@@ -1,10 +1,39 @@
 # scent-studio
-현재 단계: 3 (QA팀 테스트 목록)
+현재 단계: 4 (구현 — ★ 백엔드팀 사장 검토 중: 엔진 마무리)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 안드로이드 앱 (Kotlin + Compose 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 없음 (4단계에서 채움)
-결과: 테스트 아직 없음
-사용자에게 남은 질문: 없음 (디자인 방향은 2026-10-30 확정: 크림 + 딥 그린 + 골드, 고급스럽고 깔끔하게 — design.md 3절)
-다음 할 일: "3단계 시작 전 확인" 3번 — QA팀 테스트 목록(docs/tests.md) 작성 후 사장 승인
+테스트 실행: `bash tests/run.sh`
+리뷰 기준: a92de1c
+결과: 파이프라인 12/12 · 엔진 11/11 통과, 승인 목록 0/40 (화면 구현 전이라 정상) (2026-10-30 확인)
+사용자에게 남은 질문: 레몬 '강' 문제 해결 방식 (아래 "다음 세션에서 할 일" 1번)
+다음 할 일: 아래 "다음 세션에서 할 일" 1 → 2 → 3 순서
+
+## 다음 세션에서 할 일 (2026-10-30 사장 요청으로 여기서 멈춤)
+> ⚠️ 이 단계의 작업은 승인 테스트 0/40(화면 전) 상태라 main이 아니라 **작업 브랜치 `wip/scent-studio-stage4`**에 올렸다(2026-10-30, 실패 상태 커밋은 사장 결정). 다른 컴퓨터에서는 `git fetch` → `git switch wip/scent-studio-stage4`. 승인 테스트가 모두 통과하면 main에 합친다.
+> 원본 데이터가 없으면 먼저 `py pipeline/fetch.py` → `py pipeline/build_catalog.py`.
+
+### 1. 레몬 "강"이 약하게 반영되는 문제 — 사장 결정 받기
+- 사장이 짚은 문제: 맹점 조합(레몬 강·오스만투스·샌달우드 약)의 조합 어코드가 시트러스 22 = 플로럴 22, Top 5 중 시트러스가 1위 어코드인 향수 0개.
+- 원인: 노트 프로필은 이미 "전체 평균 빼기"(design.md 8-2절)인데도, 레몬 프로필은 시트러스 48%로 퍼져 있고 오스만투스는 플로럴 55%로 몰려 있음 + "강"(1.5)이 "중"(1.0)과 차이가 작음.
+- 비교 실험: `py pipeline/experiments/profile_methods.py` (같은 향수 묶기 반영 후 결과, 재현은 정확히 같은 향수만 센 값)
+
+  | 방식 | 조합 어코드 | 시트러스 1위 | 재현(기준 15) |
+  |---|---|---|---|
+  | 지금: 평균 빼기, 강 1.5 | 시트러스 22 · 플로럴 22 | 0/5 | 15 |
+  | 평균 빼기, 강 2.0 | 시트러스 29 · 플로럴 19 | 2/5 | 15 |
+  | 특징 강조(PPMI: m·max(0, ln(m/g))), 강 1.5 | 시트러스 26 · 플로럴 23 | 1/5 | 14 |
+  | 특징 강조, 강 2.0 | 시트러스 34 · 플로럴 19 | 2/5 | 14 |
+  | 제곱, 강 2.0 | 시트러스 43 · 플로럴 26 | 2/5 | 13 |
+- 지난 세션 추천은 "특징 강조 + 강 2.0"이었으나, 같은 향수 묶기를 넣은 뒤 재현이 14로 떨어졌다. **먼저 `evaluate.py` 방식(같은 향수의 다른 농도도 맞힌 것으로 셈)으로 두 후보(특징 강조+강 2.0 / 평균 빼기+강 2.0)를 다시 재고**, 기준(재현 15)을 넘는 쪽을 추천해 사장에게 묻는다. 둘 다 넘으면 시트러스가 더 앞서는 특징 강조를 추천.
+- 정해지면 바꿀 곳: 프로필 계산 `pipeline/build_catalog.py` 6번 단계 · "강" 값 `pipeline/engine_ref.py` INTENSITIES와 Java `EngineParams.INTENSITIES`·`ENGINE_VERSION` 3 · `requirements.md` 핵심 개념 표(강도) · `design.md` 8-2·8-3절 · 앱이 강도 이름(strong)을 숫자로 바꾸는 곳(M4에서 만들 때) → `py pipeline/build_catalog.py --fixture && py pipeline/build_catalog.py && py pipeline/make_golden.py && py pipeline/evaluate.py` → `bash tests/run.sh`로 파이프라인·엔진 통과 확인.
+
+### 2. 블라인드 비교 → 눈으로 평가
+- 바뀐 엔진으로 `py pipeline/evaluate.py` → 사장에게 `docs/engine_blind.md`를 보여 주고 답을 받는다 (형식: `블라인드: 1A 2B …`).
+- 답을 `docs/engine_blind_answers.txt`에 적고(`블라인드: …` 줄) `py pipeline/evaluate.py` → 이제 `engine_report.md`에 지금 엔진의 Top 5가 나오므로 그걸 보여 주고 눈으로 평가 점수 10개를 받아 같은 파일의 `점수: …` 줄에 적고 다시 실행.
+- 기준: 블라인드 6/10 이상, 눈으로 평균 3.5 이상. 못 넘으면 원인을 찾아 사장과 다시 정한다.
+
+### 3. 그다음
+- ★ 백엔드팀 검토 마무리 → M3 서버(`backend/`, Spring Boot 4.1) → ★ 디자인 시안 → M4 화면 (docs/plan.md).
 
 ## 지금까지 한 것
 - 1단계(기획)와 2단계(설계)는 사장과 Claude 앱 대화에서 진행했다. 결과물이 이 폴더에 있다:
@@ -26,3 +55,20 @@
 - 테스트 명령 줄은 아직 없다. 3단계에서 테스트를 만들 때 `bash tests/run.sh`로 추가한다(그 전까지 훅이 이 앱을 건너뛴다).
 - 4단계 구현 순서와 관문은 `docs/design.md` 15절(M0~M5). 추천 엔진은 화면보다 먼저 노트북으로 검증하고, 합격 기준표를 백엔드팀 사장 검토 때 보여 준다.
 - 원본 데이터 CSV는 커밋하지 않는다 (`pipeline/data/raw/`).
+
+## 3단계 결과 (2026-10-30, 아직 커밋 안 함 — 4단계에서 테스트가 통과한 뒤 함께 커밋)
+- `docs/tests.md` 승인 목록 40개를 사장이 승인했다.
+- 테스트 코드: `app/src/test/java/.../acceptance/` (A~I 9개 파일 = 40개), 공통 준비 `acceptance/harness/`(가짜 서버·가짜 로그인·화면 검사 도우미).
+- 화면 요소 이름표 `app/src/main/java/.../ui/Tags.kt`, 앱 조립 약속 `ScentApplication.kt`(`AppConfig`), `auth/AuthGateway.kt`. 이름표를 바꾸면 승인 테스트가 깨지므로 사장 재승인 필요.
+- 가짜 데이터: `tests/fixtures/synthetic_parfumo.csv`(지어낸 향수 40개), `tests/fixtures/notes_ko.csv`. M0에서 파이프라인으로 `app/src/test/resources/catalog/test_catalog.json.gz`를 만든다(이 파일은 가짜 데이터라 커밋해도 됨). 테스트용 파이프라인 기준값은 작게: 목록 노출 df≥3, 검색 전용 df≥2, 궁합 함께 나온 횟수≥2.
+- 빌드: Gradle 9.8.2(wrapper), AGP 9.5.0, Kotlin 2.4.21, Compose BOM 2026.09.00, Robolectric 4.17(SDK 36), Roborazzi 1.77.0. 이 컴퓨터의 JDK는 25라 Robolectric용 `--add-opens/--add-exports`를 `app/build.gradle.kts`에 넣었다.
+- 전체 테스트 실행 시간: 실패 상태에서 약 3분 30초(테스트마다 5초 기다림). 훅 제한 5분에 가까우므로 구현 후 다시 재고 `NOTES.md`에 적는다.
+- 서버 Spring Boot는 최신 안정판이 4.1이라 4로 만든다 → 4단계에서 design.md 1절 고칠 것.
+
+## 4단계 진행 (2026-10-30, 아직 커밋 안 함 — 승인 테스트가 통과해야 커밋 가능)
+- M0 파이프라인: `pipeline/`(fetch, catalog_rules, build_catalog, manual/*.csv, tests/). 원본은 `py pipeline/fetch.py`로 받는다(커밋 안 함). 보고서 `pipeline/report.md`.
+- M1 참조 엔진·검증: `pipeline/engine_ref.py`, `pipeline/evaluate.py` → `docs/engine_report.md`, 정답 `docs/engine_blind_key.md`(사장이 고르기 전에는 열지 않는다).
+- M2 Java 엔진: `engine/`. 골든 파일 `tests/golden/recommend_cases.json`은 `py pipeline/make_golden.py`로 만든다.
+- 블라인드 비교는 `docs/engine_blind.md`로 분리했다(2026-10-30 사장 요청). 지금 엔진의 추천 목록이 보이는 표는 사장 답(`docs/engine_blind_answers.txt`)이 있을 때만 `engine_report.md`에 나온다. A/B 배치는 고정 난수라 정답 파일을 따로 두지 않는다.
+- 추천에서 농도만 다른 같은 향수는 하나만(`group`, 2026-10-30 사장 요청).
+- 노트 한글명 1,198개는 에이전트가 초안을 썼다(`pipeline/manual/notes_ko.csv`). 사장 검토 때 이상한 이름이 보이면 고친다.

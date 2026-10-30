@@ -1,0 +1,42 @@
+Number,Name,Brand,Release_Year,Concentration,Rating_Value,Rating_Count,Main_Accords,Top_Notes,Middle_Notes,Base_Notes,Perfumers,URL
+T001,Lumière d'Agrumes,Aurelle,2019,Eau de Toilette,8.1,820,"Citrus, Floral, Fresh, Green, Woody","Lemon, Bergamot","Osmanthus, Jasmine","Sandalwood, White musk",NA,https://example.invalid/T001
+T002,Santal Profond,Noirwood,2017,Eau de Parfum,8.3,910,"Woody, Oriental, Resinous, Smoky, Spicy",Lemon,Osmanthus,"Sandalwood, Oud, Incense, Patchouli",NA,https://example.invalid/T002
+T003,Verte No.1,Maison Verte,2015,Eau de Toilette,7.6,300,"Citrus, Floral, Woody, Fresh, Powdery","Lemon, Mandarin orange","Rose, Peony","Sandalwood, Musk",NA,https://example.invalid/T003
+T004,Verte No.2,Maison Verte,2015,Eau de Toilette,7.4,280,"Floral, Citrus, Woody, Powdery, Fresh",Lemon,"Rose, Jasmine","Sandalwood, Cedarwood",NA,https://example.invalid/T004
+T005,Verte No.3,Maison Verte,2016,Eau de Toilette,7.5,260,"Citrus, Woody, Floral, Fresh, Green","Lemon, Grapefruit",Rose,"Sandalwood, Vetiver",NA,https://example.invalid/T005
+T006,Verte No.4,Maison Verte,2016,Eau de Parfum,7.7,240,"Citrus, Floral, Fresh, Woody, Sweet","Lemon, Bergamot","Rose, Orange blossom","Sandalwood, Vanilla",NA,https://example.invalid/T006
+T007,Verte No.5,Maison Verte,2018,Eau de Toilette,7.3,220,"Floral, Citrus, Fresh, Woody, Green",Lemon,"Rose, Lily of the valley","Sandalwood, Musk",NA,https://example.invalid/T007
+T008,Verte No.6,Maison Verte,2019,Eau de Toilette,7.2,200,"Citrus, Floral, Woody, Powdery, Fresh","Lemon, Mandarin orange","Rose, Iris","Sandalwood, Cedarwood",NA,https://example.invalid/T008
+T009,Rose Patchouli,Atelier Brume,2018,Eau de Parfum,7.9,410,"Floral, Woody, Citrus, Earthy, Spicy","Lemon, Pink pepper",Rose,"Sandalwood, Patchouli",NA,https://example.invalid/T009
+T010,Citron Terre,Atelier Brume,2020,Eau de Parfum,7.6,190,"Citrus, Woody, Earthy, Floral, Fresh",Lemon,"Rose, Geranium","Patchouli, Sandalwood",NA,https://example.invalid/T010
+T011,Jardin Sombre,Halden,2014,Eau de Parfum,7.8,350,"Woody, Floral, Citrus, Earthy, Powdery","Bergamot, Lemon",Rose,"Patchouli, Sandalwood, Musk",NA,https://example.invalid/T011
+T012,Mousse Claire,Halden,2012,Eau de Parfum,8.0,330,"Chypre, Citrus, Woody, Floral, Green","Lemon, Bergamot","Rose, Jasmine","Oakmoss, Sandalwood",NA,https://example.invalid/T012
+T013,Pivoine Blanche,Sorell,2021,Eau de Parfum,7.7,270,"Floral, Fresh, Powdery, Citrus, Sweet",Bergamot,"Rose, Peony, Jasmine","Musk, Sandalwood",NA,https://example.invalid/T013
+T014,Rose d'Été,Sorell,2022,Eau de Toilette,7.5,230,"Floral, Fruity, Fresh, Citrus, Powdery",Lemon,"Rose, Lychee","Musk, Sandalwood",NA,https://example.invalid/T014
+T015,Fleur de Thé,Kanoa,2020,Eau de Toilette,7.6,210,"Floral, Green, Fresh, Citrus, Woody","Bergamot, Green tea","Jasmine, Rose",Sandalwood,NA,https://example.invalid/T015
+T016,Cèdre Sec,Kanoa,2017,Eau de Parfum,7.4,260,"Woody, Spicy, Fresh, Earthy, Smoky","Lemon, Cardamom",Cedarwood,"Sandalwood, Vetiver",NA,https://example.invalid/T016
+T017,Bois Lumineux,Orrin,2019,Eau de Toilette,7.8,390,"Woody, Citrus, Fresh, Spicy, Green","Lemon, Grapefruit",Lavender,"Cedarwood, Sandalwood",NA,https://example.invalid/T017
+T018,Ambre Nuit,Orrin,2016,Eau de Parfum,8.2,610,"Oriental, Sweet, Resinous, Spicy, Woody",Cardamom,"Rose, Cinnamon","Amber, Vanilla, Sandalwood",NA,https://example.invalid/T018
+T019,Vanille Douce,Sorell,2018,Eau de Parfum,7.9,520,"Sweet, Gourmand, Creamy, Powdery, Oriental",Bergamot,Orange blossom,"Vanilla, Tonka bean, Musk",NA,https://example.invalid/T019
+T020,Marée Bleue,Kanoa,2015,Eau de Toilette,7.3,450,"Aquatic, Fresh, Citrus, Green, Woody","Lemon, Sea notes","Lavender, Rosemary","Cedarwood, Musk",NA,https://example.invalid/T020
+T021,Lavande Fraîche,Halden,2013,Eau de Toilette,7.6,300,"Fougère, Fresh, Green, Spicy, Woody","Lavender, Bergamot",Geranium,"Tonka bean, Oakmoss",NA,https://example.invalid/T021
+T022,Cuir Fumé,Noirwood,2019,Eau de Parfum,8.0,380,"Leathery, Smoky, Woody, Spicy, Animal",Pink pepper,Leather,"Oud, Incense, Patchouli",NA,https://example.invalid/T022
+T023,Encens Calme,Noirwood,2020,Eau de Parfum,7.9,290,"Smoky, Resinous, Woody, Spicy, Oriental",Bergamot,Incense,"Sandalwood, Amber",NA,https://example.invalid/T023
+T024,Figue Verte,Atelier Brume,2021,Eau de Toilette,7.7,240,"Green, Fruity, Fresh, Woody, Creamy",Fig leaf,Fig,"Cedarwood, Musk",NA,https://example.invalid/T024
+T025,Thé Vert,Orrin,2014,Eau de Toilette,7.4,330,"Green, Fresh, Citrus, Floral, Aquatic","Bergamot, Lemon","Green tea, Jasmine",Musk,NA,https://example.invalid/T025
+T026,Osmanthe Doré,Aurelle,2022,Eau de Parfum,7.8,260,"Floral, Fruity, Sweet, Powdery, Citrus",Mandarin orange,Osmanthus,"Musk, Sandalwood",NA,https://example.invalid/T026
+T027,Agrumes Vifs,Aurelle,2018,Eau de Toilette,7.5,310,"Citrus, Fresh, Green, Aquatic, Spicy","Lemon, Grapefruit, Bergamot",Ginger,Vetiver,NA,https://example.invalid/T027
+T028,Iris Poudré,Sorell,2017,Eau de Parfum,7.9,280,"Powdery, Floral, Woody, Creamy, Sweet",Bergamot,"Iris, Violet","Sandalwood, Musk",NA,https://example.invalid/T028
+T029,Hinoki Bath,Kanoa,2023,Eau de Parfum,7.6,120,"Woody, Green, Fresh, Earthy, Smoky",Yuzu,Hinoki,"Cedarwood, Vetiver",NA,https://example.invalid/T029
+T030,Hinoki Rain,Orrin,2023,Eau de Toilette,7.4,110,"Woody, Aquatic, Green, Fresh, Earthy",Bergamot,"Hinoki, Sea notes",Musk,NA,https://example.invalid/T030
+T031,Épices d'Or,Halden,2016,Eau de Parfum,7.8,340,"Spicy, Oriental, Woody, Sweet, Resinous","Cardamom, Pink pepper","Cinnamon, Rose","Amber, Patchouli",NA,https://example.invalid/T031
+T032,Néroli Blanc,Aurelle,2020,Eau de Toilette,7.7,300,"Citrus, Floral, Fresh, Green, Powdery","Bergamot, Lemon","Neroli, Orange blossom",Musk,NA,https://example.invalid/T032
+T033,Jasmin Nuit,Sorell,2015,Eau de Parfum,8.0,420,"Floral, Sweet, Animal, Oriental, Powdery",Bergamot,"Jasmine, Tuberose","Vanilla, Musk",NA,https://example.invalid/T033
+T034,Bois de Santal,Halden,2018,Eau de Parfum,7.9,360,"Woody, Creamy, Powdery, Sweet, Floral",Cardamom,Iris,"Sandalwood, Musk",NA,https://example.invalid/T034
+T035,Pamplemousse,Atelier Brume,2019,Eau de Toilette,7.3,250,"Citrus, Fruity, Fresh, Sweet, Green","Grapefruit, Lemon",Peach,Musk,NA,https://example.invalid/T035
+T036,Mousse de Chêne,Noirwood,2011,Eau de Parfum,8.1,300,"Chypre, Woody, Earthy, Green, Floral",Bergamot,Rose,"Oakmoss, Patchouli, Vetiver",NA,https://example.invalid/T036
+T037,Peu Connu,Kanoa,2024,Eau de Toilette,9.0,3,"Citrus, Floral, Woody, Fresh, Green",Lemon,"Rose, Osmanthus",Sandalwood,NA,https://example.invalid/T037
+T038,Verte No.1,Maison Verte,2017,Eau de Parfum,7.8,150,"Citrus, Floral, Woody, Fresh, Powdery","Lemon, Mandarin orange","Rose, Peony","Sandalwood, Musk",NA,https://example.invalid/T038
+T039,Sans Notes,Orrin,2010,NA,7.0,90,"Woody, Fresh",NA,NA,NA,NA,https://example.invalid/T039
+T040,Sans Accords,Orrin,2010,NA,7.0,90,NA,Lemon,Rose,Sandalwood,NA,https://example.invalid/T040
+T041,Lumière d'Agrumes Aurelle 2021 Eau de Parfum,Aurelle,2021,Eau de Parfum,8.0,400,"Citrus, Floral, Fresh, Green, Woody","Lemon, Bergamot","Osmanthus, Jasmine","Sandalwood, White musk",NA,https://example.invalid/T041
