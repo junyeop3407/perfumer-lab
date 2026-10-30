@@ -1,175 +1,367 @@
-# scent-studio 설계 (1차)
+# scent-studio 설계 (1차, 보강판)
 
-> 작성: 2026-10-30 · /build-app 2단계 결과물
-> 기술은 CLAUDE.md "팀별 기본 기술"을 따른다. Python은 화면 뒤에서 한 번씩 돌리는 데이터 작업에만 쓴다.
+> 작성: 2026-10-30 · /build-app 2단계 결과물. 같은 날 안드로이드 전용(D안)으로 바꾸고, 실제 데이터로 실사·시험한 결과를 반영해 보강했다.
+> 기술 규칙은 CLAUDE.md "팀별 기본 기술"과 "안드로이드 앱 전용" 항목을 따른다. Python은 화면 뒤에서 한 번씩 돌리는 데이터 작업에만 쓴다.
 > **저장소 밖 문서와 내용이 다르면 이 문서가 기준이다.**
 
+## 0. 보강에서 바뀐 것 (사장 검토용 요약)
+
+### 0-1. 실제 데이터를 열어 보고 알게 된 것 (5절에 숫자)
+- Parfumo 데이터의 어코드는 **비율 없이 이름만** 있고, 향수마다 거의 **5개로 고정**(90%)이며, 종류는 **21개**다. → "합 100으로 정규화된 강도"는 데이터에 없다. **순서로 비중을 매긴다**(1위 5 : 2위 4 : … : 5위 1).
+- 기존 계산식대로 노트 프로필을 "그 노트가 든 향수들의 어코드 평균"으로 만들면, 모든 노트가 흔한 어코드(플로럴·스파이시·스위트)로 뭉개진다.
+  - 실험: 레몬의 프로필 1위가 프레시 14 · 스파이시 12 · 시트러스 12로 거의 평평하고, 샌달우드는 1위가 **플로럴**이었다.
+  - 맹점 조합(레몬 강 + 오스만투스 + 샌달우드 약)의 어코드에 **시트러스가 상위 5개에 없었다.** 기획서가 막으려던 문제가 그대로 생긴다.
+  - **보정:** "평균보다 얼마나 더 많은가"(평균 초과분)로 프로필을 만든다. 그러면 레몬은 시트러스 45, 샌달우드는 우디 32가 1위가 된다. 맹점 조합은 플로럴 23 · 시트러스 22가 되고, 추천 상위 5개 모두에 시트러스가 들어간다. (8절)
+- 추천 후보는 약 2.1만 개이고, 평가가 10건 이상인 것으로 거르면 약 1.4만 개다. 노트는 3,610종인데, 30개 이상 향수에 쓰인 노트는 536종뿐이다. → 입문자에게는 이 536종만 목록으로 보여 주고, 나머지는 검색으로 찾게 한다.
+
+### 0-2. 설계에서 바꾸자고 제안하는 것 (★ 사장 결정, 추천안을 이 문서에 반영해 둠)
+| # | 결정 | 추천 | 이유 |
+|---|---|---|---|
+| D1 | 추천 계산을 어디서 하나 | **앱 안에서** (서버는 로그인·저장·통계만) | 무료 서버는 15분 쉬면 잠들어 깨는 데 최대 1분 걸린다. 앱 안에서 계산하면 핵심 기능(조합 → 추천)이 **즉시, 인터넷 없이도** 된다. 카탈로그 파일은 압축해서 약 1MB로 작다(시험 측정 0.7MB + 노트 프로필). 계산 코드는 앱·서버가 함께 쓰는 Java 모듈 하나에 둔다 |
+| D2 | 하단 탭 | **4개**(홈 · 향수 찾기 · 보관함 · 마이) + "새 조합 만들기"는 홈에서 시작하는 전체 화면 흐름 | 조합 → 요약 → 추천 → 상세는 한 줄로 이어지는 흐름이다. 지금처럼 추천 결과(S06)가 "향수 찾기" 탭에 있으면 뒤로 가기가 꼬인다 |
+| D3 | 로그인 안 한 사람의 불호·선호 설정 | **폰에 저장해 바로 적용**, 로그인하면 서버로 합친다 | 입문자는 로그인 전에 써 본다. 불호 노트 필터는 추천 품질에 직접 영향을 준다 |
+| D4 | 데이터 라이선스 | 1차는 **Play 내부 테스트(초대한 사람만)**까지. 정식 공개는 라이선스를 확인한 뒤 | Parfumo 데이터는 수집(스크래핑) 데이터이고 라이선스 표시가 없다 |
+
+### 0-3. 기획서에 더할 것 (OK를 받으면 requirements.md에 반영)
+- 마이(S11)에 **계정 삭제**를 둔다. Play 정책상 계정을 만들 수 있는 앱은 필수다. 웹에서 삭제를 요청하는 방법도 안내해야 한다.
+- **개인정보처리방침 페이지**를 만든다(정적 페이지 하나, GitHub Pages).
+- 성공 기준을 재려면 **사용 기록**(조합 시작·완료, 추천 보기 등)이 필요하다. 13절에서 최소한으로 설계했다.
+- 추천 점수 옆에 "매우 비슷 / 비슷 / 참고" 같은 **말로 된 등급**을 함께 보여 준다(8-6절).
+
 ## 1. 고른 안: D안 — Kotlin 안드로이드 앱 + Spring, 데이터 작업만 Python
-> 2026-10-30 변경: 사장이 "안드로이드 앱 전용"으로 정해 A안(React 웹 + Capacitor)에서 바꿨다. 서버·추천 엔진·데이터 작업은 A안 그대로다.
-> 기술 규칙은 CLAUDE.md "안드로이드 앱 전용" 항목.
+> 2026-10-30: 사장이 "안드로이드 앱 전용"으로 정해 A안(React 웹 + Capacitor)에서 바꿨다.
+
+```mermaid
+flowchart LR
+  subgraph PC["개발 PC (필요할 때만)"]
+    RAW[Parfumo CSV] --> PIPE[pipeline/ Python] --> CAT[(catalog.json.gz<br/>향수·노트·프로필)]
+  end
+  subgraph PHONE["안드로이드 앱"]
+    UI[Compose 화면] --> VM[ViewModel]
+    VM --> ENG[engine 모듈<br/>추천·조합 분석]
+    ENG --> MEM[(카탈로그<br/>메모리)]
+    VM --> LOCAL[(Room<br/>조합 임시저장·설정·기록 대기열)]
+    VM --> NET[Retrofit]
+  end
+  CAT -- 앱에 포함 + 새 버전 내려받기 --> MEM
+  NET -- JWT --> API[Spring 서버<br/>로그인 사용자 데이터·통계]
+  API --> DB[(Supabase Postgres)]
+  UI -- 구글 로그인 --> AUTH[Supabase Auth]
+```
 
 | 영역 | 맡는 팀 | 기술 |
 |---|---|---|
-| 화면 (안드로이드 앱) | 프론트엔드팀 | Kotlin + Jetpack Compose(Material 3), Gradle(`./gradlew`), 최소 Android 8.0(API 26). 화면 상태 ViewModel + StateFlow(조합 임시 상태 포함), 화면 이동 Navigation Compose, 서버 통신 Retrofit + kotlinx.serialization, 구글 로그인 Credential Manager + Supabase Kotlin 클라이언트(Auth만) |
-| 디자인 | 디자인팀 | `docs/DESIGN.md` + Compose 테마(색·글꼴·모양) (4단계 시작에 작성). 시안 캡처는 Roborazzi |
-| 서버·API·로그인 검증 | 백엔드팀 | Java 21 + Spring Boot 3, Gradle(`./gradlew`), Spring Web, Spring Data JPA, Flyway, Spring Security(OAuth2 Resource Server), springdoc-openapi |
-| 추천 엔진 | 백엔드팀 | 순수 Java 패키지 `engine` (DB·Spring을 모름). 서버 시작 시 카탈로그를 메모리에 올려 계산 |
-| DB · 로그인 | 백엔드팀 | Supabase를 **PostgreSQL 호스팅과 구글 로그인(Auth)으로만** 사용. 데이터 접근 제한은 Spring이 한다 |
-| 데이터 정리 | 백엔드팀 | Python 3.11 + pandas (`pipeline/`). 원본 정리 → DB 적재 → 골든 테스트 파일 생성 |
-| 엔진 검증 실험 | 백엔드팀 | Jupyter 노트북 (`notebooks/`), Python 참조 엔진 사용 |
-| 테스트 | QA팀 | 승인 목록: Compose UI 테스트(Robolectric, 에뮬레이터 없이) · 엔진/API·화면 계산: JUnit · 시안 캡처: Roborazzi · 실제 기기 확인: 에뮬레이터 테스트(6단계에 따로) · 전체 실행: `bash tests/run.sh` |
+| 앱 화면 | 프론트엔드팀 | Kotlin + Jetpack Compose(Material 3), 최소 Android 8.0(API 26), target은 Play가 요구하는 최신. ViewModel + StateFlow, Navigation Compose(타입 안전 경로), Room(폰 안 저장), Retrofit + kotlinx.serialization, 의존성은 손으로 묶음(`AppContainer`, Hilt 안 씀) |
+| 로그인 | 프론트엔드팀 + 백엔드팀 | 앱: Credential Manager로 구글 ID 토큰 → Supabase Kotlin 클라이언트(Auth만)로 세션. 서버: Spring Security가 Supabase JWT를 공개키(JWKS)로 검증 |
+| 디자인 | 디자인팀 | `docs/DESIGN.md` + Compose 테마. 시안 캡처는 Roborazzi |
+| 추천 엔진 | 백엔드팀 | **`engine` 모듈: 순수 Java 17, 의존성 없음.** 앱과 서버가 같은 코드를 쓴다. 1차에는 앱만 추천을 계산한다 |
+| 서버 | 백엔드팀 | Java 21 + Spring Boot 3, Spring Web, Spring Data JPA, Flyway, Spring Security(OAuth2 Resource Server), springdoc-openapi |
+| DB · 로그인 | 백엔드팀 | Supabase를 **Postgres 호스팅과 구글 로그인으로만** 사용. 앱은 DB에 직접 붙지 않는다(12절) |
+| 데이터 정리 | 백엔드팀 | Python 3.11 + pandas (`pipeline/`) → 카탈로그 파일, 보고서, Python 참조 엔진 |
+| 엔진 검증 실험 | 백엔드팀 | Jupyter 노트북 (`notebooks/`) |
+| 빌드 | 공통 | **앱 폴더 하나의 Gradle 빌드**에 모듈 셋(`:engine`, `:backend`, `:app`). 명령 한 번, Gradle 데몬 하나로 전부 테스트해 훅 5분 안에 끝낸다 |
+| 테스트 | QA팀 | 14절 |
 
 ## 2. 버린 안과 이유
 | 안 | 내용 | 버린 이유 |
 |---|---|---|
 | A | React 웹 + Spring, Capacitor로 감싸 안드로이드 배포 (처음 고른 안) | 사장이 웹 없이 안드로이드 앱 전용으로 정함. 앱 안의 화면이 웹 화면이라 조작감이 진짜 앱보다 떨어짐 |
-| B | FastAPI(Python) + Expo(React Native) | 서버까지 Python으로 바뀌어 작업장 기본 기술(Spring)과 충돌. React Native만 쓰는 변형도 검토했으나, 앱 전용이면 안드로이드 정식 언어(Kotlin)가 조작감·성능이 가장 좋아 사장이 Kotlin을 고름 |
-| C | 서버 없이 React만, 브라우저에서 추천 계산 | 카탈로그가 수만 건이라 첫 로딩이 무겁고, 로그인·저장·피드백을 위해 결국 서버가 필요 |
+| B | FastAPI(Python) + Expo(React Native) | 서버까지 Python으로 바뀌어 작업장 기본 기술(Spring)과 충돌. 앱 전용이면 안드로이드 정식 언어(Kotlin)가 조작감·성능이 가장 좋아 사장이 Kotlin을 고름 |
+| C | 서버 없이 화면만 | 로그인·저장·피드백·통계에 서버가 필요. (단, D1대로 **추천 계산만은 앱 안에서** 한다) |
+| D1-서버 | 추천을 서버 API로 계산 | 무료 서버가 잠들면 첫 추천에 최대 1분. 인터넷이 없으면 핵심 기능이 멈춤. 카탈로그를 API로 내보내는 것도 앱에 넣는 것과 라이선스 위험이 같다 |
 
-## 3. 디자인 방향
-**미정 — 사장 선택 필요.** 보기(추천 순): ① 깔끔한 흰색 + 파란 포인트 하나 ② 따뜻한 베이지·향수 매장 느낌 ③ 어두운 고급 느낌.
-고른 결과를 여기에 적고, 디자인팀은 4단계 시작에 `docs/DESIGN.md`를 쓴다. 공통 원칙: AI가 만든 티가 나지 않는 절제된 화면, 계열마다 정해진 색 하나.
+## 3. 디자인 방향과 앱 화면 원칙
+**디자인 방향 미정 — 사장 선택 필요.** 보기(추천 순): ① 깔끔한 흰색 + 파란 포인트 하나 ② 따뜻한 베이지·향수 매장 느낌 ③ 어두운 고급 느낌.
+디자인팀은 4단계 시작에 `docs/DESIGN.md`를 쓴다. 디자인 방향과 상관없이 지킬 것:
+- AI가 만든 티가 나지 않는 절제된 화면. 강조색은 하나, 계열마다 정해진 색 하나(10색, 6절)
+- **색만으로 뜻을 전하지 않는다.** 어코드 막대에는 늘 이름과 %를 글자로 함께 쓴다(색약 사용자, TalkBack)
+- 누르는 곳은 최소 48dp. 글자 크기를 200%로 키워도 화면이 깨지지 않는다(Roborazzi로 캡처해 확인)
+- 1차는 밝은 화면만(다크 모드는 2차 후보). 글꼴은 디자인팀이 정하고, 앱에 넣는다면 무료 라이선스(OFL 등)만 쓴다
+- 모든 화면에 네 가지 상태를 그린다: 불러오는 중 · 내용 있음 · 비어 있음 · 오류(다시 시도)
+- 화면 문구는 "데이터상 유사도", "메인 테마 추정치"처럼 단정하지 않는 말로 쓴다
 
 ## 4. 폴더 구조
 ```
 apps/scent-studio/
 ├── HANDOFF.md
-├── docs/            requirements.md, design.md (+ 이후 tests.md, plan.md, DESIGN.md, NOTES.md, review.md)
-├── android/         Kotlin + Compose (Gradle 프로젝트)
-│   └── app/src/
-│       ├── main/java/.../  ui/screens(S01~S12), ui/components, ui/theme(DESIGN.md 적용), blend/BlendDraftViewModel.kt, data/api(Retrofit), auth(구글 로그인)
-│       ├── test/           승인 목록(Compose UI 테스트, Robolectric) · 화면 계산 JUnit · Roborazzi 캡처
-│       └── androidTest/    에뮬레이터 테스트 (6단계에 따로 실행)
-├── backend/         Spring Boot (Gradle)
-│   └── src/main/java/.../
-│       ├── engine/  추천 엔진 (순수 Java)
-│       ├── api/     컨트롤러 (notes, blends, recommendations, perfumes, favorites, feedback, me)
-│       ├── domain/  엔티티·리포지토리
-│       └── security/ Supabase JWT 검증 설정
+├── settings.gradle.kts, build.gradle.kts, gradlew(.bat), gradle/   ← 하나의 Gradle 빌드
+├── docs/            requirements.md, design.md, reference.md (+ 이후 tests.md, plan.md, DESIGN.md, NOTES.md, review.md)
+├── engine/          순수 Java 17 라이브러리 (추천·조합 분석·균형 경고). Spring·Android를 모름
+│   └── src/test/    골든 테스트, 성질 테스트
+├── app/             안드로이드 앱 (Kotlin + Compose)
+│   └── src/
+│       ├── main/java/.../  ui/(screens S01~S12, components, theme), blend/, catalog/, user/(Retrofit), auth/, events/, AppContainer.kt
+│       ├── main/assets/    catalog.json.gz (파이프라인이 만듦, 커밋 안 함)
+│       ├── test/           승인 목록(Compose UI + Robolectric), ViewModel 테스트, Roborazzi 캡처
+│       └── androidTest/    에뮬레이터 테스트 (6단계에 따로)
+├── backend/         Spring Boot
+│   └── src/main/java/.../  api/, domain/, security/, events/
 │   └── src/main/resources/db/migration/   Flyway SQL (스키마는 여기서만 바꾼다)
-├── pipeline/        Python: normalize.py, build_profiles.py, load.py, engine_ref.py, make_golden.py
-│   └── data/raw/    원본 CSV (커밋하지 않음, .gitignore)
+├── pipeline/        Python: fetch.py, clean.py, profiles.py, build_catalog.py, engine_ref.py, make_golden.py, report.md
+│   ├── manual/      aliases.csv, note_family_override.csv, notes_ko.csv (사람이 검토한 표, 커밋함)
+│   └── data/raw/    원본 CSV (커밋 안 함)
 ├── notebooks/       engine_validation.ipynb
 └── tests/
-    ├── run.sh       빠른 테스트를 차례로 실행 (HANDOFF의 테스트 명령. 에뮬레이터 테스트는 넣지 않음)
-    └── golden/      catalog.json(고정 소형 카탈로그), recommend_cases.json(기대 결과)
+    ├── run.sh       빠른 테스트 전체 (HANDOFF의 테스트 명령)
+    └── golden/      synthetic_catalog.json(가짜 향수 약 60개), recommend_cases.json(기대 결과)
 ```
-경로는 모두 앱 폴더 기준 상대 경로. 비밀값(DB 주소, Supabase 키)은 `.env`에 두고 `.env.example`에 이름만 적는다.
+- 경로는 모두 앱 폴더 기준 상대 경로다. 비밀값(DB 주소, Supabase 서비스 키)은 `.env`에 두고 `.env.example`에는 이름만 적는다.
+- **이 저장소는 공개 저장소다.** 원본 CSV와 그것으로 만든 카탈로그 파일은 커밋하지 않는다. 다른 컴퓨터에서는 `pipeline/fetch.py`가 원본을 받아 다시 만든다. 테스트용 카탈로그는 **가짜 향수**로 만든다(라이선스 걱정이 없고, 경계 사례를 일부러 넣을 수 있다).
 
-## 5. 데이터 모델 (PostgreSQL)
-### 카탈로그 (읽기 전용, 파이프라인이 채움)
-| 테이블 | 컬럼 | 비고 |
+## 5. 데이터 실사 결과 (2026-10-30, Parfumo TidyTuesday 2024-12-10 `parfumo_data_clean.csv`)
+| 항목 | 값 | 설계에 미친 영향 |
 |---|---|---|
-| brands | id, name, country | |
-| perfumes | id, brand_id, name, year, gender, concentration, rating, rating_count, is_candidate, source, source_id, updated_at | is_candidate = 1차 추천 후보 여부 |
-| families | code, name_ko, wheel_order, color | citrus, floral, woody … |
-| notes | id, name_en, name_ko, family_code, description, popularity | |
-| note_aliases | alias, note_id | "Calabrian Bergamot" → Bergamot |
-| perfume_notes | perfume_id, note_id, layer | layer ∈ top/middle/base |
-| accords | id, name_en, name_ko, family_code, color | 어코드도 계열에 속한다 (취향 점수용) |
-| perfume_accords | perfume_id, accord_id, strength | 향수별 합 100으로 정규화 |
-| note_accord_profiles | note_id, accord_id, weight | 노트별 합 1로 정규화 |
-| note_pairings | note_id, paired_note_id, score | 궁합 힌트 상위 3개 |
+| 전체 향수 | 59,325 | |
+| 어코드 있음 / 탑·미들·베이스 모두 있음 | 32,225 / 31,103 | |
+| 추천 후보 (3층 모두 + 노트 3개 이상 + 어코드 있음) | 21,229 | |
+| 그중 평가 10건 이상 | 14,089 | 후보 최소 평가 수 10 (설정값) |
+| 어코드 종류 | 21개 + 잘못 들어간 값 "Main Accords" 10건 | 92개가 아니라 21차원. 잘못된 값은 버린다 |
+| 향수당 어코드 수 | 5개 89% · 4개 5% · 그 이하 6% | 순위 비중(5:4:3:2:1)을 쓴다 |
+| 어코드 강도·비율 | **없음** (이름 목록만) | 위와 같음. 목록이 진한 순서라는 가정은 M0에서 사이트 20건과 대조해 확인한다 |
+| 노트 종류 (후보 안) | 3,610 · 30개 이상 향수에 쓰임 536 · 5개 이상 1,475 | 노트 공개 범위 (7절 8번) |
+| 이름이 겹치는 노트 | cedar / cedarwood, musk / white musk 등 | 별칭 표(`aliases.csv`)로 합칠지 사람이 결정 |
+| 같은 브랜드·같은 이름 중복 | 146건 | 하나로 합친다 (7절 4번) |
+| 향수가 많은 브랜드 | Guerlain 305, Avon 215, Al Haramain 203 | 상위 10개 안에서 한 브랜드 최대 2개 |
+| 라이선스 | 표시 없음 (Kaggle 수집 데이터, TidyTuesday 정리본) | D4 |
 
-### 사용자 데이터 (서버가 로그인한 user_id 것만 읽고 쓴다)
-| 테이블 | 컬럼 |
-|---|---|
-| user_preferences | user_id(PK, Supabase uid), preferred_families text[], disliked_note_ids int[] |
-| blends | id, user_id, name, families text[], created_at |
-| blend_notes | blend_id, note_id, layer, intensity (0.5 / 1.0 / 1.5) |
-| favorites | user_id, perfume_id, created_at |
-| tasting_feedback | id, user_id, perfume_id, blend_id(선택), satisfaction 1~5, similarity 1~5, memo, tested_at |
+**FragDB는 1차에 꼭 필요하지 않다.** 노트 계열은 데이터에서 계산하고(7절 7번) 한글명은 직접 만든다(7절 10번). FragDB 무료 샘플은 한글명 초안의 참고로만 쓴다.
 
-## 6. 데이터 파이프라인 (Python, 사람이 필요할 때 실행)
-데이터 소스별 내용·주의점과 노트 정규화 사례는 `reference.md` 1·2절, 계열 순서(`wheel_order`)와 궁합 문구 재료는 3절.
+## 6. 계열과 어코드 (모든 팀 공통 표, 초안 — M0에서 확정)
+사용자가 고르는 **계열 10개**를 프래그런스 휠 순서(`wheel_order`, 원형이라 10번 다음은 1번)로 둔다. 휠에서 이웃한 계열은 잘 어울린다고 안내한다.
 
-1. 원본 수집: FragDB 샘플·Parfumo CSV → `pipeline/data/raw/` (출처·받은 날짜 기록)
-2. 노트 정규화: 소문자·공백·악센트 정리 → `note_aliases`로 대표 노트에 합침 → 미매핑 노트는 `unmapped_notes.csv`
-3. 한글명·계열: FragDB 번역 사용, 없으면 상위 300개 수작업
-4. 어코드 정규화: 향수별 합 100
-5. 후보 표시 `is_candidate`: 노트 3개 이상 **그리고** 탑·미들·베이스 구분 있음 **그리고** 어코드 있음
-6. `note_accord_profiles`: 노트별로, 그 노트가 든 후보 향수들의 어코드 비율 평균 → 합 1로 정규화
-7. `note_pairings`: 같은 향수에 함께 나온 빈도(PMI)로 노트별 상위 3개
-8. DB 적재(upsert) + `report.md` (향수 수, 미매핑 비율, 어코드 누락 비율). 미매핑 비율 5% 이하가 기준
-9. 골든 파일 생성: `make_golden.py` → `tests/golden/` (아래 9절)
+| wheel_order | code | 이름 | 이 계열로 묶는 Parfumo 어코드 |
+|---|---|---|---|
+| 1 | citrus | 시트러스 | Citrus |
+| 2 | fruity | 프루티 | Fruity |
+| 3 | floral | 플로럴 | Floral |
+| 4 | soft | 머스크·파우더리 | Powdery, Creamy, Synthetic, Animal |
+| 5 | sweet | 스위트·구르망 | Sweet, Gourmand |
+| 6 | spicy | 스파이시 | Spicy |
+| 7 | amber | 앰버·레진 | Oriental, Resinous |
+| 8 | woody | 우디 | Woody, Smoky, Leathery, Earthy, Chypre |
+| 9 | green | 그린·아로마틱 | Green, Fougère |
+| 10 | fresh | 프레시·아쿠아틱 | Fresh, Aquatic |
 
-## 7. 추천 엔진 명세 (Python 참조 엔진과 Java 엔진이 **똑같이** 따라야 함)
-입력: 고른 노트 목록 `[(note_id, layer, intensity)]`, 불호 노트 집합, 선호 계열 집합(없을 수 있음), k(기본 10)
+어코드 21개는 각각 한글명과 위 계열 하나를 가진다. 어코드 색은 계열 색을 따른다.
 
-1. **후보:** `is_candidate = true`이고, 불호 노트를 어느 층에도 갖지 않은 향수
-2. **향수 어코드 벡터 a:** perfume_accords.strength (합 100)
-3. **조합 어코드 벡터 b:** 고른 노트마다 `intensity × note_accord_profiles(note)`를 더한다 (층은 반영하지 않음)
-   - 화면용 비율: `b / sum(b) × 100`을 반올림해 정수로 (표시만, 계산에는 반올림 전 값 사용)
-4. **어코드 유사도:** `accord_sim = cos(a, b)` (0~1, 둘 중 하나라도 0벡터면 0)
-5. **노트 일치도:** 고른 노트 n마다
-   - 가중치 `w_n = ln(1 + N / df_n)` (N = 후보 향수 수, df_n = n을 가진 후보 수)
-   - 점수 `c_n` = 1.0(같은 층에 있음) / 0.5(다른 층에만 있음) / 0.3(n은 없지만 같은 계열 노트가 있음) / 0
-   - `note_match = Σ w_n·c_n / Σ w_n` (강도는 반영하지 않음)
-6. **취향 적합도:** `pref = (향수 어코드 중 계열이 선호 계열인 strength의 합) / 100`
-7. **점수:** 선호 계열이 있으면 `0.6·accord_sim + 0.3·note_match + 0.1·pref`, 없으면 `(0.6/0.9)·accord_sim + (0.3/0.9)·note_match` (반올림한 0.6667을 쓰지 말고 이 식 그대로)
-8. **정렬:** 점수 내림차순 → 같으면(차이 1e-9 이하) rating_count 내림차순 → perfume_id 오름차순. 상위 k개
-9. **반환:** perfume_id, score, accord_sim, note_match, 향수 상위 어코드 3개, matched_notes(note_id, layer), missing_notes(향수 상위 노트 중 고르지 않은 것 최대 3개)
+## 7. 데이터 파이프라인 (Python, 사람이 필요할 때 실행 → 카탈로그 파일)
+1. **받기** `fetch.py`: 원본 CSV를 `pipeline/data/raw/`에 받고, 받은 날짜와 해시를 `report.md`에 적는다
+2. **정리** `clean.py`: 목록을 쉼표로 나누고, 소문자·악센트·공백을 정리하고, 잘못된 어코드 값을 버리고, `aliases.csv`로 별칭을 대표 노트로 합친다 → 별칭 표에 없는 비슷한 이름 후보는 `unmapped_notes.csv`에 모은다
+3. **후보 표시**: 3층 모두 있음, 노트 3개 이상, 어코드 1개 이상, 평가 10건 이상
+4. **중복 합치기**: 같은 브랜드에서 농도 단어(EDT, EDP, Eau de …)를 뗀 이름이 같으면 평가 수가 많은 하나만 남긴다
+5. **향수 어코드 벡터**: 목록 순서대로 5·4·3·2·1을 주고 합을 100으로 맞춘다(4개면 5·4·3·2를 100으로)
+6. **노트 프로필** (8-2절 식): 평균 초과분 + 데이터가 적은 노트는 같은 계열 평균으로 끌어당기기
+7. **노트 계열**: 프로필 1위 어코드의 계열. 상위 300개 노트는 사람이 훑어보고 이상한 것만 `note_family_override.csv`로 고친다
+8. **노트 공개 범위**: 30개 이상 향수에 쓰인 노트(약 540종) = 목록에 보임 · 5~29개(약 940종) = 검색으로만 · 4개 이하 = 고를 수 없음(향수 데이터에는 남음)
+9. **궁합 노트**: 같은 향수에 함께 나오는 정도(PMI), 함께 나온 횟수 20번 이상인 것 중 상위 3개
+10. **한글명·설명**: 고를 수 있는 노트(약 1,500종)의 한글명 초안을 만들고 사람이 `notes_ko.csv`에서 검토한다. 한 줄 설명은 목록에 보이는 노트 중 상위 300개만 쓰고, 나머지는 계열 공통 문구를 쓴다
+11. **카탈로그 파일** `build_catalog.py`: `catalog.json.gz`(버전 번호, 계열, 어코드, 노트+프로필+궁합, 향수, 출처 문구) → `app/src/main/assets/`와 서버 배포 폴더에 둔다
+12. **보고서** `report.md`: 후보 수, 미매핑 비율(5% 이하가 기준), 계열별 노트 수, 중복 합친 수
+13. **골든 파일** `make_golden.py`: 가짜 카탈로그로 Python 참조 엔진을 돌려 `tests/golden/recommend_cases.json` 생성
 
-계산은 모두 double. 가중치(0.6/0.3/0.1, 1.0/0.5/0.3)는 한 곳(설정 상수)에만 두고, 바꿀 때는 Python·Java·골든 파일을 함께 바꾼다.
+## 8. 추천 엔진 명세 v2 (Python 참조 엔진과 Java `engine`이 **똑같이** 따른다)
+기호: 어코드 집합 A(21개), 후보 향수 집합 P(N개), 노트 n을 가진 후보 수 df(n).
 
-## 8. API (Spring Boot, `/api/v1`, JSON)
-로그인은 안드로이드 앱이 Supabase Auth(구글)로 하고, 받은 JWT를 `Authorization: Bearer`로 보낸다. Spring Security가 검증한다.
+### 8-1. 향수 어코드 벡터
+`a_p[x]` = 7절 5번의 순위 비중 (합 100). 전체 평균 `g[x] = (1/N) Σ_p a_p[x]`.
+
+### 8-2. 노트 프로필 (파이프라인이 미리 계산해 카탈로그에 넣음)
+1. 평균: `m_n[x]` = n을 가진 후보들의 `a_p[x]` 평균
+2. 평균 초과분: `e_n[x] = max(0, m_n[x] − g[x])`
+3. 끌어당기기: `e'_n = (df(n)·e_n + K·f_c) / (df(n) + K)`. K = 20, `f_c` = 같은 계열 노트들의 `e_n`을 df로 가중 평균한 것. (노트의 계열은 7절 7번 → 계열 계산에는 끌어당기기 전 `e_n`을 쓴다)
+4. 합 1로 맞춘다. 모두 0이면 `f_c`를 쓴다
+
+### 8-3. 조합 벡터와 화면 비율
+- 고른 노트 `(n, 층, 강도 s ∈ {0.5, 1.0, 1.5})`마다 `b = Σ s · λ_층 · e'_n`. **λ_층은 1차에 모두 1.0**(탑 0.8 · 베이스 1.2 같은 층 가중은 노트북에서 시험만 한다)
+- 화면용 비율: `b / sum(b) × 100`을 반올림한 정수. 반올림 합이 100이 아니면 가장 큰 항목에서 맞춘다(표시 전용)
+
+### 8-4. 점수
+1. **후보:** 7절 3·4번을 통과한 향수 중 불호 노트를 어느 층에도 갖지 않은 것
+2. **어코드 유사도:** `accord_sim = cos(a_p, b)`. 하나라도 0벡터면 0
+3. **노트 일치도:** 고른 노트마다 `w_n = ln(1 + N/df(n))`. 같은 층에 있으면 1.0, 다른 층에만 있으면 0.5, 그 노트는 없지만 같은 계열 노트가 있으면 0.3, 없으면 0. `note_match = Σ w_n·c_n / Σ w_n`
+4. **취향 적합도:** `pref = Σ_{x의 계열 ∈ 선호 계열} a_p[x] / 100`
+5. **점수:** 선호 계열이 있으면 `0.6·accord_sim + 0.3·note_match + 0.1·pref`, 없으면 `(0.6·accord_sim + 0.3·note_match) / 0.9`
+
+### 8-5. 정렬과 다양성
+1. 점수 내림차순 → 차이가 1e-9 이하면 평가 수 내림차순 → 향수 key 오름차순
+2. 위에서부터 담되 **한 브랜드는 최대 2개**까지만 담는다(넘치면 건너뛰고 다음 향수). k개(기본 10)를 채우면 끝
+
+### 8-6. 반환과 설명
+향수 key, score, accord_sim, note_match, 등급, 그리고 "왜 비슷한지":
+- `shared_accords`: `min(a_p 비율, b 비율)`이 큰 어코드 상위 3개와 양쪽 %
+- `matched_notes`: 일치한 노트와 층(같은 층 / 다른 층 / 같은 계열)
+- `missing_notes`: 향수에는 있고 조합에는 없는 노트 중 df가 큰 순서로 최대 3개
+- `등급`: 점수 0.85 이상 "매우 비슷", 0.75 이상 "비슷", 그 아래 "참고". 기준값은 노트북에서 점수 분포를 보고 정한다(시험에서는 중앙값 약 0.5, 상위권 0.85~0.9)
+
+### 8-7. 조합 균형 안내 (경고가 아니라 안내 문구, 엔진이 판단하고 화면은 문구만 고른다)
+| 코드 | 조건 | 안내 예 |
+|---|---|---|
+| EMPTY_LAYER | 비어 있는 층이 있음 | "베이스가 비어 있어 잔향이 가볍게 느껴질 수 있어요" |
+| ONE_FAMILY | 고른 노트가 모두 한 계열 | "한 계열로만 이루어져 단조로울 수 있어요. 이웃 계열(○○)을 더해 보세요" |
+| DOMINANT | 조합 비율 1위 어코드가 60% 이상 | "○○ 느낌이 아주 강한 조합이에요" |
+| FAR_FAMILIES | 고른 계열 중 휠에서 서로 정반대(거리 5)인 쌍만 있고 이어 줄 계열이 없음 | "대비가 큰 조합이에요. 사이를 잇는 ○○ 계열을 더하면 부드러워져요" |
+
+### 8-8. 숫자와 설정
+- 계산은 모두 double. 가중치(0.6/0.3/0.1, 1.0/0.5/0.3), K, 최소 평가 수, 브랜드 상한, 등급 기준은 `EngineParams` 한 곳에만 둔다. 바꿀 때는 Python·Java·골든 파일을 함께 바꾸고 `engine_version`을 올린다
+- 성능 목표: 중급 안드로이드 폰에서 추천 1회 300ms 이하, 카탈로그 불러오기 1.5초 이하(후보 1.4만 × 21차원이라 여유 있음)
+
+## 9. 화면 흐름 (D2 반영)
+```mermaid
+flowchart LR
+  subgraph TAB1[홈 탭]
+    S01[홈<br/>새 조합 · 최근 조합]
+  end
+  subgraph FLOW[새 조합 흐름 · 전체 화면]
+    S02[계열 선택] --> S03[노트 선택<br/>층 탭·검색·강도]
+    S03 <--> S04[노트 카드 시트]
+    S03 --> S05[조합 요약<br/>비율 막대·균형 안내]
+    S05 -- 수정 --> S03
+    S05 --> S06[추천 Top 10]
+    S06 --> S07a[향수 상세]
+  end
+  subgraph TAB2[향수 찾기 탭]
+    S08[향수 검색] --> S07b[향수 상세]
+  end
+  subgraph TAB3[보관함 탭]
+    S09[조합 · 찜 · 시향 기록] --> S10[시향 피드백]
+  end
+  subgraph TAB4[마이 탭]
+    S11[불호 노트 · 선호 계열 · 계정 · 계정 삭제]
+  end
+  S01 --> S02
+  S07a -- 찜·피드백 --> S12[로그인 필요하면 로그인]
+```
+- 탭마다 뒤로 가기 기록을 따로 가진다(탭을 옮겨도 보던 자리가 남음)
+- 새 조합 흐름에서 나가면 "임시 저장된 조합 이어 하기"가 홈에 뜬다
+- 저장된 조합(S09)을 누르면 S05(요약)로 열리고, 거기서 다시 추천을 볼 수 있다
+
+## 10. 안드로이드 앱 구조
+- **층 나누기:** 화면(Compose) → ViewModel(화면 상태 하나를 StateFlow로) → 저장소(`CatalogRepository`, `BlendDraftRepository`, `UserRepository`, `EventQueue`) → engine 모듈 / Room / Retrofit
+- **카탈로그:** 앱에 넣은 `catalog.json.gz`를 시작할 때 백그라운드에서 메모리로 읽는다(약 1MB, 읽는 동안 첫 화면을 보여 준다). 앱을 켤 때 서버에 새 버전이 있으면 와이파이에서 내려받아 다음 실행부터 쓴다. 파일 해시를 확인하고, 깨졌으면 앱에 넣은 버전을 쓴다
+- **조합 임시 저장:** 바뀔 때마다 Room에 저장한다. 앱이 꺼져도(시스템이 앱을 정리해도) 그대로 돌아온다
+- **로그인 전 설정(D3):** 불호·선호를 Room에 저장해 바로 추천에 반영한다. 로그인하면 서버 값과 **합친다**(불호는 합집합, 선호는 서버 값이 없을 때만 폰 값)
+- **인터넷:** 조합·추천·검색은 인터넷 없이 된다. 저장·찜·피드백은 인터넷이 필요하다. 3초가 넘으면 "서버를 깨우는 중이에요(최대 1분)"를 보여 주고 실패하면 "다시 시도"를 둔다. 실패한 저장을 몰래 쌓아 두지 않는다
+- **로그인:** Credential Manager로 구글 ID 토큰(nonce 포함) → Supabase `signInWith(IDToken)` → 세션은 Supabase 클라이언트가 암호화해 보관하고 자동 갱신한다 → Retrofit이 모든 요청에 `Authorization: Bearer`를 붙인다. 401이면 한 번 갱신하고 다시 시도, 그래도 401이면 로그아웃 상태로
+- **서버 주소:** 빌드 설정값(debug는 에뮬레이터용 `http://10.0.2.2:8080`, release는 배포 주소). 코드에 박지 않는다. release는 HTTPS만 허용한다
+- **문구:** 모든 글자는 `strings.xml`(한국어)에 둔다
+- **출시 빌드:** 코드 축소(R8)를 켜고, Play 앱 서명을 쓴다. 업로드 키는 사장이 보관하고 백업한다(커밋 금지)
+
+## 11. API (Spring Boot, `/api/v1`, JSON)
+추천 계산과 검색은 앱 안에서 한다(D1). 서버는 로그인한 사용자 데이터, 카탈로그 배포, 통계만 맡는다.
+
 | 메서드 · 경로 | 로그인 | 설명 | 화면 |
 |---|---|---|---|
-| GET /families | — | 계열 목록 | S02 |
-| GET /notes?family=&q=&layer= | — | 노트 목록·검색(한글/영문/별칭) | S03 |
-| GET /notes/{id} | — | 노트 상세 + 궁합 노트 3개 | S04 |
-| POST /blends/analyze | — | 조합의 어코드 비율 + 균형 경고 | S05 |
-| POST /recommendations | 선택 | Top k. 로그인 시 불호·선호 자동 반영 | S06 |
-| GET /perfumes/{id}?blend= | — | 향수 상세 (+ 조합과 비교) | S07 |
-| GET /perfumes?q= | — | 향수 검색 | S08 |
-| GET·POST /blends, DELETE /blends/{id} | 필수 | 내 조합 | S01, S09 |
-| GET /favorites, PUT·DELETE /favorites/{perfumeId} | 필수 | 찜 | S07, S09 |
+| GET /catalog/latest | — | `{version, sha256, size, url}` | 앱 시작 |
+| GET /catalog/{version} | — | 카탈로그 파일(gzip) | 앱 시작 |
+| GET /me | 필수 | 내 계정 정보 | S11 |
+| DELETE /me | 필수 | **계정 삭제**: 내 데이터 전부 + Supabase 계정 삭제 | S11 |
+| GET·PUT /me/preferences | 필수 | 불호 노트 key 목록, 선호 계열 | S11, 로그인 직후 합치기 |
+| GET·POST /blends, PUT·DELETE /blends/{id} | 필수 | 내 조합 (이름 바꾸기 포함) | S01, S05, S09 |
+| GET /favorites, PUT·DELETE /favorites/{perfumeKey} | 필수 | 찜 | S07, S09 |
 | GET·POST /feedback | 필수 | 시향 피드백 | S09, S10 |
-| GET·PUT /me/preferences | 필수 | 불호 노트, 선호 계열 | S11 |
+| POST /events | 선택 | 사용 기록 묶음(최대 100개) | 13절 |
 
-- 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, intensity ∈ {0.5, 1.0, 1.5}
-- 오류 형식: `{"error": {"code": "NOTE_NOT_FOUND", "message": "..."}}`
-- 앱의 Kotlin 데이터 클래스는 springdoc이 만든 OpenAPI 문서에서 생성한다 (손으로 맞추지 않음)
-- 개발 중 에뮬레이터에서 PC의 서버에 붙을 때 주소는 `http://10.0.2.2:8080` (빌드 설정값으로 두고 코드에 박지 않음)
+- 사용자 id는 **토큰에서만** 꺼낸다. 요청 본문이나 경로의 사용자 id는 믿지 않는다
+- 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, 강도 ∈ {0.5, 1.0, 1.5}, 노트 key는 현재 카탈로그에 있는 것만, 이름 40자, 메모 500자
+- 오류 형식: `{"error": {"code": "NOTE_NOT_FOUND", "message": "..."}}`. 코드 목록은 `docs/api-errors.md`(4단계)
+- 앱의 Kotlin 데이터 클래스는 springdoc OpenAPI 문서에서 생성한다(손으로 맞추지 않음)
+- `/events`는 기기 하나당 분당 요청 수를 제한한다
 
-## 9. 테스트 설계 (QA팀 3단계 재료)
-- **승인 목록(Compose UI 테스트 + Robolectric, `android/app/src/test/`)**: 3단계에서 사장 승인. 에뮬레이터 없이 PC에서 앱 화면을 사람처럼 눌러 확인한다. 서버는 가짜 응답(MockWebServer)으로 대신한다. 후보: 노트 고르기 → 조합 요약 → 추천 10개 표시, 불호 노트 제외, 저장·피드백 후 보관함에 보임, 비로그인 시 저장에서 로그인 요구, 작은 폰·큰 폰 화면에서 동작
-- **실제 기기 확인(에뮬레이터, `android/app/src/androidTest/`)**: 승인 목록 중 핵심 흐름(노트 고르기 → 추천)을 에뮬레이터에서 실제 서버와 함께 돌린다. 느려서 훅에 넣지 않고 6단계 QA 보고 전에 `./gradlew connectedDebugAndroidTest`로 돌려 결과를 보고에 적는다
-- **골든 테스트(JUnit)**: `tests/golden/catalog.json`(고정 소형 카탈로그 약 200개)과 `recommend_cases.json`(기준 조합 20개 + 맹점 조합의 기대 결과, Python 참조 엔진이 생성)을 Java 엔진에 넣어 **순위가 같고 점수 차가 1e-6 이하**인지 확인. DB 없이 돈다
-- **엔진 합격 기준** (노트북으로 확인, 결과를 백엔드팀 사장 검토 때 함께 보여 줌):
+## 12. 데이터 모델 (Postgres, 스키마 `app`)
+카탈로그는 DB에 넣지 않는다(파일 하나가 원본). 사용자 데이터는 카탈로그가 바뀌어도 유지되게 **바뀌지 않는 key**(향수 = Parfumo 번호, 노트 = 정리된 영문 이름)로 가리킨다.
+
+| 테이블 | 컬럼 |
+|---|---|
+| user_preferences | user_id(PK, Supabase uid), preferred_families text[], disliked_note_keys text[], updated_at |
+| blends | id uuid, user_id, name, families text[], notes jsonb `[{note_key, layer, intensity}]`, created_at, updated_at |
+| favorites | user_id, perfume_key, created_at (PK user_id+perfume_key) |
+| tasting_feedback | id, user_id, perfume_key, blend_id(선택), satisfaction 1~5, similarity 1~5, memo, tested_at, rank(선택), score(선택), engine_version, catalog_version |
+| events | id, install_id uuid, user_id(선택), name, props jsonb, app_version, occurred_at, received_at |
+
+- 피드백에 그때의 순위·점수·엔진 버전을 함께 남긴다 → 4차 "피드백으로 가중치 조정"의 재료
+- 모든 사용자 테이블에 `user_id` 인덱스. 계정 삭제는 한 트랜잭션에서 사용자 행을 모두 지운다(events의 user_id는 null로)
+
+## 12-1. 보안·개인정보·Play 정책
+- **Supabase 직접 접근 막기:** 앱에 들어가는 Supabase 공개 키(anon key)는 누구나 꺼낼 수 있다. 테이블을 공개 API에 노출되지 않는 `app` 스키마에 두고, 모든 테이블에 RLS를 켜고 정책을 두지 않는다(= 공개 API로는 아무것도 못 읽음). Spring만 DB 계정으로 접근한다
+- 서비스 키(계정 삭제에 필요)는 서버 `.env`에만 둔다
+- JWT 검증: 서명(JWKS), `iss`, `aud=authenticated`, 만료를 확인한다
+- 사용 기록에는 광고 ID를 쓰지 않는다. 앱 설치 때 만든 무작위 `install_id`만 쓴다
+- Play 준비물: 개인정보처리방침 URL, 데이터 보안 양식(수집: 이메일·사용 기록·피드백 메모), 앱 안 계정 삭제 + 웹 삭제 요청 안내 URL. 두 페이지는 GitHub Pages 정적 페이지로 만든다
+- 화면에 데이터 출처(Parfumo)를 표시한다
+
+## 13. 사용 기록 (성공 기준 측정용, 최소한만)
+| 이벤트 | 언제 | props |
+|---|---|---|
+| app_open | 앱 시작 | — |
+| blend_started | 새 조합 흐름 시작 | — |
+| blend_summary_viewed | S05 도착 | note_count, warnings |
+| recs_viewed | S06 도착 | engine_version, catalog_version |
+| perfume_opened | S07 열기 | from(recs/search), rank |
+| blend_saved / favorite_added / feedback_submitted | 각 동작 성공 | — |
+
+- 폰의 Room 대기열에 쌓았다가 30초마다 또는 앱이 백그라운드로 갈 때 보낸다. 인터넷이 없으면 다음에 보낸다(최대 1,000개, 넘으면 오래된 것부터 버림)
+- 기획서 성공 기준 계산: 조합 완성률 = recs_viewed / blend_started, 저장률 = blend_saved / recs_viewed, 재방문율 = 7일 안에 app_open이 2일 이상인 install_id 비율. 계산 SQL은 `docs/metrics.sql`(4단계)
+
+## 14. 테스트 설계 (QA팀 3단계 재료)
+| 종류 | 어디서 | 내용 | 훅에서 돌림 |
+|---|---|---|---|
+| **승인 목록** | `app/src/test/` Compose UI + Robolectric | 사장 승인 대상. 에뮬레이터 없이 앱 화면을 사람처럼 누른다. 카탈로그는 가짜 카탈로그, 서버는 가짜 응답(MockWebServer) | ✅ |
+| 엔진 골든 | `engine/src/test/` JUnit | 가짜 카탈로그 + Python이 만든 기대 결과와 **순위가 같고 점수 차 1e-9 이하** | ✅ |
+| 엔진 성질 | 같은 곳 | 비율 합 100, 불호 노트 든 향수가 절대 안 나옴, 같은 입력 같은 결과, 브랜드 최대 2개, 노트 0개면 오류 | ✅ |
+| 서버 | `backend/src/test/` JUnit + Spring Boot Test + 내장 Postgres(zonky, Docker 불필요) | 토큰 없으면 401, 남의 조합을 못 읽고 못 지움, 검증 실패 400, 계정 삭제 후 데이터 없음 | ✅ |
+| 앱 부품 | `app/src/test/` JUnit | ViewModel: 층당 3개 제한, 임시 저장 복원, 로그인 후 설정 합치기, 사용 기록 대기열 | ✅ |
+| 화면 캡처 | Roborazzi | 화면마다 작은 폰(360dp) · 큰 폰(411dp) · 글자 200%. 디자인 검토 시안이자 화면 회귀 확인 | ✅ |
+| 실제 기기 | `app/src/androidTest/` 에뮬레이터 | 핵심 흐름(새 조합 → 추천 → 상세)과 앱 재시작 후 임시 저장 복원. 6단계 QA 보고 전에 `./gradlew :app:connectedDebugAndroidTest` | ❌ |
+| 사장 직접 | 실제 폰 | 구글 로그인, 저장·찜·피드백, 계정 삭제 (구글 로그인은 자동 테스트가 안 됨) | ❌ |
+
+- **승인 목록 후보:** ① 계열 고르고 층마다 노트를 골라 요약에서 비율 막대 합이 100% ② 층당 4번째 노트는 안 들어감 ③ 추천 10개가 점수 순으로 나오고 각각 등급·공통 어코드·일치 노트가 보임 ④ 불호 노트를 정하면 그 노트가 든 향수가 추천에서 사라짐(로그인 없이도) ⑤ 비로그인으로 저장을 누르면 로그인 화면으로 감 ⑥ 로그인 상태로 저장·찜·피드백하면 보관함에 보임 ⑦ 앱을 껐다 켜도 만들던 조합이 남음 ⑧ 인터넷이 없어도 조합과 추천이 됨 ⑨ 작은 폰과 글자 200%에서 버튼이 잘리지 않음 ⑩ 계정 삭제 후 보관함이 빔
+- **엔진 합격 기준** (노트북, 실제 카탈로그, 백엔드팀 사장 검토 때 함께 보여 줌):
   | 항목 | 기준 |
   |---|---|
-  | 기준 세트 재현 (실제 향수 20개의 노트를 넣으면 그 향수가 Top 3) | 20개 중 16개 이상 |
-  | 맹점 테스트 (레몬 강 + 오스만투스 중 + 샌달우드 약) | Top 5 중 4개 이상이 시트러스·플로럴 메인 |
-  | 눈으로 평가 (조합 10개 × Top 5, 1~5점) | 평균 3.5 이상 |
-  | 계산 시간 (후보 3만 건) | 1회 200ms 이하 |
-- 화면 계산(JUnit, ViewModel 단위): 어코드 비율 막대 합이 100, 층당 3개 제한 등
-- 전체 실행 방법: 3단계에서 `tests/run.sh`(백엔드 `./gradlew test` → 앱 `./gradlew testDebugUnitTest`)를 만들고 HANDOFF의 테스트 명령 줄을 `bash tests/run.sh`로 채운다. 훅이 5분 안에 끝나야 하므로 시간이 넘으면 `NOTES.md`에 적고 줄일 방법을 찾는다
+  | 재현: 실제 향수 20개의 노트를 그대로 넣으면 그 향수가 Top 3 | 16개 이상 |
+  | 맹점: 레몬 강 + 오스만투스 중 + 샌달우드 약 | Top 5 중 4개 이상이 시트러스와 플로럴을 둘 다 가짐 (보정 후 시험에서 5/5) |
+  | 블라인드 비교(가설 1): 조합 10개마다 어코드 중심 Top 5와 노트 중심 Top 5를 어느 쪽인지 숨기고 사장이 더 비슷한 쪽을 고름 | 어코드 중심이 6개 이상 |
+  | 눈으로 평가: 조합 10개 × Top 5를 1~5점으로 | 평균 3.5 이상 |
+  | 다양성: 조합 10개의 Top 10 전체에서 서로 다른 브랜드 수 | 40개 이상 |
+- **전체 실행:** `tests/run.sh` = `./gradlew :engine:test :backend:test :app:testDebugUnitTest` (Gradle 한 번). HANDOFF 테스트 명령은 `bash tests/run.sh`. 5분을 넘으면 `NOTES.md`에 적고 Gradle 캐시·데몬 설정부터 손본다
 
-## 10. 4단계 구현 순서 (plan.md에 옮길 것)
-1. 백엔드팀: Flyway 스키마, 파이프라인으로 데이터 적재
-2. 백엔드팀: Python 참조 엔진 + 노트북 검증 → 합격 기준표 → 골든 파일
-3. 백엔드팀: Java 엔진(골든 테스트 통과) → API
-4. ★ 백엔드팀 사장 검토: 저장할 데이터·기능 목록 + 엔진 합격 기준표
-5. ★ 디자인팀 사장 검토: DESIGN.md + 시안 캡처
-6. 프론트엔드팀: 안드로이드 화면 (S02→S05 흐름 먼저, 그다음 S06·S07, 마지막 보관함·마이·로그인)
-7. 프론트엔드팀: 에뮬레이터에서 실제 서버와 함께 실행 확인, 출시용(release) 빌드 확인
+## 15. 4단계 구현 순서 (plan.md에 옮길 것, 관문을 못 넘으면 다음으로 가지 않음)
+| 단계 | 팀 | 할 일 | 관문 |
+|---|---|---|---|
+| M0 | 백엔드 | 파이프라인 1~12, 어코드 순서 가정 확인(사이트 20건), 별칭·계열·한글명 표 초안 | 미매핑 5% 이하, 순서 가정 확인 |
+| M1 | 백엔드 | Python 참조 엔진 + 노트북 → 합격 기준표, 등급 기준값 확정 | 14절 기준 통과 |
+| M2 | 백엔드 | Java `engine` 모듈 + 가짜 카탈로그 골든 테스트 | 골든·성질 테스트 통과 |
+| ★ | 백엔드 | **사장 검토**: 저장할 데이터·기능 목록 + 엔진 합격 기준표 | OK |
+| M3 | 백엔드 | Spring 서버: 보안, 사용자 API, 계정 삭제, 사용 기록, 카탈로그 배포 | 서버 테스트 통과 |
+| ★ | 디자인 | **사장 검토**: DESIGN.md + Roborazzi 시안 캡처 | OK |
+| M4 | 프론트 | 앱: 카탈로그·새 조합 흐름(S02→S06) 먼저 → S07·S08 → 로그인·보관함·마이 | 승인 목록 통과 |
+| M5 | 프론트 | 사용 기록, 오류·빈 상태, 출시 빌드, 개인정보·삭제 안내 페이지 | 에뮬레이터 테스트 통과 |
 
-## 11. 배포 (6단계, 공개는 사장이 `!` 한 줄로 실행)
+## 16. 배포·운영 (6단계, 공개는 사장이 `!` 한 줄로 실행)
 | 부분 | 위치 | 메모 |
 |---|---|---|
-| API | Render (Docker) | 무료 512MB에서 Spring이 빠듯할 수 있음 → JVM 메모리 상한 지정, 느리면 유료 플랜 검토 |
-| DB · 로그인 | Supabase 무료 티어 | |
-| 안드로이드 | `./gradlew bundleRelease`(앱 묶음 파일) → Play Console 내부 테스트 | 계정 등록과 앱 서명 키 보관은 사장이 직접 (서명 키는 커밋하지 않음) |
+| API | Render (Docker) 무료 | 15분 쉬면 잠듦 → D1 덕에 저장·찜만 느려짐. JVM 메모리 상한 지정. 베타 중 불편하면 유료(월 약 7달러) |
+| DB · 로그인 | Supabase 무료 | **7일 동안 아무 요청이 없으면 프로젝트가 일시 정지됨** → GitHub Actions 예약 작업이 하루 한 번 서버 상태 확인(DB까지 닿는 것)을 부른다 |
+| 카탈로그 | 앱에 포함 + 서버에서 새 버전 배포 | 버전 번호와 해시 |
+| 안드로이드 | `./gradlew :app:bundleRelease` → Play Console **내부 테스트**(D4) | 개발자 계정 등록(1회 25달러)과 업로드 키 보관은 사장이 직접 |
+| 안내 페이지 | GitHub Pages | 개인정보처리방침, 계정 삭제 요청 방법 |
 
-## 12. 위험과 대응
+## 17. 위험과 대응
 | 위험 | 대응 |
 |---|---|
-| Python과 Java 엔진 결과가 어긋남 | 7절 명세 한 곳, 골든 테스트로 자동 확인 |
-| 어코드 강도는 커뮤니티 투표 값(실제 처방 비율 아님) | 화면에 "메인 테마 추정치", "데이터상 유사도"로 표기 |
-| 데이터 라이선스 | 공개 배포 전 확인, 출처 표시 |
-| 유명 브랜드만 상위에 몰림 | 노트북에서 상위 결과 브랜드 분포 확인 |
-| 무료 서버에서 Spring 메모리 부족 | 11절 대응 |
-| 안드로이드 빌드가 느려 훅(5분)이 시간 초과 | 훅에는 에뮬레이터 없는 테스트만. 그래도 넘으면 Gradle 설정(캐시·데몬)부터 손보고 `NOTES.md`에 기록 |
-| 이 컴퓨터에 Android Studio(SDK)가 없음 | 4단계 시작 전 사장에게 설치 부탁 (루트 HANDOFF "처음 쓰는 컴퓨터 준비" 6번) |
+| 데이터 라이선스 (수집 데이터, 표시 없음) | D4: 내부 테스트까지만. 공개 전 결정. 원본·카탈로그는 공개 저장소에 커밋하지 않음 |
+| 어코드 순서 = 진한 순서라는 가정이 틀림 | M0에서 확인. 틀리면 모두 같은 비중(1/개수)으로 바꾸고 노트북을 다시 돌림 |
+| 노트 프로필이 흔한 어코드로 뭉개짐 | 8-2절 평균 초과분 + 끌어당기기. 노트북에서 노트 20개의 프로필을 사람이 확인 |
+| 21차원 × 5개라 비슷한 점수가 많음 | 노트 일치도·평가 수로 순서를 가르고, 등급으로 보여 줌 |
+| Python과 Java 엔진이 어긋남 | 8절 명세 한 곳, 골든 테스트 |
+| 유명·대형 브랜드만 상위에 몰림 | 브랜드 최대 2개, 다양성 기준 |
+| 무료 서버 잠듦 / Supabase 일시 정지 | D1(핵심 기능은 서버 없이), 하루 한 번 깨우기 |
+| 앱의 공개 키로 DB를 직접 읽음 | 12-1절 `app` 스키마 + RLS |
+| 안드로이드 빌드가 느려 훅(5분) 초과 | Gradle 한 번에 실행, 에뮬레이터 테스트는 훅에서 뺌 |
+| 이 컴퓨터에 Android Studio(SDK)가 없음 | 4단계 시작 전 사장에게 설치 부탁 (루트 HANDOFF 6번) |
+| 카탈로그가 커져 앱이 무거워짐 | 1.4만 개 기준 압축 약 1MB. 5MB가 넘으면 압축 형식(바이너리)으로 바꿈 |
+
+## 18. 아직 정하지 않은 것
+- 디자인 방향 (3절)
+- D1~D4 (0-2절, 추천안으로 적어 둠)
+- 노트 별칭 중 냄새가 다른 것(예: musk와 white musk)을 합칠지 → M0에서 `unmapped_notes.csv` 목록으로 사장에게 짧게 확인
