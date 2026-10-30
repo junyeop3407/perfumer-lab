@@ -1,0 +1,28 @@
+# 비밀 정보
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 다시 만들 수 있는 것
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+*.pyc
+.venv/
+venv/
+coverage/
+
+# 개인 설정·로그
+.claude/settings.local.json
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 교차 리뷰에 보낸 내용 (다시 만들 수 있음)
+review_input.txt

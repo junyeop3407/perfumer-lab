@@ -1,0 +1,34 @@
+{
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-tests.sh\" commit",
+            "timeout": 300,
+            "statusMessage": "커밋 전 테스트 확인 중..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-tests.sh\" stop",
+            "timeout": 300,
+            "statusMessage": "테스트 확인 중..."
+          }
+        ]
+      }
+    ]
+  }
+}
