@@ -1,2 +1,8 @@
 pipeline/data/raw/
 .env
+# 안드로이드: 빌드 결과물, 내 컴퓨터 SDK 경로, 앱 서명 키
+.gradle/
+build/
+android/local.properties
+*.jks
+*.keystore

@@ -4,23 +4,26 @@
 > 기술은 CLAUDE.md "팀별 기본 기술"을 따른다. Python은 화면 뒤에서 한 번씩 돌리는 데이터 작업에만 쓴다.
 > **저장소 밖 문서와 내용이 다르면 이 문서가 기준이다.**
 
-## 1. 고른 안: A안 — React + Spring, 데이터 작업만 Python
+## 1. 고른 안: D안 — Kotlin 안드로이드 앱 + Spring, 데이터 작업만 Python
+> 2026-10-30 변경: 사장이 "안드로이드 앱 전용"으로 정해 A안(React 웹 + Capacitor)에서 바꿨다. 서버·추천 엔진·데이터 작업은 A안 그대로다.
+> 기술 규칙은 CLAUDE.md "안드로이드 앱 전용" 항목.
+
 | 영역 | 맡는 팀 | 기술 |
 |---|---|---|
-| 화면 | 프론트엔드팀 | React 18 + Vite + TypeScript, Tailwind CSS, 상태 관리 Zustand(조합 임시 상태), react-router |
-| 디자인 | 디자인팀 | `docs/DESIGN.md` + Tailwind (4단계 시작에 작성) |
+| 화면 (안드로이드 앱) | 프론트엔드팀 | Kotlin + Jetpack Compose(Material 3), Gradle(`./gradlew`), 최소 Android 8.0(API 26). 화면 상태 ViewModel + StateFlow(조합 임시 상태 포함), 화면 이동 Navigation Compose, 서버 통신 Retrofit + kotlinx.serialization, 구글 로그인 Credential Manager + Supabase Kotlin 클라이언트(Auth만) |
+| 디자인 | 디자인팀 | `docs/DESIGN.md` + Compose 테마(색·글꼴·모양) (4단계 시작에 작성). 시안 캡처는 Roborazzi |
 | 서버·API·로그인 검증 | 백엔드팀 | Java 21 + Spring Boot 3, Gradle(`./gradlew`), Spring Web, Spring Data JPA, Flyway, Spring Security(OAuth2 Resource Server), springdoc-openapi |
 | 추천 엔진 | 백엔드팀 | 순수 Java 패키지 `engine` (DB·Spring을 모름). 서버 시작 시 카탈로그를 메모리에 올려 계산 |
 | DB · 로그인 | 백엔드팀 | Supabase를 **PostgreSQL 호스팅과 구글 로그인(Auth)으로만** 사용. 데이터 접근 제한은 Spring이 한다 |
 | 데이터 정리 | 백엔드팀 | Python 3.11 + pandas (`pipeline/`). 원본 정리 → DB 적재 → 골든 테스트 파일 생성 |
 | 엔진 검증 실험 | 백엔드팀 | Jupyter 노트북 (`notebooks/`), Python 참조 엔진 사용 |
-| 안드로이드 | 프론트엔드팀 | 같은 React 화면을 Capacitor로 감싸 빌드 (1차 마지막 단계) |
-| 테스트 | QA팀 | 승인 목록: Playwright · 엔진/API: JUnit · 화면 계산: Vitest · 전체 실행: `bash tests/run.sh` |
+| 테스트 | QA팀 | 승인 목록: Compose UI 테스트(Robolectric, 에뮬레이터 없이) · 엔진/API·화면 계산: JUnit · 시안 캡처: Roborazzi · 실제 기기 확인: 에뮬레이터 테스트(6단계에 따로) · 전체 실행: `bash tests/run.sh` |
 
 ## 2. 버린 안과 이유
 | 안 | 내용 | 버린 이유 |
 |---|---|---|
-| B | FastAPI(Python) + Expo(React Native) | 작업장 기본 기술(Spring, React 웹)과 달라 팀 규칙·테스트 흐름과 충돌. 안드로이드 경험은 더 자연스럽지만 이번엔 일관성을 우선 |
+| A | React 웹 + Spring, Capacitor로 감싸 안드로이드 배포 (처음 고른 안) | 사장이 웹 없이 안드로이드 앱 전용으로 정함. 앱 안의 화면이 웹 화면이라 조작감이 진짜 앱보다 떨어짐 |
+| B | FastAPI(Python) + Expo(React Native) | 서버까지 Python으로 바뀌어 작업장 기본 기술(Spring)과 충돌. React Native만 쓰는 변형도 검토했으나, 앱 전용이면 안드로이드 정식 언어(Kotlin)가 조작감·성능이 가장 좋아 사장이 Kotlin을 고름 |
 | C | 서버 없이 React만, 브라우저에서 추천 계산 | 카탈로그가 수만 건이라 첫 로딩이 무겁고, 로그인·저장·피드백을 위해 결국 서버가 필요 |
 
 ## 3. 디자인 방향
@@ -32,7 +35,11 @@
 apps/scent-studio/
 ├── HANDOFF.md
 ├── docs/            requirements.md, design.md (+ 이후 tests.md, plan.md, DESIGN.md, NOTES.md, review.md)
-├── frontend/        React + Vite (src/pages, src/components, src/store/blendDraft.ts, src/lib/api.ts)
+├── android/         Kotlin + Compose (Gradle 프로젝트)
+│   └── app/src/
+│       ├── main/java/.../  ui/screens(S01~S12), ui/components, ui/theme(DESIGN.md 적용), blend/BlendDraftViewModel.kt, data/api(Retrofit), auth(구글 로그인)
+│       ├── test/           승인 목록(Compose UI 테스트, Robolectric) · 화면 계산 JUnit · Roborazzi 캡처
+│       └── androidTest/    에뮬레이터 테스트 (6단계에 따로 실행)
 ├── backend/         Spring Boot (Gradle)
 │   └── src/main/java/.../
 │       ├── engine/  추천 엔진 (순수 Java)
@@ -44,8 +51,7 @@ apps/scent-studio/
 │   └── data/raw/    원본 CSV (커밋하지 않음, .gitignore)
 ├── notebooks/       engine_validation.ipynb
 └── tests/
-    ├── run.sh       모든 테스트를 차례로 실행 (HANDOFF의 테스트 명령)
-    ├── e2e/         Playwright (승인된 테스트 목록)
+    ├── run.sh       빠른 테스트를 차례로 실행 (HANDOFF의 테스트 명령. 에뮬레이터 테스트는 넣지 않음)
     └── golden/      catalog.json(고정 소형 카탈로그), recommend_cases.json(기대 결과)
 ```
 경로는 모두 앱 폴더 기준 상대 경로. 비밀값(DB 주소, Supabase 키)은 `.env`에 두고 `.env.example`에 이름만 적는다.
@@ -107,7 +113,7 @@ apps/scent-studio/
 계산은 모두 double. 가중치(0.6/0.3/0.1, 1.0/0.5/0.3)는 한 곳(설정 상수)에만 두고, 바꿀 때는 Python·Java·골든 파일을 함께 바꾼다.
 
 ## 8. API (Spring Boot, `/api/v1`, JSON)
-로그인은 프론트엔드가 Supabase Auth(구글)로 하고, 받은 JWT를 `Authorization: Bearer`로 보낸다. Spring Security가 검증한다.
+로그인은 안드로이드 앱이 Supabase Auth(구글)로 하고, 받은 JWT를 `Authorization: Bearer`로 보낸다. Spring Security가 검증한다.
 | 메서드 · 경로 | 로그인 | 설명 | 화면 |
 |---|---|---|---|
 | GET /families | — | 계열 목록 | S02 |
@@ -124,10 +130,12 @@ apps/scent-studio/
 
 - 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, intensity ∈ {0.5, 1.0, 1.5}
 - 오류 형식: `{"error": {"code": "NOTE_NOT_FOUND", "message": "..."}}`
-- 프론트엔드 타입은 springdoc이 만든 OpenAPI 문서에서 생성한다 (손으로 맞추지 않음)
+- 앱의 Kotlin 데이터 클래스는 springdoc이 만든 OpenAPI 문서에서 생성한다 (손으로 맞추지 않음)
+- 개발 중 에뮬레이터에서 PC의 서버에 붙을 때 주소는 `http://10.0.2.2:8080` (빌드 설정값으로 두고 코드에 박지 않음)
 
 ## 9. 테스트 설계 (QA팀 3단계 재료)
-- **승인 목록(Playwright, `tests/e2e/`)**: 3단계에서 사장 승인. 후보: 노트 고르기 → 조합 요약 → 추천 10개 표시, 불호 노트 제외, 저장·피드백 후 보관함에 보임, 비로그인 시 저장에서 로그인 요구, 폰 크기 화면에서 동작
+- **승인 목록(Compose UI 테스트 + Robolectric, `android/app/src/test/`)**: 3단계에서 사장 승인. 에뮬레이터 없이 PC에서 앱 화면을 사람처럼 눌러 확인한다. 서버는 가짜 응답(MockWebServer)으로 대신한다. 후보: 노트 고르기 → 조합 요약 → 추천 10개 표시, 불호 노트 제외, 저장·피드백 후 보관함에 보임, 비로그인 시 저장에서 로그인 요구, 작은 폰·큰 폰 화면에서 동작
+- **실제 기기 확인(에뮬레이터, `android/app/src/androidTest/`)**: 승인 목록 중 핵심 흐름(노트 고르기 → 추천)을 에뮬레이터에서 실제 서버와 함께 돌린다. 느려서 훅에 넣지 않고 6단계 QA 보고 전에 `./gradlew connectedDebugAndroidTest`로 돌려 결과를 보고에 적는다
 - **골든 테스트(JUnit)**: `tests/golden/catalog.json`(고정 소형 카탈로그 약 200개)과 `recommend_cases.json`(기준 조합 20개 + 맹점 조합의 기대 결과, Python 참조 엔진이 생성)을 Java 엔진에 넣어 **순위가 같고 점수 차가 1e-6 이하**인지 확인. DB 없이 돈다
 - **엔진 합격 기준** (노트북으로 확인, 결과를 백엔드팀 사장 검토 때 함께 보여 줌):
   | 항목 | 기준 |
@@ -136,8 +144,8 @@ apps/scent-studio/
   | 맹점 테스트 (레몬 강 + 오스만투스 중 + 샌달우드 약) | Top 5 중 4개 이상이 시트러스·플로럴 메인 |
   | 눈으로 평가 (조합 10개 × Top 5, 1~5점) | 평균 3.5 이상 |
   | 계산 시간 (후보 3만 건) | 1회 200ms 이하 |
-- 화면 계산(Vitest): 어코드 비율 막대 합이 100, 층당 3개 제한 등
-- 전체 실행 방법: 3단계에서 `tests/run.sh`(백엔드 `./gradlew test` → 프론트 `npx vitest run` → `npx playwright test`)를 만들고 HANDOFF의 테스트 명령 줄을 채운다
+- 화면 계산(JUnit, ViewModel 단위): 어코드 비율 막대 합이 100, 층당 3개 제한 등
+- 전체 실행 방법: 3단계에서 `tests/run.sh`(백엔드 `./gradlew test` → 앱 `./gradlew testDebugUnitTest`)를 만들고 HANDOFF의 테스트 명령 줄을 `bash tests/run.sh`로 채운다. 훅이 5분 안에 끝나야 하므로 시간이 넘으면 `NOTES.md`에 적고 줄일 방법을 찾는다
 
 ## 10. 4단계 구현 순서 (plan.md에 옮길 것)
 1. 백엔드팀: Flyway 스키마, 파이프라인으로 데이터 적재
@@ -145,16 +153,15 @@ apps/scent-studio/
 3. 백엔드팀: Java 엔진(골든 테스트 통과) → API
 4. ★ 백엔드팀 사장 검토: 저장할 데이터·기능 목록 + 엔진 합격 기준표
 5. ★ 디자인팀 사장 검토: DESIGN.md + 시안 캡처
-6. 프론트엔드팀: 화면 (S02→S05 흐름 먼저, 그다음 S06·S07, 마지막 보관함·마이·로그인)
-7. 프론트엔드팀: Capacitor로 안드로이드 빌드 확인
+6. 프론트엔드팀: 안드로이드 화면 (S02→S05 흐름 먼저, 그다음 S06·S07, 마지막 보관함·마이·로그인)
+7. 프론트엔드팀: 에뮬레이터에서 실제 서버와 함께 실행 확인, 출시용(release) 빌드 확인
 
 ## 11. 배포 (6단계, 공개는 사장이 `!` 한 줄로 실행)
 | 부분 | 위치 | 메모 |
 |---|---|---|
-| 화면 | Vercel 또는 GitHub Pages | React 정적 빌드 |
 | API | Render (Docker) | 무료 512MB에서 Spring이 빠듯할 수 있음 → JVM 메모리 상한 지정, 느리면 유료 플랜 검토 |
 | DB · 로그인 | Supabase 무료 티어 | |
-| 안드로이드 | Capacitor → Android Studio 빌드 → Play Console 내부 테스트 | 계정 등록은 사장이 직접 |
+| 안드로이드 | `./gradlew bundleRelease`(앱 묶음 파일) → Play Console 내부 테스트 | 계정 등록과 앱 서명 키 보관은 사장이 직접 (서명 키는 커밋하지 않음) |
 
 ## 12. 위험과 대응
 | 위험 | 대응 |
@@ -164,3 +171,5 @@ apps/scent-studio/
 | 데이터 라이선스 | 공개 배포 전 확인, 출처 표시 |
 | 유명 브랜드만 상위에 몰림 | 노트북에서 상위 결과 브랜드 분포 확인 |
 | 무료 서버에서 Spring 메모리 부족 | 11절 대응 |
+| 안드로이드 빌드가 느려 훅(5분)이 시간 초과 | 훅에는 에뮬레이터 없는 테스트만. 그래도 넘으면 Gradle 설정(캐시·데몬)부터 손보고 `NOTES.md`에 기록 |
+| 이 컴퓨터에 Android Studio(SDK)가 없음 | 4단계 시작 전 사장에게 설치 부탁 (루트 HANDOFF "처음 쓰는 컴퓨터 준비" 6번) |
