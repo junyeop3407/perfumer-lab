@@ -20,6 +20,7 @@
    - Java (백엔드팀): `winget install --id EclipseAdoptium.Temurin.21.JDK -e` (Mac `brew install --cask temurin@21`)
    - Node.js (프론트엔드팀·디자인팀·QA팀의 React, Vite, Tailwind, Playwright, Vitest): `winget install --id OpenJS.NodeJS.LTS -e` (Mac `brew install node`)
    - Playwright 브라우저 (QA팀, 앱 폴더에서 한 번): `npx playwright install chromium`
+   - 안드로이드 앱 전용일 때만: Android Studio `winget install --id Google.AndroidStudio -e` (Mac `brew install --cask android-studio`) → 처음 실행해서 SDK 설치 마법사를 끝까지 진행. 에뮬레이터는 Device Manager에서 하나 만든다
    - 파이썬으로 테스트하는 앱일 때만: `py -m pip install pytest playwright` → `py -m playwright install chromium` (Mac은 `python3`)
 
 ## 4. 로드맵

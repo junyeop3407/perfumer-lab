@@ -21,7 +21,7 @@ description: Use when the user asks to build a new app or program in this reposi
 |---|---|---|---|
 | 1 ★ | **기획팀**: 요구사항 질문(한 번에 하나, 보기 + 추천. 최소한 "누가, 어디서(폰/PC), 꼭 되어야 할 기능, 저장이 필요한지") → 기획서(목표·사용자·기능 우선순위·하지 않을 것·화면 흐름도 Mermaid)로 정리 → **사장 검토** | `docs/requirements.md` | superpowers:brainstorming |
 | 2 ★ | 설계안 3개(CLAUDE.md "팀별 기본 기술" 안에서, 초보가 쓰기 쉬운 순서, 설치 필요 여부·장단점·추천 표시) + 화면이 있는 앱이면 디자인 방향 보기 2~3개(예: 깔끔한 흰색, 토스 느낌) → 사용자가 고름 | `docs/design.md` (고른 안 + 버린 안과 이유) | superpowers:brainstorming |
-| 3 ★ | **QA팀**: "뭐가 되면 끝인가" 테스트 목록을 쉬운 말로 → **사장 검토(승인)**. 승인 후 테스트 코드 작성(승인 목록은 Playwright, 까다로운 계산·날짜는 부품 단위 테스트 추가) | `docs/tests.md`, `tests/` | superpowers:test-driven-development |
+| 3 ★ | **QA팀**: "뭐가 되면 끝인가" 테스트 목록을 쉬운 말로 → **사장 검토(승인)**. 승인 후 테스트 코드 작성(승인 목록은 Playwright — 안드로이드 앱 전용이면 Robolectric으로 돌리는 Compose UI 테스트, 까다로운 계산·날짜는 부품 단위 테스트 추가) | `docs/tests.md`, `tests/` | superpowers:test-driven-development |
 | 4 ★ | 계획(작은 앱이어도 단계 3~6줄) → (화면이 있으면) **디자인팀** `docs/DESIGN.md` + 시안 캡처 → **사장 검토** → (서버가 있으면) **백엔드팀** 저장할 데이터·기능 목록(쉬운 말로) → **사장 검토** → 구현 → 테스트 → 실패한 것만 고치기, 전부 통과까지 | `docs/plan.md`, `docs/NOTES.md` | superpowers:writing-plans, superpowers:subagent-driven-development |
 | 5 | **QA팀**: ① 새 에이전트(Agent 도구, 구현 대화를 넘기지 않음)에게 `docs/tests.md`와 코드·테스트 파일 경로만 주고 리뷰 ② **교차 리뷰(필수, Gemini)**: 아래 "교차 리뷰" 절 순서대로 → 둘에서 나온 진짜 문제만 고치고 테스트 다시 실행 | `docs/review.md`, `docs/review_result.md` | superpowers:requesting-code-review |
 | 6 ★ | 테스트를 직접 돌려 통과 확인 → (공개가 필요하면 아래 "올리기") → **QA 보고**(테스트 N/N 통과, 리뷰에서 찾고 고친 것, 교차 리뷰 "반영한 지적 / 반영 안 한 지적(이유) / 사장 확인 필요한 것") + 실행 방법 한두 줄 → **사장 검토**: 써 보고 OK → **저장소 공개 여부 묻기**(아래 "저장소 공개 여부") | `HANDOFF.md`, 루트 `HANDOFF.md` | superpowers:verification-before-completion |
@@ -46,7 +46,7 @@ description: Use when the user asks to build a new app or program in this reposi
 - 실패한 테스트가 있으면 커밋하지 않는다. 남은 실패와 이유는 `NOTES.md`에.
 - 테스트 하나를 3번 고쳐도 통과하지 않으면 멈추고 superpowers:systematic-debugging으로 원인부터 찾는다.
 - 대화가 길어져 흐름을 놓칠 것 같으면 HANDOFF를 갱신하고 커밋한 다음, 새 세션에서 "/build-app 이어서"를 하자고 제안한다.
-- 기술은 CLAUDE.md "팀별 기본 기술"(기획 기획서, 디자인 DESIGN.md+Tailwind, 프론트엔드 React, 백엔드 Java+Spring, QA Playwright+Vitest/JUnit)을 따른다. 그 안의 세부(버전, 빌드 도구 등)는 초보가 실행하기 쉬운 쪽을 추천한다. 다른 기술은 사용자가 원할 때만. 경로는 저장소 기준 상대 경로만.
+- 기술은 CLAUDE.md "팀별 기본 기술"(기획 기획서, 디자인 DESIGN.md+Tailwind, 프론트엔드 React, 백엔드 Java+Spring, QA Playwright+Vitest/JUnit)을 따른다. 안드로이드 앱 전용이면 CLAUDE.md의 "안드로이드 앱 전용" 항목(Kotlin + Compose, Robolectric, Roborazzi)을 따른다. 그 안의 세부(버전, 빌드 도구 등)는 초보가 실행하기 쉬운 쪽을 추천한다. 다른 기술은 사용자가 원할 때만. 경로는 저장소 기준 상대 경로만.
 
 ## apps/<앱>/HANDOFF.md 형식
 ```markdown
