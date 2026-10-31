@@ -6,6 +6,7 @@
   - docs/engine_blind.md   블라인드 비교만 (A/B 중 어느 쪽이 지금 엔진인지 숨김)
   - docs/engine_report.md  나머지 기준표. 지금 엔진의 추천 목록이 보이는 표(맹점 Top 5, 눈으로 평가)는
                            사장이 블라인드 비교 답을 낸 뒤에만 넣는다 (먼저 보면 A/B가 드러나므로)
+블라인드 문서(engine_blind.md, engine_blind_vs_v3.md)는 이미 있으면 덮어쓰지 않는다. 다시 만들 때만 --rebuild-blind.
 주 비교(지금 엔진 vs 예전 엔진 v3) 문서는  py pipeline/evaluate.py --compare-v3  로 docs/engine_blind_vs_v3.md 를 만들고,
 답은 docs/engine_blind_vs_v3_answers.txt 에 조합 단위로 적는다(블라인드: 1A 2B … 12A).
 기준선(지금 엔진 vs 노트만) 답은 docs/engine_blind_answers.txt 에 적는다. 예:
@@ -355,7 +356,9 @@ def main() -> None:
     blind, engine_side, current_pairs = blind_doc(
         header, "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
         pairs_by_combo, BLIND_SEED, label, accords_ko)
-    (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
+    # 블라인드 문서는 사장이 답하는 동안 바뀌면 안 되므로, 이미 있으면 --rebuild-blind 일 때만 다시 쓴다 (2026-10-31)
+    if "--rebuild-blind" in sys.argv or not (DOCS / "engine_blind.md").exists():
+        (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
 
     # 주 비교(2026-10-31): 지금 엔진 v6 vs 엔진 v3. 문서는 --compare-v3 로만 만든다(사장이 정할 때까지)
     v3_side = {}
@@ -365,7 +368,7 @@ def main() -> None:
         doc_v3, v3_side, _ = blind_doc(
             header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v3)입니다. 어느 쪽인지는 숨겨 두었습니다.",
             pairs_v3, V3_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v3)")
-        if "--compare-v3" in sys.argv:
+        if "--compare-v3" in sys.argv and ("--rebuild-blind" in sys.argv or not (DOCS / "engine_blind_vs_v3.md").exists()):
             (DOCS / "engine_blind_vs_v3.md").write_text("\n".join(doc_v3), encoding="utf-8")
 
     # ---------- 기준표 ----------
