@@ -12,11 +12,19 @@ W_ACCORD, W_NOTE, W_PREF = 0.45, 0.45, 0.1  # 2026-10-30 사장 결정 (기획 6
 C_SAME_LAYER, C_OTHER_LAYER, C_SAME_FAMILY = 1.0, 0.5, 0.3
 LAYER_WEIGHT = {"top": 1.0, "middle": 1.0, "base": 1.0}
 BRAND_CAP = 2
-GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.85, 0.75
+# 2026-10-31 v3: "그 향수의 노트를 그대로 넣었을 때 그 향수 자신의 점수" 중앙값·하위 25% (docs/engine_variants.md)
+GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.87, 0.79
 SCORE_QUANTUM = 1e9  # 정렬은 round(score × 1e9)로 (차이 1e-9 이하는 같은 점수)
 RANK_WEIGHTS = [5, 4, 3, 2, 1]
 LAYERS = ("top", "middle", "base")
-INTENSITIES = (0.5, 1.0, 1.5)
+# 약 · 중 · 강. 2026-10-31 사장 결정: 강 1.5 → 2.0 (레몬 '강'이 '중'과 거의 같던 문제, docs/NOTES.md)
+INTENSITIES = (0.5, 1.0, 2.0)
+STRENGTH_NAMES = ("weak", "medium", "strong")
+
+
+def intensity(level: str | float) -> float:
+    """강도 이름(weak/medium/strong) → 숫자. 숫자는 그대로 (잘못된 값 시험용)."""
+    return INTENSITIES[STRENGTH_NAMES.index(level)] if isinstance(level, str) else level
 MAX_PER_LAYER = 3
 
 

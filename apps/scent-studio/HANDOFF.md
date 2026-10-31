@@ -1,11 +1,11 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan.md 단계 1·2 끝, 다음은 ★엔진 마무리 사장 결정)
+현재 단계: 4 (구현 — docs/plan.md ★엔진: 레몬 문제 해결(v3) 끝, 블라인드 비교 답 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱. 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 12/12 · TS 엔진(Vitest) 36/36 통과 (2026-10-31 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 레몬 '강' 문제 해결 방식 (아래 "다음 세션에서 할 일" 1번)
+사용자에게 남은 질문: 엔진 v3 검토(OK/수정) + 블라인드 비교 답 (`docs/engine_blind.md`, 형식 `블라인드: 1A 2B …`)
 다음 할 일: 아래 "다음 세션에서 할 일" 1 → 2 → 3 순서 (엔진은 이제 TypeScript `app/src/engine/` — 1번의 "Java EngineParams"는 `app/src/engine/params.ts`)
 
 ## 2026-10-31 단계 1·2 결과
@@ -27,7 +27,7 @@
 > ⚠️ 이 단계의 작업은 승인 테스트 0/40(화면 전) 상태라 main이 아니라 **작업 브랜치 `wip/scent-studio-stage4`**에 올렸다(2026-10-30, 실패 상태 커밋은 사장 결정). 다른 컴퓨터에서는 `git fetch` → `git switch wip/scent-studio-stage4`. 승인 테스트가 모두 통과하면 main에 합친다.
 > 원본 데이터가 없으면 먼저 `py pipeline/fetch.py` → `py pipeline/build_catalog.py`.
 
-### 1. 레몬 "강"이 약하게 반영되는 문제 — 사장 결정 받기
+### 1. ✅ (2026-10-31) 레몬 "강" 문제 — 특징 강조 + 강 2.0 + 최소 등장 수 20 + 등급 0.87/0.79 (engine v3, 이유는 NOTES.md, 비교는 docs/engine_variants.md)
 - 사장이 짚은 문제: 맹점 조합(레몬 강·오스만투스·샌달우드 약)의 조합 어코드가 시트러스 22 = 플로럴 22, Top 5 중 시트러스가 1위 어코드인 향수 0개.
 - 원인: 노트 프로필은 이미 "전체 평균 빼기"(design.md 8-2절)인데도, 레몬 프로필은 시트러스 48%로 퍼져 있고 오스만투스는 플로럴 55%로 몰려 있음 + "강"(1.5)이 "중"(1.0)과 차이가 작음.
 - 비교 실험: `py pipeline/experiments/profile_methods.py` (같은 향수 묶기 반영 후 결과, 재현은 정확히 같은 향수만 센 값)

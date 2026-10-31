@@ -53,7 +53,7 @@ export type Catalog = {
   perfumes: Perfume[];
 };
 
-/** 고른 노트 하나. intensity: 0.5(약) / 1.0(중) / 1.5(강) */
+/** 고른 노트 하나. intensity: 0.5(약) / 1.0(중) / 2.0(강, 2026-10-31 1.5에서 바꿈) */
 export type BlendNote = { noteKey: string; layer: Layer; intensity: number };
 
 export type Grade = 'VERY_SIMILAR' | 'SIMILAR' | 'REFERENCE';

@@ -11,14 +11,14 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from engine_ref import BlendNote, Engine  # noqa: E402
+from engine_ref import BlendNote, Engine, intensity  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent
 CATALOG = APP / "tests" / "fixtures" / "test_catalog.json.gz"
 OUT = APP / "tests" / "golden" / "recommend_cases.json"
 
-A3 = [("lemon", "top", 1.5), ("rose", "middle", 1.0), ("sandalwood", "base", 0.5)]
-BLIND_SPOT = [("lemon", "top", 1.5), ("osmanthus", "middle", 1.0), ("sandalwood", "base", 0.5)]
+A3 = [("lemon", "top", "strong"), ("rose", "middle", "medium"), ("sandalwood", "base", "weak")]
+BLIND_SPOT = [("lemon", "top", "strong"), ("osmanthus", "middle", "medium"), ("sandalwood", "base", "weak")]
 
 CASES = [
     {"name": "A3 조합", "blend": A3},
@@ -26,34 +26,34 @@ CASES = [
     {"name": "불호 패출리", "blend": A3, "disliked": ["patchouli"]},
     {"name": "선호 플로럴", "blend": A3, "preferred": ["floral"]},
     {"name": "선호 둘 + 불호 둘", "blend": BLIND_SPOT, "preferred": ["woody", "citrus"], "disliked": ["musk", "oud"]},
-    {"name": "노트 하나", "blend": [("bergamot", "top", 1.0)]},
-    {"name": "베이스 비고 우디·그린", "blend": [("cardamom", "top", 0.5), ("lavender", "middle", 1.5), ("cedarwood", "middle", 1.0)]},
+    {"name": "노트 하나", "blend": [("bergamot", "top", "medium")]},
+    {"name": "베이스 비고 우디·그린", "blend": [("cardamom", "top", "weak"), ("lavender", "middle", "strong"), ("cedarwood", "middle", "medium")]},
     {"name": "층마다 3개", "blend": [
-        ("lemon", "top", 1.5), ("bergamot", "top", 1.0), ("grapefruit", "top", 0.5),
-        ("rose", "middle", 1.0), ("jasmine", "middle", 1.0), ("osmanthus", "middle", 0.5),
-        ("sandalwood", "base", 1.0), ("musk", "base", 1.0), ("vanilla", "base", 1.5)]},
-    {"name": "검색 전용 노트", "blend": [("hinoki", "middle", 1.0), ("vetiver", "base", 1.0)]},
-    {"name": "멀리 떨어진 두 계열", "blend": [("lemon", "top", 1.0), ("amber", "base", 1.0)]},
-    {"name": "전체 순위", "blend": [("lemon", "top", 1.0)], "k": 100},
+        ("lemon", "top", "strong"), ("bergamot", "top", "medium"), ("grapefruit", "top", "weak"),
+        ("rose", "middle", "medium"), ("jasmine", "middle", "medium"), ("osmanthus", "middle", "weak"),
+        ("sandalwood", "base", "medium"), ("musk", "base", "medium"), ("vanilla", "base", "strong")]},
+    {"name": "검색 전용 노트", "blend": [("hinoki", "middle", "medium"), ("vetiver", "base", "medium")]},
+    {"name": "멀리 떨어진 두 계열", "blend": [("lemon", "top", "medium"), ("amber", "base", "medium")]},
+    {"name": "전체 순위", "blend": [("lemon", "top", "medium")], "k": 100},
 ]
 
 ERRORS = [
     {"name": "빈 조합", "blend": [], "error": "EMPTY_BLEND"},
-    {"name": "한 층에 4개", "blend": [("lemon", "top", 1.0), ("bergamot", "top", 1.0),
-                                    ("grapefruit", "top", 1.0), ("mandarin orange", "top", 1.0)], "error": "LAYER_LIMIT"},
-    {"name": "같은 노트 두 번", "blend": [("lemon", "top", 1.0), ("lemon", "middle", 1.0)], "error": "DUPLICATE_NOTE"},
-    {"name": "고를 수 없는 노트", "blend": [("tuberose", "middle", 1.0)], "error": "NOTE_NOT_FOUND"},
-    {"name": "없는 노트", "blend": [("unobtainium", "middle", 1.0)], "error": "NOTE_NOT_FOUND"},
-    {"name": "잘못된 강도", "blend": [("lemon", "top", 2.0)], "error": "BAD_BLEND_NOTE"},
+    {"name": "한 층에 4개", "blend": [("lemon", "top", "medium"), ("bergamot", "top", "medium"),
+                                    ("grapefruit", "top", "medium"), ("mandarin orange", "top", "medium")], "error": "LAYER_LIMIT"},
+    {"name": "같은 노트 두 번", "blend": [("lemon", "top", "medium"), ("lemon", "middle", "medium")], "error": "DUPLICATE_NOTE"},
+    {"name": "고를 수 없는 노트", "blend": [("tuberose", "middle", "medium")], "error": "NOTE_NOT_FOUND"},
+    {"name": "없는 노트", "blend": [("unobtainium", "middle", "medium")], "error": "NOTE_NOT_FOUND"},
+    {"name": "잘못된 강도 (예전 강 1.5)", "blend": [("lemon", "top", 1.5)], "error": "BAD_BLEND_NOTE"},
 ]
 
 
 def to_blend(spec):
-    return [BlendNote(k, layer, s) for k, layer, s in spec]
+    return [BlendNote(k, layer, intensity(s)) for k, layer, s in spec]
 
 
 def blend_json(spec):
-    return [{"noteKey": k, "layer": layer, "intensity": s} for k, layer, s in spec]
+    return [{"noteKey": k, "layer": layer, "intensity": intensity(s)} for k, layer, s in spec]
 
 
 def main() -> None:

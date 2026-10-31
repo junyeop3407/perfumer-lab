@@ -23,6 +23,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import engine_ref  # noqa: E402
 from engine_ref import BlendNote, Engine  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent
@@ -31,23 +32,27 @@ DOCS = APP / "docs"
 ANSWERS = DOCS / "engine_blind_answers.txt"
 BLIND_SEED = 20261030
 
-# 평가용 조합 10개: 계열이 고루 섞이게. 1번은 기획서의 맹점 조합
+# 기획서의 맹점 조합 (기준표 2번). 2026-10-31 블라인드 비교에서는 뺐다: 이 조합의 지금 엔진 Top 5를
+# 사장에게 따로 보여 주므로(docs/engine_variants.md) 블라인드에 넣으면 A/B가 드러난다
+BLIND_SPOT = [("lemon", "top", "strong"), ("osmanthus", "middle", "medium"), ("sandalwood", "base", "weak")]
+
+# 블라인드 비교·눈으로 평가·다양성용 조합 10개: 계열이 고루 섞이게
 BLENDS = [
-    ("맹점: 레몬 강 · 오스만투스 · 샌달우드 약", [("lemon", "top", 1.5), ("osmanthus", "middle", 1.0), ("sandalwood", "base", 0.5)]),
-    ("베르가못 · 장미 · 머스크", [("bergamot", "top", 1.0), ("rose", "middle", 1.0), ("musk", "base", 1.0)]),
-    ("자몽 · 라벤더 · 베티버", [("grapefruit", "top", 1.0), ("lavender", "middle", 1.0), ("vetiver", "base", 1.0)]),
-    ("만다린 · 자스민 · 바닐라", [("mandarin orange", "top", 1.0), ("jasmine", "middle", 1.0), ("vanilla", "base", 1.0)]),
-    ("핑크 페퍼 · 아이리스 · 시더우드", [("pink pepper", "top", 1.0), ("iris", "middle", 1.0), ("cedarwood", "base", 1.0)]),
-    ("레몬 · 녹차 · 화이트 머스크", [("lemon", "top", 1.0), ("green tea", "middle", 1.0), ("white musk", "base", 1.0)]),
-    ("카다멈 · 타바코 · 우드 · 앰버", [("cardamom", "top", 1.0), ("tobacco", "middle", 1.0), ("oud", "base", 1.5), ("amber", "base", 1.0)]),
-    ("복숭아 · 작약 · 머스크", [("peach", "top", 1.0), ("peony", "middle", 1.0), ("musk", "base", 1.0)]),
-    ("마린 노트 · 세이지 · 시더우드 약", [("marine notes", "top", 1.5), ("sage", "middle", 1.0), ("cedarwood", "base", 0.5)]),
-    ("시나몬 · 통카 빈 · 바닐라 · 샌달우드", [("cinnamon", "top", 1.0), ("tonka bean", "middle", 1.0), ("vanilla", "base", 1.5), ("sandalwood", "base", 1.0)]),
+    ("핑크 페퍼 · 장미 · 패출리", [("pink pepper", "top", "medium"), ("rose", "middle", "medium"), ("patchouli", "base", "medium")]),
+    ("베르가못 · 장미 · 머스크", [("bergamot", "top", "medium"), ("rose", "middle", "medium"), ("musk", "base", "medium")]),
+    ("자몽 · 라벤더 · 베티버", [("grapefruit", "top", "medium"), ("lavender", "middle", "medium"), ("vetiver", "base", "medium")]),
+    ("만다린 · 자스민 · 바닐라", [("mandarin orange", "top", "medium"), ("jasmine", "middle", "medium"), ("vanilla", "base", "medium")]),
+    ("핑크 페퍼 · 아이리스 · 시더우드", [("pink pepper", "top", "medium"), ("iris", "middle", "medium"), ("cedarwood", "base", "medium")]),
+    ("레몬 · 녹차 · 화이트 머스크", [("lemon", "top", "medium"), ("green tea", "middle", "medium"), ("white musk", "base", "medium")]),
+    ("카다멈 · 타바코 · 우드 · 앰버", [("cardamom", "top", "medium"), ("tobacco", "middle", "medium"), ("oud", "base", "strong"), ("amber", "base", "medium")]),
+    ("복숭아 · 작약 · 머스크", [("peach", "top", "medium"), ("peony", "middle", "medium"), ("musk", "base", "medium")]),
+    ("마린 노트 · 세이지 · 시더우드 약", [("marine notes", "top", "strong"), ("sage", "middle", "medium"), ("cedarwood", "base", "weak")]),
+    ("시나몬 · 통카 빈 · 바닐라 · 샌달우드", [("cinnamon", "top", "medium"), ("tonka bean", "middle", "medium"), ("vanilla", "base", "strong"), ("sandalwood", "base", "medium")]),
 ]
 
 
 def blend(spec):
-    return [BlendNote(k, layer, s) for k, layer, s in spec]
+    return [BlendNote(k, layer, engine_ref.intensity(s)) for k, layer, s in spec]
 
 
 def read_answers() -> tuple[dict[int, str], list[int]] | None:
@@ -142,7 +147,7 @@ def main() -> None:
               "<details><summary>향수별 순위</summary>", "", "| 향수 | 순위 |", "|---|---|", *rows, "", "</details>", ""]
 
     # 2. 맹점
-    b0 = blend(BLENDS[0][1])
+    b0 = blend(BLIND_SPOT)
     recs = eng.recommend(b0, k=5)
     ok = sum(1 for r in recs if {"citrus", "floral"} <= {acc_family[a] for a in by_key[r["perfumeKey"]]["accords"]})
     citrus_first = sum(1 for r in recs if by_key[r["perfumeKey"]]["accords"][0] == "citrus")

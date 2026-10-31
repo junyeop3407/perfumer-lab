@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # 같은 폴더의 규
 import catalog_rules as R  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 2
+ENGINE_VERSION = 3  # 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79
 
 
 @dataclass
@@ -161,7 +161,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     vec = {p.key: R.rank_weights(p.accords) for p in perfumes}
     g = {a: sum(vec[p.key].get(a, 0.0) for p in perfumes) / n for a in R.ACCORD_KEYS}
 
-    # 6: 노트 프로필 (평균 초과분)
+    # 6: 노트 프로필 (8-2절)
     by_note: dict[str, list[Perfume]] = defaultdict(list)
     for p in perfumes:
         for k in p.all_notes:
@@ -185,25 +185,46 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
             top = max(R.ACCORD_KEYS, key=lambda a: (m[a], -R.ACCORD_KEYS.index(a)))
         family_of[k] = R.ACCORDS[top][1]
 
-    # 계열 평균(끌어당기기 목표) f_c: 같은 계열 노트들의 평균 초과분을 df로 가중 평균
-    fam_sum: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
-    fam_w: Counter = Counter()
-    for k, e in excess.items():
-        c = family_of[k]
-        fam_w[c] += df[k]
-        for a in R.ACCORD_KEYS:
-            fam_sum[c][a] += df[k] * e[a]
-    fam_prior = {c: {a: fam_sum[c][a] / fam_w[c] for a in R.ACCORD_KEYS} for c in fam_w}
+    # 프로필의 재료(특징): 계열은 위처럼 평균 초과분으로 정하고, 프로필은 params.profile_method로 만든다.
+    # ppmi(특징 강조) = m·max(0, ln(m/g)): 평균보다 "몇 배" 많은지를 보므로 레몬처럼 여러 어코드에 퍼진 노트도
+    # 제 특징(시트러스)이 살아난다 (2026-10-31 사장 결정, docs/NOTES.md)
+    feature: dict[str, dict[str, float]] = {}
+    for k, ps in by_note.items():
+        if params.profile_method == "diff":
+            feature[k] = excess[k]
+            continue
+        m = {a: sum(vec[p.key].get(a, 0.0) for p in ps) / len(ps) for a in R.ACCORD_KEYS}
+        feature[k] = {a: m[a] * max(0.0, math.log(m[a] / g[a])) if m[a] > 0 and g[a] > 0 else 0.0
+                      for a in R.ACCORD_KEYS}
+
+    # 계열 평균(끌어당기기 목표) f_c: 같은 계열 노트들의 특징을 df로 가중 평균.
+    # 적게 나오는 노트(df < min_profile_df)는 특징이 부풀려지기 쉬워 평균에 넣지 않는다 (그런 노트뿐이면 모두 넣음)
+    def family_prior(reliable_only: bool) -> dict[str, dict[str, float]]:
+        fam_sum: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        fam_w: Counter = Counter()
+        for k, e in feature.items():
+            if reliable_only and df[k] < params.min_profile_df:
+                continue
+            c = family_of[k]
+            fam_w[c] += df[k]
+            for a in R.ACCORD_KEYS:
+                fam_sum[c][a] += df[k] * e[a]
+        return {c: {a: fam_sum[c][a] / fam_w[c] for a in R.ACCORD_KEYS} for c in fam_w}
+
+    fam_prior = {**family_prior(False), **family_prior(True)}
 
     def normalized(v: dict[str, float]) -> dict[str, float] | None:
         t = sum(v.values())
         return None if t == 0 else {a: v[a] / t for a in R.ACCORD_KEYS}
 
     profile: dict[str, list[float]] = {}
-    for k, e in excess.items():
+    for k, e in feature.items():
         f = fam_prior[family_of[k]]
-        shrunk = {a: (df[k] * e[a] + params.shrink_k * f[a]) / (df[k] + params.shrink_k) for a in R.ACCORD_KEYS}
-        p = normalized(shrunk) or normalized(f)
+        if df[k] < params.min_profile_df:
+            p = normalized(f)  # 적게 나오는 노트: 계열 평균 프로필 그대로
+        else:
+            shrunk = {a: (df[k] * e[a] + params.shrink_k * f[a]) / (df[k] + params.shrink_k) for a in R.ACCORD_KEYS}
+            p = normalized(shrunk) or normalized(f)
         profile[k] = [round(p[a], 6) for a in R.ACCORD_KEYS] if p else [0.0] * len(R.ACCORD_KEYS)
 
     # 8: 공개 범위

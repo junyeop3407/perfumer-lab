@@ -10,7 +10,7 @@ const engine = new RecommendationEngine(fixtureCatalog());
 const byKey = new Map<string, Perfume>(engine.catalog.perfumes.map((p) => [p.key, p]));
 
 const A3: BlendNote[] = [
-  { noteKey: 'lemon', layer: 'top', intensity: 1.5 },
+  { noteKey: 'lemon', layer: 'top', intensity: 2.0 },
   { noteKey: 'rose', layer: 'middle', intensity: 1.0 },
   { noteKey: 'sandalwood', layer: 'base', intensity: 0.5 },
 ];

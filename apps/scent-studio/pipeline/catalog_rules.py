@@ -62,11 +62,13 @@ class Params:
     browse_min_df: int        # 목록에 보이는 노트 (7절 8번)
     search_min_df: int        # 검색으로만 고를 수 있는 노트
     pairing_min_co: int       # 궁합 노트: 함께 나온 최소 횟수 (7절 9번)
+    min_profile_df: int       # 이보다 적은 향수에 나오는 노트는 계열 평균 프로필을 쓴다 (8-2절, 2026-10-31)
     shrink_k: float = 20.0    # 노트 프로필 끌어당기기 K (8-2절)
+    profile_method: str = "ppmi"  # "ppmi" 특징 강조 m·max(0, ln(m/g)) / "diff" 평균 초과분 max(0, m−g) (8-2절)
 
 
-REAL = Params(min_votes=10, browse_min_df=30, search_min_df=5, pairing_min_co=20)
-FIXTURE = Params(min_votes=10, browse_min_df=3, search_min_df=2, pairing_min_co=2)
+REAL = Params(min_votes=10, browse_min_df=30, search_min_df=5, pairing_min_co=20, min_profile_df=20)
+FIXTURE = Params(min_votes=10, browse_min_df=3, search_min_df=2, pairing_min_co=2, min_profile_df=3)
 
 NA = {"", "NA", "N/A", "nan"}
 
