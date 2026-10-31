@@ -1,6 +1,6 @@
 """카탈로그를 만드는 규칙과 표 (docs/design.md 5~8절).
 
-Python 기본 기능만 쓴다. 이 파일의 규칙은 Java `engine` 모듈과 똑같아야 한다:
+Python 기본 기능만 쓴다. 이 파일의 규칙은 TypeScript 엔진(`app/src/engine`)과 똑같아야 한다:
   - 향수 어코드 벡터: 목록 순서대로 5·4·3·2·1, 합 100 (rank_weights)
 """
 from __future__ import annotations

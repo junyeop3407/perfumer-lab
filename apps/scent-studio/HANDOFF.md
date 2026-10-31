@@ -1,12 +1,17 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan.md 단계 1: Expo 뼈대 + 승인 목록 Playwright 테스트)
+현재 단계: 4 (구현 — docs/plan.md 단계 1·2 끝, 다음은 ★엔진 마무리 사장 결정)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱. 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
-실행 방법: 아직 없음 (4단계에서 채움)
+실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 12/12 · Java 엔진 11/11 통과 (2026-10-31 확인). 승인 목록 41개는 아직 테스트 코드 없음(Kotlin 테스트를 지웠고 Playwright로 다시 쓸 차례)
+결과: 파이프라인 12/12 · TS 엔진(Vitest) 36/36 통과 (2026-10-31 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 레몬 '강' 문제 해결 방식 (아래 "다음 세션에서 할 일" 1번)
-다음 할 일: 아래 "다음 세션에서 할 일" 1 → 2 → 3 순서
+다음 할 일: 아래 "다음 세션에서 할 일" 1 → 2 → 3 순서 (엔진은 이제 TypeScript `app/src/engine/` — 1번의 "Java EngineParams"는 `app/src/engine/params.ts`)
+
+## 2026-10-31 단계 1·2 결과
+- 단계 1: Expo 뼈대(`app/`: 탭 4개, PC에서는 왼쪽 메뉴, 이름표 `src/ui/testIds.ts`, 설정 `src/config.ts`) + 승인 목록 41개 Playwright 테스트(`app/tests/acceptance/`, 공통 준비 `harness/`). 테스트 준비에서 정한 것(글자 200% = 브라우저 확대 등)은 `docs/NOTES.md`.
+- 단계 2: TS 엔진 `app/src/engine/` + Vitest 골든·성질 36개. Java `engine/`과 Gradle 루트는 지웠다. 서버(`backend/`)는 단계 4에서 자체 Gradle로 만든다.
+- 다른 컴퓨터에서 처음이면: `cd app && npm install && npx playwright install chromium`.
 
 ## 2026-10-31 방향 변경 (먼저 읽기)
 - 사장 결정: 안드로이드 전용 → **웹 + 안드로이드(Play 앱) + 아이폰(1차는 웹 주소, 앱스토어는 다음 차수, 그때 막히지 않게)**, PC 화면도 제대로 지원. 기획서 수정은 사장 OK.

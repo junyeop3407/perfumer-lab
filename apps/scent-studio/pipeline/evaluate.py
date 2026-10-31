@@ -202,12 +202,12 @@ def main() -> None:
               f"- 10위 점수: 평균 {statistics.mean(top10):.3f} · 최소 {min(top10):.3f} · 최대 {max(top10):.3f}",
               "- 지금 기준: 0.85 이상 매우 비슷 · 0.75 이상 비슷 · 그 아래 참고", ""]
 
-    # 7. 계산 시간 (Python 참고값. 앱의 Java 엔진은 엔진 테스트에서 따로 잰다)
+    # 7. 계산 시간 (Python 참고값. 앱의 TypeScript 엔진은 Vitest 엔진 테스트에서 따로 잰다)
     t = time.perf_counter()
     for _, spec in BLENDS:
         eng.recommend(blend(spec), k=10)
     ms = (time.perf_counter() - t) * 1000 / len(BLENDS)
-    lines += ["## 7. 계산 시간", "", f"- Python 참조 엔진 1회 평균 {ms:.0f}ms (참고값. 기준 300ms는 폰의 Java 엔진으로 잰다)", ""]
+    lines += ["## 7. 계산 시간", "", f"- Python 참조 엔진 1회 평균 {ms:.0f}ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)", ""]
 
     (DOCS / "engine_report.md").write_text("\n".join(lines), encoding="utf-8")
     old_key = DOCS / "engine_blind_key.md"

@@ -1,5 +1,5 @@
 """골든 파일: Python 참조 엔진이 가짜 카탈로그로 계산한 기대 결과 → tests/golden/recommend_cases.json
-Java engine 골든 테스트가 이 파일과 순위가 같고 점수 차 1e-9 이하인지 확인한다 (docs/design.md 14절).
+TypeScript 엔진 골든 테스트(app/tests/unit/engine.golden.test.ts)가 이 파일과 순위가 같고 점수 차 1e-9 이하인지 확인한다 (docs/design.md 14절).
 
 앱 폴더에서:  py pipeline/build_catalog.py --fixture  다음에  py pipeline/make_golden.py
 """

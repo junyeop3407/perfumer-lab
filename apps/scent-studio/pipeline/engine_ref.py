@@ -1,4 +1,4 @@
-"""Python 참조 엔진 (docs/design.md 8절). Java `engine` 모듈은 이 결과와 똑같아야 한다(골든 테스트).
+"""Python 참조 엔진 (docs/design.md 8절). TypeScript 엔진(`app/src/engine`)은 이 결과와 똑같아야 한다(골든 테스트).
 
 입력은 catalog.json(.gz)을 읽은 dict. Python 기본 기능만 쓴다.
 """
@@ -7,7 +7,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-# 8-8절: 가중치는 이 한 곳에만 둔다. 바꾸면 Java EngineParams·골든 파일도 함께 바꾸고 ENGINE_VERSION을 올린다
+# 8-8절: 가중치는 이 한 곳에만 둔다. 바꾸면 TypeScript `app/src/engine/params.ts`·골든 파일도 함께 바꾸고 ENGINE_VERSION을 올린다
 W_ACCORD, W_NOTE, W_PREF = 0.45, 0.45, 0.1  # 2026-10-30 사장 결정 (기획 60/30에서 변경, engine_report.md)
 C_SAME_LAYER, C_OTHER_LAYER, C_SAME_FAMILY = 1.0, 0.5, 0.3
 LAYER_WEIGHT = {"top": 1.0, "middle": 1.0, "base": 1.0}
@@ -197,5 +197,5 @@ def grade(score: float) -> str:
 
 
 def round_half_up(x: float) -> int:
-    """Java Math.round와 같은 반올림 (Python round는 짝수 쪽으로 반올림해서 다름)."""
+    """Java Math.round·TypeScript roundHalfUp과 같은 반올림 (Python round는 짝수 쪽으로 반올림해서 다름)."""
     return math.floor(x + 0.5)
