@@ -17,8 +17,8 @@ GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.87, 0.79
 SCORE_QUANTUM = 1e9  # 정렬은 round(score × 1e9)로 (차이 1e-9 이하는 같은 점수)
 RANK_WEIGHTS = [5, 4, 3, 2, 1]
 LAYERS = ("top", "middle", "base")
-# 약 · 중 · 강. 2026-10-31 사장 결정: 강 1.5 → 2.0 (레몬 '강'이 '중'과 거의 같던 문제, docs/NOTES.md)
-INTENSITIES = (0.5, 1.0, 2.0)
+# 약 · 중 · 강. 2026-10-31 사장 결정: 강 1.5 → 2.0 (v3) → 3.0 (v6, 어코드 쪽에만. docs/engine_strong_both.md)
+INTENSITIES = (0.5, 1.0, 3.0)
 STRENGTH_NAMES = ("weak", "medium", "strong")
 # 시험용 스위치: 노트 일치도에도 강도를 반영할지 (pipeline/experiments/strong_both.py). 엔진은 꺼진 상태(False)가 기준
 NOTE_MATCH_BY_INTENSITY = False

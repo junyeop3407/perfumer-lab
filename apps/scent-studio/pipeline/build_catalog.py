@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # 같은 폴더의 규
 import catalog_rules as R  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 5  # v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
+ENGINE_VERSION = 6  # v6: 강 3.0 · v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
 
 
 @dataclass
