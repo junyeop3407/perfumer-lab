@@ -340,7 +340,7 @@ def main() -> None:
 
     if args.fixture:
         result = build_fixture()
-        out = APP_DIR / "app" / "src" / "test" / "resources" / "catalog" / "test_catalog.json.gz"
+        out = APP_DIR / "tests" / "fixtures" / "test_catalog.json.gz"
         write_catalog(result.catalog, out)
         print(f"테스트 카탈로그: {out.relative_to(APP_DIR)} ({result.report['candidates']}개 향수)")
         return
@@ -359,7 +359,7 @@ def main() -> None:
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"
     write_catalog(result.catalog, out)
     # 앱에 넣는 카탈로그 (커밋하지 않음, .gitignore)
-    assets = APP_DIR / "app" / "src" / "main" / "assets" / "catalog.json.gz"
+    assets = APP_DIR / "app" / "assets" / "catalog" / "catalog.json.gz"
     write_catalog(result.catalog, assets)
     write_report(result, APP_DIR / "pipeline" / "report.md", "카탈로그 보고서")
     print(f"카탈로그: {out.relative_to(APP_DIR)} · 후보 {result.report['candidates']:,} · "

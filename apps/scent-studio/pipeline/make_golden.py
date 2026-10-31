@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from engine_ref import BlendNote, Engine  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent
-CATALOG = APP / "app" / "src" / "test" / "resources" / "catalog" / "test_catalog.json.gz"
+CATALOG = APP / "tests" / "fixtures" / "test_catalog.json.gz"
 OUT = APP / "tests" / "golden" / "recommend_cases.json"
 
 A3 = [("lemon", "top", 1.5), ("rose", "middle", 1.0), ("sandalwood", "base", 0.5)]

@@ -7,6 +7,12 @@ local.properties
 *.jks
 *.keystore
 pipeline/data/out/
-app/src/main/assets/catalog.json.gz
+app/assets/catalog/catalog.json.gz
+# Expo 앱
+node_modules/
+.expo/
+dist/
+playwright-report/
+test-results/
 __pycache__/
 .pytest_cache/

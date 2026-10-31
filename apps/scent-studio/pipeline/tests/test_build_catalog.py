@@ -96,6 +96,6 @@ def test_노트_key_정리():
 
 def test_커밋된_테스트_카탈로그가_가짜_데이터와_같다(catalog):
     """tests/fixtures를 바꾸고 다시 만들지 않으면 실패한다:  py pipeline/build_catalog.py --fixture"""
-    committed = APP / "app" / "src" / "test" / "resources" / "catalog" / "test_catalog.json.gz"
+    committed = APP / "tests" / "fixtures" / "test_catalog.json.gz"
     with gzip.open(committed, "rt", encoding="utf-8") as f:
         assert json.load(f) == catalog

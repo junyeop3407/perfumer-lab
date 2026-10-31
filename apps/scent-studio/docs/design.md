@@ -1,7 +1,8 @@
 # scent-studio 설계 (1차, 보강판)
 
 > 작성: 2026-10-30 · /build-app 2단계 결과물. 같은 날 안드로이드 전용(D안)으로 바꾸고, 실제 데이터로 실사·시험한 결과를 반영해 보강했다.
-> 기술 규칙은 CLAUDE.md "팀별 기본 기술"과 "안드로이드 앱 전용" 항목을 따른다. Python은 화면 뒤에서 한 번씩 돌리는 데이터 작업에만 쓴다.
+> **2026-10-31 사장 결정: 웹 + 안드로이드 + 아이폰으로 바꾸고 E안(Expo, React Native)을 골랐다.** 1·2·3·4·10·14·15·16·17절을 고쳤다. 5~9절(데이터·엔진 명세)은 그대로다.
+> 기술 규칙은 CLAUDE.md "팀별 기본 기술"을 따른다(프론트엔드 React 계열 = React Native, 디자인 Tailwind = NativeWind). Python은 화면 뒤에서 한 번씩 돌리는 데이터 작업에만 쓴다.
 > **저장소 밖 문서와 내용이 다르면 이 문서가 기준이다.**
 
 ## 0. 보강에서 바뀐 것 (사장 검토용 요약)
@@ -28,47 +29,60 @@
 - 성공 기준을 재려면 **사용 기록**(조합 시작·완료, 추천 보기 등)이 필요하다. 13절에서 최소한으로 설계했다.
 - 추천 점수 옆에 "매우 비슷 / 비슷 / 참고" 같은 **말로 된 등급**을 함께 보여 준다(8-6절).
 
-## 1. 고른 안: D안 — Kotlin 안드로이드 앱 + Spring, 데이터 작업만 Python
-> 2026-10-30: 사장이 "안드로이드 앱 전용"으로 정해 A안(React 웹 + Capacitor)에서 바꿨다.
+## 1. 고른 안: E안 — Expo(React Native) 앱 하나로 웹·안드로이드·아이폰 + Spring, 데이터 작업만 Python
+> 2026-10-31: 사장이 "웹 + 안드로이드 + 아이폰"으로 바꾸고, 설계안 3개(A React 웹 + Capacitor 포장 / B Expo / C 서버가 추천 계산) 중 B(여기서는 E안)를 골랐다. 그 전(10-30)은 D안(Kotlin 안드로이드 전용).
 
 ```mermaid
 flowchart LR
   subgraph PC["개발 PC (필요할 때만)"]
     RAW[Parfumo CSV] --> PIPE[pipeline/ Python] --> CAT[(catalog.json.gz<br/>향수·노트·프로필)]
   end
-  subgraph PHONE["안드로이드 앱"]
-    UI[Compose 화면] --> VM[ViewModel]
-    VM --> ENG[engine 모듈<br/>추천·조합 분석]
+  subgraph CLIENT["Expo 앱 하나 (같은 코드)"]
+    UI[React Native 화면<br/>Expo Router · NativeWind] --> ST[상태 · 저장소]
+    ST --> ENG[엔진 TypeScript<br/>추천·조합 분석]
     ENG --> MEM[(카탈로그<br/>메모리)]
-    VM --> LOCAL[(Room<br/>조합 임시저장·설정·기록 대기열)]
-    VM --> NET[Retrofit]
+    ST --> LOCAL[(AsyncStorage<br/>폰: 앱 저장소 · 웹: localStorage)]
+    ST --> NET[fetch + JWT]
   end
+  CLIENT -. 내보내기 .-> WEB[웹: 정적 파일 + 오프라인 캐시]
+  CLIENT -. EAS 클라우드 빌드 .-> AND[안드로이드 AAB → Play 내부 테스트]
+  CLIENT -. 다음 차수 .-> IOS[아이폰 → 앱스토어]
   CAT -- 앱에 포함 + 새 버전 내려받기 --> MEM
-  NET -- JWT --> API[Spring 서버<br/>로그인 사용자 데이터·통계]
+  NET --> API[Spring 서버<br/>로그인 사용자 데이터·통계]
   API --> DB[(Supabase Postgres)]
   UI -- 구글 로그인 --> AUTH[Supabase Auth]
 ```
 
 | 영역 | 맡는 팀 | 기술 |
 |---|---|---|
-| 앱 화면 | 프론트엔드팀 | Kotlin + Jetpack Compose(Material 3), 최소 Android 8.0(API 26), target은 Play가 요구하는 최신. ViewModel + StateFlow, Navigation Compose(타입 안전 경로), Room(폰 안 저장), Retrofit + kotlinx.serialization, 의존성은 손으로 묶음(`AppContainer`, Hilt 안 씀) |
-| 로그인 | 프론트엔드팀 + 백엔드팀 | 앱: Credential Manager로 구글 ID 토큰 → Supabase Kotlin 클라이언트(Auth만)로 세션. 서버: Spring Security가 Supabase JWT를 공개키(JWKS)로 검증 |
-| 디자인 | 디자인팀 | `docs/DESIGN.md` + Compose 테마. 시안 캡처는 Roborazzi |
-| 추천 엔진 | 백엔드팀 | **`engine` 모듈: 순수 Java 17, 의존성 없음.** 앱과 서버가 같은 코드를 쓴다. 1차에는 앱만 추천을 계산한다 |
+| 앱 화면 (웹·안드로이드·아이폰 공통) | 프론트엔드팀 | **Expo(React Native) + TypeScript**, 최신 안정 Expo SDK(정확한 버전은 4단계 계획에서 `NOTES.md`에). 화면 이동 Expo Router(탭 + 쌓기, 웹 주소도 자동), 웹은 react-native-web. 상태는 React 상태 + 작은 저장소 모듈(라이브러리 최소). 기기 안 저장 AsyncStorage(웹에서는 localStorage). 서버 호출 fetch |
+| 넓은 화면(PC) | 프론트엔드팀 | 화면 너비 1024px 이상이면 하단 탭 → 왼쪽 메뉴, 목록·상세 나란히, 노트 카드는 옆 패널(같은 컴포넌트, 배치만 다름) |
+| 오프라인 | 프론트엔드팀 | 폰 앱: 카탈로그를 앱에 넣음. 웹: 내보낸 정적 파일과 카탈로그를 서비스 워커로 캐시(Workbox) → 한 번 연 뒤 인터넷 없이 됨. "홈 화면에 추가"용 웹 앱 매니페스트 |
+| 로그인 | 프론트엔드팀 + 백엔드팀 | 앱: Supabase JS 클라이언트(Auth만) + 구글 OAuth(PKCE, 웹·폰 같은 코드). 로그인 방법을 목록으로 두어 앱스토어 때 애플 로그인(Supabase 지원)을 한 줄 더하면 되게 한다. 서버: Spring Security가 Supabase JWT를 공개키(JWKS)로 검증 |
+| 디자인 | 디자인팀 | `docs/DESIGN.md` + **NativeWind**(React Native용 Tailwind). 색·간격은 `tailwind.config.js` 토큰 한 곳. 시안 캡처는 Playwright로 웹 화면을 폰·PC 크기로 찍음 |
+| 추천 엔진 | 백엔드팀 | **`app/src/engine/` 순수 TypeScript, 의존성 없음.** 8절 명세 그대로, Python 참조 엔진이 만든 같은 골든 파일로 결과가 같은지 확인. 1차에는 기기만 추천을 계산한다 |
 | 서버 | 백엔드팀 | Java 21 + Spring Boot 4, Spring Web, Spring Data JPA, Flyway, Spring Security(OAuth2 Resource Server), springdoc-openapi |
 | DB · 로그인 | 백엔드팀 | Supabase를 **Postgres 호스팅과 구글 로그인으로만** 사용. 앱은 DB에 직접 붙지 않는다(12절) |
 | 데이터 정리 | 백엔드팀 | Python(기본 기능만, 설치 없음) (`pipeline/`) → 카탈로그 파일, 보고서, Python 참조 엔진 |
-| 엔진 검증 | 백엔드팀 | `pipeline/evaluate.py` → `docs/engine_report.md` (노트북 대신, 설치 없음) |
-| 빌드 | 공통 | **앱 폴더 하나의 Gradle 빌드**에 모듈 셋(`:engine`, `:backend`, `:app`). 명령 한 번, Gradle 데몬 하나로 전부 테스트해 훅 5분 안에 끝낸다 |
+| 엔진 검증 | 백엔드팀 | `pipeline/evaluate.py` → `docs/engine_report.md` (설치 없음) |
+| 빌드 | 공통 | 앱: npm(Expo). 안드로이드·아이폰 설치 파일은 **EAS Build(클라우드, 무료 한도)** — 이 PC에 Android Studio·맥이 없어도 됨. 서버: `backend/` Gradle |
 | 테스트 | QA팀 | 14절 |
+
+### 1-1. 이미 만든 것 처리 (2026-10-31)
+| 만든 것 | 처리 |
+|---|---|
+| `pipeline/` (Python 데이터 정리·참조 엔진·평가), 골든 파일, 가짜 데이터(`tests/fixtures/`) | **그대로 쓴다** |
+| 승인 테스트 목록 40개(`tests.md`) | 내용 그대로. 안드로이드 전용 표현만 웹·폰 공통으로 바꿔 3단계에서 **바뀐 항목만 재승인** |
+| Kotlin 앱(`app/`의 Kotlin 코드, Robolectric 승인 테스트 40개, Gradle 앱 모듈) | 재승인 뒤 지운다. 테스트는 Playwright로 다시 쓴다 |
+| Java 엔진(`engine/`) | TypeScript로 옮긴 뒤 지운다(1차 서버는 추천을 계산하지 않음). 옮길 때 Java 골든·성질 테스트를 그대로 TypeScript로 옮긴다 |
 
 ## 2. 버린 안과 이유
 | 안 | 내용 | 버린 이유 |
 |---|---|---|
-| A | React 웹 + Spring, Capacitor로 감싸 안드로이드 배포 (처음 고른 안) | 사장이 웹 없이 안드로이드 앱 전용으로 정함. 앱 안의 화면이 웹 화면이라 조작감이 진짜 앱보다 떨어짐 |
-| B | FastAPI(Python) + Expo(React Native) | 서버까지 Python으로 바뀌어 작업장 기본 기술(Spring)과 충돌. 앱 전용이면 안드로이드 정식 언어(Kotlin)가 조작감·성능이 가장 좋아 사장이 Kotlin을 고름 |
-| C | 서버 없이 화면만 | 로그인·저장·피드백·통계에 서버가 필요. (단, D1대로 **추천 계산만은 앱 안에서** 한다) |
-| D1-서버 | 추천을 서버 API로 계산 | 무료 서버가 잠들면 첫 추천에 최대 1분. 인터넷이 없으면 핵심 기능이 멈춤. 카탈로그를 API로 내보내는 것도 앱에 넣는 것과 라이선스 위험이 같다 |
+| A | React 웹 + Tailwind, Capacitor로 포장해 Play·앱스토어 (10-31 Claude 추천) | 사장이 E안을 고름. 앱 안의 화면이 웹 화면이라 폰 조작감이 진짜 앱보다 떨어지고, 아이폰 앱스토어 빌드에 맥이 필요 |
+| C | React 웹 + Spring이 추천 계산(Java 엔진 재사용) | 무료 서버가 잠들면 첫 추천에 최대 1분, 인터넷 없으면 핵심 기능이 멈춤, 웹 주소만 감싼 앱은 앱스토어 심사 위험 |
+| D | Kotlin + Compose 안드로이드 전용 (10-30에 고름) | 아이폰·웹 사용자가 못 씀 (10-31 사장 결정) |
+| 서버 Python(FastAPI) | Expo + FastAPI | 작업장 기본 기술(Spring)과 충돌 |
 
 ## 3. 디자인 방향과 앱 화면 원칙
 > 2026-10-30 사장 결정: 사장이 준 컬러 시스템을 쓴다. Claude가 대비를 계산해 고친 4곳과 "계열 색 없음"은 사장이 OK했다.
@@ -79,7 +93,7 @@ flowchart LR
 **고급스럽고 깔끔하게. 아기자기하거나 귀여운 느낌은 화면, 도형, 아이콘, 문구 어디에도 넣지 않는다.** 핑크·블루 같은 성별 코드 색은 쓰지 않는다.
 
 ### 3-2. 컬러 토큰
-Compose에서는 `ui/theme/ScentColors.kt` 한 곳에 아래 이름으로 정의하고, 화면 코드에서는 토큰 이름으로만 쓴다(색 값 직접 쓰기 금지). 라이트·다크 둘 다 1차에 만든다(시스템 설정을 따름).
+`tailwind.config.js`(NativeWind) 한 곳에 아래 이름으로 정의하고, 화면 코드에서는 토큰 이름으로만 쓴다(색 값 직접 쓰기 금지). 라이트·다크 둘 다 1차에 만든다(시스템 설정을 따름).
 
 | 토큰 | 라이트 | 다크 | 쓰는 곳 |
 |---|---|---|---|
@@ -113,7 +127,7 @@ Compose에서는 `ui/theme/ScentColors.kt` 한 곳에 아래 이름으로 정의
 - 노트 색 3개는 탑·미들·베이스 구분에만 쓴다(칩, 피라미드, 그래프). 버튼에는 쓰지 않는다
 - 그라데이션은 쓰지 않는다. 그림자는 아주 옅은 한 단계만, 되도록 1dp 선으로 구분한다
 - 글자 대비는 WCAG AA(4.5:1, 큰 글자 3:1) 이상. 막대처럼 대비가 낮은 그래픽에는 반드시 글자를 함께 쓴다
-- **색만으로 뜻을 전하지 않는다**(색약 사용자, TalkBack). 선택 상태는 색 + 테두리 또는 체크 표시로 나타낸다
+- **색만으로 뜻을 전하지 않는다**(색약 사용자, 화면 읽기 TalkBack·VoiceOver·스크린 리더). 선택 상태는 색 + 테두리 또는 체크 표시로 나타낸다
 
 ### 3-4. 모양과 분위기 (고급스럽고 깔끔하게)
 | 항목 | 이렇게 | 하지 않을 것 |
@@ -131,37 +145,39 @@ Compose에서는 `ui/theme/ScentColors.kt` 한 곳에 아래 이름으로 정의
 - 글꼴은 디자인팀이 DESIGN.md에서 정한다. 앱에 넣는 글꼴은 무료 라이선스(OFL 등)만 쓴다(후보: 제목 Noto Serif KR 또는 마루 부리, 본문 Pretendard)
 
 ### 3-5. 공통 원칙
-- 누르는 곳은 최소 48dp. 글자 크기를 200%로 키워도 화면이 깨지지 않는다
+- 단위 dp는 웹에서 같은 값의 px로 쓴다(React Native는 dp, 웹은 CSS px로 자동 대응)
+- 누르는 곳은 최소 48dp(아이폰 기준 44pt보다 큼). 글자 크기를 200%로 키워도 화면이 깨지지 않는다
+- 넓은 화면(1024px 이상)은 하단 탭 대신 왼쪽 메뉴, 목록·상세 나란히. 본문 폭은 너무 넓어지지 않게 최대 폭을 둔다
 - 모든 화면에 네 가지 상태를 그린다: 불러오는 중 · 내용 있음 · 비어 있음 · 오류(다시 시도)
-- 시안과 화면 회귀 확인은 Roborazzi 캡처로 한다: 화면마다 라이트·다크 × 작은 폰·큰 폰 + 글자 200%
+- 시안과 화면 회귀 확인은 Playwright 캡처(웹 화면)로 한다: 화면마다 라이트·다크 × 작은 폰(360)·큰 폰(412)·PC(1280) + 글자 200%
 
 ## 4. 폴더 구조
 ```
 apps/scent-studio/
 ├── HANDOFF.md
-├── settings.gradle.kts, build.gradle.kts, gradlew(.bat), gradle/   ← 하나의 Gradle 빌드
-├── docs/            requirements.md, design.md, reference.md (+ 이후 tests.md, plan.md, DESIGN.md, NOTES.md, review.md)
-├── engine/          순수 Java 17 라이브러리 (추천·조합 분석·균형 경고). Spring·Android를 모름
-│   └── src/test/    골든 테스트, 성질 테스트
-├── app/             안드로이드 앱 (Kotlin + Compose)
-│   └── src/
-│       ├── main/java/.../  ui/(screens S01~S12, components, theme), blend/, catalog/, user/(Retrofit), auth/, events/, AppContainer.kt
-│       ├── main/assets/    catalog.json.gz (파이프라인이 만듦, 커밋 안 함)
-│       ├── test/           승인 목록(Compose UI + Robolectric), ViewModel 테스트, Roborazzi 캡처
-│       └── androidTest/    에뮬레이터 테스트 (6단계에 따로)
-├── backend/         Spring Boot
-│   └── src/main/java/.../  api/, domain/, security/, events/
-│   └── src/main/resources/db/migration/   Flyway SQL (스키마는 여기서만 바꾼다)
-├── pipeline/        Python: fetch.py, clean.py, profiles.py, build_catalog.py, engine_ref.py, make_golden.py, report.md
-│   ├── manual/      aliases.csv, note_family_override.csv, notes_ko.csv (사람이 검토한 표, 커밋함)
-│   └── data/raw/    원본 CSV (커밋 안 함)
-├── notebooks/       engine_validation.ipynb
+├── docs/            requirements.md, spec.md, design.md, reference.md, tests.md, plan.md, DESIGN.md, NOTES.md, review.md
+├── app/             Expo 앱 (웹·안드로이드·아이폰 공통, TypeScript)
+│   ├── app/            Expo Router 화면 (탭: index·search·library·my, 흐름: blend/*, perfume/[key])
+│   ├── src/
+│   │   ├── engine/     순수 TS 엔진 (추천·조합 분석·균형 안내) — React·Expo를 모름
+│   │   ├── catalog/ blend/ user/ auth/ events/ ui/(components, theme)
+│   │   └── strings.ko.ts   모든 화면 문구
+│   ├── assets/catalog/ catalog.json.gz (파이프라인이 만듦, 커밋 안 함)
+│   ├── tests/
+│   │   ├── acceptance/  승인 목록 (Playwright, 웹으로 내보낸 앱을 실제 브라우저로 조작)
+│   │   ├── unit/        엔진 골든·성질, 저장소 로직 (Vitest)
+│   │   └── screens/     디자인 캡처 (Playwright)
+│   └── tailwind.config.js, app.json, eas.json, package.json
+├── backend/         Spring Boot (Gradle 별도 빌드)
+│   └── src/main/resources/db/migration/   Flyway SQL
+├── pipeline/        Python: fetch, build_catalog, engine_ref, make_golden, evaluate, manual/*.csv, data/raw/(커밋 안 함)
 └── tests/
     ├── run.sh       빠른 테스트 전체 (HANDOFF의 테스트 명령)
-    └── golden/      synthetic_catalog.json(가짜 향수 약 60개), recommend_cases.json(기대 결과)
+    ├── fixtures/    가짜 Parfumo CSV, 노트 한글명
+    └── golden/      recommend_cases.json (Python 참조 엔진이 만든 기대 결과)
 ```
-- 경로는 모두 앱 폴더 기준 상대 경로다. 비밀값(DB 주소, Supabase 서비스 키)은 `.env`에 두고 `.env.example`에는 이름만 적는다.
-- **이 저장소는 공개 저장소다.** 원본 CSV와 그것으로 만든 카탈로그 파일은 커밋하지 않는다. 다른 컴퓨터에서는 `pipeline/fetch.py`가 원본을 받아 다시 만든다. 테스트용 카탈로그는 **가짜 향수**로 만든다(라이선스 걱정이 없고, 경계 사례를 일부러 넣을 수 있다).
+- 경로는 모두 앱 폴더 기준 상대 경로다. 비밀값(DB 주소, Supabase 서비스 키, EAS 토큰)은 `.env`에 두고 `.env.example`에는 이름만 적는다. 앱에 들어가는 Supabase 공개 키는 비밀이 아니지만 12-1절대로 막는다.
+- **이 저장소는 공개 저장소다.** 원본 CSV와 그것으로 만든 카탈로그 파일은 커밋하지 않는다. 다른 컴퓨터에서는 `pipeline/fetch.py`가 원본을 받아 다시 만든다. 테스트용 카탈로그는 **가짜 향수**로 만든다.
 
 ## 5. 데이터 실사 결과 (2026-10-30, Parfumo TidyTuesday 2024-12-10 `parfumo_data_clean.csv`)
 | 항목 | 값 | 설계에 미친 영향 |
@@ -262,7 +278,8 @@ apps/scent-studio/
 
 ### 8-8. 숫자와 설정
 - 계산은 모두 double. 가중치(0.45/0.45/0.1, 1.0/0.5/0.3), K, 최소 평가 수, 브랜드 상한, 등급 기준은 `EngineParams` 한 곳에만 둔다. 바꿀 때는 Python·Java·골든 파일을 함께 바꾸고 `engine_version`을 올린다
-- 성능 목표: 중급 안드로이드 폰에서 추천 1회 300ms 이하, 카탈로그 불러오기 1.5초 이하(후보 1.4만 × 21차원이라 여유 있음)
+- 성능 목표: 중급 폰(앱·모바일 브라우저 모두)에서 추천 1회 300ms 이하, 카탈로그 불러오기 1.5초 이하(후보 1.4만 × 21차원이라 여유 있음). 웹에서 계산이 화면을 멈추면 Web Worker로 옮긴다
+- TypeScript 엔진의 숫자는 JS number(=double)라 Python과 같은 결과를 낸다. 반올림 규칙(0.5 올림)은 직접 함수로 쓴다
 
 ## 9. 화면 흐름 (D2 반영)
 ```mermaid
@@ -294,16 +311,17 @@ flowchart LR
 - 새 조합 흐름에서 나가면 "임시 저장된 조합 이어 하기"가 홈에 뜬다
 - 저장된 조합(S09)을 누르면 S05(요약)로 열리고, 거기서 다시 추천을 볼 수 있다
 
-## 10. 안드로이드 앱 구조
-- **층 나누기:** 화면(Compose) → ViewModel(화면 상태 하나를 StateFlow로) → 저장소(`CatalogRepository`, `BlendDraftRepository`, `UserRepository`, `EventQueue`) → engine 모듈 / Room / Retrofit
-- **카탈로그:** 앱에 넣은 `catalog.json.gz`를 시작할 때 백그라운드에서 메모리로 읽는다(약 1MB, 읽는 동안 첫 화면을 보여 준다). 앱을 켤 때 서버에 새 버전이 있으면 와이파이에서 내려받아 다음 실행부터 쓴다. 파일 해시를 확인하고, 깨졌으면 앱에 넣은 버전을 쓴다
-- **조합 임시 저장:** 바뀔 때마다 Room에 저장한다. 앱이 꺼져도(시스템이 앱을 정리해도) 그대로 돌아온다
-- **로그인 전 설정(D3):** 불호·선호를 Room에 저장해 바로 추천에 반영한다. 로그인하면 서버 값과 **합친다**(불호는 합집합, 선호는 서버 값이 없을 때만 폰 값)
+## 10. 앱 구조 (Expo, 웹·안드로이드·아이폰 공통)
+- **층 나누기:** 화면(Expo Router 화면 + 컴포넌트) → 화면별 훅(상태 계산) → 저장소 모듈(`catalog`, `blendDraft`, `user`, `eventQueue`) → engine / AsyncStorage / fetch. 플랫폼마다 다른 것(로그인 창, 오프라인 캐시)은 `*.web.ts` / `*.native.ts` 파일로만 나눈다
+- **카탈로그:** 앱에 넣은 `catalog.json.gz`를 시작할 때 읽는다(약 1MB, 읽는 동안 첫 화면을 보여 준다). 시작할 때 서버에 새 버전이 있으면 내려받아 다음 실행부터 쓴다(폰은 와이파이에서만). 해시를 확인하고 깨졌으면 넣어 둔 버전을 쓴다
+- **오프라인(웹):** 서비스 워커가 앱 파일과 카탈로그를 캐시한다. 새 버전을 배포하면 다음 방문 때 "새 버전이 있어요 · 새로고침" 안내
+- **조합 임시 저장:** 바뀔 때마다 AsyncStorage에 저장한다. 앱·브라우저를 껐다 켜도(폰에서 시스템이 앱을 정리해도) 그대로 돌아온다
+- **로그인 전 설정(D3):** 불호·선호를 AsyncStorage에 저장해 바로 추천에 반영한다. 로그인하면 서버 값과 **합친다**(불호는 합집합, 선호는 서버 값이 없을 때만 기기 값)
 - **인터넷:** 조합·추천·검색은 인터넷 없이 된다. 저장·찜·피드백은 인터넷이 필요하다. 3초가 넘으면 "서버를 깨우는 중이에요(최대 1분)"를 보여 주고 실패하면 "다시 시도"를 둔다. 실패한 저장을 몰래 쌓아 두지 않는다
-- **로그인:** Credential Manager로 구글 ID 토큰(nonce 포함) → Supabase `signInWith(IDToken)` → 세션은 Supabase 클라이언트가 암호화해 보관하고 자동 갱신한다 → Retrofit이 모든 요청에 `Authorization: Bearer`를 붙인다. 401이면 한 번 갱신하고 다시 시도, 그래도 401이면 로그아웃 상태로
-- **서버 주소:** 빌드 설정값(debug는 에뮬레이터용 `http://10.0.2.2:8080`, release는 배포 주소). 코드에 박지 않는다. release는 HTTPS만 허용한다
-- **문구:** 모든 글자는 `strings.xml`(한국어)에 둔다
-- **출시 빌드:** 코드 축소(R8)를 켜고, Play 앱 서명을 쓴다. 업로드 키는 사장이 보관하고 백업한다(커밋 금지)
+- **로그인:** Supabase `signInWithOAuth`(구글, PKCE). 웹은 같은 창 이동, 폰은 시스템 브라우저 창 후 앱으로 돌아옴(딥링크 `scentstudio://`). 세션은 Supabase 클라이언트가 보관·자동 갱신(폰은 expo-secure-store). 모든 요청에 `Authorization: Bearer`. 401이면 한 번 갱신하고 다시 시도, 그래도 401이면 로그아웃 상태로. 로그인 방법은 목록(`providers = ['google']`)으로 두어 애플을 더하기 쉽게 한다
+- **서버 주소:** `EXPO_PUBLIC_API_URL` 환경값(개발은 PC 주소, 배포는 HTTPS 주소). 코드에 박지 않는다
+- **문구:** 모든 글자는 `src/strings.ko.ts`(한국어)에 둔다
+- **출시 빌드:** EAS Build로 안드로이드 AAB(Play 앱 서명). 업로드 키는 EAS가 보관하고 사장 계정에 묶인다(커밋 금지). 아이폰은 다음 차수에 같은 방법(애플 개발자 계정 필요)
 
 ## 11. API (Spring Boot, `/api/v1`, JSON)
 추천 계산과 검색은 앱 안에서 한다(D1). 서버는 로그인한 사용자 데이터, 카탈로그 배포, 통계만 맡는다.
@@ -323,7 +341,7 @@ flowchart LR
 - 사용자 id는 **토큰에서만** 꺼낸다. 요청 본문이나 경로의 사용자 id는 믿지 않는다
 - 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, 같은 노트는 한 번만, 강도 ∈ {0.5, 1.0, 1.5}, 노트 key는 현재 카탈로그에 있는 것만, 이름 40자, 메모 500자
 - 오류 형식: `{"error": {"code": "NOTE_NOT_FOUND", "message": "..."}}`. 코드 목록은 `docs/api-errors.md`(4단계)
-- 앱의 Kotlin 데이터 클래스는 springdoc OpenAPI 문서에서 생성한다(손으로 맞추지 않음)
+- 앱의 TypeScript 타입은 springdoc OpenAPI 문서에서 생성한다(openapi-typescript, 손으로 맞추지 않음)
 - `/events`는 기기 하나당 분당 요청 수를 제한한다
 
 ## 12. 데이터 모델 (Postgres, 스키마 `app`)
@@ -358,20 +376,20 @@ flowchart LR
 | perfume_opened | S07 열기 | from(recs/search), rank |
 | blend_saved / favorite_added / feedback_submitted | 각 동작 성공 | — |
 
-- 폰의 Room 대기열에 쌓았다가 30초마다 또는 앱이 백그라운드로 갈 때 보낸다. 인터넷이 없으면 다음에 보낸다(최대 1,000개, 넘으면 오래된 것부터 버림)
+- 기기의 AsyncStorage 대기열에 쌓았다가 30초마다 또는 앱이 백그라운드로 가거나 탭이 가려질 때 보낸다. 인터넷이 없으면 다음에 보낸다(최대 1,000개, 넘으면 오래된 것부터 버림)
 - 기획서 성공 기준 계산: 조합 완성률 = recs_viewed / blend_started, 저장률 = blend_saved / recs_viewed, 재방문율 = 7일 안에 app_open이 2일 이상인 install_id 비율. 계산 SQL은 `docs/metrics.sql`(4단계)
 
-## 14. 테스트 설계 (QA팀 3단계 재료)
+## 14. 테스트 설계 (2026-10-31 E안에 맞게 바꿈)
 | 종류 | 어디서 | 내용 | 훅에서 돌림 |
 |---|---|---|---|
-| **승인 목록** | `app/src/test/` Compose UI + Robolectric | 사장 승인 대상. 에뮬레이터 없이 앱 화면을 사람처럼 누른다. 카탈로그는 가짜 카탈로그, 서버는 가짜 응답(MockWebServer) | ✅ |
-| 엔진 골든 | `engine/src/test/` JUnit | 가짜 카탈로그 + Python이 만든 기대 결과와 **순위가 같고 점수 차 1e-9 이하** | ✅ |
+| **승인 목록** | `app/tests/acceptance/` **Playwright** | 사장 승인 대상. 앱을 웹으로 내보내 실제 브라우저(크롬)에서 사람처럼 누른다. 폰 크기와 PC 크기 화면. 카탈로그는 가짜 카탈로그, 서버는 Playwright가 가로챈 가짜 응답, 로그인은 "로그인된 상태" 흉내 | ✅ |
+| 엔진 골든 | `app/tests/unit/` Vitest | 가짜 카탈로그 + Python이 만든 기대 결과와 **순위가 같고 점수 차 1e-9 이하** | ✅ |
 | 엔진 성질 | 같은 곳 | 비율 합 100, 불호 노트 든 향수가 절대 안 나옴, 같은 입력 같은 결과, 브랜드 최대 2개, 노트 0개면 오류 | ✅ |
+| 저장소 로직 | 같은 곳 | 층당 3개 제한, 임시 저장 복원, 로그인 후 설정 합치기, 사용 기록 대기열 | ✅ |
 | 서버 | `backend/src/test/` JUnit + Spring Boot Test + 내장 Postgres(zonky, Docker 불필요) | 토큰 없으면 401, 남의 조합을 못 읽고 못 지움, 검증 실패 400, 계정 삭제 후 데이터 없음 | ✅ |
-| 앱 부품 | `app/src/test/` JUnit | ViewModel: 층당 3개 제한, 임시 저장 복원, 로그인 후 설정 합치기, 사용 기록 대기열 | ✅ |
-| 화면 캡처 | Roborazzi | 화면마다 라이트·다크 × 작은 폰(360dp)·큰 폰(411dp) + 글자 200%. 디자인 검토 시안이자 화면 회귀 확인 | ✅ |
-| 실제 기기 | `app/src/androidTest/` 에뮬레이터 | 핵심 흐름(새 조합 → 추천 → 상세)과 앱 재시작 후 임시 저장 복원. 6단계 QA 보고 전에 `./gradlew :app:connectedDebugAndroidTest` | ❌ |
-| 사장 직접 | 실제 폰 | 구글 로그인, 저장·찜·피드백, 계정 삭제 (구글 로그인은 자동 테스트가 안 됨) | ❌ |
+| 화면 캡처 | `app/tests/screens/` Playwright | 화면마다 라이트·다크 × 360·412·1280 + 글자 200%. 디자인 검토 시안이자 화면 회귀 확인 | ✅ |
+| 폰 앱 확인 | 안드로이드 실제 폰 또는 에뮬레이터 (EAS로 만든 설치 파일) | 핵심 흐름(새 조합 → 추천 → 상세), 앱 재시작 후 임시 저장 복원, 비행기 모드에서 추천. 6단계 QA 보고 전에 Maestro 흐름 파일로 돌리거나 사장이 직접 | ❌ |
+| 사장 직접 | 실제 폰(안드로이드 앱, 아이폰 사파리) | 구글 로그인, 저장·찜·피드백, 계정 삭제, 아이폰 "홈 화면에 추가" (구글 로그인은 자동 테스트가 안 됨) | ❌ |
 
 - **승인 목록 후보:** ① 계열 고르고 층마다 노트를 골라 요약에서 비율 막대 합이 100% ② 층당 4번째 노트는 안 들어감 ③ 추천 10개가 점수 순으로 나오고 각각 등급·공통 어코드·일치 노트가 보임 ④ 불호 노트를 정하면 그 노트가 든 향수가 추천에서 사라짐(로그인 없이도) ⑤ 비로그인으로 저장을 누르면 로그인 화면으로 감 ⑥ 로그인 상태로 저장·찜·피드백하면 보관함에 보임 ⑦ 앱을 껐다 켜도 만들던 조합이 남음 ⑧ 인터넷이 없어도 조합과 추천이 됨 ⑨ 작은 폰과 글자 200%에서 버튼이 잘리지 않음 ⑩ 계정 삭제 후 보관함이 빔
 - **엔진 합격 기준** (노트북, 실제 카탈로그, 백엔드팀 사장 검토 때 함께 보여 줌):
@@ -382,19 +400,19 @@ flowchart LR
   | 블라인드 비교(가설 1): 조합 10개마다 어코드 중심 Top 5와 노트 중심 Top 5를 어느 쪽인지 숨기고 사장이 더 비슷한 쪽을 고름 | 어코드 중심이 6개 이상 |
   | 눈으로 평가: 조합 10개 × Top 5를 1~5점으로 | 평균 3.5 이상 |
   | 다양성: 조합 10개의 Top 10 전체에서 서로 다른 브랜드 수 | 40개 이상 |
-- **전체 실행:** `tests/run.sh` = `./gradlew :engine:test :backend:test :app:testDebugUnitTest` (Gradle 한 번). HANDOFF 테스트 명령은 `bash tests/run.sh`. 5분을 넘으면 `NOTES.md`에 적고 Gradle 캐시·데몬 설정부터 손본다
+- **전체 실행:** `tests/run.sh` = 파이프라인 pytest → `app`에서 `npx vitest run` → 웹 내보내기 + `npx playwright test` → `backend`에서 `./gradlew test`. HANDOFF 테스트 명령은 `bash tests/run.sh`. 5분을 넘으면 `NOTES.md`에 적고 내보내기 캐시부터 손본다
 
 ## 15. 4단계 구현 순서 (plan.md에 옮길 것, 관문을 못 넘으면 다음으로 가지 않음)
 | 단계 | 팀 | 할 일 | 관문 |
 |---|---|---|---|
 | M0 | 백엔드 | 파이프라인 1~12, 어코드 순서 가정 확인(사이트 20건), 별칭·계열·한글명 표 초안 | 미매핑 5% 이하, 순서 가정 확인 |
 | M1 | 백엔드 | Python 참조 엔진 + 노트북 → 합격 기준표, 등급 기준값 확정 | 14절 기준 통과 |
-| M2 | 백엔드 | Java `engine` 모듈 + 가짜 카탈로그 골든 테스트 | 골든·성질 테스트 통과 |
+| M2 | 백엔드 | ~~Java `engine` 모듈~~(10-30 완료, 10-31 E안으로 교체) → **TypeScript 엔진** `app/src/engine/` + 같은 골든·성질 테스트(Vitest) | 골든·성질 테스트 통과 |
 | ★ | 백엔드 | **사장 검토**: 저장할 데이터·기능 목록 + 엔진 합격 기준표 | OK |
 | M3 | 백엔드 | Spring 서버: 보안, 사용자 API, 계정 삭제, 사용 기록, 카탈로그 배포 | 서버 테스트 통과 |
-| ★ | 디자인 | **사장 검토**: DESIGN.md + Roborazzi 시안 캡처 | OK |
+| ★ | 디자인 | **사장 검토**: DESIGN.md + Playwright 시안 캡처(폰·PC) | OK |
 | M4 | 프론트 | 앱: 카탈로그·새 조합 흐름(S02→S06) 먼저 → S07·S08 → 로그인·보관함·마이 | 승인 목록 통과 |
-| M5 | 프론트 | 사용 기록, 오류·빈 상태, 출시 빌드, 개인정보·삭제 안내 페이지 | 에뮬레이터 테스트 통과 |
+| M5 | 프론트 | 사용 기록, 오류·빈 상태, 웹 오프라인·홈 화면 추가, EAS 안드로이드 빌드, 개인정보·삭제 안내 페이지 | 폰 앱 확인 통과 |
 
 ## 16. 배포·운영 (6단계, 공개는 사장이 `!` 한 줄로 실행)
 | 부분 | 위치 | 메모 |
@@ -402,7 +420,9 @@ flowchart LR
 | API | Render (Docker) 무료 | 15분 쉬면 잠듦 → D1 덕에 저장·찜만 느려짐. JVM 메모리 상한 지정. 베타 중 불편하면 유료(월 약 7달러) |
 | DB · 로그인 | Supabase 무료 | **7일 동안 아무 요청이 없으면 프로젝트가 일시 정지됨** → GitHub Actions 예약 작업이 하루 한 번 서버 상태 확인(DB까지 닿는 것)을 부른다 |
 | 카탈로그 | 앱에 포함 + 서버에서 새 버전 배포 | 버전 번호와 해시 |
-| 안드로이드 | `./gradlew :app:bundleRelease` → Play Console **내부 테스트**(D4) | 개발자 계정 등록(1회 25달러)과 업로드 키 보관은 사장이 직접 |
+| 웹 | 앱 파일만 담은 공개 저장소 + GitHub Pages (`npx expo export -p web`) | HTTPS 주소 하나. 폰에서 "홈 화면에 추가" |
+| 안드로이드 | EAS Build(클라우드) → Play Console **내부 테스트**(D4) | Expo 계정(무료)과 Play 개발자 계정(1회 25달러)은 사장이 직접 |
+| 아이폰 (다음 차수) | EAS Build(클라우드, 맥 불필요) → 앱스토어 | 애플 개발자 계정(연 99달러), 애플 로그인 추가 |
 | 안내 페이지 | GitHub Pages | 개인정보처리방침, 계정 삭제 요청 방법 |
 
 ## 17. 위험과 대응
@@ -416,8 +436,10 @@ flowchart LR
 | 유명·대형 브랜드만 상위에 몰림 | 브랜드 최대 2개, 다양성 기준 |
 | 무료 서버 잠듦 / Supabase 일시 정지 | D1(핵심 기능은 서버 없이), 하루 한 번 깨우기 |
 | 앱의 공개 키로 DB를 직접 읽음 | 12-1절 `app` 스키마 + RLS |
-| 안드로이드 빌드가 느려 훅(5분) 초과 | Gradle 한 번에 실행, 에뮬레이터 테스트는 훅에서 뺌 |
-| 이 컴퓨터에 Android Studio(SDK)가 없음 | 4단계 시작 전 사장에게 설치 부탁 (루트 HANDOFF 6번) |
+| 웹 내보내기 + Playwright가 느려 훅(5분) 초과 | 한 번만 내보내고 테스트를 나눠 돌림, 폰 앱 확인은 훅에서 뺌 |
+| react-native-web에서 폰과 웹이 다르게 보임 | 승인 목록은 웹으로, 폰은 6단계 폰 앱 확인으로 따로 본다. 다른 부분은 `*.web.tsx`로만 나눈다 |
+| 웹 주소만 감싼 앱이라 앱스토어 거절 | E안은 진짜 앱으로 빌드되고 데이터·계산이 앱 안에 있음 |
+| 이 컴퓨터에 Android Studio가 없음 | EAS 클라우드 빌드라 필요 없음. 에뮬레이터로 확인하고 싶을 때만 설치 |
 | 카탈로그가 커져 앱이 무거워짐 | 1.4만 개 기준 압축 약 1MB. 5MB가 넘으면 압축 형식(바이너리)으로 바꿈 |
 
 ## 18. 아직 정하지 않은 것

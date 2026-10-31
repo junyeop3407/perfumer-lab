@@ -27,7 +27,7 @@ final class TestCatalogs {
     static final Path APP_DIR = Path.of("..").toAbsolutePath().normalize();
 
     static Catalog fixtureCatalog() {
-        Path p = APP_DIR.resolve("app/src/test/resources/catalog/test_catalog.json.gz");
+        Path p = APP_DIR.resolve("tests/fixtures/test_catalog.json.gz");
         try (Reader r = new InputStreamReader(new GZIPInputStream(Files.newInputStream(p)), StandardCharsets.UTF_8)) {
             return parse(JsonParser.parseReader(r).getAsJsonObject());
         } catch (IOException e) {

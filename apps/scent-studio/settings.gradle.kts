@@ -16,5 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "scent-studio"
 
-// 4단계에서 :backend 를 더한다 (docs/design.md 4절)
-include(":engine", ":app")
+// 앱은 Expo(app/, npm)로 바뀌었다. Java 엔진은 TypeScript로 옮긴 뒤 지운다 (docs/design.md 1-1절)
+include(":engine")
