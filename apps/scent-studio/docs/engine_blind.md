@@ -2,11 +2,11 @@
 
 > 카탈로그 `2026.10.31` · 엔진 v3 · 후보 향수 13,786개 · `py pipeline/evaluate.py`로 만든 문서
 
-조합마다 A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.
+조합마다(또는 줄마다) A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.
 한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.
 **이 파일의 답을 내기 전에는 `engine_report.md`의 추천 목록을 보지 않도록, 그 표들은 답을 받은 뒤에 넣습니다.**
 
-답은 이렇게 주세요: `블라인드: 1A 2B 3A …`
+답은 이렇게 주세요: `블라인드: 1A 2B 3A …` (조합마다) 또는 `블라인드: 1-1A 1-2B … 10-5A` (줄마다, 양쪽이 같은 향수면 `=`)
 
 ## 1. 핑크 페퍼 · 장미 · 패출리
 
@@ -42,7 +42,7 @@
 
 | | A | B |
 |---|---|---|
-| 1 | Estēe Lauder — Bronze Goddess Capri (플로럴 · 스위트 · 프루티) | Joop! — Joop! Homme Joop! 1989 Eau de Toilette (스위트 · 오리엔탈 · 신세틱) |
+| 1 | Estée Lauder — Bronze Goddess Capri (플로럴 · 스위트 · 프루티) | Joop! — Joop! Homme Joop! 1989 Eau de Toilette (스위트 · 오리엔탈 · 신세틱) |
 | 2 | Dior — J'adore Dior 2002 Eau de Toilette (플로럴 · 스위트 · 시트러스) | Mugler — Angel Mugler 1992 Eau de Parfum (스위트 · 구르망 · 오리엔탈) |
 | 3 | Tesori d'Oriente — Tiaré delle Indie (플로럴 · 스위트 · 프루티) | Chanel — Allure Homme Chanel 1999 Eau de Toilette (우디 · 스파이시 · 프레시) |
 | 4 | DKNY / Donna Karan — DKNY Women Gold (플로럴 · 프루티 · 스위트) | Dolce & Gabbana — The One Dolce & Gabbana 2006 Eau de Parfum (스위트 · 플로럴 · 프루티) |
@@ -68,6 +68,9 @@
 | 4 | Bath & Body Works — Sonoma Weekend Escape (프레시 · 플로럴 · 시트러스) | Bath & Body Works — Sonoma Weekend Escape (프레시 · 플로럴 · 시트러스) |
 | 5 | Lanvin — Éclat d'Arpège Gourmandise (프레시 · 플로럴 · 시트러스) | Lanvin — Éclat d'Arpège Gourmandise (프레시 · 플로럴 · 시트러스) |
 
+- 양쪽이 같은 향수인 줄: 6-4, 6-5 → `=`로 답하면 됩니다(집계에서 뺌)
+- 같은 두 향수가 자리만 바뀐 줄: 6-2/6-3 → 한 번만 셉니다
+
 ## 7. 카다멈 · 타바코 · 우드 · 앰버
 
 | | A | B |
@@ -78,6 +81,8 @@
 | 4 | Anfas — Shaghaf (스파이시 · 애니멀릭 · 오리엔탈) | Annette Neuffer — Autumn Nocturne (스파이시 · 스위트 · 레진) |
 | 5 | Al Haramain / الحرمين — Urbanist Prive Gold (레진 · 스파이시 · 우디) | The Merchant Of Venice — Oudrageous (스모키 · 레더 · 오리엔탈) |
 
+- 같은 두 향수가 자리만 바뀐 줄: 7-1/7-2 → 한 번만 셉니다
+
 ## 8. 복숭아 · 작약 · 머스크
 
 | | A | B |
@@ -87,6 +92,8 @@
 | 3 | Grès — Sphinx - Hommage à Greta Garbo (플로럴 · 프루티 · 프레시) | Boucheron — Jaïpur Boucheron 1994 Eau de Toilette (플로럴 · 프루티 · 파우더리) |
 | 4 | Salvatore Ferragamo — Incanto (플로럴 · 프루티 · 스위트) | Jovoy — Terra Incognita (스파이시 · 파우더리 · 플로럴) |
 | 5 | Roja Parfums — Elysium pour Femme (플로럴 · 프루티 · 스위트) | Roja Parfums — Elysium pour Femme (플로럴 · 프루티 · 스위트) |
+
+- 양쪽이 같은 향수인 줄: 8-1, 8-5 → `=`로 답하면 됩니다(집계에서 뺌)
 
 ## 9. 마린 노트 · 세이지 · 시더우드 약
 
@@ -105,5 +112,5 @@
 | 1 | Nobile 1942 — Il Capriccio del Maestro (스위트 · 스파이시 · 구르망) | Hermès — Eau d'Hermès (스파이시 · 애니멀릭 · 레더) |
 | 2 | Joop! — Joop! Homme Joop! 2021 Eau de Parfum (스위트 · 스파이시 · 오리엔탈) | Miyaz Perfume — Iris Cacao (우디 · 애니멀릭 · 스파이시) |
 | 3 | Brecourt — Mauvais Garçon (스위트 · 스파이시 · 우디) | Nobile 1942 — Il Capriccio del Maestro (스위트 · 스파이시 · 구르망) |
-| 4 | Kayali — Invite Only Amber | 23 (스위트 · 스파이시 · 오리엔탈) | House of Sillage — HoS N.001 (스위트 · 구르망 · 스파이시) |
+| 4 | Kayali — Invite Only Amber \| 23 (스위트 · 스파이시 · 오리엔탈) | House of Sillage — HoS N.001 (스위트 · 구르망 · 스파이시) |
 | 5 | Otto Kern — Beyond Horizon Otto Kern 2022 Eau de Toilette (스파이시 · 스위트 · 오리엔탈) | Alexandre.J — The Majestic Vanilla (스위트 · 시트러스 · 스파이시) |

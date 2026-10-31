@@ -89,6 +89,14 @@ def test_향수_key는_주소에서_만들고_슬래시가_없다():
     assert R.perfume_key("https://example.invalid/T001") == "T001"
 
 
+def test_브랜드_표기_오류를_고친다():
+    rows = [{"URL": "https://example.invalid/X1", "Brand": "Estēe Lauder", "Name": "Test", "Release_Year": "2000",
+             "Concentration": "NA", "Rating_Value": "8", "Rating_Count": "50", "Main_Accords": "citrus, floral",
+             "Top_Notes": "lemon", "Middle_Notes": "rose", "Base_Notes": "musk"}]
+    res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", brand_fixes={"Estēe Lauder": "Estée Lauder"})
+    assert [p["brand"] for p in res.catalog["perfumes"]] == ["Estée Lauder"]
+
+
 def test_노트_key_정리():
     assert R.note_key("  Ylang-Ylang ") == "ylang-ylang"
     assert R.note_key("Crème  Brûlée") == "creme brulee"

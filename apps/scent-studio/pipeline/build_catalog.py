@@ -79,6 +79,13 @@ def read_overrides(path: Path | None) -> dict[str, str]:
     return {R.note_key(r["note_key"]): r["family_code"].strip() for r in read_csv(path)}
 
 
+def read_brand_fixes(path: Path | None) -> dict[str, str]:
+    """원본의 브랜드 표기 오류 → 바른 이름 (사람이 고친 표, 2026-10-31)"""
+    if path is None or not path.exists():
+        return {}
+    return {r["raw"].strip(): r["fixed"].strip() for r in read_csv(path)}
+
+
 def read_korean(path: Path | None) -> dict[str, tuple[str, str]]:
     if path is None or not path.exists():
         return {}
@@ -90,7 +97,8 @@ def read_korean(path: Path | None) -> dict[str, tuple[str, str]]:
 
 def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           overrides: dict[str, str], korean: dict[str, tuple[str, str]],
-          version: str, source_note: str, junk: set[str] = frozenset()) -> BuildResult:
+          version: str, source_note: str, junk: set[str] = frozenset(),
+          brand_fixes: dict[str, str] | None = None) -> BuildResult:
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -130,7 +138,8 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
         if not accords or votes < params.min_votes:
             continue
         candidates.append(Perfume(
-            key=R.perfume_key(r["URL"]), brand=r["Brand"].strip(), name=r["Name"].strip(),
+            key=R.perfume_key(r["URL"]), brand=(brand_fixes or {}).get(r["Brand"].strip(), r["Brand"].strip()),
+            name=r["Name"].strip(),
             year=_int(r["Release_Year"]),
             concentration=None if R.is_na(r["Concentration"]) else r["Concentration"].strip(),
             rating=_float(r["Rating_Value"]), rating_count=votes,
@@ -375,7 +384,7 @@ def main() -> None:
         read_csv(raw), R.REAL, read_aliases(manual / "aliases.csv"),
         read_overrides(manual / "note_family_override.csv"), read_korean(manual / "notes_ko.csv"),
         version=version, source_note="Parfumo (TidyTuesday 2024-12-10 정리본). 커뮤니티 데이터 기반 추정치",
-        junk=read_junk(manual / "junk_notes.csv"),
+        junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"),
     )
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"
     write_catalog(result.catalog, out)

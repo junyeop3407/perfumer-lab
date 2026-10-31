@@ -7,8 +7,10 @@
   - docs/engine_report.md  나머지 기준표. 지금 엔진의 추천 목록이 보이는 표(맹점 Top 5, 눈으로 평가)는
                            사장이 블라인드 비교 답을 낸 뒤에만 넣는다 (먼저 보면 A/B가 드러나므로)
 사장의 답은 docs/engine_blind_answers.txt 에 적는다. 예:
-  블라인드: 1A 2B 3A 4A 5B 6A 7B 8A 9A 10B
-  점수: 4 3 4 5 3 4 4 3 4 4
+  출처: 사장                      (Claude가 대신 고른 임시 답안이면 claude-provisional)
+  고정본: engine_blind_v3_pairs.json   (답을 단 문서의 줄별 A/B 향수. 문서를 다시 만들어도 이걸로 채점)
+  블라인드: 1-1A 1-2B … 10-5A    (조합-줄마다 A/B, 양쪽이 같은 향수면 =)  또는  1A 2B … 10B (조합마다)
+  점수: 4 3 4 5 3 4 4 3 4 4       (눈으로 평가, 없으면 비워 둔다)
 A/B 배치는 고정된 난수로 정하므로 파일에 따로 남기지 않는다 (같은 카탈로그·엔진이면 언제 돌려도 같음).
 """
 from __future__ import annotations
@@ -55,18 +57,74 @@ def blend(spec):
     return [BlendNote(k, layer, engine_ref.intensity(s)) for k, layer, s in spec]
 
 
-def read_answers() -> tuple[dict[int, str], list[int]] | None:
-    """사장의 답: ({조합 번호: "A"|"B"}, [점수 10개]). 파일이 없으면 None"""
+def cell(text: str) -> str:
+    """마크다운 표 칸: 이름 안의 | 가 칸을 밀지 않게"""
+    return text.replace("|", "\\|")
+
+
+def read_answers() -> dict | None:
+    """답안 파일: {"source", "pairs"(고정본 경로|None), "lines"{(조합, 줄): A|B|=} 또는 "combos"{조합: A|B}, "scores"[]}.
+    파일이 없으면 None. # 으로 시작하는 줄은 설명"""
     if not ANSWERS.exists():
         return None
-    text = ANSWERS.read_text(encoding="utf-8")
-    blind_line = re.search(r"블라인드\s*:(.*)", text)
-    score_line = re.search(r"점수\s*:(.*)", text)
-    picks = {int(n): ab.upper() for n, ab in re.findall(r"(\d+)\s*([ABab])", blind_line.group(1))} if blind_line else {}
-    scores = [int(x) for x in re.findall(r"\d", score_line.group(1))] if score_line else []
-    if sorted(picks) != list(range(1, len(BLENDS) + 1)) or len(scores) != len(BLENDS):
-        raise SystemExit(f"{ANSWERS.name} 형식이 맞지 않습니다: 블라인드 1~{len(BLENDS)}번 A/B, 점수 {len(BLENDS)}개")
-    return picks, scores
+    text = "\n".join(l for l in ANSWERS.read_text(encoding="utf-8").splitlines() if not l.lstrip().startswith("#"))
+
+    def field(name: str) -> str:
+        m = re.search(rf"{name}\s*:(.*)", text)
+        return m.group(1).strip() if m else ""
+
+    blind, score_text = field("블라인드"), field("점수")
+    ans = {"source": field("출처") or "사장", "pairs": DOCS / field("고정본") if field("고정본") else None,
+           "scores": [int(x) for x in re.findall(r"\d", score_text)], "lines": {}, "combos": {}}
+    if re.search(r"\d+-\d+", blind):
+        ans["lines"] = {(int(i), int(j)): ab.upper() for i, j, ab in re.findall(r"(\d+)-(\d+)\s*([ABab=])", blind)}
+        expected = {(i, j) for i in range(1, len(BLENDS) + 1) for j in range(1, 6)}
+        if set(ans["lines"]) != expected:
+            raise SystemExit(f"{ANSWERS.name}: 블라인드 답이 1-1 ~ {len(BLENDS)}-5 를 모두 담아야 합니다")
+    else:
+        ans["combos"] = {int(n): ab.upper() for n, ab in re.findall(r"(\d+)\s*([ABab])", blind)}
+        if sorted(ans["combos"]) != list(range(1, len(BLENDS) + 1)):
+            raise SystemExit(f"{ANSWERS.name}: 블라인드 1~{len(BLENDS)}번 A/B")
+    if ans["scores"] and len(ans["scores"]) != len(BLENDS):
+        raise SystemExit(f"{ANSWERS.name}: 점수는 {len(BLENDS)}개 (아직이면 비워 둔다)")
+    return ans
+
+
+def score_lines(ans: dict, pairs: list, engine_side: dict[int, str]) -> tuple[float, list[str], dict]:
+    """줄별 답 채점. 같은 향수 줄은 빼고, 같은 두 향수가 자리만 바뀐 줄은 처음 것만 센다(일관성만 확인).
+    조합마다 남은 줄에서 엔진 쪽을 더 많이 고르면 1, 같으면 0.5. → (점수, 표 줄, 집계)"""
+    total, rows = 0.0, []
+    tally = {"engine": 0, "other": 0, "same": [], "dup": [], "inconsistent": []}
+    for i, lines in enumerate(pairs, 1):
+        seen: dict = {}
+        e = o = 0
+        for j, (a, b) in enumerate(lines, 1):
+            pick = ans["lines"][(i, j)]
+            if a == b:
+                tally["same"].append(f"{i}-{j}")
+                continue
+            chosen = a if pick == "A" else b if pick == "B" else None
+            key = frozenset((a, b))
+            if key in seen:
+                first, first_chosen = seen[key]
+                tally["dup"].append(f"{i}-{first}/{i}-{j}")
+                if chosen != first_chosen:
+                    tally["inconsistent"].append(f"{i}-{first}/{i}-{j}")
+                continue
+            seen[key] = (j, chosen)
+            if pick == "=":
+                continue
+            if pick == engine_side[i]:
+                e += 1
+            else:
+                o += 1
+        win = 1.0 if e > o else 0.5 if e == o else 0.0
+        total += win
+        tally["engine"] += e
+        tally["other"] += o
+        verdict = "승" if win == 1 else "동점" if win else "패"
+        rows.append(f"| {i}. {BLENDS[i - 1][0]} | {engine_side[i]} | {e} : {o} | {verdict} |")
+    return total, rows, tally
 
 
 def main() -> None:
@@ -91,16 +149,17 @@ def main() -> None:
     # ---------- 블라인드 비교 (따로 파일) ----------
     rng = random.Random(BLIND_SEED)
     engine_side: dict[int, str] = {}
+    current_pairs: list = []
     blind = [
         "# 블라인드 비교",
         "",
         header,
         "",
-        "조합마다 A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.",
+        "조합마다(또는 줄마다) A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.",
         "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
         "**이 파일의 답을 내기 전에는 `engine_report.md`의 추천 목록을 보지 않도록, 그 표들은 답을 받은 뒤에 넣습니다.**",
         "",
-        "답은 이렇게 주세요: `블라인드: 1A 2B 3A …`",
+        "답은 이렇게 주세요: `블라인드: 1A 2B 3A …` (조합마다) 또는 `블라인드: 1-1A 1-2B … 10-5A` (줄마다, 양쪽이 같은 향수면 `=`)",
         "",
     ]
     for i, (name, spec) in enumerate(BLENDS, 1):
@@ -109,11 +168,23 @@ def main() -> None:
         a_is_engine = rng.random() < 0.5
         engine_side[i] = "A" if a_is_engine else "B"
         A, B = (current, note_only) if a_is_engine else (note_only, current)
+        current_pairs.append([[A[j]["perfumeKey"], B[j]["perfumeKey"]] for j in range(5)])
         blind += [f"## {i}. {name}", "", "| | A | B |", "|---|---|---|"]
         for j in range(5):
-            blind.append(f"| {j + 1} | {label(A[j]['perfumeKey'])} ({accords_ko(A[j]['perfumeKey'])}) "
-                         f"| {label(B[j]['perfumeKey'])} ({accords_ko(B[j]['perfumeKey'])}) |")
+            blind.append(f"| {j + 1} | {cell(label(A[j]['perfumeKey']))} ({accords_ko(A[j]['perfumeKey'])}) "
+                         f"| {cell(label(B[j]['perfumeKey']))} ({accords_ko(B[j]['perfumeKey'])}) |")
         blind.append("")
+        # 판별력 없는 줄 표시 (2026-10-31): 양쪽이 같은 향수 / 같은 두 향수가 자리만 바뀐 줄
+        ka, kb = [r["perfumeKey"] for r in A], [r["perfumeKey"] for r in B]
+        same = [f"{i}-{j + 1}" for j in range(5) if ka[j] == kb[j]]
+        swapped = [f"{i}-{j + 1}/{i}-{k + 1}" for j in range(5) for k in range(j + 1, 5)
+                   if ka[j] != kb[j] and {ka[j], kb[j]} == {ka[k], kb[k]}]
+        if same:
+            blind.append(f"- 양쪽이 같은 향수인 줄: {', '.join(same)} → `=`로 답하면 됩니다(집계에서 뺌)")
+        if swapped:
+            blind.append(f"- 같은 두 향수가 자리만 바뀐 줄: {', '.join(swapped)} → 한 번만 셉니다")
+        if same or swapped:
+            blind.append("")
     (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
 
     # ---------- 기준표 ----------
@@ -140,7 +211,7 @@ def main() -> None:
         groups = [by_key[r["perfumeKey"]]["group"] for r in recs]
         rank = groups.index(p["group"]) + 1 if p["group"] in groups else None  # 같은 향수의 다른 농도도 맞힌 것으로
         hit += 1 if rank and rank <= 3 else 0
-        rows.append(f"| {label(p['key'])} | {rank or '10위 밖'} |")
+        rows.append(f"| {cell(label(p['key']))} | {rank or '10위 밖'} |")
     results["reproduce"] = hit
     lines += ["## 1. 재현 (기준: 20개 중 15개 이상이 Top 3, 2026-10-30 사장 결정으로 16→15)", "",
               f"**결과: {hit} / 20 {'✅' if hit >= 15 else '❌'}**", "",
@@ -159,7 +230,7 @@ def main() -> None:
               f"- Top 5 중 1위 어코드가 시트러스인 향수: {citrus_first}개 (참고: 레몬을 '강'으로 골랐을 때 시트러스가 앞서는지)", ""]
     if answers is not None:
         lines += ["| 순위 | 향수 | 상위 어코드 | 점수 |", "|---|---|---|---|",
-                  *[f"| {i + 1} | {label(r['perfumeKey'])} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} |"
+                  *[f"| {i + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} |"
                     for i, r in enumerate(recs)], ""]
 
     # 3. 블라인드 비교 결과
@@ -167,12 +238,37 @@ def main() -> None:
     if answers is None:
         lines += ["`engine_blind.md`에서 답을 받은 뒤 채웁니다.", ""]
     else:
-        chosen, scores = answers
-        wins = sum(1 for i, ab in chosen.items() if engine_side[i] == ab)
-        results["blind"] = wins
-        lines += [f"**결과: {wins} / 10 {'✅' if wins >= 6 else '❌'}**", "",
-                  "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
-                  *[f"| {i}. {BLENDS[i - 1][0]} | {chosen[i]} | {engine_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
+        source = answers["source"]
+        if source != "사장":
+            lines += [f"> ⚠️ **임시 답안 (source: {source})**: 사람이 아니라 Claude가 향을 맡지 않고 노트 피라미드 지식과 "
+                      "어코드 라벨로 고른 답이다. 어코드 엔진 쪽에 유리하게 치우쳤을 수 있다. **사장 답안이 오면 그걸 기준으로 한다.**", ""]
+        if answers["lines"]:
+            pairs_file = answers["pairs"]
+            if pairs_file and pairs_file.exists():
+                pairs = [c["lines"] for c in json.loads(pairs_file.read_text(encoding="utf-8"))["combos"]]
+            else:
+                pairs = current_pairs
+            wins, rows, t = score_lines(answers, pairs, engine_side)
+            results["blind"] = wins
+            decided = t["engine"] + t["other"]
+            share = f"- 줄 단위: 엔진 쪽 {t['engine']} / {decided}줄 ({t['engine'] / decided:.0%})" if decided else "- 줄 단위: 판별 가능한 줄 없음"
+            consistent = "모두 같은 향수를 골랐음" if not t["inconsistent"] else "다르게 고름 " + ", ".join(t["inconsistent"])
+            doc_note = f"- 채점 기준: `{pairs_file.name if pairs_file else 'engine_blind.md (지금)'}`"
+            if pairs != current_pairs:
+                doc_note += " — ⚠️ 지금 문서와 줄 구성이 다름(답은 고정본 기준)"
+            lines += [f"**결과: {wins:g} / 10 {'✅' if wins >= 6 else '❌'}** (조합마다 남은 줄에서 엔진 쪽을 더 많이 고르면 1, 같으면 0.5)", "",
+                      share,
+                      f"- 뺀 줄 — 양쪽이 같은 향수: {', '.join(t['same']) or '없음'} · 자리만 바뀐 같은 쌍(뒤 줄은 세지 않음): {', '.join(t['dup']) or '없음'}",
+                      f"- 자리만 바뀐 쌍의 판단 일관성: {consistent}",
+                      doc_note, "",
+                      "| 조합 | 지금 엔진 쪽 | 엔진 : 다른 쪽 | 판정 |", "|---|---|---|---|", *rows, ""]
+        else:
+            chosen = answers["combos"]
+            wins = sum(1 for i, ab in chosen.items() if engine_side[i] == ab)
+            results["blind"] = wins
+            lines += [f"**결과: {wins} / 10 {'✅' if wins >= 6 else '❌'}**", "",
+                      "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
+                      *[f"| {i}. {BLENDS[i - 1][0]} | {chosen[i]} | {engine_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
 
     # 4. 눈으로 평가 (지금 엔진의 목록이 보이므로 블라인드 답 뒤에만)
     lines += ["## 4. 눈으로 평가 (기준: 평균 3.5점 이상)", ""]
@@ -184,15 +280,17 @@ def main() -> None:
         all_brands |= {by_key[r["perfumeKey"]]["brand"] for r in r10}
         top1.append(r10[0]["score"])
         top10.append(r10[-1]["score"])
-        score_text = f"{answers[1][i - 1]}점" if answers else "☐"
+        score_text = f"{answers['scores'][i - 1]}점" if answers and answers["scores"] else "☐"
         eye += [f"**{i}. {name}** — 조합 어코드: {', '.join(f'{acc_ko[a]} {p}%' for a, p in eng.display_ratios(b)[:4])} — 점수: {score_text}", "",
                 "| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |", "|---|---|---|---|---|",
-                *[f"| {j + 1} | {label(r['perfumeKey'])} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} | {r['grade']} |"
+                *[f"| {j + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} | {r['grade']} |"
                   for j, r in enumerate(r10[:5])], ""]
     if answers is None:
         lines += ["블라인드 비교 답을 받은 뒤, 조합마다 지금 엔진의 Top 5를 보여 드리고 1~5점을 받습니다.", ""]
+    elif not answers["scores"]:
+        lines += ["**점수 대기**: 조합마다 아래 Top 5를 보고 1~5점을 `engine_blind_answers.txt`의 `점수:` 줄에 적는다.", "", *eye]
     else:
-        avg = statistics.mean(answers[1])
+        avg = statistics.mean(answers["scores"])
         results["eye"] = avg
         lines += [f"**결과: 평균 {avg:.1f}점 {'✅' if avg >= 3.5 else '❌'}**", "", *eye]
 
@@ -221,7 +319,9 @@ def main() -> None:
     summary = (f"재현 {results['reproduce']}/20 · 맹점 {results['blindspot']}/5 (시트러스 1위 {citrus_first}) · "
                f"브랜드 {results['brands']}개 · Python {ms:.0f}ms/회")
     if answers:
-        summary += f" · 블라인드 {results['blind']}/10 · 눈으로 {results['eye']:.1f}점"
+        summary += f" · 블라인드 {results['blind']:g}/10 ({answers['source']})"
+        if "eye" in results:
+            summary += f" · 눈으로 {results['eye']:.1f}점"
     print(summary)
 
 
