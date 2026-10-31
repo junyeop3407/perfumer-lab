@@ -109,3 +109,7 @@
 ## 2026-10-31 엔진 v6: '강' 3.0 (어코드 쪽에만, 사장 결정)
 - `engine_ref.INTENSITIES`·`app/src/engine/params.ts` 강 2.0 → 3.0, 노트 일치도에는 강을 쓰지 않는다(지금 방식 유지). 근거 `docs/engine_strong_both.md`: 레몬 강 시트러스 1위 2/5, 맹점 4/5, 재현 20/20.
 - 카탈로그·가짜 카탈로그·골든 다시 만듦. 가짜 데이터 맹점 1위 T001 그대로.
+
+## 2026-10-31 복사 오류 규칙 점검 + 거의 복사 표시
+- 원본을 가린 87묶음 중 "조향사 단서"가 양쪽 브랜드에 모두 맞는 경우: **0개**(조향사 규칙 83은 정의상 한 브랜드만, 연도 규칙 4도 단서 브랜드 0). 양쪽이 다 맞는 12묶음은 이미 원본을 못 가려 묶음째 빠져 있었다. 앞으로도 연도 규칙이 이런 묶음을 고르지 않도록 확인을 넣었다. `copy_suspects.csv`에 `perfumer_clue_brands` 칸 추가.
+- 거의 복사: 카탈로그에서 브랜드가 다르고 노트·어코드가 같은 쌍은 4쌍뿐이고 모두 평가 수 차이 1~2(Outremer Lavande/XerJoff Zefiro, Bath & Body Works/Mazzolari, Aubusson/Armani Privé, Carner/Jo Malone). 기준 차이 5 이하로 `near_copy` 표시 8개, 후보에는 남김(뺄지는 사장 결정). 회귀 테스트 먼저.

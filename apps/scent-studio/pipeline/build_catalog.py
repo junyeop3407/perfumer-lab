@@ -100,6 +100,9 @@ def _perfumers(value: str | None) -> tuple[str, ...]:
     return tuple(sorted(x for x in R.split_list(value) if x))
 
 
+NEAR_COPY_MAX_VOTE_DIFF = 5  # 실제 데이터의 거의 복사 4쌍은 모두 차이 1~2 (2026-10-31)
+
+
 def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> tuple[list[Perfume], list[dict]]:
     """원본 데이터셋의 복사 오류 (2026-10-31 사장 결정): 브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같은 묶음.
     원본 데이터셋(TidyTuesday Parfumo)에서 한 향수의 상세 정보(노트·어코드·평점·조향사)가 다른 향수에 들어간 것으로 보인다.
@@ -137,6 +140,8 @@ def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> t
         plausible = [p for p in members if not implausible_year(p)]
         if len(rel) == 1:
             original, reason = rel[0], "조향사가 이 브랜드에서 다른 향수도 만듦"
+        elif len({p.brand for p in rel}) >= 2:  # 조향사 단서가 양쪽 브랜드에 다 맞으면 못 가린 것 (2026-10-31 사장 요청)
+            original, reason = None, "조향사 단서가 여러 브랜드에 맞음 → 묶음 전체 제외"
         elif len(plausible) == 1:
             original, reason = plausible[0], "다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음"
         else:
@@ -148,8 +153,27 @@ def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> t
             why = reason if keep or original is None else f"복사본 — 원본은 {original.brand} — {original.name} ({reason})"
             records.append({"set": no, "key": p.key, "brand": p.brand, "name": p.name, "year": p.year or "",
                             "rating_count": p.rating_count, "decision": "kept_original" if keep else "excluded",
-                            "reason": why})
-    return [p for p in perfumes if p.key not in excluded], records
+                            "reason": why, "perfumer_clue_brands": len({q.brand for q in rel})})
+    kept = [p for p in perfumes if p.key not in excluded]
+    # 거의 복사 (2026-10-31): 브랜드가 다르고 노트·어코드가 같은데 평가 수만 NEAR_COPY_MAX_VOTE_DIFF 이하로 다름.
+    # 수집 시점 차이로 평가 수만 달라진 복사로 보인다. 표시만 하고 후보에는 남긴다(뺄지는 사장 결정)
+    near: dict[tuple, list[Perfume]] = defaultdict(list)
+    for p in kept:
+        near[(tuple(tuple(sorted(p.layers[layer])) for layer in ("top", "middle", "base")), tuple(p.accords))].append(p)
+    no = max((r["set"] for r in records), default=0)
+    for members in near.values():
+        flagged = sorted({p.key: p for a in members for b in members
+                          if a.brand != b.brand and abs(a.rating_count - b.rating_count) <= NEAR_COPY_MAX_VOTE_DIFF
+                          for p in (a, b)}.values(), key=lambda p: p.key)
+        if not flagged:
+            continue
+        no += 1
+        for p in flagged:
+            records.append({"set": no, "key": p.key, "brand": p.brand, "name": p.name, "year": p.year or "",
+                            "rating_count": p.rating_count, "decision": "near_copy",
+                            "reason": f"브랜드가 다른데 노트·어코드가 같고 평가 수 차이 {NEAR_COPY_MAX_VOTE_DIFF} 이하",
+                            "perfumer_clue_brands": ""})
+    return kept, records
 
 
 def deconvolve(perfumes: list[Perfume], vec: dict[str, dict[str, float]],
@@ -248,9 +272,10 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
 
     perfumes, copy_records = mark_copy_suspects(perfumes, rows, brand_of)
     report["copy_suspects"] = copy_records
-    report["copy_sets"] = len({r["set"] for r in copy_records})
+    report["copy_sets"] = len({r["set"] for r in copy_records if r["decision"] != "near_copy"})
     report["copy_excluded"] = sum(1 for r in copy_records if r["decision"] == "excluded")
     report["copy_kept_original"] = sum(1 for r in copy_records if r["decision"] == "kept_original")
+    report["near_copy"] = sum(1 for r in copy_records if r["decision"] == "near_copy")
     report["candidates"] = len(perfumes)
     group_of = R.split_groups_by_notes(
         [(p.key, R.group_key(p.brand, p.name, p.concentration), p.all_notes, p.rating_count) for p in perfumes])
@@ -439,7 +464,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 후보(중복 합치기 전): {r['candidates_before_dedupe']:,} · 중복 합침: {r['duplicates_merged']:,} · **후보: {r['candidates']:,}**",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
-        f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 (`pipeline/copy_suspects.csv`, 2026-10-31)",
+        f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사로 표시(후보에 남김) {r.get('near_copy', 0):,}개 (`pipeline/copy_suspects.csv`, 2026-10-31)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
@@ -503,7 +528,7 @@ def main() -> None:
     write_catalog(result.catalog, assets)
     write_report(result, APP_DIR / "pipeline" / "report.md", "카탈로그 보고서")
     with (APP_DIR / "pipeline" / "copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["set", "key", "brand", "name", "year", "rating_count", "decision", "reason"])
+        w = csv.DictWriter(f, fieldnames=["set", "key", "brand", "name", "year", "rating_count", "decision", "reason", "perfumer_clue_brands"])
         w.writeheader()
         w.writerows(result.report["copy_suspects"])
     print(f"카탈로그: {out.relative_to(APP_DIR)} · 후보 {result.report['candidates']:,} · "
