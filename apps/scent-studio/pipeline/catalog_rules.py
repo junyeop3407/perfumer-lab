@@ -124,6 +124,34 @@ _GROUP_WORDS = re.compile(
 )
 
 
+# 같은 이름 묶음 안에서 노트가 이만큼 이상 겹쳐야 같은 향수(농도만 다른 버전)로 본다 (자카드, 2026-10-31)
+GROUP_MIN_NOTE_OVERLAP = 0.5
+
+
+def split_groups_by_notes(items: list[tuple[str, str, set[str], int]]) -> dict[str, str]:
+    """(향수 key, 이름 묶음 group_key, 노트 집합, 평가 수) → {향수 key: 최종 묶음}.
+    이름에서 연도를 지우므로 "Joop! Homme 1989"와 노트가 전혀 다른 "Joop! Homme 2021", 해마다 다른
+    "CK One Summer 2004/2006"이 한 묶음이 되던 문제(2026-10-31)를 막는다. 이름 묶음 안에서 평가 많은 순으로,
+    앞 묶음의 대표(가장 평가 많은 향수)와 노트가 GROUP_MIN_NOTE_OVERLAP 이상 겹치면 그 묶음에, 아니면 새 묶음.
+    첫 묶음은 이름 묶음 값 그대로, 다음 묶음은 "#2", "#3"을 붙인다."""
+    by_base: dict[str, list[tuple[str, set[str], int]]] = {}
+    for key, base, notes, votes in items:
+        by_base.setdefault(base, []).append((key, notes, votes))
+    out: dict[str, str] = {}
+    for base, members in by_base.items():
+        clusters: list[tuple[str, set[str]]] = []  # (묶음 값, 대표 노트)
+        for key, notes, _ in sorted(members, key=lambda m: (-m[2], m[0])):
+            for group, rep in clusters:
+                if rep | notes and len(rep & notes) / len(rep | notes) >= GROUP_MIN_NOTE_OVERLAP:
+                    out[key] = group
+                    break
+            else:
+                group = base if not clusters else f"{base}#{len(clusters) + 1}"
+                clusters.append((group, notes))
+                out[key] = group
+    return out
+
+
 def group_key(brand: str, name: str, concentration: str | None) -> str:
     """추천에서 하나로 묶는 key: 이름에서 브랜드·연도·농도를 뺀 것 (design.md 8-5절).
     예: "Mediterraneo Carthusia 2018 Eau de Parfum" → "carthusia|mediterraneo"

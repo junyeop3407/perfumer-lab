@@ -162,7 +162,10 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     if dup_keys:
         raise SystemExit(f"향수 key가 겹칩니다: {dup_keys[:10]}")
     report["candidates"] = len(perfumes)
-    groups = Counter(R.group_key(p.brand, p.name, p.concentration) for p in perfumes)
+    group_of = R.split_groups_by_notes(
+        [(p.key, R.group_key(p.brand, p.name, p.concentration), p.all_notes, p.rating_count) for p in perfumes])
+    report["groups_split_by_notes"] = sum(1 for g in set(group_of.values()) if "#" in g)
+    groups = Counter(group_of.values())
     report["groups_with_versions"] = sum(1 for c in groups.values() if c > 1)
     n = len(perfumes)
 
@@ -297,7 +300,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
         "key": p.key, "brand": p.brand, "name": p.name, "year": p.year,
         "concentration": p.concentration, "rating": p.rating, "ratingCount": p.rating_count,
         "accords": p.accords, "top": p.layers["top"], "middle": p.layers["middle"], "base": p.layers["base"],
-        "group": R.group_key(p.brand, p.name, p.concentration),
+        "group": group_of[p.key],
     } for p in perfumes]
 
     catalog = {
@@ -333,6 +336,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 원본 행: {r['rows']:,} · 잘못된 어코드 값 버림: {r['junk_accord_values']:,} · 실재하지 않는 노트 이름 버림: {r['junk_note_values']:,}",
         f"- 후보(중복 합치기 전): {r['candidates_before_dedupe']:,} · 중복 합침: {r['duplicates_merged']:,} · **후보: {r['candidates']:,}**",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
+        f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
         f"- 노트: 전체 {r['notes_total']:,} · 목록 {r['notes_browse']:,} · 검색 전용 {r['notes_search']:,} · 고를 수 없음 {r['notes_hidden']:,}",
         f"- **미매핑 비율(후보 향수의 노트 중 고를 수 없는 노트의 비율): {r['unmapped_ratio']:.1%}** (기준 5% 이하)",
         f"- 한글명이 없는 고를 수 있는 노트: {r['selectable_without_korean']:,}",

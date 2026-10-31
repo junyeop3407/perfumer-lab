@@ -107,3 +107,25 @@ def test_커밋된_테스트_카탈로그가_가짜_데이터와_같다(catalog)
     committed = APP / "tests" / "fixtures" / "test_catalog.json.gz"
     with gzip.open(committed, "rt", encoding="utf-8") as f:
         assert json.load(f) == catalog
+
+
+def _row(key, name, year, conc, votes, top, middle, base):
+    return {"URL": f"https://example.invalid/{key}", "Brand": "Joop!", "Name": name, "Release_Year": year,
+            "Concentration": conc, "Rating_Value": "8", "Rating_Count": str(votes), "Main_Accords": "sweet, oriental",
+            "Top_Notes": top, "Middle_Notes": middle, "Base_Notes": base}
+
+
+def test_이름이_같아도_노트가_다르면_다른_묶음():
+    # 2026-10-31 사장 요청: 이름에서 연도를 지워 Joop! Homme 1989와 노트가 전혀 다른 2021이 한 향수로 묶였다
+    rows = [
+        _row("J89", "Joop! Homme Joop! 1989 Eau de Toilette", "1989", "Eau de Toilette", 2732,
+             "orange blossom, bergamot", "heliotrope, cinnamon", "vanilla, tonka bean, sandalwood"),
+        _row("J89AS", "Joop! Homme Joop! 1989 After Shave", "1989", "After Shave", 15,
+             "orange blossom, bergamot", "heliotrope, cinnamon", "vanilla, tonka bean, sandalwood"),
+        _row("J21", "Joop! Homme Joop! 2021 Eau de Parfum", "2021", "Eau de Parfum", 638,
+             "hazelnut, cardamom", "fir needle, moss", "cashmeran, vetiver"),
+    ]
+    g = {p["key"]: p["group"] for p in B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t").catalog["perfumes"]}
+    assert g["J89"] == g["J89AS"], "노트가 같은 농도 버전은 같은 묶음"
+    assert g["J89"] != g["J21"], "노트가 다른 새 향수는 다른 묶음"
+    assert g["J89"] == "joop!|homme", "평가 많은 쪽 묶음은 이름 그대로 (예전 묶음 값 유지)"

@@ -195,4 +195,4 @@
 
 ## 7. 계산 시간
 
-- Python 참조 엔진 1회 평균 146ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)
+- Python 참조 엔진 1회 평균 147ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)
