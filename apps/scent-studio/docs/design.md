@@ -255,7 +255,8 @@ apps/scent-studio/
 2. **어코드 유사도:** `accord_sim = cos(a_p, b)`. 하나라도 0벡터면 0
 3. **노트 일치도:** 고른 노트마다 `w_n = ln(1 + N/df(n))`. 같은 층에 있으면 1.0, 다른 층에만 있으면 0.5, 그 노트는 없지만 같은 계열 노트가 있으면 0.3, 없으면 0. `note_match = Σ w_n·c_n / Σ w_n`
 4. **취향 적합도:** `pref = Σ_{x의 계열 ∈ 선호 계열} a_p[x] / 100`
-5. **점수:** 선호 계열이 있으면 `0.45·accord_sim + 0.45·note_match + 0.1·pref`, 없으면 `(0.45·accord_sim + 0.45·note_match) / 0.9`
+5. **점수:** 선호 계열이 있으면 `0.35·accord_sim + 0.55·note_match + 0.1·pref`, 없으면 `(0.35·accord_sim + 0.55·note_match) / 0.9`
+   - 2026-10-31 사장 결정(engine v4): 45/45 → 35/55. 재현 실패가 "노트는 다 맞는데(일치 1.000) 커뮤니티 어코드가 노트로 계산한 어코드와 달라 밀림"이었다. 재현 15 → 17/20, 평가 많은 향수 100개 재현 87 → 96 (`docs/engine_weights.md`)
    - 2026-10-30 사장 결정: 기획의 60/30/10에서 45/45/10으로 바꿨다. 실제 데이터에서 60/30은 "향수의 노트를 그대로 넣으면 그 향수가 3위 안"이 9/20, 45/45는 15/20이었고 맹점 조합은 둘 다 5/5였다(`docs/engine_report.md`). `engine_version` 2
 
 ### 8-5. 정렬과 다양성
@@ -279,7 +280,7 @@ apps/scent-studio/
 | FAR_FAMILIES | 고른 노트의 계열이 딱 2개이고 휠 거리가 4 이상 | "대비가 큰 조합이에요. 사이를 잇는 ○○ 계열을 더하면 부드러워져요" |
 
 ### 8-8. 숫자와 설정
-- 계산은 모두 double. 가중치(0.45/0.45/0.1, 1.0/0.5/0.3), K, 최소 평가 수, 브랜드 상한, 등급 기준은 `EngineParams` 한 곳에만 둔다. 바꿀 때는 Python(`pipeline/engine_ref.py`)·TypeScript(`app/src/engine/params.ts`)·골든 파일을 함께 바꾸고 `engine_version`을 올린다 (지금 v3, 2026-10-31)
+- 계산은 모두 double. 가중치(0.35/0.55/0.1, 1.0/0.5/0.3), K, 최소 평가 수, 브랜드 상한, 등급 기준은 `EngineParams` 한 곳에만 둔다. 바꿀 때는 Python(`pipeline/engine_ref.py`)·TypeScript(`app/src/engine/params.ts`)·골든 파일을 함께 바꾸고 `engine_version`을 올린다 (지금 v4, 2026-10-31)
 - 성능 목표: 중급 폰(앱·모바일 브라우저 모두)에서 추천 1회 300ms 이하, 카탈로그 불러오기 1.5초 이하(후보 1.4만 × 21차원이라 여유 있음). 웹에서 계산이 화면을 멈추면 Web Worker로 옮긴다
 - TypeScript 엔진의 숫자는 JS number(=double)라 Python과 같은 결과를 낸다. 반올림 규칙(0.5 올림)은 직접 함수로 쓴다
 

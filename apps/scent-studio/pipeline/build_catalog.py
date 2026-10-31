@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # 같은 폴더의 규
 import catalog_rules as R  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 3  # 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79
+ENGINE_VERSION = 4  # 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
 
 
 @dataclass
@@ -167,6 +167,15 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     report["groups_split_by_notes"] = sum(1 for g in set(group_of.values()) if "#" in g)
     groups = Counter(group_of.values())
     report["groups_with_versions"] = sum(1 for c in groups.values() if c > 1)
+    # 노트 데이터(층별 노트)가 완전히 같은 향수 묶음 (2026-10-31): 같은 향수의 농도 버전이 아니면 클론·중복 등록
+    same_notes: dict[tuple, list[Perfume]] = defaultdict(list)
+    for p in perfumes:
+        same_notes[tuple(tuple(sorted(p.layers[layer])) for layer in ("top", "middle", "base"))].append(p)
+    clone_sets = [ps for ps in same_notes.values() if len({group_of[p.key] for p in ps}) > 1]
+    report["identical_note_sets"] = sum(1 for ps in same_notes.values() if len(ps) > 1)
+    report["clone_sets"] = len(clone_sets)
+    report["clone_perfumes"] = sum(len(ps) for ps in clone_sets)
+    report["clone_sets_cross_brand"] = sum(1 for ps in clone_sets if len({p.brand for p in ps}) > 1)
     n = len(perfumes)
 
     # 5: 어코드 벡터와 전체 평균
@@ -336,6 +345,8 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 원본 행: {r['rows']:,} · 잘못된 어코드 값 버림: {r['junk_accord_values']:,} · 실재하지 않는 노트 이름 버림: {r['junk_note_values']:,}",
         f"- 후보(중복 합치기 전): {r['candidates_before_dedupe']:,} · 중복 합침: {r['duplicates_merged']:,} · **후보: {r['candidates']:,}**",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
+        f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
+        f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
         f"- 노트: 전체 {r['notes_total']:,} · 목록 {r['notes_browse']:,} · 검색 전용 {r['notes_search']:,} · 고를 수 없음 {r['notes_hidden']:,}",
         f"- **미매핑 비율(후보 향수의 노트 중 고를 수 없는 노트의 비율): {r['unmapped_ratio']:.1%}** (기준 5% 이하)",

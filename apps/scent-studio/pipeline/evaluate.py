@@ -214,17 +214,30 @@ def main() -> None:
         brands.add(p["brand"])
         if len(picks) == 20:
             break
-    hit, rows = 0, []
+    hit, rows, hits, limits = 0, [], {}, []
+    sig = lambda p: tuple(tuple(sorted(p[layer])) for layer in ("top", "middle", "base"))  # noqa: E731
     for p, notes in picks:
         recs = eng.recommend([BlendNote(k, layer, 1.0) for k, layer in notes], k=10)
         groups = [by_key[r["perfumeKey"]]["group"] for r in recs]
         rank = groups.index(p["group"]) + 1 if p["group"] in groups else None  # 같은 향수의 다른 농도도 맞힌 것으로
-        hit += 1 if rank and rank <= 3 else 0
+        ok = bool(rank and rank <= 3)
+        hit += ok
+        hits[sig(p)] = hits.get(sig(p), False) or ok
+        dropped = [k for layer in ("top", "middle", "base") for k in p[layer][3:]]
+        if not ok and dropped:
+            limits.append(f"- {cell(label(p['key']))}: 층마다 3개 제한으로 {', '.join(eng.notes[k]['nameKo'] for k in dropped)} 빠짐")
         rows.append(f"| {cell(label(p['key']))} | {rank or '10위 밖'} |")
     results["reproduce"] = hit
+    unique_hit = sum(hits.values())
+    clones = [p for p, _ in picks if sum(1 for q, _ in picks if sig(q) == sig(p)) > 1]
     lines += ["## 1. 재현 (기준: 20개 중 15개 이상이 Top 3, 2026-10-30 사장 결정으로 16→15)", "",
-              f"**결과: {hit} / 20 {'✅' if hit >= 15 else '❌'}**", "",
-              "<details><summary>향수별 순위</summary>", "", "| 향수 | 순위 |", "|---|---|", *rows, "", "</details>", ""]
+              f"**결과: {hit} / 20 {'✅' if hit >= 15 else '❌'}** · 고유 노트 기준(클론은 1개로): {unique_hit} / {len(hits)}", "",
+              "- 넣는 노트는 화면 규칙대로 층마다 앞 3개까지. 고유 노트 기준은 노트 데이터가 완전히 같은 향수(클론)를 하나로 세고, 그중 하나라도 맞히면 맞힌 것으로 본다",
+              f"- 이 20개 안의 클론: {', '.join(cell(label(p['key'])) for p in clones) or '없음'}", ""]
+    if limits:
+        lines += ["**알려진 한계: 화면에서 표현 불가** — 층마다 3개까지만 고를 수 있어서 이 향수들의 노트를 다 넣을 수 없다. "
+                  "빠진 노트(주로 시트러스)가 향의 성격을 정해서, 남은 노트로 만든 조합이 다른 계열로 기운다.", "", *limits, ""]
+    lines += ["<details><summary>향수별 순위</summary>", "", "| 향수 | 순위 |", "|---|---|", *rows, "", "</details>", ""]
 
     # 2. 맹점
     b0 = blend(BLIND_SPOT)

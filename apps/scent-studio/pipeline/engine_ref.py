@@ -8,7 +8,7 @@ import math
 from dataclasses import dataclass
 
 # 8-8절: 가중치는 이 한 곳에만 둔다. 바꾸면 TypeScript `app/src/engine/params.ts`·골든 파일도 함께 바꾸고 ENGINE_VERSION을 올린다
-W_ACCORD, W_NOTE, W_PREF = 0.45, 0.45, 0.1  # 2026-10-30 사장 결정 (기획 60/30에서 변경, engine_report.md)
+W_ACCORD, W_NOTE, W_PREF = 0.35, 0.55, 0.1  # 2026-10-31 사장 결정 v4: 45/45 → 35/55 (재현 실패 = 노트는 다 맞는데 어코드가 달라 밀림, docs/engine_weights.md)
 C_SAME_LAYER, C_OTHER_LAYER, C_SAME_FAMILY = 1.0, 0.5, 0.3
 LAYER_WEIGHT = {"top": 1.0, "middle": 1.0, "base": 1.0}
 BRAND_CAP = 2
