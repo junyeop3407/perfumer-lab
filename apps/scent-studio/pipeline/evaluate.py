@@ -94,6 +94,54 @@ def reproduction_picks(catalog: dict, eng: Engine, n: int) -> list[tuple[dict, l
 REPRO_DROP_SEED = 20261031
 V3_COMPARE_SEED = 20261101  # 지금 엔진 vs v3 블라인드의 A/B 배치
 V3_ANSWERS = DOCS / "engine_blind_vs_v3_answers.txt"
+# v6 vs v3 비교 조합 (2026-10-31 사장 지시): 기준선 조합 중 두 엔진 Top 5가 2개 이상 다른 1·2·3·4·8·10번 +
+# 새 조합 6개(experiments/pick_v3_combos.py가 "두 엔진이 다른가"만 보고 적은 순서대로 고름, docs/engine_v3_combo_pick.md)
+V3_EXTRA_COMBOS = [
+    ("자몽 · 장미 · 머스크", [("grapefruit", "top", "medium"), ("rose", "middle", "medium"), ("musk", "base", "medium")]),
+    ("핑크 페퍼 · 장미 · 패출리 강", [("pink pepper", "top", "medium"), ("rose", "middle", "medium"), ("patchouli", "base", "strong")]),
+    ("레몬 · 라벤더 · 통카 빈", [("lemon", "top", "medium"), ("lavender", "middle", "medium"), ("tonka bean", "base", "medium")]),
+    ("베르가못 · 아이리스 · 머스크 강", [("bergamot", "top", "medium"), ("iris", "middle", "medium"), ("musk", "base", "strong")]),
+    ("베르가못 · 자스민 · 패출리 · 바닐라", [("bergamot", "top", "medium"), ("jasmine", "middle", "medium"),
+                                    ("patchouli", "base", "medium"), ("vanilla", "base", "medium")]),
+    ("오렌지 · 카다멈 · 패출리", [("orange", "top", "medium"), ("cardamom", "middle", "medium"), ("patchouli", "base", "medium")]),
+]
+# 눈으로 평가 점수로 등급 기준값을 고를 때 비교할 후보 (매우 비슷, 비슷)
+GRADE_CANDIDATES = [(0.87, 0.79), (0.89, 0.82), (0.90, 0.84), (0.92, 0.87)]
+
+
+def combo_result(ans: dict, side: dict[int, str], combos: list) -> list[str]:
+    """조합 단위 답 집계. 일부 조합만 답해도 센다(2026-10-31). 판정(60% 이상)은 모든 조합에 답한 뒤에만"""
+    got = ans["combos"]
+    wins = sum(1 for i, ab in got.items() if side[i] == ab)
+    need = math.ceil(0.6 * len(combos))
+    if len(got) == len(combos):
+        head = f"**결과: {wins} / {len(combos)} {'✅' if wins >= need else '❌'}** (출처: {ans['source']})"
+    else:
+        head = (f"**부분 답 {len(got)} / {len(combos)}개: 지금 엔진 쪽 {wins}개** (출처: {ans['source']}) — "
+                f"판정(기준 {need}개)은 모든 조합에 답한 뒤에")
+    return [head, "", "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
+            *[f"| {i}. {combos[i - 1][0]} | {got[i]} | {side[i]} |" for i in sorted(got)]]
+
+
+def v3_combos() -> list:
+    return [BLENDS[i - 1] for i in (1, 2, 3, 4, 8, 10)] + V3_EXTRA_COMBOS
+
+
+def grade_candidate_rows(tops: dict[int, list[dict]], scores: dict[int, int]) -> list[str]:
+    """등급 기준값 후보마다 사람 점수와 얼마나 맞는지 (2026-10-31 사장 요청).
+    tops: {조합: Top 10 추천(점수 높은 순)}, scores: {조합: 눈으로 평가 1~5점}(일부만 있어도 됨)"""
+    good = [i for i, sc in scores.items() if sc >= 4]
+    bad = [i for i, sc in scores.items() if sc <= 2]
+    rows = []
+    for vs, sm in GRADE_CANDIDATES:
+        top1_vs = sum(1 for i in good if tops[i][0]["score"] >= vs)
+        bad_vs = sum(1 for i in bad if any(r["score"] >= vs for r in tops[i][:5]))
+        none = sum(1 for recs in tops.values() if all(r["score"] < vs for r in recs))
+        g10 = [("VS" if r["score"] >= vs else "S" if r["score"] >= sm else "R") for recs in tops.values() for r in recs]
+        pct = lambda a, b: f"{a}/{b} ({a / b:.0%})" if b else "해당 없음"  # noqa: E731
+        rows.append(f"| {vs} / {sm} | {pct(top1_vs, len(good))} | {pct(bad_vs, len(bad))} | {none} "
+                    f"| {g10.count('VS')} / {g10.count('S')} / {g10.count('R')} |")
+    return rows
 
 
 def undecidable_notes(i: int, ka: list[str], kb: list[str]) -> list[str]:
@@ -207,18 +255,18 @@ def reproduction_hits(eng: Engine, by_key: dict, picks: list, variant: str = "no
     return hit
 
 
-def parse_scores(text: str) -> list[int]:
-    """눈으로 평가 점수: "4 3 4 …"(조합 순서대로) 또는 "1=4 2=3 …"(조합 번호=점수)"""
+def parse_scores(text: str) -> dict[int, int]:
+    """눈으로 평가 점수 → {조합 번호: 점수}. "4 3 4 …"(1번부터 순서대로) 또는 "1=4 11=3 …"(조합 번호=점수, 일부만 있어도 됨)"""
     pairs = re.findall(r"(\d+)\s*=\s*(\d)", text)
     if pairs:
-        by_no = {int(n): int(v) for n, v in pairs}
-        return [by_no[i] for i in sorted(by_no)] if sorted(by_no) == list(range(1, len(BLENDS) + 1)) else [-1]
-    return [int(x) for x in re.findall(r"\d", text.split("(")[0])]
+        return {int(n): int(v) for n, v in pairs}
+    return {i: int(x) for i, x in enumerate(re.findall(r"\d", text.split("(")[0]), 1)}
 
 
-def read_answers(path: Path | None = None) -> dict | None:
-    """답안 파일: {"source", "pairs"(고정본 경로|None), "lines"{(조합, 줄): A|B|=} 또는 "combos"{조합: A|B}, "scores"[]}.
-    파일이 없으면 None. # 으로 시작하는 줄은 설명"""
+def read_answers(path: Path | None = None, n_combos: int | None = None) -> dict | None:
+    """답안 파일: {"source", "pairs"(고정본 경로|None), "lines"{(조합, 줄): A|B|=} 또는 "combos"{조합: A|B}, "scores"{조합: 점수}}.
+    조합 단위 답과 점수는 일부 조합만 있어도 된다(2026-10-31). 파일이 없으면 None. # 으로 시작하는 줄은 설명"""
+    n_combos = n_combos or len(BLENDS)
     path = path or ANSWERS
     if not path.exists():
         return None
@@ -238,10 +286,10 @@ def read_answers(path: Path | None = None) -> dict | None:
             raise SystemExit(f"{ANSWERS.name}: 블라인드 답이 1-1 ~ {len(BLENDS)}-5 를 모두 담아야 합니다")
     else:
         ans["combos"] = {int(n): ab.upper() for n, ab in re.findall(r"(\d+)\s*([ABab])", blind)}
-        if sorted(ans["combos"]) != list(range(1, len(BLENDS) + 1)):
-            raise SystemExit(f"{ANSWERS.name}: 블라인드 1~{len(BLENDS)}번 A/B")
-    if ans["scores"] and (len(ans["scores"]) != len(BLENDS) or not all(1 <= x <= 5 for x in ans["scores"])):
-        raise SystemExit(f"{ANSWERS.name}: 점수는 1~5점 {len(BLENDS)}개 (아직이면 비워 둔다)")
+        if any(not 1 <= n <= n_combos for n in ans["combos"]):
+            raise SystemExit(f"{path.name}: 블라인드 조합 번호는 1~{n_combos}")
+    if any(not 1 <= n <= n_combos or not 1 <= v <= 5 for n, v in ans["scores"].items()):
+        raise SystemExit(f"{path.name}: 점수는 조합 1~{n_combos}번에 1~5점")
     return ans
 
 
@@ -313,7 +361,7 @@ def main() -> None:
     v3_side = {}
     if "--compare-v3" in sys.argv or V3_ANSWERS.exists():
         v3 = v3_recommender()
-        pairs_v3 = [(name, eng.recommend(blend(spec), k=5), v3(spec)) for name, spec in BLENDS]
+        pairs_v3 = [(name, eng.recommend(blend(spec), k=5), v3(spec)) for name, spec in v3_combos()]
         doc_v3, v3_side, _ = blind_doc(
             header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v3)입니다. 어느 쪽인지는 숨겨 두었습니다.",
             pairs_v3, V3_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v3)")
@@ -394,13 +442,12 @@ def main() -> None:
     # 3. 블라인드 비교 결과
     need = math.ceil(0.6 * len(BLENDS))  # 기준: 조합의 60% 이상 (10개면 6개, 12개면 8개)
     if V3_ANSWERS.exists():
-        v3_ans = read_answers(V3_ANSWERS)
-        v3_wins = sum(1 for i, ab in v3_ans["combos"].items() if v3_side[i] == ab)
-        results["blind_v3"] = v3_wins
-        lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v3 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상)", "",
-                  f"**결과: {v3_wins} / {len(BLENDS)} {'✅' if v3_wins >= need else '❌'}** (출처: {v3_ans['source']})", "",
-                  "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
-                  *[f"| {i}. {BLENDS[i - 1][0]} | {v3_ans['combos'][i]} | {v3_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
+        combos3 = v3_combos()
+        v3_ans = read_answers(V3_ANSWERS, len(combos3))
+        lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v3 "
+                  f"(기준: 지금 엔진 쪽을 {len(combos3)}개 중 {math.ceil(0.6 * len(combos3))}개 이상)", "",
+                  *combo_result(v3_ans, v3_side, combos3), ""]
+        results["blind_v3"] = sum(1 for i, ab in v3_ans["combos"].items() if v3_side[i] == ab)
     lines += [f"## 3. 블라인드 비교 — 기준선: 지금 엔진 vs 노트만 보는 방식 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]
     if answers is None:
         lines += ["`engine_blind.md`에서 답을 받은 뒤 채웁니다.", ""]
@@ -430,24 +477,25 @@ def main() -> None:
                       doc_note, "",
                       "| 조합 | 지금 엔진 쪽 | 엔진 : 다른 쪽 | 판정 |", "|---|---|---|---|", *rows, ""]
         else:
-            chosen = answers["combos"]
-            wins = sum(1 for i, ab in chosen.items() if engine_side[i] == ab)
-            results["blind"] = wins
-            lines += [f"**결과: {wins} / {len(BLENDS)} {'✅' if wins >= need else '❌'}**", "",
-                      "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
-                      *[f"| {i}. {BLENDS[i - 1][0]} | {chosen[i]} | {engine_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
+            results["blind"] = sum(1 for i, ab in answers["combos"].items() if engine_side[i] == ab)
+            lines += [*combo_result(answers, engine_side, BLENDS), ""]
 
     # 4. 눈으로 평가 (지금 엔진의 목록이 보이므로 블라인드 답 뒤에만)
     lines += ["## 4. 눈으로 평가 (기준: 평균 3.5점 이상)", ""]
     all_brands, top1, top10 = set(), [], []
-    eye = []
+    eye, tops = [], {}
+    # 블라인드 답을 받은 조합만 지금 엔진의 목록을 보여 준다 (답 안 한 조합의 A/B가 드러나지 않게)
+    answered = set(range(1, len(BLENDS) + 1)) if answers and answers["lines"] else set(answers["combos"]) if answers else set()
     for i, (name, spec) in enumerate(BLENDS, 1):
         b = blend(spec)
         r10 = eng.recommend(b, k=10)
+        tops[i] = r10
         all_brands |= {by_key[r["perfumeKey"]]["brand"] for r in r10}
         top1.append(r10[0]["score"])
         top10.append(r10[-1]["score"])
-        score_text = f"{answers['scores'][i - 1]}점" if answers and answers["scores"] else "☐"
+        if i not in answered:
+            continue
+        score_text = f"{answers['scores'][i]}점" if answers["scores"].get(i) else "☐"
         eye += [f"**{i}. {name}** — 조합 어코드: {', '.join(f'{acc_ko[a]} {p}%' for a, p in eng.display_ratios(b)[:4])} — 점수: {score_text}", "",
                 "| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |", "|---|---|---|---|---|",
                 *[f"| {j + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} | {r['grade']} |"
@@ -455,14 +503,16 @@ def main() -> None:
     if answers is None:
         lines += ["블라인드 비교 답을 받은 뒤, 조합마다 지금 엔진의 Top 5를 보여 드리고 1~5점을 받습니다.", ""]
     elif not answers["scores"]:
-        lines += ["**점수 대기**: 조합마다 아래 Top 5를 보고 1~5점을 `engine_blind_answers.txt`의 `점수:` 줄에 적는다.", "", *eye]
+        lines += ["**점수 대기**: 조합마다 아래 Top 5를 보고 1~5점을 `engine_blind_answers.txt`의 `점수:` 줄에 적는다"
+                  "(`1=4 11=3`처럼 일부만 적어도 된다). 블라인드 답을 받은 조합만 보인다.", "", *eye]
     else:
-        avg = statistics.mean(answers["scores"])
+        avg = statistics.mean(answers["scores"].values())
         results["eye"] = avg
         if answers["source"] != "사장":
             lines += [f"> ⚠️ **임시 점수 (source: {answers['source']})**: 사람이 아니라 Claude가 향을 맡지 않고 노트 지식과 "
                       "어코드 라벨로 매긴 점수다. **사장 점수가 오면 그걸로 덮어쓴다.**", ""]
-        lines += [f"**결과: 평균 {avg:.1f}점 {'✅' if avg >= 3.5 else '❌'}**", "", *eye]
+        part = "" if len(answers["scores"]) == len(BLENDS) else f" (점수 {len(answers['scores'])} / {len(BLENDS)}개만)"
+        lines += [f"**결과: 평균 {avg:.1f}점 {'✅' if avg >= 3.5 else '❌'}**{part}", "", *eye]
 
     # 5. 다양성
     results["brands"] = len(all_brands)
@@ -473,7 +523,19 @@ def main() -> None:
     lines += ["## 6. 점수 분포 (등급 기준값 정하기용)", "",
               f"- 1위 점수: 평균 {statistics.mean(top1):.3f} · 최소 {min(top1):.3f} · 최대 {max(top1):.3f}",
               f"- 10위 점수: 평균 {statistics.mean(top10):.3f} · 최소 {min(top10):.3f} · 최대 {max(top10):.3f}",
-              f"- 지금 기준(engine_ref.py): {engine_ref.GRADE_VERY_SIMILAR} 이상 매우 비슷 · {engine_ref.GRADE_SIMILAR} 이상 비슷 · 그 아래 참고", ""]
+              f"- 지금 기준(engine_ref.py): {engine_ref.GRADE_VERY_SIMILAR} 이상 매우 비슷 · {engine_ref.GRADE_SIMILAR} 이상 비슷 · 그 아래 참고", "",
+              "### 등급 기준값 후보 (눈으로 평가 점수 기준, 2026-10-31)", ""]
+    scores = answers["scores"] if answers else {}
+    if scores:
+        lines += ["- 4~5점 조합의 1위가 '매우 비슷'인 비율이 높고, 2점 이하 조합에 '매우 비슷'이 적을수록 사람 판단과 맞는다.",
+                  f"- 점수 받은 조합 {len(scores)}개 · 4~5점 {sum(1 for v in scores.values() if v >= 4)}개 · "
+                  f"2점 이하 {sum(1 for v in scores.values() if v <= 2)}개", "",
+                  "| 매우 비슷 / 비슷 | 4~5점 조합 중 1위가 매우 비슷 | 2점 이하 조합 중 Top 5에 매우 비슷이 있음 "
+                  f"| 매우 비슷이 하나도 없는 조합 ({len(tops)}개 중) | Top 10 등급: 매우 / 비슷 / 참고 |",
+                  "|---|---|---|---|---|", *grade_candidate_rows(tops, scores), ""]
+    else:
+        lines += ["눈으로 평가 점수가 들어오면 후보 "
+                  + ", ".join(f"{a}/{b}" for a, b in GRADE_CANDIDATES) + "마다 사람 점수와 맞는 정도를 계산한다.", ""]
 
     # 7. 계산 시간 (Python 참고값. 앱의 TypeScript 엔진은 Vitest 엔진 테스트에서 따로 잰다)
     t = time.perf_counter()

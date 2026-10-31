@@ -1,0 +1,320 @@
+{
+ "catalogVersion": "2026.10.31",
+ "engineVersion": 6,
+ "doc": "engine_blind_vs_v3.md",
+ "docSha256": "eb63aad46648e395860a8ec9f9874ce34c8668cf5b6008ff67cbe44e34b61b64",
+ "combos": [
+  {
+   "no": 1,
+   "name": "핑크 페퍼 · 장미 · 패출리",
+   "lines": [
+    [
+     "Sospiro:Duetto",
+     "Van_Cleef_Arpels:moonlight-rose"
+    ],
+    [
+     "Agent_Provocateur:Miss_AP",
+     "Parfums_dElmar:Elixir_d_Amour"
+    ],
+    [
+     "Nishane:favonius",
+     "Thameen:Peacock_Throne_Eau_de_Parfum"
+    ],
+    [
+     "Agent_Provocateur:L_Agent_Eau_de_Parfum",
+     "Nishane:favonius"
+    ],
+    [
+     "Teo_Cabanel:Alahine",
+     "The_Merchant_Of_Venice:imperial-emerald-eau-de-parfum"
+    ]
+   ]
+  },
+  {
+   "no": 2,
+   "name": "베르가못 · 장미 · 머스크",
+   "lines": [
+    [
+     "Floris:Private_Collection_Royal_Arms_Diamond_Edition",
+     "Molton_Brown:orange-bergamot-eau-de-parfum"
+    ],
+    [
+     "MiN_New_York:scent-stories-vol-2-ch-01-ad-lumen",
+     "Floris:Private_Collection_Royal_Arms_Diamond_Edition"
+    ],
+    [
+     "Galimard:Gelsomino",
+     "Versace:Yellow_Jeans"
+    ],
+    [
+     "Acqua_di_Parma:magnolia-infinita",
+     "Penhaligons:Luna"
+    ],
+    [
+     "Penhaligons:Luna",
+     "Floris:Special_No_127_Original_Gentlemen_s_Cologne"
+    ]
+   ]
+  },
+  {
+   "no": 3,
+   "name": "자몽 · 라벤더 · 베티버",
+   "lines": [
+    [
+     "Eisenberg:Eau_Fraiche_Eau_de_Parfum",
+     "Eisenberg:Eau_Fraiche_Eau_de_Parfum"
+    ],
+    [
+     "Rasasi:Rumz_Al_Rasasi_9459_pour_Lui",
+     "Angel_Schlesser:Selection_de_Memoires_Esprit_de_Gingembre_pour_Homme"
+    ],
+    [
+     "Hugo_Boss:Hugo_Eau_de_Toilette",
+     "Dior:Dior_Homme_Sport_2008_Eau_de_Toilette"
+    ],
+    [
+     "Maeurer_Wirtz:tabac-original-craftsman-eau-de-toilette",
+     "Azzaro:Azzaro_pour_Homme_L_Eau"
+    ],
+    [
+     "Lacoste:Booster_Eau_de_Toilette",
+     "Acqua_di_Parma:colonia-futura"
+    ]
+   ]
+  },
+  {
+   "no": 4,
+   "name": "만다린 · 자스민 · 바닐라",
+   "lines": [
+    [
+     "Estee_Lauder:Bronze_Goddess_Capri",
+     "Estee_Lauder:Bronze_Goddess_Capri"
+    ],
+    [
+     "DKNY:DKNY_Women_Gold",
+     "Tesori_dOriente:Tiare_delle_Indie"
+    ],
+    [
+     "Tesori_dOriente:Tiare_delle_Indie",
+     "Dolce_Gabbana:LEau_The_One"
+    ],
+    [
+     "Dior:J_adore_L_Eau_de_Toilette_2002",
+     "Dior:Bronze_Sweet_Sun"
+    ],
+    [
+     "Juicy_Couture:Viva_La_Juicy_La_Fleur_Eau_de_Toilette",
+     "John_Galliano:Parlezmoi_d_Amour_Eau_de_Parfum"
+    ]
+   ]
+  },
+  {
+   "no": 5,
+   "name": "복숭아 · 작약 · 머스크",
+   "lines": [
+    [
+     "Rituals:Oriental_Essences__Fleurs_de_L_Himalaya",
+     "Ex_Nihilo:fleur-narcotique-eau-de-parfum"
+    ],
+    [
+     "Ex_Nihilo:fleur-narcotique-eau-de-parfum",
+     "V_Canto:Ricina"
+    ],
+    [
+     "V_Canto:Ricina",
+     "Salvatore_Ferragamo:Incanto"
+    ],
+    [
+     "Ex_Nihilo:fleur-narcotique-signature-rose-de-mai",
+     "Roja_Parfums:elysium-pour-femme"
+    ],
+    [
+     "Salvatore_Ferragamo:Incanto",
+     "Gres:Sphinx_Hommage__Greta_Garbo"
+    ]
+   ]
+  },
+  {
+   "no": 6,
+   "name": "시나몬 · 통카 빈 · 바닐라 · 샌달우드",
+   "lines": [
+    [
+     "Brecourt:Mauvais_Garcon",
+     "Nobile_1942:Il_Capriccio_del_Maestro"
+    ],
+    [
+     "Nobile_1942:Il_Capriccio_del_Maestro",
+     "Brecourt:Mauvais_Garcon"
+    ],
+    [
+     "House_of_Sillage:HoS_N_001",
+     "Joop:joop-homme-eau-de-parfum"
+    ],
+    [
+     "Joop:joop-homme-eau-de-parfum",
+     "Kayali:invite-only-amber-23"
+    ],
+    [
+     "Comptoir_Sud_Pacifique:Eclats_d_Amandes",
+     "Otto_Kern:beyond-horizon-eau-de-toilette"
+    ]
+   ]
+  },
+  {
+   "no": 7,
+   "name": "자몽 · 장미 · 머스크",
+   "lines": [
+    [
+     "Davidoff:Cool_Water_Tender_Sea_Rose",
+     "Davidoff:Cool_Water_Tender_Sea_Rose"
+    ],
+    [
+     "Lanvin:Rumeur_2_Rose",
+     "Lanvin:Rumeur_2_Rose"
+    ],
+    [
+     "Rance_1795:eau-de-noblesse",
+     "Jo_Malone:Assam__Grapefruit"
+    ],
+    [
+     "Kenzo:Kenzo_Amour_I_Love_U",
+     "Floris:Fleur"
+    ],
+    [
+     "Tesori_dOriente:Japanese_Rituals",
+     "Kenzo:Kenzo_Amour_I_Love_U"
+    ]
+   ]
+  },
+  {
+   "no": 8,
+   "name": "핑크 페퍼 · 장미 · 패출리 강",
+   "lines": [
+    [
+     "Van_Cleef_Arpels:moonlight-rose",
+     "Sospiro:Duetto"
+    ],
+    [
+     "Jo_Malone:Dark_Amber_and_Ginger_Lily",
+     "Kenzo:Madly_Kenzo_Oud_Collection"
+    ],
+    [
+     "Parfums_dElmar:Elixir_d_Amour",
+     "Jo_Malone:Dark_Amber_and_Ginger_Lily"
+    ],
+    [
+     "House_of_Sillage:Nouez_moi",
+     "House_of_Sillage:Nouez_moi"
+    ],
+    [
+     "Nishane:favonius",
+     "Agent_Provocateur:L_Agent_Eau_de_Parfum"
+    ]
+   ]
+  },
+  {
+   "no": 9,
+   "name": "레몬 · 라벤더 · 통카 빈",
+   "lines": [
+    [
+     "English_Laundry:Notting_Hill",
+     "David_Beckham:Intimately_Beckham_Yours_Men"
+    ],
+    [
+     "Nicolai:New_York_Intense",
+     "Creed:Himalaya"
+    ],
+    [
+     "Eisenberg:Eau_Fraiche_Eau_de_Parfum",
+     "Paco_Rabanne:invictus-victory"
+    ],
+    [
+     "Diptyque:L_Eau_de_L_Eau",
+     "Eisenberg:Eau_Fraiche_Eau_de_Parfum"
+    ],
+    [
+     "Creed:Himalaya",
+     "English_Laundry:Notting_Hill"
+    ]
+   ]
+  },
+  {
+   "no": 10,
+   "name": "베르가못 · 아이리스 · 머스크 강",
+   "lines": [
+    [
+     "Floris:Private_Collection_Royal_Arms_Diamond_Edition",
+     "Floris:Private_Collection_Royal_Arms_Diamond_Edition"
+    ],
+    [
+     "Nina_Ricci:Capricci",
+     "marc-gebauer:purple-flamingo"
+    ],
+    [
+     "ArteOlfatto_Luxury_Perfumes:Giuggiola",
+     "Gianfranco_Ferre:Camicia_113"
+    ],
+    [
+     "Gianfranco_Ferre:Camicia_113",
+     "Lubin:Grisette"
+    ],
+    [
+     "Lubin:Grisette",
+     "LM_Parfums:Chemise_Blanche"
+    ]
+   ]
+  },
+  {
+   "no": 11,
+   "name": "베르가못 · 자스민 · 패출리 · 바닐라",
+   "lines": [
+    [
+     "Roja_Parfums:Unspoken_Parfum",
+     "Amouroud:Dark_Orchid"
+    ],
+    [
+     "Elizabeth_Arden:Red_Door_Velvet",
+     "Elizabeth_Arden:Red_Door_Velvet"
+    ],
+    [
+     "Molinard:Chypre_Charnel",
+     "Bois_1920:fondentarancio"
+    ],
+    [
+     "Agent_Provocateur:Lace_Noir",
+     "Roja_Parfums:Ti_Amo"
+    ],
+    [
+     "Lubin:L_de_Lubin_Eau_de_Toilette",
+     "Volnay:Objet_Celeste"
+    ]
+   ]
+  },
+  {
+   "no": 12,
+   "name": "오렌지 · 카다멈 · 패출리",
+   "lines": [
+    [
+     "Reminiscence:Reminiscence_pour_Homme",
+     "Penhaligons:Zizonia"
+    ],
+    [
+     "Penhaligons:Zizonia",
+     "Comptoir_Sud_Pacifique:Barbier_des_Isles"
+    ],
+    [
+     "Comptoir_Sud_Pacifique:Barbier_des_Isles",
+     "Acqua_di_Parma:sandalo-eau-de-parfum"
+    ],
+    [
+     "Escada:Escada_pour_Homme_Eau_de_Parfum",
+     "Issey_Miyake:L_Eau_d_Issey_pour_Homme_INTENSE"
+    ],
+    [
+     "L_Erbolario:Assenzio",
+     "Cartier:Declaration"
+    ]
+   ]
+  }
+ ]
+}
