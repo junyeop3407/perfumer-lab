@@ -34,6 +34,11 @@ COMBOS = [
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    out_file, profile_note = "engine_strong.md", "엔진 v3 프로필"
+    if "--candidate" in sys.argv:  # 후보 프로필("함께 든 노트 몫 빼기", note_profile_check.py)로 같은 시험
+        from note_profile_check import deconvolved
+        cat = deconvolved(cat)
+        out_file, profile_note = "engine_strong_candidate.md", "후보 프로필(함께 든 노트 몫 빼기, `note_profile_check.py`)"
     eng = E.Engine(cat)
     E.W_ACCORD, E.W_NOTE = WEIGHTS
     by = {p["key"]: p for p in cat["perfumes"]}
@@ -48,7 +53,7 @@ def main() -> None:
         return eng.accords[max(range(len(prof)), key=lambda i: prof[i])]
 
     out = ["# '강' 값 시험", "",
-           f"> `py pipeline/experiments/strong_value_test.py` (2026-10-31). 어코드 {WEIGHTS[0]} : 노트 {WEIGHTS[1]}, 엔진 v3 프로필. "
+           f"> `py pipeline/experiments/strong_value_test.py` (2026-10-31). 어코드 {WEIGHTS[0]} : 노트 {WEIGHTS[1]}, {profile_note}. "
            "강 1.0 = 모두 '중'(기준선).",
            "> '강 어코드 1위' = Top 5 중 1위 어코드가 '강' 노트의 대표 어코드인 향수 수. "
            "'중 어코드 남음' = Top 5 중 '중' 노트의 대표 어코드를 (목록 어디에든) 가진 향수 수. 0/5에 가까우면 '강' 노트가 조합을 덮은 것.",
@@ -81,7 +86,7 @@ def main() -> None:
                           for i, r in enumerate(recs)], ""]
         summary.append(f"| {name} | {kind} | {note_ko[sk]} → {ko[sa]} | " + " | ".join(cells) + " |")
         print(name, "|", " / ".join(cells))
-    (APP / "docs" / "engine_strong.md").write_text("\n".join(out + summary + [""] + details), encoding="utf-8")
+    (APP / "docs" / out_file).write_text("\n".join(out + summary + [""] + details), encoding="utf-8")
 
 
 if __name__ == "__main__":
