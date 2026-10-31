@@ -6,7 +6,9 @@
   - docs/engine_blind.md   블라인드 비교만 (A/B 중 어느 쪽이 지금 엔진인지 숨김)
   - docs/engine_report.md  나머지 기준표. 지금 엔진의 추천 목록이 보이는 표(맹점 Top 5, 눈으로 평가)는
                            사장이 블라인드 비교 답을 낸 뒤에만 넣는다 (먼저 보면 A/B가 드러나므로)
-사장의 답은 docs/engine_blind_answers.txt 에 적는다. 예:
+주 비교(지금 엔진 vs 예전 엔진 v3) 문서는  py pipeline/evaluate.py --compare-v3  로 docs/engine_blind_vs_v3.md 를 만들고,
+답은 docs/engine_blind_vs_v3_answers.txt 에 조합 단위로 적는다(블라인드: 1A 2B … 12A).
+기준선(지금 엔진 vs 노트만) 답은 docs/engine_blind_answers.txt 에 적는다. 예:
   출처: 사장                      (Claude가 대신 고른 임시 답안이면 claude-provisional)
   고정본: engine_blind_v3_pairs.json   (답을 단 문서의 줄별 A/B 향수. 문서를 다시 만들어도 이걸로 채점)
   블라인드: 1-1A 1-2B … 10-5A    (조합-줄마다 A/B, 양쪽이 같은 향수면 =)  또는  1A 2B … 10B (조합마다)
@@ -90,6 +92,92 @@ def reproduction_picks(catalog: dict, eng: Engine, n: int) -> list[tuple[dict, l
 
 
 REPRO_DROP_SEED = 20261031
+V3_COMPARE_SEED = 20261101  # 지금 엔진 vs v3 블라인드의 A/B 배치
+V3_ANSWERS = DOCS / "engine_blind_vs_v3_answers.txt"
+
+
+def undecidable_notes(i: int, ka: list[str], kb: list[str]) -> list[str]:
+    """판별력 없는 줄 표시 (2026-10-31): 양쪽이 같은 향수 / 같은 향수들이 자리만 돈 줄(맞바꿈·순환) / 목록이 한 칸씩 밀림"""
+    out = []
+    same = [f"{i}-{j + 1}" for j in range(len(ka)) if ka[j] == kb[j]]
+    if same:
+        out.append(f"- 양쪽이 같은 향수인 줄: {', '.join(same)}")
+    # 순환: 줄 j에서 A→B로 잇고, 그 B가 A인 줄로 따라가 처음 줄로 돌아오면 그 줄들은 같은 향수들이 자리만 돈 것
+    seen: set[int] = set()
+    for j in range(len(ka)):
+        if j in seen or ka[j] == kb[j]:
+            continue
+        cycle, k = [j], j
+        while True:
+            nxt = next((m for m in range(len(ka)) if ka[m] == kb[k] and ka[m] != kb[m]), None)
+            if nxt is None or nxt in cycle:
+                break
+            cycle.append(nxt)
+            k = nxt
+        if nxt == j and len(cycle) >= 2:
+            seen.update(cycle)
+            kind = "맞바꿈" if len(cycle) == 2 else "순환"
+            out.append(f"- 같은 향수들이 자리만 바뀐 줄({kind}): {'/'.join(f'{i}-{m + 1}' for m in sorted(cycle))}")
+    if set(ka) == set(kb) and ka != kb:
+        out.append("- 두 목록의 향수가 모두 같고 순서만 다르다")
+    # 한 칸씩 밀림: 한쪽 목록이 다른 쪽을 한 칸 내린 모양 (B[j] == A[j-1] 또는 A[j] == B[j-1]이 3줄 이상)
+    down = sum(1 for j in range(1, len(ka)) if kb[j] == ka[j - 1])
+    up = sum(1 for j in range(1, len(ka)) if ka[j] == kb[j - 1])
+    if max(down, up) >= 3:
+        new_side, top = ("B", kb[0]) if down >= up else ("A", ka[0])
+        out.append(f"- 두 목록이 한 칸씩 밀림: {new_side} 1위만 새 향수이고 나머지는 다른 쪽과 같은 향수가 한 칸 아래에 있다")
+    return out
+
+
+def blind_doc(header: str, who: str, pairs_by_combo: list, seed: int, label, accords_ko,
+              title: str = "블라인드 비교") -> tuple[list[str], dict[int, str], list]:
+    """블라인드 문서: 조합마다 A/B(고정 난수로 배치), 판별력 없는 줄 표시. → (문서 줄, {조합: 지금 엔진 쪽}, 줄별 A/B key)"""
+    rng = random.Random(seed)
+    side: dict[int, str] = {}
+    pairs: list = []
+    doc = [f"# {title}", "", header, "",
+           "조합마다 A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.", who,
+           "**이 파일의 답을 내기 전에는 `engine_report.md`의 추천 목록을 보지 않도록, 그 표들은 답을 받은 뒤에 넣습니다.**", "",
+           f"답은 조합 단위로 주세요: `블라인드: 1A 2B 3A … {len(pairs_by_combo)}A`", ""]
+    for i, (name, current, other) in enumerate(pairs_by_combo, 1):
+        a_is_engine = rng.random() < 0.5
+        side[i] = "A" if a_is_engine else "B"
+        A, B = (current, other) if a_is_engine else (other, current)
+        ka, kb = [r["perfumeKey"] for r in A], [r["perfumeKey"] for r in B]
+        pairs.append([[x, y] for x, y in zip(ka, kb)])
+        doc += [f"## {i}. {name}", "", "| | A | B |", "|---|---|---|"]
+        for j in range(5):
+            doc.append(f"| {j + 1} | {cell(label(ka[j]))} ({accords_ko(ka[j])}) | {cell(label(kb[j]))} ({accords_ko(kb[j])}) |")
+        doc.append("")
+        notes = undecidable_notes(i, ka, kb)
+        if notes:
+            doc += notes + ["- 위 줄들은 두 목록의 차이를 보여 주지 못하니, 나머지 줄을 보고 고르세요.", ""]
+    return doc, side, pairs
+
+
+def v3_recommender():
+    """예전 엔진 v3: 프로필 특징 강조(PPMI), 어코드 0.45 : 노트 0.45, 강 2.0. 데이터 정리(묶음·복사 오류·브랜드 표기)는 지금과 같게 해서
+    엔진 차이만 비교한다. 원본 CSV가 필요하다."""
+    import dataclasses
+    import build_catalog as B
+    import catalog_rules as R
+
+    manual = APP / "pipeline" / "manual"
+    cat = B.build(B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv"),
+                  dataclasses.replace(R.REAL, profile_method="ppmi"), B.read_aliases(manual / "aliases.csv"),
+                  B.read_overrides(manual / "note_family_override.csv"), B.read_korean(manual / "notes_ko.csv"),
+                  version="v3", source_note="v3", junk=B.read_junk(manual / "junk_notes.csv"),
+                  brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv")).catalog
+    eng3 = Engine(cat)
+
+    def recommend(spec):
+        saved = (engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES)
+        engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES = 0.45, 0.45, (0.5, 1.0, 2.0)
+        try:
+            return eng3.recommend(blend(spec), k=5)
+        finally:
+            engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES = saved
+    return recommend
 
 
 def hard_inputs(p: dict, notes: list[tuple[str, str]], variant: str) -> list[tuple[str, str]]:
@@ -128,12 +216,13 @@ def parse_scores(text: str) -> list[int]:
     return [int(x) for x in re.findall(r"\d", text.split("(")[0])]
 
 
-def read_answers() -> dict | None:
+def read_answers(path: Path | None = None) -> dict | None:
     """답안 파일: {"source", "pairs"(고정본 경로|None), "lines"{(조합, 줄): A|B|=} 또는 "combos"{조합: A|B}, "scores"[]}.
     파일이 없으면 None. # 으로 시작하는 줄은 설명"""
-    if not ANSWERS.exists():
+    path = path or ANSWERS
+    if not path.exists():
         return None
-    text = "\n".join(l for l in ANSWERS.read_text(encoding="utf-8").splitlines() if not l.lstrip().startswith("#"))
+    text = "\n".join(l for l in path.read_text(encoding="utf-8").splitlines() if not l.lstrip().startswith("#"))
 
     def field(name: str) -> str:
         m = re.search(rf"{name}\s*:(.*)", text)
@@ -212,46 +301,24 @@ def main() -> None:
 
     header = f"> 카탈로그 `{catalog['version']}` · 엔진 v{catalog['engineVersion']} · 후보 향수 {len(catalog['perfumes']):,}개 · `py pipeline/evaluate.py`로 만든 문서"
 
-    # ---------- 블라인드 비교 (따로 파일) ----------
-    rng = random.Random(BLIND_SEED)
-    engine_side: dict[int, str] = {}
-    current_pairs: list = []
-    blind = [
-        "# 블라인드 비교",
-        "",
-        header,
-        "",
-        "조합마다(또는 줄마다) A와 B 중 **조합의 느낌에 더 가까운 쪽**을 골라 주세요.",
-        "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
-        "**이 파일의 답을 내기 전에는 `engine_report.md`의 추천 목록을 보지 않도록, 그 표들은 답을 받은 뒤에 넣습니다.**",
-        "",
-        "답은 이렇게 주세요: `블라인드: 1A 2B 3A …` (조합마다) 또는 `블라인드: 1-1A 1-2B … 12-5A` (줄마다, 양쪽이 같은 향수면 `=`)",
-        "",
-    ]
-    for i, (name, spec) in enumerate(BLENDS, 1):
-        current = eng.recommend(blend(spec), k=5)
-        note_only = eng.recommend(blend(spec), k=5, note_only=True)
-        a_is_engine = rng.random() < 0.5
-        engine_side[i] = "A" if a_is_engine else "B"
-        A, B = (current, note_only) if a_is_engine else (note_only, current)
-        current_pairs.append([[A[j]["perfumeKey"], B[j]["perfumeKey"]] for j in range(5)])
-        blind += [f"## {i}. {name}", "", "| | A | B |", "|---|---|---|"]
-        for j in range(5):
-            blind.append(f"| {j + 1} | {cell(label(A[j]['perfumeKey']))} ({accords_ko(A[j]['perfumeKey'])}) "
-                         f"| {cell(label(B[j]['perfumeKey']))} ({accords_ko(B[j]['perfumeKey'])}) |")
-        blind.append("")
-        # 판별력 없는 줄 표시 (2026-10-31): 양쪽이 같은 향수 / 같은 두 향수가 자리만 바뀐 줄
-        ka, kb = [r["perfumeKey"] for r in A], [r["perfumeKey"] for r in B]
-        same = [f"{i}-{j + 1}" for j in range(5) if ka[j] == kb[j]]
-        swapped = [f"{i}-{j + 1}/{i}-{k + 1}" for j in range(5) for k in range(j + 1, 5)
-                   if ka[j] != kb[j] and {ka[j], kb[j]} == {ka[k], kb[k]}]
-        if same:
-            blind.append(f"- 양쪽이 같은 향수인 줄: {', '.join(same)} → `=`로 답하면 됩니다(집계에서 뺌)")
-        if swapped:
-            blind.append(f"- 같은 두 향수가 자리만 바뀐 줄: {', '.join(swapped)} → 한 번만 셉니다")
-        if same or swapped:
-            blind.append("")
+    # ---------- 블라인드 비교 (따로 파일): 기준선 = 지금 엔진 vs 노트만 보는 방식 ----------
+    pairs_by_combo = [(name, eng.recommend(blend(spec), k=5), eng.recommend(blend(spec), k=5, note_only=True))
+                      for name, spec in BLENDS]
+    blind, engine_side, current_pairs = blind_doc(
+        header, "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
+        pairs_by_combo, BLIND_SEED, label, accords_ko)
     (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
+
+    # 주 비교(2026-10-31): 지금 엔진 v6 vs 엔진 v3. 문서는 --compare-v3 로만 만든다(사장이 정할 때까지)
+    v3_side = {}
+    if "--compare-v3" in sys.argv or V3_ANSWERS.exists():
+        v3 = v3_recommender()
+        pairs_v3 = [(name, eng.recommend(blend(spec), k=5), v3(spec)) for name, spec in BLENDS]
+        doc_v3, v3_side, _ = blind_doc(
+            header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v3)입니다. 어느 쪽인지는 숨겨 두었습니다.",
+            pairs_v3, V3_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v3)")
+        if "--compare-v3" in sys.argv:
+            (DOCS / "engine_blind_vs_v3.md").write_text("\n".join(doc_v3), encoding="utf-8")
 
     # ---------- 기준표 ----------
     lines = ["# 추천 엔진 합격 기준표", "", header,
@@ -326,7 +393,15 @@ def main() -> None:
 
     # 3. 블라인드 비교 결과
     need = math.ceil(0.6 * len(BLENDS))  # 기준: 조합의 60% 이상 (10개면 6개, 12개면 8개)
-    lines += [f"## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]
+    if V3_ANSWERS.exists():
+        v3_ans = read_answers(V3_ANSWERS)
+        v3_wins = sum(1 for i, ab in v3_ans["combos"].items() if v3_side[i] == ab)
+        results["blind_v3"] = v3_wins
+        lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v3 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상)", "",
+                  f"**결과: {v3_wins} / {len(BLENDS)} {'✅' if v3_wins >= need else '❌'}** (출처: {v3_ans['source']})", "",
+                  "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
+                  *[f"| {i}. {BLENDS[i - 1][0]} | {v3_ans['combos'][i]} | {v3_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
+    lines += [f"## 3. 블라인드 비교 — 기준선: 지금 엔진 vs 노트만 보는 방식 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]
     if answers is None:
         lines += ["`engine_blind.md`에서 답을 받은 뒤 채웁니다.", ""]
     else:

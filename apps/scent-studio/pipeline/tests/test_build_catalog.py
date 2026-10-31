@@ -187,14 +187,16 @@ def test_함께_든_노트의_몫을_빼고_노트_프로필을_만든다():
     assert top("musk") == "powdery", f"머스크가 함께 든 장미의 몫을 가져감: {top('musk')}"
 
 
-def test_거의_복사는_표시만_하고_후보에_남긴다():
-    # 2026-10-31 사장 요청: 브랜드가 다르고 노트·어코드가 같은데 평가 수만 조금 다르면 near_copy로 표시 (뺄지는 사장이 정함)
+def test_거의_복사도_원본만_남기거나_묶음째_뺀다():
+    # 2026-10-31 사장 결정: 브랜드가 다르고 노트·어코드가 같은데 평가 수만 조금 다르면(거의 복사) 완전 복사처럼 처리
     a = ("lavender, bergamot", "geranium", "cedarwood")
     rows = [_copy_row("L1", "Lhouse", "Lavande", "2005", 694, a, accords="fougère, fresh"),
             _copy_row("Z1", "Zhouse", "Zefiro", "2012", 695, a, accords="fougère, fresh"),
             _copy_row("F1", "Fhouse", "Far", "2012", 300, a, accords="fougère, fresh")]
     res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t")
-    assert {p["key"] for p in res.catalog["perfumes"]} >= {"L1", "Z1", "F1"}
-    marked = {e["key"]: e["decision"] for e in res.report["copy_suspects"]}
-    assert marked.get("L1") == marked.get("Z1") == "near_copy"
-    assert "F1" not in marked, "평가 수 차이가 크면 진짜 클론일 수 있어 표시하지 않는다"
+    keys = {p["key"] for p in res.catalog["perfumes"]}
+    assert "F1" in keys, "평가 수 차이가 크면 진짜 클론일 수 있어 남긴다"
+    assert not {"L1", "Z1"} & keys, "원본을 가릴 단서가 없으면 묶음째 뺀다"
+    marked = {e["key"]: e for e in res.report["copy_suspects"]}
+    assert marked["L1"]["kind"] == marked["Z1"]["kind"] == "near_copy"
+    assert marked["L1"]["decision"] == "excluded" and "F1" not in marked
