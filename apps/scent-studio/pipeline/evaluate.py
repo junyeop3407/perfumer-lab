@@ -62,6 +62,15 @@ def cell(text: str) -> str:
     return text.replace("|", "\\|")
 
 
+def parse_scores(text: str) -> list[int]:
+    """눈으로 평가 점수: "4 3 4 …"(조합 순서대로) 또는 "1=4 2=3 …"(조합 번호=점수)"""
+    pairs = re.findall(r"(\d+)\s*=\s*(\d)", text)
+    if pairs:
+        by_no = {int(n): int(v) for n, v in pairs}
+        return [by_no[i] for i in sorted(by_no)] if sorted(by_no) == list(range(1, len(BLENDS) + 1)) else [-1]
+    return [int(x) for x in re.findall(r"\d", text.split("(")[0])]
+
+
 def read_answers() -> dict | None:
     """답안 파일: {"source", "pairs"(고정본 경로|None), "lines"{(조합, 줄): A|B|=} 또는 "combos"{조합: A|B}, "scores"[]}.
     파일이 없으면 None. # 으로 시작하는 줄은 설명"""
@@ -75,7 +84,7 @@ def read_answers() -> dict | None:
 
     blind, score_text = field("블라인드"), field("점수")
     ans = {"source": field("출처") or "사장", "pairs": DOCS / field("고정본") if field("고정본") else None,
-           "scores": [int(x) for x in re.findall(r"\d", score_text)], "lines": {}, "combos": {}}
+           "scores": parse_scores(score_text), "lines": {}, "combos": {}}
     if re.search(r"\d+-\d+", blind):
         ans["lines"] = {(int(i), int(j)): ab.upper() for i, j, ab in re.findall(r"(\d+)-(\d+)\s*([ABab=])", blind)}
         expected = {(i, j) for i in range(1, len(BLENDS) + 1) for j in range(1, 6)}
@@ -85,8 +94,8 @@ def read_answers() -> dict | None:
         ans["combos"] = {int(n): ab.upper() for n, ab in re.findall(r"(\d+)\s*([ABab])", blind)}
         if sorted(ans["combos"]) != list(range(1, len(BLENDS) + 1)):
             raise SystemExit(f"{ANSWERS.name}: 블라인드 1~{len(BLENDS)}번 A/B")
-    if ans["scores"] and len(ans["scores"]) != len(BLENDS):
-        raise SystemExit(f"{ANSWERS.name}: 점수는 {len(BLENDS)}개 (아직이면 비워 둔다)")
+    if ans["scores"] and (len(ans["scores"]) != len(BLENDS) or not all(1 <= x <= 5 for x in ans["scores"])):
+        raise SystemExit(f"{ANSWERS.name}: 점수는 1~5점 {len(BLENDS)}개 (아직이면 비워 둔다)")
     return ans
 
 
@@ -224,14 +233,26 @@ def main() -> None:
     citrus_first = sum(1 for r in recs if by_key[r["perfumeKey"]]["accords"][0] == "citrus")
     ratios = eng.display_ratios(b0)
     results["blindspot"] = ok
+    top3_ok = sum(1 for r in recs if {"citrus", "floral"} <= {acc_family[a] for a in by_key[r["perfumeKey"]]["accords"][:3]})
     lines += ["## 2. 맹점 조합 (기준: Top 5 중 4개 이상이 시트러스와 플로럴을 둘 다 가짐)", "",
               f"**결과: {ok} / 5 {'✅' if ok >= 4 else '❌'}**", "",
+              "- 판정 방법: 향수의 어코드 목록 **전체(최대 5개)**를 계열로 바꿔, 시트러스 계열과 플로럴 계열이 둘 다 있으면 통과. "
+              "design.md 14절은 \"둘 다 가짐\"이라고만 적었고, 0절 보정 설명은 \"추천 상위 5개 모두에 시트러스가 들어간다\"(순위 무관)라서 전체 목록 기준이 의도에 맞다",
+              f"- 참고: 상위 3개 어코드만 보면 {top3_ok} / 5",
               f"- 조합 어코드: {', '.join(f'{acc_ko[a]} {p}%' for a, p in ratios[:4])}",
               f"- Top 5 중 1위 어코드가 시트러스인 향수: {citrus_first}개 (참고: 레몬을 '강'으로 골랐을 때 시트러스가 앞서는지)", ""]
     if answers is not None:
-        lines += ["| 순위 | 향수 | 상위 어코드 | 점수 |", "|---|---|---|---|",
-                  *[f"| {i + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} | {r['score']:.3f} |"
-                    for i, r in enumerate(recs)], ""]
+        def family_share(key: str, family: str) -> str:
+            vec = eng.perfume_vector(by_key[key]["accords"])
+            share = sum(v for a, v in zip(eng.accords, vec) if acc_family[a] == family)
+            ranks = [str(i + 1) for i, a in enumerate(by_key[key]["accords"]) if acc_family[a] == family]
+            return f"{share:.0f}% ({','.join(ranks)}번째)" if ranks else "없음"
+
+        lines += ["| 순위 | 향수 | 상위 어코드 | 시트러스 계열 비중 | 플로럴 계열 비중 | 점수 |", "|---|---|---|---|---|---|",
+                  *[f"| {i + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} "
+                    f"| {family_share(r['perfumeKey'], 'citrus')} | {family_share(r['perfumeKey'], 'floral')} | {r['score']:.3f} |"
+                    for i, r in enumerate(recs)], "",
+                  "비중 = 향수 어코드 벡터(목록 순서대로 5·4·3·2·1, 합 100)에서 그 계열 어코드가 차지하는 몫.", ""]
 
     # 3. 블라인드 비교 결과
     lines += ["## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 10개 중 6개 이상 고름)", ""]
@@ -292,6 +313,9 @@ def main() -> None:
     else:
         avg = statistics.mean(answers["scores"])
         results["eye"] = avg
+        if answers["source"] != "사장":
+            lines += [f"> ⚠️ **임시 점수 (source: {answers['source']})**: 사람이 아니라 Claude가 향을 맡지 않고 노트 지식과 "
+                      "어코드 라벨로 매긴 점수다. **사장 점수가 오면 그걸로 덮어쓴다.**", ""]
         lines += [f"**결과: 평균 {avg:.1f}점 {'✅' if avg >= 3.5 else '❌'}**", "", *eye]
 
     # 5. 다양성
@@ -303,7 +327,7 @@ def main() -> None:
     lines += ["## 6. 점수 분포 (등급 기준값 정하기용)", "",
               f"- 1위 점수: 평균 {statistics.mean(top1):.3f} · 최소 {min(top1):.3f} · 최대 {max(top1):.3f}",
               f"- 10위 점수: 평균 {statistics.mean(top10):.3f} · 최소 {min(top10):.3f} · 최대 {max(top10):.3f}",
-              "- 지금 기준: 0.85 이상 매우 비슷 · 0.75 이상 비슷 · 그 아래 참고", ""]
+              f"- 지금 기준(engine_ref.py): {engine_ref.GRADE_VERY_SIMILAR} 이상 매우 비슷 · {engine_ref.GRADE_SIMILAR} 이상 비슷 · 그 아래 참고", ""]
 
     # 7. 계산 시간 (Python 참고값. 앱의 TypeScript 엔진은 Vitest 엔진 테스트에서 따로 잰다)
     t = time.perf_counter()
