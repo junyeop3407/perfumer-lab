@@ -20,6 +20,8 @@ LAYERS = ("top", "middle", "base")
 # 약 · 중 · 강. 2026-10-31 사장 결정: 강 1.5 → 2.0 (레몬 '강'이 '중'과 거의 같던 문제, docs/NOTES.md)
 INTENSITIES = (0.5, 1.0, 2.0)
 STRENGTH_NAMES = ("weak", "medium", "strong")
+# 시험용 스위치: 노트 일치도에도 강도를 반영할지 (pipeline/experiments/strong_both.py). 엔진은 꺼진 상태(False)가 기준
+NOTE_MATCH_BY_INTENSITY = False
 
 
 def intensity(level: str | float) -> float:
@@ -122,7 +124,9 @@ class Engine:
         self.validate(blend)
         b = self.blend_vector(blend)
         b_total = sum(b)
-        weights = {x.note_key: math.log(1 + self.n / self.notes[x.note_key]["df"]) for x in blend}
+        # 시험용(기본 꺼짐, 2026-10-31): 켜면 노트 일치도에서도 고른 노트를 강도(약/중/강)로 가중한다
+        weights = {x.note_key: math.log(1 + self.n / self.notes[x.note_key]["df"]) * (x.intensity if NOTE_MATCH_BY_INTENSITY else 1.0)
+                   for x in blend}
         w_sum = sum(weights.values())
 
         scored = []
