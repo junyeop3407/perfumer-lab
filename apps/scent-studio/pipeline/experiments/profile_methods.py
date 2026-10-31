@@ -1,5 +1,5 @@
 """노트 프로필 계산 방식 × "강" 강도 비교 실험 (2026-10-30). 앱 폴더에서: py pipeline/experiments/profile_methods.py
-결과는 HANDOFF "다음 세션에서 할 일" 1번 표. 실제 카탈로그(pipeline/data/out/catalog.json.gz)가 있어야 한다."""
+결과는 HANDOFF "다음 세션에서 할 일" 1번 표. 2026-10-31 재현을 evaluate.py 방식(같은 향수 다른 농도도 맞힘)으로 바꿨다. 실제 카탈로그(pipeline/data/out/catalog.json.gz)가 있어야 한다."""
 import sys,gzip,json,math,copy; sys.path.insert(0,'pipeline'); sys.stdout.reconfigure(encoding='utf-8')
 from collections import defaultdict, Counter
 import engine_ref as E, evaluate as V
@@ -37,9 +37,10 @@ def build(method):
         t=sum(s) or 1; n['profile']=[x/t for x in s]
     return c
 by_key={p['key']:p for p in P}
+tier={n['key']:n['tier'] for n in c0['notes']}
 picks,brands=[],set()
 for p in sorted(P,key=lambda p:(-p['ratingCount'],p['key'])):
-    notes=[(k,l) for l in ('top','middle','base') for k in p[l][:3] if any(n['key']==k and n['tier']!='hidden' for n in c0['notes'][:1200])]
+    notes=[(k,l) for l in ('top','middle','base') for k in p[l][:3] if tier[k]!='hidden']  # evaluate.py와 같은 고르기
     if p['brand'] in brands or not notes: continue
     picks.append((p,notes)); brands.add(p['brand'])
     if len(picks)==20: break
@@ -49,7 +50,11 @@ def evaluate(label, e):
     recs=e.recommend(bs,k=5)
     first_citrus=sum(1 for r in recs if by_key[r['perfumeKey']]['accords'][0]=='citrus')
     cf=sum(1 for r in recs if {'citrus','floral'}<= {afam[a] for a in by_key[r['perfumeKey']]['accords']})
-    rep=sum(1 for p,n in picks if p['key'] in [r['perfumeKey'] for r in e.recommend([E.BlendNote(k,l,1.0) for k,l in n],k=3)])
+    # 재현은 evaluate.py와 같게: Top 10 안에서 같은 향수(group, 다른 농도 포함)가 3위 안이면 맞힘 (2026-10-31)
+    def rank(p,n):
+        gs=[by_key[r['perfumeKey']]['group'] for r in e.recommend([E.BlendNote(k,l,1.0) for k,l in n],k=10)]
+        return gs.index(p['group'])+1 if p['group'] in gs else 99
+    rep=sum(1 for p,n in picks if rank(p,n)<=3)
     br=set()
     for _,s in V.BLENDS: br|={by_key[r['perfumeKey']]['brand'] for r in e.recommend(V.blend(s),k=10)}
     print(f"{label:14} 조합{ratios} 시트러스1위 {first_citrus}/5 시트러스+플로럴 {cf}/5 재현 {rep}/20 브랜드 {len(br)}")
