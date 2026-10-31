@@ -1,0 +1,35 @@
+# 다시 만들 수 있는 것 (app/ 안)
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# 폰 앱 빌드 결과 (Expo가 다시 만듦)
+/ios
+/android
+.kotlin/
+
+# 서명 키·비밀
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+.env*.local
+
+# 기타
+.metro-health-check*
+npm-debug.*
+*.tsbuildinfo
+.DS_Store
+
+# 승인 테스트 빌드·결과
+dist-test/
+test-results/
+playwright-report/
