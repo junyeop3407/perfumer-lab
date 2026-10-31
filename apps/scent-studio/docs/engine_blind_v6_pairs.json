@@ -1,0 +1,320 @@
+{
+ "catalogVersion": "2026.10.31",
+ "engineVersion": 6,
+ "doc": "engine_blind.md",
+ "docSha256": "77777f24a975a46bbb45b7878cad7f584fe63ecdab4c4b54b5764e943da2acd0",
+ "combos": [
+  {
+   "no": 1,
+   "name": "핑크 페퍼 · 장미 · 패출리",
+   "lines": [
+    [
+     "Tom_Ford:Noir_Eau_de_Parfum",
+     "Van_Cleef_Arpels:moonlight-rose"
+    ],
+    [
+     "Amouage:Epic_Woman",
+     "Parfums_dElmar:Elixir_d_Amour"
+    ],
+    [
+     "Creed:Aventus_for_Her",
+     "Thameen:Peacock_Throne_Eau_de_Parfum"
+    ],
+    [
+     "Editions_de_Parfum_Frederic_Malle:promise-parfum",
+     "Nishane:favonius"
+    ],
+    [
+     "Lancome:Miracle_Eau_de_Parfum",
+     "The_Merchant_Of_Venice:imperial-emerald-eau-de-parfum"
+    ]
+   ]
+  },
+  {
+   "no": 2,
+   "name": "베르가못 · 장미 · 머스크",
+   "lines": [
+    [
+     "Calvin_Klein:CK_One",
+     "Floris:Private_Collection_Royal_Arms_Diamond_Edition"
+    ],
+    [
+     "mugler:Angel",
+     "MiN_New_York:scent-stories-vol-2-ch-01-ad-lumen"
+    ],
+    [
+     "Versace:Blue_Jeans",
+     "Galimard:Gelsomino"
+    ],
+    [
+     "Jil_Sander:sun-eau-de-toilette",
+     "Acqua_di_Parma:magnolia-infinita"
+    ],
+    [
+     "Xerjoff:Casamorati_1888_Mefisto",
+     "Penhaligons:Luna"
+    ]
+   ]
+  },
+  {
+   "no": 3,
+   "name": "자몽 · 라벤더 · 베티버",
+   "lines": [
+    [
+     "Hugo_Boss:Hugo_Eau_de_Toilette",
+     "Eisenberg:Eau_Fraiche_Eau_de_Parfum"
+    ],
+    [
+     "pana-dora:forever-love",
+     "Rasasi:Rumz_Al_Rasasi_9459_pour_Lui"
+    ],
+    [
+     "Xerjoff:homme",
+     "Hugo_Boss:Hugo_Eau_de_Toilette"
+    ],
+    [
+     "Dior:Dior_Homme_Sport_2008_Eau_de_Toilette",
+     "Maeurer_Wirtz:tabac-original-craftsman-eau-de-toilette"
+    ],
+    [
+     "liquides-imaginaires:sancti",
+     "Lacoste:Booster_Eau_de_Toilette"
+    ]
+   ]
+  },
+  {
+   "no": 4,
+   "name": "만다린 · 자스민 · 바닐라",
+   "lines": [
+    [
+     "Estee_Lauder:Bronze_Goddess_Capri",
+     "Joop:Joop_Homme_Eau_de_Toilette"
+    ],
+    [
+     "Tesori_dOriente:Tiare_delle_Indie",
+     "mugler:Angel"
+    ],
+    [
+     "Dolce_Gabbana:LEau_The_One",
+     "Chanel:Allure_Homme"
+    ],
+    [
+     "Dior:Bronze_Sweet_Sun",
+     "Dolce_Gabbana:The_One_Eau_de_Parfum"
+    ],
+    [
+     "John_Galliano:Parlezmoi_d_Amour_Eau_de_Parfum",
+     "Roja_Parfums:oceania"
+    ]
+   ]
+  },
+  {
+   "no": 5,
+   "name": "핑크 페퍼 · 아이리스 · 시더우드",
+   "lines": [
+    [
+     "Clive_Christian:x-for-men",
+     "La_Perla:my-day"
+    ],
+    [
+     "Giorgio_Armani:Eau_de_Nuit_Eau_de_Toilette",
+     "Giorgio_Armani:Armani_Mania_for_Women"
+    ],
+    [
+     "Tom_Ford:Violet_Blonde",
+     "Ormonde_Jayne:Orris_Noir_Eau_de_Parfum"
+    ],
+    [
+     "Ormonde_Jayne:Vanille_d_Iris",
+     "Ormonde_Jayne:Vanille_d_Iris"
+    ],
+    [
+     "Burberry:Burberry_the_Beat",
+     "Molinard:iris"
+    ]
+   ]
+  },
+  {
+   "no": 6,
+   "name": "레몬 · 녹차 · 화이트 머스크",
+   "lines": [
+    [
+     "Carthusia:Mediterraneo",
+     "Carthusia:Mediterraneo_Profumo"
+    ],
+    [
+     "Les_Parfums_de_Rosine:Un_Zest_de_Rose",
+     "Ffern:autumn-21"
+    ],
+    [
+     "Ffern:autumn-21",
+     "Lanvin:Eclat_d_Arpege_Gourmandise"
+    ],
+    [
+     "Lanvin:Eclat_d_Arpege_Gourmandise",
+     "Les_Parfums_de_Rosine:Un_Zest_de_Rose"
+    ],
+    [
+     "Nicolai:victoire",
+     "Nicolai:victoire"
+    ]
+   ]
+  },
+  {
+   "no": 7,
+   "name": "카다멈 · 타바코 · 우드 · 앰버",
+   "lines": [
+    [
+     "Chopard:Oud_Malaki",
+     "Nabeel:dubai-meydan-eau-de-parfum"
+    ],
+    [
+     "Nabeel:The_Spirit_of_Dubai__Baz",
+     "Nabeel:The_Spirit_of_Dubai__Baz"
+    ],
+    [
+     "Anfas:Shaghaf",
+     "Anfas:Shaghaf"
+    ],
+    [
+     "Nabeel:dubai-meydan-eau-de-parfum",
+     "Annette_Neuffer:Autumn_Nocturne"
+    ],
+    [
+     "Korres:Saffron_Amber_Cardamom",
+     "The_Merchant_Of_Venice:Oudrageous"
+    ]
+   ]
+  },
+  {
+   "no": 8,
+   "name": "복숭아 · 작약 · 머스크",
+   "lines": [
+    [
+     "Rituals:Oriental_Essences__Fleurs_de_L_Himalaya",
+     "Ex_Nihilo:fleur-narcotique-eau-de-parfum"
+    ],
+    [
+     "Ex_Nihilo:fleur-narcotique-eau-de-parfum",
+     "Rituals:Oriental_Essences__Fleurs_de_L_Himalaya"
+    ],
+    [
+     "V_Canto:Ricina",
+     "Boucheron:Jaipur_Eau_de_Toilette"
+    ],
+    [
+     "Ex_Nihilo:fleur-narcotique-signature-rose-de-mai",
+     "Jovoy:Terra_Incognita"
+    ],
+    [
+     "Salvatore_Ferragamo:Incanto",
+     "Roja_Parfums:elysium-pour-femme"
+    ]
+   ]
+  },
+  {
+   "no": 9,
+   "name": "마린 노트 · 세이지 · 시더우드 약",
+   "lines": [
+    [
+     "Davidoff:Cool_Water_Into_the_Ocean",
+     "Davidoff:Cool_Water_Night_Dive_Eau_de_Toilette"
+    ],
+    [
+     "Kenzo:kenzo-homme-2016-eau-de-parfum",
+     "Davidoff:Cool_Water_Into_the_Ocean"
+    ],
+    [
+     "Fendi:Fan_di_Fendi_pour_Homme_Acqua",
+     "Kenzo:kenzo-homme-2016-eau-de-parfum"
+    ],
+    [
+     "Al_Haramain:amber-oud-carbon-edition",
+     "Fendi:Fan_di_Fendi_pour_Homme_Acqua"
+    ],
+    [
+     "Giorgio_Armani:acqua-di-gio-profondo-2024-eau-de-parfum",
+     "Al_Haramain:amber-oud-carbon-edition"
+    ]
+   ]
+  },
+  {
+   "no": 10,
+   "name": "시나몬 · 통카 빈 · 바닐라 · 샌달우드",
+   "lines": [
+    [
+     "Brecourt:Mauvais_Garcon",
+     "Hermes:Eau_d_Hermes"
+    ],
+    [
+     "Nobile_1942:Il_Capriccio_del_Maestro",
+     "miyaz-perfume:iris-cacao"
+    ],
+    [
+     "House_of_Sillage:HoS_N_001",
+     "Nobile_1942:Il_Capriccio_del_Maestro"
+    ],
+    [
+     "Joop:joop-homme-eau-de-parfum",
+     "House_of_Sillage:HoS_N_001"
+    ],
+    [
+     "Comptoir_Sud_Pacifique:Eclats_d_Amandes",
+     "AlexandreJ:the-majestic-vanilla"
+    ]
+   ]
+  },
+  {
+   "no": 11,
+   "name": "레몬 강 · 장미 · 머스크",
+   "lines": [
+    [
+     "Calvin_Klein:CK_One",
+     "ameenroma-aromatics:laos-oud-supreme"
+    ],
+    [
+     "Jil_Sander:sun-eau-de-toilette",
+     "Profumi_del_Forte:Prima_Rugiada"
+    ],
+    [
+     "Chanel:Allure_Homme",
+     "L_Erbolario:verbena"
+    ],
+    [
+     "Armaf:club-de-nuit-intense-man-eau-de-parfum",
+     "Armaf:club-de-nuit-sillage-eau-de-parfum"
+    ],
+    [
+     "Abercrombie_Fitch:Fierce",
+     "Loewe:Agua_de_Loewe_Ella"
+    ]
+   ]
+  },
+  {
+   "no": 12,
+   "name": "베르가못 · 라벤더 · 바닐라 강",
+   "lines": [
+    [
+     "Yves_de_Sistelle:Chairman",
+     "Versace:Blue_Jeans"
+    ],
+    [
+     "Miro:Cabal_pour_Homme",
+     "Yves_Saint_Laurent:La_Nuit_de_L_Homme_Le_Parfum"
+    ],
+    [
+     "Giorgio_Armani:armani-code-2021-eau-de-parfum",
+     "Parfums_de_Marly:pegasus-exclusif"
+    ],
+    [
+     "Brecourt:Mauvais_Garcon",
+     "Penhaligons:halfeti"
+    ],
+    [
+     "Birkholz:Vanilla_Vibes",
+     "Parfums_MDCI:Invasion_Barbare"
+    ]
+   ]
+  }
+ ]
+}

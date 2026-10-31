@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import math
 import random
 import re
 import statistics
@@ -38,7 +39,7 @@ BLIND_SEED = 20261030
 # 사장에게 따로 보여 주므로(docs/engine_variants.md) 블라인드에 넣으면 A/B가 드러난다
 BLIND_SPOT = [("lemon", "top", "strong"), ("osmanthus", "middle", "medium"), ("sandalwood", "base", "weak")]
 
-# 블라인드 비교·눈으로 평가·다양성용 조합 10개: 계열이 고루 섞이게
+# 블라인드 비교·눈으로 평가·다양성용 조합: 계열이 고루 섞이게 10개 + '강'이 든 조합 2개(2026-10-31, v6 문서부터)
 BLENDS = [
     ("핑크 페퍼 · 장미 · 패출리", [("pink pepper", "top", "medium"), ("rose", "middle", "medium"), ("patchouli", "base", "medium")]),
     ("베르가못 · 장미 · 머스크", [("bergamot", "top", "medium"), ("rose", "middle", "medium"), ("musk", "base", "medium")]),
@@ -50,6 +51,10 @@ BLENDS = [
     ("복숭아 · 작약 · 머스크", [("peach", "top", "medium"), ("peony", "middle", "medium"), ("musk", "base", "medium")]),
     ("마린 노트 · 세이지 · 시더우드 약", [("marine notes", "top", "strong"), ("sage", "middle", "medium"), ("cedarwood", "base", "weak")]),
     ("시나몬 · 통카 빈 · 바닐라 · 샌달우드", [("cinnamon", "top", "medium"), ("tonka bean", "middle", "medium"), ("vanilla", "base", "strong"), ("sandalwood", "base", "medium")]),
+    # 2026-10-31 사장 요청: '강'이 든 조합 2개 추가. 맹점·"바닐라 강 · 베르가못 · 자스민"은 다른 문서에 Top 5가 이미 보여서
+    # (engine_variants.md, engine_strong*.md) 블라인드에 넣으면 A/B가 드러나므로, 보인 적 없는 '강' 조합으로 골랐다
+    ("레몬 강 · 장미 · 머스크", [("lemon", "top", "strong"), ("rose", "middle", "medium"), ("musk", "base", "medium")]),
+    ("베르가못 · 라벤더 · 바닐라 강", [("bergamot", "top", "medium"), ("lavender", "middle", "medium"), ("vanilla", "base", "strong")]),
 ]
 
 
@@ -82,6 +87,36 @@ def reproduction_picks(catalog: dict, eng: Engine, n: int) -> list[tuple[dict, l
         if len(picks) == n:
             break
     return picks
+
+
+REPRO_DROP_SEED = 20261031
+
+
+def hard_inputs(p: dict, notes: list[tuple[str, str]], variant: str) -> list[tuple[str, str]]:
+    """어려운 재현 시험의 입력 (2026-10-31 사장 요청: 기본 재현이 거의 만점이라 변별력이 없음).
+    two_per_layer: 층마다 앞 2개만 / drop_one: 넣을 노트 중 하나를 무작위로 뺌(향수마다 고정 난수, 노트가 2개 이상일 때)"""
+    if variant == "two_per_layer":
+        counts: dict[str, int] = {}
+        out = []
+        for k, layer in notes:
+            if counts.get(layer, 0) < 2:
+                out.append((k, layer))
+                counts[layer] = counts.get(layer, 0) + 1
+        return out
+    if variant == "drop_one" and len(notes) > 1:
+        drop = random.Random(f"{REPRO_DROP_SEED}:{p['key']}").randrange(len(notes))
+        return [x for i, x in enumerate(notes) if i != drop]
+    return notes
+
+
+def reproduction_hits(eng: Engine, by_key: dict, picks: list, variant: str = "normal") -> int:
+    """정답 향수(같은 향수의 다른 농도 포함)가 Top 3 안에 든 수"""
+    hit = 0
+    for p, notes in picks:
+        inp = notes if variant == "normal" else hard_inputs(p, notes, variant)
+        groups = [by_key[r["perfumeKey"]]["group"] for r in eng.recommend([BlendNote(k, layer, 1.0) for k, layer in inp], k=10)]
+        hit += p["group"] in groups and groups.index(p["group"]) < 3
+    return hit
 
 
 def parse_scores(text: str) -> list[int]:
@@ -190,7 +225,7 @@ def main() -> None:
         "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
         "**이 파일의 답을 내기 전에는 `engine_report.md`의 추천 목록을 보지 않도록, 그 표들은 답을 받은 뒤에 넣습니다.**",
         "",
-        "답은 이렇게 주세요: `블라인드: 1A 2B 3A …` (조합마다) 또는 `블라인드: 1-1A 1-2B … 10-5A` (줄마다, 양쪽이 같은 향수면 `=`)",
+        "답은 이렇게 주세요: `블라인드: 1A 2B 3A …` (조합마다) 또는 `블라인드: 1-1A 1-2B … 12-5A` (줄마다, 양쪽이 같은 향수면 `=`)",
         "",
     ]
     for i, (name, spec) in enumerate(BLENDS, 1):
@@ -242,11 +277,20 @@ def main() -> None:
         rows.append(f"| {cell(label(p['key']))} | {rank or '10위 밖'} |")
     results["reproduce"] = hit
     unique_hit = sum(hits.values())
+    picks100 = reproduction_picks(catalog, eng, 100)
+    hard = {(n, v): reproduction_hits(eng, by_key, ps, v)
+            for n, ps in ((20, picks), (100, picks100)) for v in ("normal", "two_per_layer", "drop_one")}
+    results["reproduce_hard"] = hard
     clones = [p for p, _ in picks if sum(1 for q, _ in picks if sig(q) == sig(p)) > 1]
     lines += ["## 1. 재현 (기준: 20개 중 15개 이상이 Top 3, 2026-10-30 사장 결정으로 16→15)", "",
               f"**결과: {hit} / 20 {'✅' if hit >= 15 else '❌'}** · 고유 노트 기준(클론은 1개로): {unique_hit} / {len(hits)}", "",
               "- 넣는 노트는 화면 규칙대로 층마다 앞 3개까지. 고유 노트 기준은 노트 데이터가 완전히 같은 향수(클론)를 하나로 세고, 그중 하나라도 맞히면 맞힌 것으로 본다",
-              f"- 이 20개 안의 클론: {', '.join(cell(label(p['key'])) for p in clones) or '없음'}", ""]
+              f"- 이 20개 안의 클론: {', '.join(cell(label(p['key'])) for p in clones) or '없음'}", "",
+              "어려운 버전(참고, 2026-10-31 — 기본이 거의 만점이라 변별력을 보려고):", "",
+              "| 입력 | 20개 | 100개 |", "|---|---|---|",
+              f"| 기본: 층마다 3개 | {hard[(20, 'normal')]}/20 | {hard[(100, 'normal')]}/100 |",
+              f"| (a) 층마다 2개만 | {hard[(20, 'two_per_layer')]}/20 | {hard[(100, 'two_per_layer')]}/100 |",
+              f"| (b) 노트 하나를 무작위로 뺌 (고정 난수 {REPRO_DROP_SEED}) | {hard[(20, 'drop_one')]}/20 | {hard[(100, 'drop_one')]}/100 |", ""]
     if limits:
         lines += ["**알려진 한계: 화면에서 표현 불가** — 층마다 3개까지만 고를 수 있어서 이 향수들의 노트를 다 넣을 수 없다. "
                   "빠진 노트(주로 시트러스)가 향의 성격을 정해서, 남은 노트로 만든 조합이 다른 계열로 기운다.", "", *limits, ""]
@@ -281,7 +325,8 @@ def main() -> None:
                   "비중 = 향수 어코드 벡터(목록 순서대로 5·4·3·2·1, 합 100)에서 그 계열 어코드가 차지하는 몫.", ""]
 
     # 3. 블라인드 비교 결과
-    lines += ["## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 10개 중 6개 이상 고름)", ""]
+    need = math.ceil(0.6 * len(BLENDS))  # 기준: 조합의 60% 이상 (10개면 6개, 12개면 8개)
+    lines += [f"## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]
     if answers is None:
         lines += ["`engine_blind.md`에서 답을 받은 뒤 채웁니다.", ""]
     else:
@@ -303,7 +348,7 @@ def main() -> None:
             doc_note = f"- 채점 기준: `{pairs_file.name if pairs_file else 'engine_blind.md (지금)'}`"
             if pairs != current_pairs:
                 doc_note += " — ⚠️ 지금 문서와 줄 구성이 다름(답은 고정본 기준)"
-            lines += [f"**결과: {wins:g} / 10 {'✅' if wins >= 6 else '❌'}** (조합마다 남은 줄에서 엔진 쪽을 더 많이 고르면 1, 같으면 0.5)", "",
+            lines += [f"**결과: {wins:g} / {len(pairs)} {'✅' if wins >= math.ceil(0.6 * len(pairs)) else '❌'}** (조합마다 남은 줄에서 엔진 쪽을 더 많이 고르면 1, 같으면 0.5)", "",
                       share,
                       f"- 뺀 줄 — 양쪽이 같은 향수: {', '.join(t['same']) or '없음'} · 자리만 바뀐 같은 쌍(뒤 줄은 세지 않음): {', '.join(t['dup']) or '없음'}",
                       f"- 자리만 바뀐 쌍의 판단 일관성: {consistent}",
@@ -313,7 +358,7 @@ def main() -> None:
             chosen = answers["combos"]
             wins = sum(1 for i, ab in chosen.items() if engine_side[i] == ab)
             results["blind"] = wins
-            lines += [f"**결과: {wins} / 10 {'✅' if wins >= 6 else '❌'}**", "",
+            lines += [f"**결과: {wins} / {len(BLENDS)} {'✅' if wins >= need else '❌'}**", "",
                       "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
                       *[f"| {i}. {BLENDS[i - 1][0]} | {chosen[i]} | {engine_side[i]} |" for i in range(1, len(BLENDS) + 1)], ""]
 
@@ -346,7 +391,7 @@ def main() -> None:
 
     # 5. 다양성
     results["brands"] = len(all_brands)
-    lines += ["## 5. 다양성 (기준: 조합 10개의 Top 10 전체에서 서로 다른 브랜드 40개 이상)", "",
+    lines += [f"## 5. 다양성 (기준: 조합 {len(BLENDS)}개의 Top 10 전체에서 서로 다른 브랜드 40개 이상)", "",
               f"**결과: {len(all_brands)}개 {'✅' if len(all_brands) >= 40 else '❌'}**", ""]
 
     # 6. 등급 기준값 참고
@@ -366,10 +411,10 @@ def main() -> None:
     old_key = DOCS / "engine_blind_key.md"
     if old_key.exists():
         old_key.unlink()  # 예전 방식의 정답 파일 (이제 남기지 않음)
-    summary = (f"재현 {results['reproduce']}/20 · 맹점 {results['blindspot']}/5 (시트러스 1위 {citrus_first}) · "
+    summary = (f"재현 {results['reproduce']}/20 (2개 {results['reproduce_hard'][(20, 'two_per_layer')]} · 하나 뺌 {results['reproduce_hard'][(20, 'drop_one')]}) · 맹점 {results['blindspot']}/5 (시트러스 1위 {citrus_first}) · "
                f"브랜드 {results['brands']}개 · Python {ms:.0f}ms/회")
     if answers:
-        summary += f" · 블라인드 {results['blind']:g}/10 ({answers['source']})"
+        summary += f" · 블라인드 {results['blind']:g} ({answers['source']})"
         if "eye" in results:
             summary += f" · 눈으로 {results['eye']:.1f}점"
     print(summary)

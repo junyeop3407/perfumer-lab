@@ -1,7 +1,9 @@
 # 추천 엔진 합격 기준표
 
-> 카탈로그 `2026.10.31` · 엔진 v5 · 후보 향수 13,461개 · `py pipeline/evaluate.py`로 만든 문서
+> 카탈로그 `2026.10.31` · 엔진 v6 · 후보 향수 13,461개 · `py pipeline/evaluate.py`로 만든 문서
 > 기준은 docs/design.md 14절. 블라인드 비교는 `engine_blind.md`.
+
+> ⏳ **블라인드 비교 답을 기다리는 중.** 지금 엔진의 추천 목록이 보이는 표(2절 표, 4절)는 답을 받은 뒤에 나옵니다.
 
 ## 1. 재현 (기준: 20개 중 15개 이상이 Top 3, 2026-10-30 사장 결정으로 16→15)
 
@@ -9,6 +11,14 @@
 
 - 넣는 노트는 화면 규칙대로 층마다 앞 3개까지. 고유 노트 기준은 노트 데이터가 완전히 같은 향수(클론)를 하나로 세고, 그중 하나라도 맞히면 맞힌 것으로 본다
 - 이 20개 안의 클론: 없음
+
+어려운 버전(참고, 2026-10-31 — 기본이 거의 만점이라 변별력을 보려고):
+
+| 입력 | 20개 | 100개 |
+|---|---|---|
+| 기본: 층마다 3개 | 20/20 | 99/100 |
+| (a) 층마다 2개만 | 20/20 | 98/100 |
+| (b) 노트 하나를 무작위로 뺌 (고정 난수 20261031) | 20/20 | 97/100 |
 
 <details><summary>향수별 순위</summary>
 
@@ -39,163 +49,31 @@
 
 ## 2. 맹점 조합 (기준: Top 5 중 4개 이상이 시트러스와 플로럴을 둘 다 가짐)
 
-**결과: 5 / 5 ✅**
+**결과: 4 / 5 ✅**
 
 - 판정 방법: 향수의 어코드 목록 **전체(최대 5개)**를 계열로 바꿔, 시트러스 계열과 플로럴 계열이 둘 다 있으면 통과. design.md 14절은 "둘 다 가짐"이라고만 적었고, 0절 보정 설명은 "추천 상위 5개 모두에 시트러스가 들어간다"(순위 무관)라서 전체 목록 기준이 의도에 맞다
 - 참고: 상위 3개 어코드만 보면 1 / 5
-- 조합 어코드: 시트러스 35%, 플로럴 19%, 프레시 16%, 프루티 8%
-- Top 5 중 1위 어코드가 시트러스인 향수: 0개 (참고: 레몬을 '강'으로 골랐을 때 시트러스가 앞서는지)
+- 조합 어코드: 시트러스 39%, 프레시 19%, 플로럴 15%, 프루티 7%
+- Top 5 중 1위 어코드가 시트러스인 향수: 2개 (참고: 레몬을 '강'으로 골랐을 때 시트러스가 앞서는지)
 
-| 순위 | 향수 | 상위 어코드 | 시트러스 계열 비중 | 플로럴 계열 비중 | 점수 |
-|---|---|---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 13% (4번째) | 33% (1번째) | 0.910 |
-| 2 | Kuschel J / クシェルヨット — Freude Feder フロイデフェーダァ | 플로럴 · 프레시 · 프루티 | 7% (5번째) | 33% (1번째) | 0.893 |
-| 3 | Elizabeth Arden — Sunflowers Elizabeth Arden 1993 Eau de Toilette | 플로럴 · 프레시 · 프루티 | 7% (5번째) | 33% (1번째) | 0.883 |
-| 4 | Ormonde Jayne — Gatsby 22 | 프레시 · 시트러스 · 플로럴 | 27% (2번째) | 20% (3번째) | 0.871 |
-| 5 | Balenciaga — Talisman Balenciaga 1996 Eau Transparente | 플로럴 · 프루티 · 그린 | 13% (4번째) | 33% (1번째) | 0.864 |
+## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 12개 중 8개 이상 고름)
 
-비중 = 향수 어코드 벡터(목록 순서대로 5·4·3·2·1, 합 100)에서 그 계열 어코드가 차지하는 몫.
-
-## 3. 블라인드 비교 (기준: 지금 엔진 쪽을 10개 중 6개 이상 고름)
-
-> ⚠️ **임시 답안 (source: claude-provisional)**: 사람이 아니라 Claude가 향을 맡지 않고 노트 피라미드 지식과 어코드 라벨로 고른 답이다. 어코드 엔진 쪽에 유리하게 치우쳤을 수 있다. **사장 답안이 오면 그걸 기준으로 한다.**
-
-**결과: 9.5 / 10 ✅** (조합마다 남은 줄에서 엔진 쪽을 더 많이 고르면 1, 같으면 0.5)
-
-- 줄 단위: 엔진 쪽 36 / 44줄 (82%)
-- 뺀 줄 — 양쪽이 같은 향수: 6-4, 6-5, 8-1, 8-5 · 자리만 바뀐 같은 쌍(뒤 줄은 세지 않음): 6-2/6-3, 7-1/7-2
-- 자리만 바뀐 쌍의 판단 일관성: 모두 같은 향수를 골랐음
-- 채점 기준: `engine_blind_v3_pairs.json` — ⚠️ 지금 문서와 줄 구성이 다름(답은 고정본 기준)
-
-| 조합 | 지금 엔진 쪽 | 엔진 : 다른 쪽 | 판정 |
-|---|---|---|---|
-| 1. 핑크 페퍼 · 장미 · 패출리 | B | 4 : 1 | 승 |
-| 2. 베르가못 · 장미 · 머스크 | B | 5 : 0 | 승 |
-| 3. 자몽 · 라벤더 · 베티버 | B | 4 : 1 | 승 |
-| 4. 만다린 · 자스민 · 바닐라 | A | 4 : 1 | 승 |
-| 5. 핑크 페퍼 · 아이리스 · 시더우드 | B | 4 : 1 | 승 |
-| 6. 레몬 · 녹차 · 화이트 머스크 | B | 1 : 1 | 동점 |
-| 7. 카다멈 · 타바코 · 우드 · 앰버 | A | 3 : 1 | 승 |
-| 8. 복숭아 · 작약 · 머스크 | A | 3 : 0 | 승 |
-| 9. 마린 노트 · 세이지 · 시더우드 약 | A | 3 : 2 | 승 |
-| 10. 시나몬 · 통카 빈 · 바닐라 · 샌달우드 | A | 5 : 0 | 승 |
+`engine_blind.md`에서 답을 받은 뒤 채웁니다.
 
 ## 4. 눈으로 평가 (기준: 평균 3.5점 이상)
 
-> ⚠️ **임시 점수 (source: claude-provisional)**: 사람이 아니라 Claude가 향을 맡지 않고 노트 지식과 어코드 라벨로 매긴 점수다. **사장 점수가 오면 그걸로 덮어쓴다.**
+블라인드 비교 답을 받은 뒤, 조합마다 지금 엔진의 Top 5를 보여 드리고 1~5점을 받습니다.
 
-**결과: 평균 3.7점 ✅**
+## 5. 다양성 (기준: 조합 12개의 Top 10 전체에서 서로 다른 브랜드 40개 이상)
 
-**1. 핑크 페퍼 · 장미 · 패출리** — 조합 어코드: 플로럴 35%, 스파이시 22%, 스위트 13%, 우디 8% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Van Cleef & Arpels — Moonlight Rose | 플로럴 · 스파이시 · 스위트 | 0.989 | VERY_SIMILAR |
-| 2 | Parfums d'Elmar — Elixir d'Amour | 플로럴 · 스파이시 · 스위트 | 0.985 | VERY_SIMILAR |
-| 3 | Thameen — Peacock Throne Thameen 2013 Extrait de Parfum | 플로럴 · 스파이시 · 스위트 | 0.974 | VERY_SIMILAR |
-| 4 | Nishane — Favonius | 플로럴 · 스파이시 · 오리엔탈 | 0.974 | VERY_SIMILAR |
-| 5 | The Merchant Of Venice — Imperial Emerald The Merchant Of Venice 2019 Eau de Parfum | 플로럴 · 스파이시 · 스위트 | 0.970 | VERY_SIMILAR |
-
-**2. 베르가못 · 장미 · 머스크** — 조합 어코드: 플로럴 40%, 프레시 23%, 시트러스 9%, 파우더리 8% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Floris — Royal Arms Diamond Edition | 플로럴 · 프레시 · 파우더리 | 0.975 | VERY_SIMILAR |
-| 2 | MiN New York — Scent Stories Vol.2/Ch.01 - Ad Lumen | 플로럴 · 프레시 · 파우더리 | 0.970 | VERY_SIMILAR |
-| 3 | Galimard — Gelsomino | 플로럴 · 프레시 · 스파이시 | 0.969 | VERY_SIMILAR |
-| 4 | Acqua di Parma — Magnolia Infinita | 플로럴 · 프레시 · 시트러스 | 0.968 | VERY_SIMILAR |
-| 5 | Penhaligon's — Luna Penhaligon's 2016 Eau de Toilette | 플로럴 · 프레시 · 시트러스 | 0.968 | VERY_SIMILAR |
-
-**3. 자몽 · 라벤더 · 베티버** — 조합 어코드: 프레시 24%, 스파이시 17%, 우디 15%, 시트러스 13% — 점수: 3점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Eisenberg — Eau Fraîche | 프레시 · 스파이시 · 시트러스 | 0.978 | VERY_SIMILAR |
-| 2 | Rasasi — Rumz Al Rasasi 9459 pour Lui | 프레시 · 스파이시 · 우디 | 0.977 | VERY_SIMILAR |
-| 3 | Hugo Boss — Hugo Hugo Boss 1995 Eau de Toilette | 프레시 · 스파이시 · 그린 | 0.961 | VERY_SIMILAR |
-| 4 | Mäurer & Wirtz — Tabac Original Craftsman Mäurer & Wirtz 2019 Eau de Toilette | 프레시 · 스파이시 · 신세틱 | 0.959 | VERY_SIMILAR |
-| 5 | Lacoste — Booster Lacoste 1996 Eau de Toilette | 프레시 · 시트러스 · 그린 | 0.955 | VERY_SIMILAR |
-
-**4. 만다린 · 자스민 · 바닐라** — 조합 어코드: 플로럴 28%, 스위트 26%, 프루티 12%, 프레시 8% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Estée Lauder — Bronze Goddess Capri | 플로럴 · 스위트 · 프루티 | 0.985 | VERY_SIMILAR |
-| 2 | Tesori d'Oriente — Tiaré delle Indie | 플로럴 · 스위트 · 프루티 | 0.985 | VERY_SIMILAR |
-| 3 | Dolce & Gabbana — L'Eau The One | 스위트 · 플로럴 · 프루티 | 0.983 | VERY_SIMILAR |
-| 4 | Dior — Dior Bronze - Sweet Sun | 스위트 · 플로럴 · 프루티 | 0.983 | VERY_SIMILAR |
-| 5 | John Galliano — Parlez-moi d'Amour John Galliano 2011 Eau de Parfum | 스위트 · 플로럴 · 프루티 | 0.983 | VERY_SIMILAR |
-
-**5. 핑크 페퍼 · 아이리스 · 시더우드** — 조합 어코드: 우디 25%, 플로럴 21%, 스파이시 16%, 파우더리 15% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | La Perla — My Day | 플로럴 · 우디 · 파우더리 | 0.974 | VERY_SIMILAR |
-| 2 | Giorgio Armani — Armani Mania pour Femme | 플로럴 · 파우더리 · 우디 | 0.956 | VERY_SIMILAR |
-| 3 | Ormonde Jayne — Orris Noir Ormonde Jayne 2006 Eau de Parfum | 스파이시 · 플로럴 · 우디 | 0.955 | VERY_SIMILAR |
-| 4 | Ormonde Jayne — Vanille d'Iris Ormonde Jayne 2015 Eau de Parfum | 파우더리 · 플로럴 · 스파이시 | 0.950 | VERY_SIMILAR |
-| 5 | Molinard — Iris | 파우더리 · 플로럴 · 우디 | 0.936 | VERY_SIMILAR |
-
-**6. 레몬 · 녹차 · 화이트 머스크** — 조합 어코드: 프레시 34%, 시트러스 26%, 그린 14%, 플로럴 9% — 점수: 3점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Carthusia — Mediterraneo Carthusia Profumo | 시트러스 · 프레시 · 그린 | 0.978 | VERY_SIMILAR |
-| 2 | Ffern — Autumn 21 | 시트러스 · 프레시 · 그린 | 0.978 | VERY_SIMILAR |
-| 3 | Lanvin — Éclat d'Arpège Gourmandise | 프레시 · 플로럴 · 시트러스 | 0.947 | VERY_SIMILAR |
-| 4 | Les Parfums de Rosine — Un Zest de Rose | 플로럴 · 시트러스 · 프레시 | 0.926 | VERY_SIMILAR |
-| 5 | Nicolaï / Parfums de Nicolaï — Victoire | 시트러스 · 프레시 · 그린 | 0.882 | VERY_SIMILAR |
-
-**7. 카다멈 · 타바코 · 우드 · 앰버** — 조합 어코드: 우디 26%, 스파이시 26%, 오리엔탈 18%, 스위트 9% — 점수: 3점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Anfas — Shaghaf | 스파이시 · 애니멀릭 · 오리엔탈 | 0.899 | VERY_SIMILAR |
-| 2 | Nabeel — The Spirit of Dubai - Baz | 스파이시 · 오리엔탈 · 레더 | 0.895 | VERY_SIMILAR |
-| 3 | Chopard — Oud Malaki | 우디 · 스파이시 · 오리엔탈 | 0.889 | VERY_SIMILAR |
-| 4 | Nabeel — Dubai - Meydan Nabeel 2015 Eau de Parfum | 레더 · 스파이시 · 우디 | 0.889 | VERY_SIMILAR |
-| 5 | Korres — Saffron \| Amber \| Cardamom | 스파이시 · 우디 · 오리엔탈 | 0.843 | SIMILAR |
-
-**8. 복숭아 · 작약 · 머스크** — 조합 어코드: 플로럴 36%, 프레시 21%, 프루티 20%, 스위트 11% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Rituals — Oriental Essence - Fleurs de L'Himalaya | 플로럴 · 프레시 · 프루티 | 0.989 | VERY_SIMILAR |
-| 2 | Ex Nihilo — Fleur Narcotique Ex Nihilo 2013 Eau de Parfum | 플로럴 · 프루티 · 프레시 | 0.987 | VERY_SIMILAR |
-| 3 | V Canto — Ricina | 플로럴 · 프루티 · 프레시 | 0.987 | VERY_SIMILAR |
-| 4 | Ex Nihilo — Fleur Narcotique Signature Rose de Mai | 플로럴 · 프레시 · 스위트 | 0.979 | VERY_SIMILAR |
-| 5 | Salvatore Ferragamo — Incanto | 플로럴 · 프루티 · 스위트 | 0.977 | VERY_SIMILAR |
-
-**9. 마린 노트 · 세이지 · 시더우드 약** — 조합 어코드: 프레시 31%, 아쿠아틱 30%, 우디 12%, 신세틱 9% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Davidoff — Cool Water Into the Ocean | 아쿠아틱 · 프레시 · 시트러스 | 0.876 | VERY_SIMILAR |
-| 2 | Fendi — Fan di Fendi pour Homme Acqua | 아쿠아틱 · 프레시 · 시트러스 | 0.843 | SIMILAR |
-| 3 | Kenzo — Kenzo Homme Kenzo 2016 Eau de Parfum | 프레시 · 아쿠아틱 · 신세틱 | 0.843 | SIMILAR |
-| 4 | Al Haramain / الحرمين — Amber Oud Carbon Edition | 프레시 · 아쿠아틱 · 시트러스 | 0.817 | SIMILAR |
-| 5 | Giorgio Armani — Acqua di Giò Profondo Giorgio Armani 2024 Eau de Parfum | 아쿠아틱 · 프레시 · 시트러스 | 0.802 | SIMILAR |
-
-**10. 시나몬 · 통카 빈 · 바닐라 · 샌달우드** — 조합 어코드: 스위트 37%, 스파이시 17%, 우디 14%, 오리엔탈 9% — 점수: 4점
-
-| 순위 | 향수 | 상위 어코드 | 점수 | 등급 |
-|---|---|---|---|---|
-| 1 | Brecourt — Mauvais Garçon | 스위트 · 스파이시 · 우디 | 0.895 | VERY_SIMILAR |
-| 2 | Nobile 1942 — Il Capriccio del Maestro | 스위트 · 스파이시 · 구르망 | 0.885 | VERY_SIMILAR |
-| 3 | House of Sillage — HoS N.001 | 스위트 · 구르망 · 스파이시 | 0.869 | SIMILAR |
-| 4 | Joop! — Joop! Homme Joop! 2021 Eau de Parfum | 스위트 · 스파이시 · 오리엔탈 | 0.868 | SIMILAR |
-| 5 | Comptoir Sud Pacifique — Éclats d'Amandes | 스위트 · 구르망 · 스파이시 | 0.861 | SIMILAR |
-
-## 5. 다양성 (기준: 조합 10개의 Top 10 전체에서 서로 다른 브랜드 40개 이상)
-
-**결과: 86개 ✅**
+**결과: 97개 ✅**
 
 ## 6. 점수 분포 (등급 기준값 정하기용)
 
-- 1위 점수: 평균 0.954 · 최소 0.876 · 최대 0.989
-- 10위 점수: 평균 0.895 · 최소 0.771 · 최대 0.978
+- 1위 점수: 평균 0.956 · 최소 0.884 · 최대 0.990
+- 10위 점수: 평균 0.902 · 최소 0.771 · 최대 0.978
 - 지금 기준(engine_ref.py): 0.87 이상 매우 비슷 · 0.79 이상 비슷 · 그 아래 참고
 
 ## 7. 계산 시간
 
-- Python 참조 엔진 1회 평균 149ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)
+- Python 참조 엔진 1회 평균 142ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)

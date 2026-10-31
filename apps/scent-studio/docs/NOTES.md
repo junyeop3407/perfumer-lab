@@ -113,3 +113,10 @@
 ## 2026-10-31 복사 오류 규칙 점검 + 거의 복사 표시
 - 원본을 가린 87묶음 중 "조향사 단서"가 양쪽 브랜드에 모두 맞는 경우: **0개**(조향사 규칙 83은 정의상 한 브랜드만, 연도 규칙 4도 단서 브랜드 0). 양쪽이 다 맞는 12묶음은 이미 원본을 못 가려 묶음째 빠져 있었다. 앞으로도 연도 규칙이 이런 묶음을 고르지 않도록 확인을 넣었다. `copy_suspects.csv`에 `perfumer_clue_brands` 칸 추가.
 - 거의 복사: 카탈로그에서 브랜드가 다르고 노트·어코드가 같은 쌍은 4쌍뿐이고 모두 평가 수 차이 1~2(Outremer Lavande/XerJoff Zefiro, Bath & Body Works/Mazzolari, Aubusson/Armani Privé, Carner/Jo Malone). 기준 차이 5 이하로 `near_copy` 표시 8개, 후보에는 남김(뺄지는 사장 결정). 회귀 테스트 먼저.
+
+## 2026-10-31 어려운 재현 시험 · 블라인드 v6 · 등급 다시 재기
+- 어려운 재현(`evaluate.hard_inputs`, 기준표 1절): 기본 20/20 · 100개 99 / (a) 층마다 2개 20/20 · 98 / (b) 노트 하나 무작위로 뺌(고정 난수) 20/20 · 97. 어려운 버전도 변별력이 거의 없다(평가 많은 향수의 노트를 그대로 넣는 시험이라 쉬움).
+- 블라인드 문서를 엔진 v6로 다시 만들었다(`docs/engine_blind.md`, 조합 12개). 예전 v3 문서·답안은 `engine_blind_v3.md`·`engine_blind_answers_v3.txt`로 이름만 바꿔 보관, 고정본 `engine_blind_v3_pairs.json`. v6 줄별 A/B는 `engine_blind_v6_pairs.json`으로 고정(사장 답안 파일 `engine_blind_answers.txt`에 `고정본: engine_blind_v6_pairs.json`을 적으면 그걸로 채점).
+  - 추가한 '강' 조합 2개: "레몬 강 · 장미 · 머스크", "베르가못 · 라벤더 · 바닐라 강". 사장이 예로 든 맹점 조합·바닐라 강 조합은 다른 문서(engine_variants.md, engine_strong*.md)에 Top 5가 이미 보여서, 넣으면 A/B가 드러나 보인 적 없는 조합으로 골랐다. 맹점은 기준표 2절에서 따로 본다.
+  - 블라인드 기준은 조합의 60% 이상(12개면 8개).
+- 등급(`docs/engine_grades.md`, 기준값은 그대로): 같은 규칙이면 0.92 / 0.87. 블라인드 조합 10개 Top 5 매우/비슷/참고 = 지금 42/8/0 → 새 값 34/8/8, Top 10 72/25/3 → 63/9/28, 매우 비슷이 없는 조합 0 → 3.

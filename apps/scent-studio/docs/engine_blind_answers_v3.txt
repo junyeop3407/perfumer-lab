@@ -1,3 +1,4 @@
+# (보관용, 2026-10-31) 엔진 v3 블라인드 문서(engine_blind_v3.md)에 대한 Claude 임시 답안. 엔진 v6 문서는 engine_blind.md, 답안은 engine_blind_answers.txt
 # 블라인드 비교 답안 (evaluate.py가 읽는다)
 # 출처: claude-provisional = Claude(채팅)가 향을 맡지 않고 노트 피라미드 지식과 문서의 어코드 라벨로 고른 임시 답안(블라인드 답과 눈으로 평가 점수 둘 다).
 #        어코드 라벨을 봤으므로 어코드 엔진 쪽에 유리하게 치우쳤을 수 있다. 사람(사장) 답안이 오면 이 파일을 바꾸고 그걸 기준으로 한다.
