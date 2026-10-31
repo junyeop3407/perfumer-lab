@@ -1,0 +1,4 @@
+# 파이프라인(데이터 정리·참조 엔진·평가)에 필요한 것. 설치: py -m pip install -r pipeline/requirements.txt
+# numpy: 노트 프로필 "함께 든 노트의 몫 빼기" 계산 (2026-10-31 사장 허용)
+numpy>=2.0
+pytest>=8.0

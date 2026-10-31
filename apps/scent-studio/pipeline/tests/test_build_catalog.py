@@ -1,4 +1,5 @@
 """파이프라인 테스트 (QA팀 추가 테스트, 승인 대상 아님). 가짜 데이터(tests/fixtures)로 확인한다."""
+import dataclasses
 import gzip
 import json
 import sys
@@ -129,3 +130,58 @@ def test_이름이_같아도_노트가_다르면_다른_묶음():
     assert g["J89"] == g["J89AS"], "노트가 같은 농도 버전은 같은 묶음"
     assert g["J89"] != g["J21"], "노트가 다른 새 향수는 다른 묶음"
     assert g["J89"] == "joop!|homme", "평가 많은 쪽 묶음은 이름 그대로 (예전 묶음 값 유지)"
+
+
+def _copy_row(key, brand, name, year, votes, notes, accords="floral, sweet", perfumer="NA"):
+    top, middle, base = notes
+    return {"URL": f"https://example.invalid/{key}", "Brand": brand, "Name": name, "Release_Year": year,
+            "Concentration": "NA", "Rating_Value": "7.5", "Rating_Count": str(votes), "Main_Accords": accords,
+            "Top_Notes": top, "Middle_Notes": middle, "Base_Notes": base, "Perfumers": perfumer}
+
+
+def test_복사_오류는_원본만_남기거나_묶음째_뺀다():
+    # 2026-10-31 사장 요청: 브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같으면 원본 데이터셋의 복사 오류로 본다
+    a = ("lemon, bergamot", "rose", "musk")
+    b = ("cardamom, pink pepper", "iris", "vetiver")
+    c = ("lemon", "jasmine", "sandalwood")
+    rows = [
+        # 원본 X1: 조향사 Pierre가 브랜드 Xhouse에서 다른 향수(X2)도 만들었다 → 원본으로 남음, 복사본 Y1은 빠짐
+        _copy_row("X1", "Xhouse", "Original", "2001", 500, a, perfumer="Pierre"),
+        _copy_row("X2", "Xhouse", "Other", "2005", 40, c, accords="citrus, woody", perfumer="Pierre"),
+        _copy_row("Y1", "Yhouse", "Copied", "2015", 500, a, perfumer="Pierre"),
+        # 조향사 정보가 없어 원본을 못 가림 → 둘 다 빠짐
+        _copy_row("P1", "Phouse", "One", "2010", 80, b),
+        _copy_row("Q1", "Qhouse", "Two", "2012", 80, b),
+        # 노트는 같지만 평가 수가 다름 → 진짜 클론일 수 있어 둘 다 남음
+        _copy_row("R1", "Rhouse", "Famous", "1990", 900, c, accords="citrus, woody"),
+        _copy_row("S1", "Shouse", "Clone", "2020", 30, c, accords="citrus, woody"),
+    ]
+    res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t")
+    keys = {p["key"] for p in res.catalog["perfumes"]}
+    assert {"X1", "X2", "R1", "S1"} <= keys
+    assert not {"Y1", "P1", "Q1"} & keys
+    excluded = {e["key"]: e for e in res.report["copy_suspects"]}
+    assert excluded["Y1"]["decision"] == "excluded" and excluded["X1"]["decision"] == "kept_original"
+    assert excluded["P1"]["decision"] == excluded["Q1"]["decision"] == "excluded"
+
+
+def test_함께_든_노트의_몫을_빼고_노트_프로필을_만든다():
+    # 2026-10-31 사장 결정: 머스크는 플로럴 향수에 장미와 함께 자주 들어가서 플로럴로 잡혔다.
+    # 플로럴은 장미가, 우디는 시더우드가 가져가고 머스크에는 자기 몫(파우더리)이 남아야 한다.
+    # 끌어당기기(K)는 계열 평균 쪽 규칙이라 여기서는 끄고(0) 노트 프로필 계산만 본다
+    rows = []
+    for i in range(20):
+        rows.append(_copy_row(f"A{i}", "T", f"Rose Musk {i}", "2010", 100 + i, ("bergamot", "rose", "musk"),
+                              accords="floral, citrus, fresh, powdery"))
+        rows.append(_copy_row(f"B{i}", "T", f"Rose Cedar {i}", "2010", 200 + i, ("bergamot", "rose", "cedarwood"),
+                              accords="floral, citrus, fresh, woody"))
+    for i in range(40):
+        rows.append(_copy_row(f"D{i}", "T", f"Spice Wood {i}", "2010", 300 + i, ("cardamom", "vetiver", "cedarwood"),
+                              accords="woody, spicy"))
+    params = dataclasses.replace(R.FIXTURE, shrink_k=0.0)
+    cat = B.build(rows, params, {}, {}, {}, version="t", source_note="t").catalog
+    keys = [a["key"] for a in cat["accords"]]
+    prof = {n["key"]: n["profile"] for n in cat["notes"]}
+    top = lambda k: keys[max(range(len(keys)), key=lambda i: prof[k][i])]  # noqa: E731
+    assert top("rose") == "floral"
+    assert top("musk") == "powdery", f"머스크가 함께 든 장미의 몫을 가져감: {top('musk')}"

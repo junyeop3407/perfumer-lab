@@ -4,8 +4,8 @@
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 12/12 · TS 엔진(Vitest) 36/36 통과 (2026-10-31 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: (엔진 v4, 어코드 0.35 : 노트 0.55 확정) ① 노트 프로필을 "함께 든 노트 몫 빼기"로 바꿀지(`docs/engine_note_profiles.md`) ② '강' 값 2.5/3.0 ③ 등급 기준값 ④ 수집 오류로 보이는 클론 199묶음 처리 규칙(`docs/engine_grades_clones.md`) ⑤ 블라인드 문서 v4로 다시 만들지. 블라인드·눈으로 평가는 Claude 임시 답안 — 사장 답안 대기
+결과: 파이프라인 16/16 · TS 엔진(Vitest) 36/36 통과 (2026-10-31 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: (엔진 v5: 0.35:0.55, 몫 빼기 프로필, 복사 오류 제외) ① '강' 값 2.0/2.5/3.0과 '강'을 노트 겹침에도 반영할지(`docs/engine_strong_both.md`) ② 등급 기준값 ③ 그 뒤 블라인드 문서 다시 만들기(지금 엔진이면 42/50줄 바뀜). 블라인드·눈으로 평가는 Claude 임시 답안 — 사장 답안 대기. 새 컴퓨터는 `py -m pip install -r pipeline/requirements.txt`(numpy)
 다음 할 일: 아래 "다음 세션에서 할 일" 1 → 2 → 3 순서 (엔진은 이제 TypeScript `app/src/engine/` — 1번의 "Java EngineParams"는 `app/src/engine/params.ts`)
 
 ## 2026-10-31 단계 1·2 결과

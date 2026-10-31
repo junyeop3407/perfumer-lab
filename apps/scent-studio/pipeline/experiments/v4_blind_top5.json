@@ -1,0 +1,77 @@
+{
+ "engineVersion": 4,
+ "catalogVersion": "2026.10.31",
+ "note": "v4(어코드 0.35:노트 0.55, 강 2.0, PPMI 프로필) 블라인드 조합 10개 Top 5. 이후 엔진과 비교용",
+ "top5": {
+  "핑크 페퍼 · 장미 · 패출리": [
+   "Sospiro:Duetto",
+   "Agent_Provocateur:Miss_AP",
+   "Nishane:favonius",
+   "Agent_Provocateur:L_Agent_Eau_de_Parfum",
+   "Bella_Bellissima:Emerald_Doree"
+  ],
+  "베르가못 · 장미 · 머스크": [
+   "Molton_Brown:orange-bergamot-eau-de-parfum",
+   "Floris:Private_Collection_Royal_Arms_Diamond_Edition",
+   "Versace:Yellow_Jeans",
+   "Penhaligons:Luna",
+   "Floris:Special_No_127_Original_Gentlemen_s_Cologne"
+  ],
+  "자몽 · 라벤더 · 베티버": [
+   "Eisenberg:Eau_Fraiche_Eau_de_Parfum",
+   "Angel_Schlesser:Selection_de_Memoires_Esprit_de_Gingembre_pour_Homme",
+   "Dior:Dior_Homme_Sport_2008_Eau_de_Toilette",
+   "Azzaro:Azzaro_pour_Homme_L_Eau",
+   "Acqua_di_Parma:colonia-futura"
+  ],
+  "만다린 · 자스민 · 바닐라": [
+   "Estee_Lauder:Bronze_Goddess_Capri",
+   "Dior:J_adore_L_Eau_de_Toilette_2002",
+   "Tesori_dOriente:Tiare_delle_Indie",
+   "DKNY:DKNY_Women_Gold",
+   "Juicy_Couture:Viva_La_Juicy_La_Fleur_Eau_de_Toilette"
+  ],
+  "핑크 페퍼 · 아이리스 · 시더우드": [
+   "Ormonde_Jayne:Orris_Noir_Eau_de_Parfum",
+   "La_Perla:my-day",
+   "Ormonde_Jayne:Vanille_d_Iris",
+   "Clive_Christian:x-for-men",
+   "Giorgio_Armani:Armani_Mania_for_Women"
+  ],
+  "레몬 · 녹차 · 화이트 머스크": [
+   "Carthusia:Mediterraneo_Profumo",
+   "Ffern:autumn-21",
+   "Les_Parfums_de_Rosine:Un_Zest_de_Rose",
+   "Bath_Body_Works:Sonoma_Weekend_Escape",
+   "Lanvin:Eclat_d_Arpege_Gourmandise"
+  ],
+  "카다멈 · 타바코 · 우드 · 앰버": [
+   "Nabeel:The_Spirit_of_Dubai__Baz",
+   "Nabeel:dubai-meydan-eau-de-parfum",
+   "Anfas:Shaghaf",
+   "Chopard:Oud_Malaki",
+   "Al_Haramain:Urbanist_Prive_Gold"
+  ],
+  "복숭아 · 작약 · 머스크": [
+   "Ex_Nihilo:fleur-narcotique-eau-de-parfum",
+   "V_Canto:Ricina",
+   "Gres:Sphinx_Hommage__Greta_Garbo",
+   "Salvatore_Ferragamo:Incanto",
+   "Roja_Parfums:elysium-pour-femme"
+  ],
+  "마린 노트 · 세이지 · 시더우드 약": [
+   "Davidoff:Cool_Water_Into_the_Ocean",
+   "Fendi:Fan_di_Fendi_pour_Homme_Acqua",
+   "Kenzo:kenzo-homme-2016-eau-de-parfum",
+   "Al_Haramain:amber-oud-carbon-edition",
+   "Giorgio_Armani:acqua-di-gio-profondo-lights"
+  ],
+  "시나몬 · 통카 빈 · 바닐라 · 샌달우드": [
+   "Nobile_1942:Il_Capriccio_del_Maestro",
+   "Joop:joop-homme-eau-de-parfum",
+   "Brecourt:Mauvais_Garcon",
+   "House_of_Sillage:HoS_N_001",
+   "Kayali:invite-only-amber-23"
+  ]
+ }
+}

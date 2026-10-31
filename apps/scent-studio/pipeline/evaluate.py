@@ -62,6 +62,28 @@ def cell(text: str) -> str:
     return text.replace("|", "\\|")
 
 
+def reproduction_picks(catalog: dict, eng: Engine, n: int) -> list[tuple[dict, list[tuple[str, str]]]]:
+    """재현 시험의 정답: 평가 많은 향수 n개(브랜드 겹치지 않게)와 넣을 노트(화면 규칙대로 층마다 앞 3개, 같은 노트는 한 번).
+    다른 브랜드에 노트·어코드가 똑같은 향수가 있으면 정답에서 뺀다(2026-10-31 사장 요청: 평가 수만 조금 다른
+    '거의 복사'도 원본 데이터셋의 복사 오류일 수 있어서. 예: Outremer Lavande 694 / XerJoff 695)."""
+    sig = lambda p: (tuple(tuple(sorted(p[layer])) for layer in ("top", "middle", "base")), tuple(p["accords"]))  # noqa: E731
+    brands_by_sig: dict = {}
+    for p in catalog["perfumes"]:
+        brands_by_sig.setdefault(sig(p), set()).add(p["brand"])
+    picks, brands = [], set()
+    for p in sorted(catalog["perfumes"], key=lambda p: (-p["ratingCount"], p["key"])):
+        seen: set[str] = set()
+        notes = [(k, layer) for layer in ("top", "middle", "base") for k in p[layer][:3]
+                 if eng.notes[k]["tier"] != "hidden" and not (k in seen or seen.add(k))]
+        if p["brand"] in brands or not notes or len(brands_by_sig[sig(p)]) > 1:
+            continue
+        picks.append((p, notes))
+        brands.add(p["brand"])
+        if len(picks) == n:
+            break
+    return picks
+
+
 def parse_scores(text: str) -> list[int]:
     """눈으로 평가 점수: "4 3 4 …"(조합 순서대로) 또는 "1=4 2=3 …"(조합 번호=점수)"""
     pairs = re.findall(r"(\d+)\s*=\s*(\d)", text)
@@ -204,16 +226,7 @@ def main() -> None:
     results = {}
 
     # 1. 재현: 평가 많은 향수 20개(브랜드 겹치지 않게)의 노트를 그대로 넣으면 그 향수가 Top 3
-    picks, brands = [], set()
-    for p in sorted(catalog["perfumes"], key=lambda p: (-p["ratingCount"], p["key"])):
-        notes = [(k, layer) for layer in ("top", "middle", "base") for k in p[layer][:3]
-                 if eng.notes[k]["tier"] != "hidden"]
-        if p["brand"] in brands or not notes:
-            continue
-        picks.append((p, notes))
-        brands.add(p["brand"])
-        if len(picks) == 20:
-            break
+    picks = reproduction_picks(catalog, eng, 20)
     hit, rows, hits, limits = 0, [], {}, []
     sig = lambda p: tuple(tuple(sorted(p[layer])) for layer in ("top", "middle", "base"))  # noqa: E731
     for p, notes in picks:

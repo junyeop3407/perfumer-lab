@@ -1,0 +1,413 @@
+set,key,brand,name,year,rating_count,decision,reason
+1,1000_Flowers:Reglisse_Noire,1000 Flowers,Réglisse Noire,2002,63,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+1,Molinard:La_Collection_Privee_Ambre_Lumiere,Molinard,La Collection Privée - Ambré Lumière,2014,63,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+2,100Bon:1-05-bois-poudre,100BON,Bois & Poudre,2009,147,excluded,복사본 — 원본은 Heeley — Chypre 21 (조향사가 이 브랜드에서 다른 향수도 만듦)
+2,Heeley:Chypre_21,Heeley,Chypre 21,2015,147,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+2,Impulse:Purple_Petals__Smoky_Sky,Impulse,Purple Petals + Smoky Sky,2012,147,excluded,복사본 — 원본은 Heeley — Chypre 21 (조향사가 이 브랜드에서 다른 향수도 만듦)
+3,1907:Almond,1907,Almond,2004,369,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+3,Molinard:Habanita_Eau_de_Parfum,Molinard,Habanita Molinard 2012 Eau de Parfum,2012,369,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+4,19_69:Kasbah,19-69,Kasbah,2001,35,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+4,Jacomo:Art_Collection_by_Jacomo_09,Jacomo,Art Collection by Jacomo #09,2010,35,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+5,4160_Tuesdays:Doe_in_the_Snow,4160 Tuesdays,Doe in the Snow,2002,78,excluded,복사본 — 원본은 Le Galion — Essence Noble (2023) Eau Noble (조향사가 이 브랜드에서 다른 향수도 만듦)
+5,Le_Galion:essence-noble-2023-eau-noble-2014,Le Galion,Essence Noble (2023) Eau Noble,2014,78,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+6,4160_Tuesdays:Ealing_Green,4160 Tuesdays,Ealing Green,2015,145,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+6,Giorgio_Armani:Armani_Prive__Cuir_Majeste,Giorgio Armani,Armani Privé - Cuir Majesté,2016,145,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+7,4711:Champaca_Eau_de_Cologne,4711,Sir - Champaca 4711 2002 Eau de Cologne,2002,201,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+7,Kemi:Layla,Kemi / Al Kimiya,Layla,2014,201,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+8,4711:Echt_Koelnisch_Wasser_Artist_Edition_2014_Koralie,4711,Echt Kölnisch Wasser - Artist Edition 2014 Koralie,2003,53,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+8,Black_Ship_Grooming_Co_:dicey-pete,Black Ship Grooming Co.,Dicey Pete,2003,53,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+8,Dunhill:Custom,Dunhill,Custom,2011,53,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+9,4711:Filigran,4711,Filigran,2002,16,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+9,Mazzolari:elena-eau-de-parfum,Mazzolari,Elena Mazzolari 2014 Eau de Parfum,2014,16,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+10,4711:Irisch_Moos_Eau_de_Toilette,4711,Sir - Irisch Moos 4711 2015 Eau de Toilette,2015,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+10,Replay:Stone_Supernova_for_Him,Replay,Stone Supernova for Him,2016,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+11,4711:Shahi_Eau_de_Toilette,4711,Shahi 4711 2006 Eau de Toilette,2006,64,excluded,복사본 — 원본은 Lubin — Condottiere (조향사가 이 브랜드에서 다른 향수도 만듦)
+11,Lubin:Condottiere,Lubin,Condottiere,2019,64,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+12,Aaron_Terence_Hughes:slut-elixir,Aaron Terence Hughes,Slut Élixir,2023,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+12,Zara:violet-blossom,Zara,Violet Blossom,2010,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+13,Abaton:Fieno_Donna,Abaton,Fieno Donna,2010,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+13,Replay:Signature_for_Woman,Replay,Signature for Woman,2017,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+14,Abbate_y_La_Mantia:colonia-isacco,Abbate y La Mantia,Colonia Isacco,1961,95,excluded,복사본 — 원본은 Lubin — L'Eau Neuve (다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음)
+14,Lubin:L_Eau_Neuve,Lubin,L'Eau Neuve,1968,95,kept_original,다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음
+15,Abel:Green_Cedar,Abel,Green Cedar,2002,608,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+15,Xerjoff:pikovaya-dama,XerJoff,Pikovaya Dama,2014,608,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+16,Abel:Grey_Labdanum,Abel,Grey Labdanum,2001,364,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+16,L_Erbolario:Dolcelisir,L'Erbolario,Dolcelisir,2010,364,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+17,Acidica:8_Jewels_Tea,Acidica Perfumes,Jewels Tea,2003,92,excluded,복사본 — 원본은 Katy Perry — Meow! Katy Perry 2011 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+17,Katy_Perry:Meow,Katy Perry,Meow! Katy Perry 2011 Eau de Parfum,2011,92,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+18,Acqua_di_Parma:Acqua_Nobile_Iris,Acqua di Parma,Acqua Nobile Iris,2013,82,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+18,Borsari:Segreto_d_Amore,Borsari 1870,Segreto d'Amore,1998,82,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+19,Acqua_di_Parma:Sakura,Acqua di Parma,Sakura,2019,127,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+19,amir-oud:arab-oud,Amir Oud,Arab Oud,2006,127,excluded,복사본 — 원본은 Acqua di Parma — Sakura (조향사가 이 브랜드에서 다른 향수도 만듦)
+20,Acqua_di_Sardegna:Desvelos,Acqua di Sardegna,Desvélos,1998,61,excluded,복사본 — 원본은 Mugler — La Rose Angel (조향사가 이 브랜드에서 다른 향수도 만듦)
+20,mugler:Angel_Garden_Of_Stars_Rose_Angel,Mugler,La Rose Angel,2006,61,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+21,Adolfo_Dominguez:Freesia,Adolfo Dominguez,Freesia,2002,13,excluded,복사본 — 원본은 Solinotes — Fleur de Figuier (조향사가 이 브랜드에서 다른 향수도 만듦)
+21,Solinotes:Fleur_de_Figuier,Solinotes,Fleur de Figuier,2014,13,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+22,Aeropostale:Aero_New_York_City_1987_Cologne_pour_Garcons,Aéropostale,Aero New York City 1987 - Cologne pour Garçons,2004,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+22,Loewe:Aire_Sensual,Loewe,Aire Sensual,2012,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+23,Afnan_Perfumes:9am-dive,Afnan Perfumes,am Dive,2022,61,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+23,Roja_Parfums:H_The_Exclusive_Aoud,Roja Parfums,H - The Exclusive Aoud,2016,61,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+24,Agar_Aura:al-mendoos-attar,Agar Aura,Al-Mendoos Agar Aura 1998 Attar,1998,147,excluded,복사본 — 원본은 Yves Rocher — Secrets d'Essences - Rose Absolue Yves Rocher 2006 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+24,Yves_Rocher:Secrets_d_Essences_Rose_Absolue,Yves Rocher,Secrets d'Essences - Rose Absolue Yves Rocher 2006 Eau de Parfum,2006,147,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+25,Agatha_Ruiz_de_la_Prada:Flor,Agatha Ruiz de la Prada,Flor,2002,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+25,Gucci:Gucci_Premiere_Eau_de_Toilette,Gucci,Gucci Première Gucci 2014 Eau de Toilette,2014,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+26,Agatha_Ruiz_de_la_Prada:Flormania,Agatha Ruiz de la Prada,Flor Mania,2003,28,excluded,복사본 — 원본은 Jo Malone — Sweet Milk (조향사가 이 브랜드에서 다른 향수도 만듦)
+26,Jo_Malone:Sweet_Milk,Jo Malone,Sweet Milk,2011,28,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+27,Agent_Provocateur:L_Agent_Eau_de_Parfum,Agent Provocateur,L'Agent Agent Provocateur 2011 Eau de Parfum,2011,208,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+27,Bella_Bellissima:Emerald_Doree,Bella Bellissima,Emerald Dorée,2003,208,excluded,복사본 — 원본은 Agent Provocateur — L'Agent Agent Provocateur 2011 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+28,Aimee_de_Mars:Les_Elements__Eau_21,Aimée de Mars,Eau 21,2008,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+28,Ormonde_Jayne:montabaco-flor,Ormonde Jayne,Montabaco Flor,2021,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+29,Ajne:Bloom_de_Nuit_Night_s_Bloom,Ajne,Bloom de Nuit Night's Bloom,1994,87,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+29,Versace:Versace,Versace,Versace pour Femme,2007,87,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+30,Al_Halal:Jamid,Al Halal,Jamid,2003,34,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+30,Calvin_Klein:Eternity_Summer_2011,Calvin Klein,Eternity Summer 2011,2011,34,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+31,Al_Halal:Perception,Al Halal,Perception,2003,175,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+31,Juliette_Has_a_Gun:Romantina,Juliette Has A Gun,Romantina,2011,175,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+32,Al_Jazeera:380,Al-Jazeera / الجزيرة,Al-Jazeera / الجزيرة,1983,127,excluded,복사본 — 원본은 Hanae Mori / ハナヱ モリ — Butterfly Hanae Mori Hanae Mori / ハナヱ モリ 1995 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+32,Hanae_Mori:Butterfly_Hanae_Mori_1995_Eau_de_Toilette,Hanae Mori / ハナヱ モリ,Butterfly Hanae Mori Hanae Mori / ハナヱ モリ 1995 Eau de Toilette,1995,127,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+33,Al_Jazeera:art-collection-art-deco,Al-Jazeera / الجزيرة,Art Collection - Art Deco,1998,21,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+33,Salvatore_Ferragamo:F_by_Ferragamo,Salvatore Ferragamo,F by Ferragamo,2006,21,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+34,Al_Jazeera:art-collection-la-foret,Al-Jazeera / الجزيرة,Art Collection - La Forêt,1998,403,excluded,복사본 — 원본은 Jil Sander — Sun Delight (조향사가 이 브랜드에서 다른 향수도 만듦)
+34,Jil_Sander:Sun_Delight,Jil Sander,Sun Delight,2006,403,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+35,Alain_Daniel:Esperanza_Eau_de_Parfum,Alain Daniel,Esperanza Alain Daniel 2007 Eau de Parfum,2007,139,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+35,Montale:Red_Aoud,Montale,Red Aoud,2008,139,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+36,Alfred_Sung:Jewel,Alfred Sung,Jewel,2005,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+36,Armaf:iDiva_Noir_Eau_de_Parfum,Armaf,iDiva Noir Armaf 1996 Eau de Parfum,1996,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+37,Amouage:Al_Mas,Amouage,Al Mas,2010,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+37,GAP:dream-plus-body-mist,GAP,Dream ＋ GAP 2001 Body Mist,2001,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+38,Amouage:honour-43,Amouage,Honour 43,2021,73,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+38,Ga_De:icon-roses-body-mist,Ga-De,Icon Roses Ga-De 2008 Body Mist,2008,73,excluded,복사본 — 원본은 Amouage — Honour 43 (조향사가 이 브랜드에서 다른 향수도 만듦)
+39,Amouage:love-mimosa,Amouage,Love Mimosa,2019,247,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+39,Antica_Spezieria_Erboristeria_San_Simone:Cuoio_Antico,Antica Spezieria Erboristeria San Simone,Cuoio Antico,2006,247,excluded,복사본 — 원본은 Amouage — Love Mimosa (조향사가 이 브랜드에서 다른 향수도 만듦)
+40,Amouage:opus-xv-king-blue,Amouage,Opus XV - King Blue,2023,137,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+40,Borsari:Desio,Borsari 1870,Desio,2019,137,excluded,복사본 — 원본은 Amouage — Opus XV - King Blue (조향사가 이 브랜드에서 다른 향수도 만듦)
+41,Angel_Schlesser:Angel_Schlesser_Femme_Eau_de_Parfum,Angel Schlesser,Femme Angel Schlesser 2014 Eau de Parfum,2014,40,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+41,Colornoise:Birthday_Cake_,Colornoise,Birthday Cake.,2002,40,excluded,복사본 — 원본은 Angel Schlesser — Femme Angel Schlesser 2014 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+42,Angela_Flanders:Taffeta,Angela Flanders,Taffeta,2002,19,excluded,복사본 — 원본은 Jimmy Choo — Flash London Club (조향사가 이 브랜드에서 다른 향수도 만듦)
+42,Jimmy_Choo:Flash_London_Club,Jimmy Choo,Flash London Club,2014,19,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+43,Angela_Flanders:White_Roses,Angela Flanders,White Roses,2006,100,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+43,Cristiano_Ronaldo:cr7-play-it-cool-eau-de-toilette,Cristiano Ronaldo,CR7 Play It Cool Cristiano Ronaldo 2019 Eau de Toilette,2019,100,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+44,Angela_Flanders:rose-sauvage-eau-de-toilette,Angela Flanders,Rose Sauvage Angela Flanders 2001 Eau de Toilette,2001,51,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+44,Profumi_del_Forte:Versilia_Platinum,Profumi del Forte,Versilia Platinum,2010,51,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+45,Anna_Zworykina:Golden_Lavender,Anna Zworykina,Golden Lavender,1971,27,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+45,Penhaligons:Ormolu,Penhaligon's,Ormolu,1977,27,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+46,Antonio_Visconti:Bal_Masque,Antonio Visconti,Bal Masqué,2001,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+46,Ed_Hardy:Hearts__Daggers_for_Men,Ed Hardy,Hearts & Daggers for Men,2009,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+47,Areej_Le_Dore:the-history-of-bengal-oud,Areej Le Doré,The History of Bengal Oud,1983,11,excluded,복사본 — 원본은 Lancetti — Lancetti Madame Lancetti 1995 Eau de Toilette (다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음)
+47,Lancetti:Lancetti_Madame,Lancetti,Lancetti Madame Lancetti 1995 Eau de Toilette,1995,11,kept_original,다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음
+48,Armaf:Derby_Club_House_Blanche,Armaf,Derby Club House Blanche,2015,111,excluded,복사본 — 원본은 Roja Parfums — FM The Perfume (조향사가 이 브랜드에서 다른 향수도 만듦)
+48,Roja_Parfums:fm-the-perfume,Roja Parfums,FM The Perfume,2018,111,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+49,Armaf:excellus-men,Armaf,Excellus Men,2001,154,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+49,Dsquared:Ocean_Wet_Wood,Dsquared²,He Wood Ocean Wet Wood,2010,154,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+50,Armaf:miss-armaf-dazzling,Armaf,Miss Armaf Dazzling,2002,196,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+50,Davidoff:Leather_Blend,Davidoff,Leather Blend,2014,196,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+51,ArteOlfatto_Luxury_Perfumes:calar-del-sole,ArteOlfatto - Luxury Perfumes,Calar del Sole,2002,66,excluded,복사본 — 원본은 Ralph Lauren — Purple Label (조향사가 이 브랜드에서 다른 향수도 만듦)
+51,Ralph_Lauren:Purple_Label,Ralph Lauren,Purple Label,2003,66,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+52,Atelier_Cologne:Iris_Rebelle,Atelier Cologne,Iris Rebelle,2001,39,excluded,복사본 — 원본은 Jeanne Arthes — Amore Mio Jeanne Arthes 2010 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+52,Jeanne_Arthes:Amore_Mio_Eau_de_Parfum,Jeanne Arthes,Amore Mio Jeanne Arthes 2010 Eau de Parfum,2010,39,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+53,Atelier_Cologne:Pacific_Lime,Atelier Cologne,Pacific Lime,2003,46,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+53,Corday:Zigane_Tzigane,Corday,Zigane Tzigane,2003,46,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+54,Atelier_Cologne:Sous_le_toit_de_Paris,Atelier Cologne,Sous Le Toit de Paris,2002,68,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+54,Avon:Elite_Gentleman_In_Black,Avon,Elite Gentleman In Black,2002,68,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+54,Omnia_Profumi:Bronzo,Omnia Profumi,Bronzo,2014,68,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+55,Atkinsons:The_Contemporary_Collection__The_Big_Bad_Cedar,Atkinsons,The Big Bad Cedar,2016,139,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+55,Fruits__Passion:Eau_Fraiche__Fleur_de_Mer_Ocean_Flower,Fruits & Passion,Eau Fraîche - Fleur de Mer Ocean Flower,2015,139,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+56,Aubusson:Futuros_Eau_de_Toilette,Aubusson,Futuros Aubusson 2002 Eau de Toilette,2002,21,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+56,Calvin_Klein:Liquid_Gold_Euphoria_Men,Calvin Klein,Liquid Gold Euphoria Men,2014,21,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+57,Aulentissima:il-velo-di-maia,Aulentissima,Il Velo di Maia,2003,125,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+57,Byredo:Seven_Veils,Byredo,Seven Veils,2011,125,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+58,Auphorie:impromptu-n-4,Auphorie,Impromptu N°4,2010,156,excluded,복사본 — 원본은 Etat Libre d'Orange — Une Amourette - Roland Mouret (조향사가 이 브랜드에서 다른 향수도 만듦)
+58,Etat_Libre_d_Orange:Une_Amourette__Roland_Mouret,Etat Libre d'Orange,Une Amourette - Roland Mouret,2017,156,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+59,Australian_Private_Reserve:Fenchurch_Eau_de_Parfum,Australian Private Reserve,Fenchurch Australian Private Reserve 2009 Eau de Parfum,2009,43,excluded,복사본 — 원본은 Carolina Herrera — Nightfall Patchouli (조향사가 이 브랜드에서 다른 향수도 만듦)
+59,Carolina_Herrera:Nightfall_Patchouli,Carolina Herrera,Nightfall Patchouli,2015,43,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+60,Ava_Luxe:black-coconut-eau-de-parfum,Ava Luxe,Black Coconut Ava Luxe 2019 Eau de Parfum,2019,34,excluded,복사본 — 원본은 Giardini di Toscana — Scintilla (조향사가 이 브랜드에서 다른 향수도 만듦)
+60,Giardini_di_Toscana:scintilla,Giardini di Toscana,Scintilla,2023,34,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+61,Avon:1_Pulse_for_Him,Avon,Pulse for Him,2003,23,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+61,Galimard:songeries-eau-de-parfum,Galimard,Songeries Galimard 2011 Eau de Parfum,2011,23,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+62,Avon:Andalusia,Avon,Andalusia,2002,189,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+62,Floris:Honey_Oud,Floris,Honey Oud,2014,189,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+63,Avon:Aqua_for_Him,Avon,Aqua for Him,2003,81,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+63,Guerlain:Les_Elixirs_Charnels__Floral_Romantique,Guerlain,Les Élixirs Charnels - Floral Romantique,2011,81,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+64,Avon:Comores_After_Shave,Avon,Comores Avon 1983 After Shave,1983,70,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+64,Chloe:Innocence,Chloé,Innocence,1995,70,excluded,복사본 — 원본은 Avon — Comores Avon 1983 After Shave (조향사가 이 브랜드에서 다른 향수도 만듦)
+65,Avon:Derek_Jeter_Driven_Sport,Avon,Derek Jeter Driven Sport,1986,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+65,Bogner:Bogner_Femme,Bogner,Bogner Femme,1988,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+66,Avon:Free_for_Her_Body_Spray,Avon,Free for Her Avon 2007 Body Spray,2007,358,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+66,Yves_Saint_Laurent:black-opium-le-parfum,Yves Saint Laurent,Black Opium Le Parfum,2022,358,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+67,Avon:Frosted_Swirls_Winter_Bloom,Avon,Frosted Swirls - Winter Bloom,2002,26,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+67,Loewe:Esencia_Sport,Loewe,Esencia Sport,2014,26,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+68,Avon:cotillion-solid-perfume,Avon,Cotillion Avon 2004 Solid Perfume,2004,26,excluded,복사본 — 원본은 Olivier Durbano — Héliotrope Olivier Durbano 2012 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+68,Olivier_Durbano:Heliotrope,Olivier Durbano,Héliotrope Olivier Durbano 2012 Eau de Parfum,2012,26,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+69,Avon:honey-blossom,Avon,Honey Blossom,1981,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+69,Estee_Lauder:White_Linen_Breeze,Estée Lauder,White Linen Breeze,1996,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+70,Avon:lyrd-artisan-santal-musk,Avon,Lyrd - Artisan Santal Musk,2009,72,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+70,The_Merchant_Of_Venice:Liberty,The Merchant Of Venice,Liberty,2015,72,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+71,Avroy_Shlain:After_Midnight_Gold,Avroy Shlain,After Midnight Gold,1978,60,excluded,복사본 — 원본은 Worth — Worth pour Homme Worth 1980 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+71,Worth:Worth_pour_Homme_Eau_de_Toilette,Worth,Worth pour Homme Worth 1980 Eau de Toilette,1980,60,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+72,Axe:Musk_Moschus_Wild_Musk,Axe / Lynx,Musk Moschus / Wild Musk,1983,43,kept_original,다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음
+72,Junaid_Perfumes:oudy,Junaid Perfumes,Oudy,1979,43,excluded,복사본 — 원본은 Axe / Lynx — Musk Moschus / Wild Musk (다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음)
+73,Ayala_Moriel:Autumn,Ayala Moriel,Autumn,2006,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+73,Bvlgari:rose-goldea-blossom-delight-eau-de-parfum,Bvlgari,Rose Goldea Blossom Delight Bvlgari 2019 Eau de Parfum,2019,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+74,Ayala_Moriel:Gigi,Ayala Moriel,Gigi,2001,152,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+74,Ramon_Molvizar:Black_Cube,Ramón Molvizar,Black Cube,2010,152,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+75,Ayala_Moriel:Magnolia_Petal,Ayala Moriel,Magnolia Petal,2002,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+75,La_Rive:Aqua_Bella,La Rive,Aqua Bella,2014,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+76,Ayala_Moriel:song-of-songs-parfum-oil,Ayala Moriel,Song of Songs Ayala Moriel 1996 Parfum Oil,1996,156,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+76,La_Maison_de_la_Vanille:Vanille_Noire_du_Mexique,La Maison de la Vanille,Vanille Noire du Mexique,2005,156,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+77,Azzaro:Chrome_Summer,Azzaro,Chrome Summer 2012,1998,43,excluded,복사본 — 원본은 Escada — Pacific Paradise (조향사가 이 브랜드에서 다른 향수도 만듦)
+77,Escada:Pacific_Paradise,Escada,Pacific Paradise,2006,43,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+78,Azzaro:Mademoiselle_Azzaro_L_Eau_Tres_Belle,Azzaro,Mademoiselle Azzaro L'Eau Très Belle,2003,188,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+78,Estee_Lauder:Sensuous_Nude,Estée Lauder,Sensuous Nude,2011,188,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+79,Azzaro:Visit_for_Men_After_Shave_Lotion,Azzaro,Visit for Men Azzaro 1996 After-Shave Lotion,1996,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+79,Lolita_Lempicka:Lolita_Lempicka_Star_Dust_Midnight_Fragrance,Lolita Lempicka,Lolita Lempicka Eau de Minuit 2005 - Star Dust,2005,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+80,Azzaro:Visit_for_Women,Azzaro,Visit for Women,2003,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+80,Tom_Tailor:Summer_of_Love,Tom Tailor,Summer Of Love,2011,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+81,Azzaro:Wanted_x_Nasty,Azzaro,Wanted x Nasty,1983,271,excluded,복사본 — 원본은 Burberry — Burberry for Men Burberry 1995 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+81,Burberry:Burberry_for_Men_Eau_de_Toilette,Burberry,Burberry for Men Burberry 1995 Eau de Toilette,1995,271,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+81,Ga_De:Icon_Musk_Oil_Gold,Ga-De,Icon Musk Gold,1983,271,excluded,복사본 — 원본은 Burberry — Burberry for Men Burberry 1995 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+82,Baldessarini:Del_Mar_Limited_Edition,Baldessarini,Del Mar Limited Edition,2002,13,excluded,복사본 — 원본은 Jean Patou — Joy Forever Jean Patou 2014 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+82,Jean_Patou:Joy_Forever_Eau_de_Toilette,Jean Patou,Joy Forever Jean Patou 2014 Eau de Toilette,2014,13,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+83,Balmain:Extatic_Eau_de_Parfum,Balmain,Extatic Balmain 2014 Eau de Parfum,2014,149,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+83,Flavia:Ampario_pour_Femme,Flavia,Ampario pour Femme,2002,149,excluded,복사본 — 원본은 Balmain — Extatic Balmain 2014 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+84,Banderas:Miami_Seduction_for_Women,Banderas,Miami Seduction for Women,2015,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+84,Franck_Boclet:Heroes,Franck Boclet,Heroes,2016,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+85,Bath_Body_Works:Sonoma_Weekend_Escape,Bath & Body Works,Sonoma Weekend Escape,2004,20,excluded,복사본 — 원본은 Lanvin — Éclat d'Arpège Gourmandise (조향사가 이 브랜드에서 다른 향수도 만듦)
+85,Lanvin:Eclat_d_Arpege_Gourmandise,Lanvin,Éclat d'Arpège Gourmandise,2012,20,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+86,Bath_Body_Works:copper-fields,Bath & Body Works,Copper Fields,2008,164,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+86,Guess:seductive-red-eau-de-toilette,Guess,Seductive Red Guess 2021 Eau de Toilette,2021,164,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+87,Bath_Body_Works:legend-body-spray,Bath & Body Works,Legend Bath & Body Works 2001 Body Spray,2001,37,excluded,복사본 — 원본은 Elizabeth Arden — Pretty Elizabeth Arden 2009 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+87,Elizabeth_Arden:Pretty,Elizabeth Arden,Pretty Elizabeth Arden 2009 Eau de Parfum,2009,37,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+88,Bath_Body_Works:moonlight-magic-eau-de-toilette,Bath & Body Works,Moonlight Magic Bath & Body Works 2001 Eau de Toilette,2001,44,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+88,Les_Parfums_de_Rosine:Une_Rose_Au_Bord_De_La_Mer,Les Parfums de Rosine,Une Rose au Bord de la Mer,2010,44,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+89,Bath_Body_Works:steeped-invigoration-rose-tangerine-tea,Bath & Body Works,Steeped Invigoration - Rose + Tangerine + Tea,2003,131,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+89,s_Oliver:Original_Women,s.Oliver,Original Women,2011,131,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+90,Bath_Body_Works:stress-relief-eucalyptus-spearmint-perfume,Bath & Body Works,Stress Relief - Eucalyptus + Spearmint Bath & Body Works 2006 Perfume,2006,178,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+90,Zoologist:Chameleon,Zoologist,Chameleon,2019,178,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+91,Benetton:Energizing_Pitanga,Benetton,Energizing Pitanga,2010,37,excluded,복사본 — 원본은 Carolina Herrera — Virgin Mint (조향사가 이 브랜드에서 다른 향수도 만듦)
+91,Carolina_Herrera:virgin-mint,Carolina Herrera,Virgin Mint,2017,37,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+92,Benetton:Stimulating_Aqua,Benetton,Stimulating Aqua,1996,118,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+92,Yves_Rocher:Neonatura_Cocoon_La_Nature_me_donne_sa_Force,Yves Rocher,Néonatura Cocoon La Nature me donne sa Force,2005,118,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+93,Benetton:we-are-tribe,Benetton,We Are Tribe,1998,44,excluded,복사본 — 원본은 Parfum Satori — Satori (조향사가 이 브랜드에서 다른 향수도 만듦)
+93,Parfum_Satori:Black_Label_Collection_Satori,Parfum Satori,Satori,2006,44,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+94,Bershka:Blue_Diamond,Bershka,Blue Diamond,2003,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+94,Rance_1795:Les_Etoiles_Jasmin_du_Malabar,Rancé 1795,Jasmin du Malabar,2011,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+95,Bershka:Rain_Kissed_Petals,Bershka,Rain Kissed Petals,2007,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+95,John_Varvatos:john-varvatos-xx-artisan,John Varvatos,John Varvatos XX Artisan,2020,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+96,Biotherm:Vanessa_Bruno_Biotherm_L_Eau,Biotherm,Vanessa Bruno - L'Eau,2004,141,excluded,복사본 — 원본은 Oscar de la Renta — Live in Love (조향사가 이 브랜드에서 다른 향수도 만듦)
+96,Oscar_de_la_Renta:Live_in_Love,Oscar de la Renta,Live in Love,2012,141,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+97,Bloodbath:Carnivale,Bloodbath,Carnivale,2003,42,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+97,Naomi_Campbell:Wild_Pearl,Naomi Campbell,Wild Pearl,2011,42,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+98,Boadicea_the_Victorious:Blue_Sapphire_Burj_Al_Arab_Edition,Boadicea the Victorious,Blue Sapphire Burj Al Arab Edition,2015,116,excluded,복사본 — 원본은 Prada — Luna Rossa Ocean Le Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+98,Prada:luna-rossa-ocean-le-parfum,Prada,Luna Rossa Ocean Le Parfum,2024,116,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+99,Boadicea_the_Victorious:Courage_Collection__Passionate,Boadicea the Victorious,Passionate,1983,1535,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+99,ann-fragrance:06-the-royal,ann fragrance,The Royal,1983,1535,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+100,Boadicea_the_Victorious:Fire_Collection__Consort,Boadicea the Victorious,Consort,2008,26,excluded,복사본 — 원본은 Kilian — A Kiss from a Rose (조향사가 이 브랜드에서 다른 향수도 만듦)
+100,Kilian:a-kiss-from-a-rose,Kilian,A Kiss from a Rose,2021,26,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+101,Boadicea_the_Victorious:bodacious,Boadicea the Victorious,Bodacious,2015,60,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+101,Michael_Kors:Midnight_Shimmer,Michael Kors,Midnight Shimmer,2016,60,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+102,Boadicea_the_Victorious:nemer-parfum,Boadicea the Victorious,Nemer Boadicea the Victorious 1996 Parfum,1996,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+102,Ralph_Lauren:Romance_Silver_Eau_de_Toilette,Ralph Lauren,Romance Silver Ralph Lauren 2005 Eau de Toilette,2005,18,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+103,Bohoboco:Sandalwood_Neroli,Bohoboco,Sandalwood Neroli,2016,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+103,Fabled_Fragrances:Dracula,Fabled Fragrances,Dracula,2015,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+104,Bois_1920:Come_Il_Sole,Bois 1920,Come Il Sole,2015,163,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+104,Ermenegildo_Zegna:Essenza_di_Zegna_Lotion_Apres_Rasage,Ermenegildo Zegna,Essenza di Zegna Ermenegildo Zegna 2012 Lotion Après-Rasage,2012,163,excluded,복사본 — 원본은 Bois 1920 — Come Il Sole (조향사가 이 브랜드에서 다른 향수도 만듦)
+105,Bois_1920:Sushi_Imperiale,Bois 1920,Sushi Imperiale,1989,94,excluded,복사본 — 원본은 Dolce & Gabbana — D&G Masculine Dolce & Gabbana 1999 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+105,Dolce_Gabbana:DG_Masculine_Eau_de_Toilette,Dolce & Gabbana,D&G Masculine Dolce & Gabbana 1999 Eau de Toilette,1999,94,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+106,Bois_1920:Vento_nel_Vento,Bois 1920,Vento nel Vento,2004,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+106,Yves_Saint_Laurent:Paris_Premieres_Roses_2012,Yves Saint Laurent,Paris Premières Roses 2012,2012,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+107,Boots:Broadway,Boots,Broadway,1994,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+107,Givenchy:Les_Parfums_Mythiques__L_Interdit,Givenchy,L'Interdit,2007,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+108,Botanicae_Expressions:euria,Botanicae Expressions,Euria,2007,52,excluded,복사본 — 원본은 Le Galion — Tilleul (조향사가 이 브랜드에서 다른 향수도 만듦)
+108,Le_Galion:tilleul,Le Galion,Tilleul,2020,52,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+109,Brecourt:L_Amoureuse,Brecourt,L'Amoureuse,2011,67,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+109,Corday:Fame_Eau_de_Toilette,Corday,Fame Corday 2003 Eau de Toilette,2003,67,excluded,복사본 — 원본은 Brecourt — L'Amoureuse (조향사가 이 브랜드에서 다른 향수도 만듦)
+110,Bubble_and_Geek:Big_Damn_Heroes,Bubble and Geek,Big Damn Heroes,2001,79,excluded,복사본 — 원본은 Ramón Monegal — Umbra (조향사가 이 브랜드에서 다른 향수도 만듦)
+110,Ramon_Monegal:Umbra,Ramón Monegal,Umbra,2010,79,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+111,Bud_Parfum_s:Whoa_de_Cologne,Bud Parfums,Whoa de Cologne,1996,12,excluded,복사본 — 원본은 Nicolas de Barry — George Sand (조향사가 이 브랜드에서 다른 향수도 만듦)
+111,Nicolas_de_Barry:George_Sand,Nicolas de Barry,George Sand,2005,12,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+112,CB_I_Hate_Perfume:7_Billion_Hearts,CB I Hate Perfume,7 Billion Hearts,1996,92,excluded,복사본 — 원본은 Ermenegildo Zegna — Z Zegna Ermenegildo Zegna 2005 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+112,Ermenegildo_Zegna:Z_Zegna_Eau_de_Toilette,Ermenegildo Zegna,Z Zegna Ermenegildo Zegna 2005 Eau de Toilette,2005,92,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+113,C_B_Woodworth__Sons_Co_:German_Cologne,C. B. Woodworth & Sons Co.,German Cologne,2002,13,excluded,복사본 — 원본은 Narciso Rodriguez — Narciso Musc Narciso Rodriguez 2014 Oil Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+113,Narciso_Rodriguez:Narciso_Musc_Oil_Parfum_Huile_Parfum,Narciso Rodriguez,Narciso Musc Narciso Rodriguez 2014 Oil Parfum,2014,13,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+114,Cacharel:Anais_Anais,Cacharel,Anaïs Anaïs,1978,388,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+114,Chiseled_Face:guy-noir-eau-de-parfum,Chiseled Face,Guy Noir Chiseled Face 1968 Eau de Parfum,1968,388,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+115,California_Perfume_Company:Peau_d_Espagne,California Perfume Company,Peau d'Espagne,2003,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+115,Mexx:Magnetic_Man_Eau_de_Toilette,Mexx,Magnetic Man Mexx 2011 Eau de Toilette,2011,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+116,California_Perfume_Company:california-bouquet,California Perfume Company,California Bouquet,,11,excluded,복사본 — 원본은 Neil Morris Fragrances — Izmir (조향사가 이 브랜드에서 다른 향수도 만듦)
+116,Neil_Morris_Fragrances:Izmir,Neil Morris Fragrances,Izmir,,11,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+117,California_Perfume_Company:daphne-perfume,California Perfume Company,Daphne California Perfume Company 2009 Perfume,2009,38,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+117,Keiko_Mecheri:Les_Merveilles__Precious_Forest,Keiko Mecheri,Les Merveilles - Precious Forest,2015,38,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+118,California_Perfume_Company:sweet-cologne,California Perfume Company,Sweet Cologne,2019,234,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+118,Hugo_Boss:the-scent-magnetic-for-him,Hugo Boss,The Scent Magnetic for Him,2023,234,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+119,Calvin_Klein:CK_All,Calvin Klein,CK All,2017,141,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+119,Roger__Gallet:Vetyver_Eau_Fraiche_Parfumee,Roger & Gallet,Vétyver (Eau Fraîche Parfumée),2003,141,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+120,Calvin_Klein:Forbidden_Euphoria,Calvin Klein,Forbidden Euphoria,2011,95,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+120,Farfalla:no-fake,Farfalla,No Fake,2003,95,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+121,Cannon:Acqua_di_Colbert,Cannon,Acqua di Colbert,2001,19,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+121,Jean_Paul_Gaultier:Classique_Summer_2010,Jean Paul Gaultier,Classique Summer Fragrance 2010,2010,19,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+122,Cannon:Ciel_Noir,Cannon,Ciel Noir,2002,462,excluded,복사본 — 원본은 Maison Margiela — Replica - At the Barber's (조향사가 이 브랜드에서 다른 향수도 만듦)
+122,Maison_Margiela:Replica_At_the_Barber_s,Maison Margiela,Replica - At the Barber's,2014,462,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+123,Carbaline:Cotone_Cotton,Carbaline,Cotone Cotton,2007,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+123,Eisenberg:happiness-young,Eisenberg,Happiness - Young,2022,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+124,Caswell_Massey:Newport_Cologne,Caswell-Massey,Newport Caswell-Massey 2006 Cologne,2006,149,excluded,복사본 — 원본은 The House of Oud — Keep Glazed (조향사가 이 브랜드에서 다른 향수도 만듦)
+124,The_House_of_Oud:Keep_Glazed,The House of Oud,Keep Glazed,2019,149,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+125,Caswell_Massey:Yellowstone__Lake,Caswell-Massey,Yellowstone - Lake,2006,69,excluded,복사본 — 원본은 Parfum d'Empire — Salute ! (조향사가 이 브랜드에서 다른 향수도 만듦)
+125,Parfums_d_Empire:salute,Parfum d'Empire,Salute !,2019,69,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+126,Caswell_Massey:lx48-cologne,Caswell-Massey,LX48 Caswell-Massey 2002 Cologne,2002,26,excluded,복사본 — 원본은 Maria Candida Gentile — Leucò (조향사가 이 브랜드에서 다른 향수도 만듦)
+126,Maria_Candida_Gentile:Leuco,Maria Candida Gentile,Leucò,2014,26,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+127,Caswell_Massey:tricorn-aftershave,Caswell-Massey,Tricorn Caswell-Massey 2007 Aftershave,2007,200,excluded,복사본 — 원본은 Réminiscence — Fleur de Délice Guimauve / Mi Fa (조향사가 이 브랜드에서 다른 향수도 만듦)
+127,Reminiscence:fleur-de-delice-guimauve-mi-fa,Réminiscence,Fleur de Délice Guimauve / Mi Fa,2008,200,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+128,Chicca_Collections:Cristal_Fragrance_Mimosa,Chicca Collections,Cristal Fragrance Mimosa,2003,171,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+128,La_Martina:Adis_Pampamia_Mujer,La Martina,Adiós Pampamia Mujer,2011,171,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+129,Chloe:SeeByChloe_Si_Belle,Chloé,SeeByChloé Si Belle,2014,48,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+129,Dorothy_Gray:Daredevil,Dorothy Gray,Daredevil,2002,48,excluded,복사본 — 원본은 Chloé — SeeByChloé Si Belle (조향사가 이 브랜드에서 다른 향수도 만듦)
+130,Chris_Adams:blue-corduroy,Chris Adams,Blue Corduroy,2003,33,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+130,Mauboussin:Mauboussin_pour_Elle,Mauboussin,Mauboussin pour Elle,2011,33,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+131,Christine_Arbel:Arbel_pour_Homme,Christine Arbel,Arbel pour Homme,2008,53,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+131,Uniquee_Luxury:crush-on-me,Unique'e Luxury,Crush On Me,2021,53,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+132,Clarins:Elysium,Clarins,Elysium,1993,17,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+132,Spezierie-Palazzo-Vecchio:Syko_e_Danae__Fico_e_Fior_di_Pesco_Fragranza_Concentrata,Spezierie Palazzo Vecchio / I Profumi di Firenze,Syko e Danae - Fico e Fior di Pesco Spezierie Palazzo Vecchio / I Profumi di Firenze 1989 Fragranza Concentrata,1989,17,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+133,Claus_Porto:6-agua-flores,Claus Porto,Agua Flores,2001,80,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+133,L_Erbolario:Legni_Fruttati,L'Erbolario,Legni Fruttati,2009,80,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+134,CnR_Create:Fire_Aries,CnR Create,Fire Aries,2001,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+134,Spezierie-Palazzo-Vecchio:Jeunesse__Il_Giorno_e_La_Notte_Eau_de_Parfum,Spezierie Palazzo Vecchio / I Profumi di Firenze,Jeunesse - Il Giorno e La Notte Spezierie Palazzo Vecchio / I Profumi di Firenze 2010 Eau de Parfum,2010,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+135,Colornoise:Coral_,Colornoise,Coral.,1996,51,excluded,복사본 — 원본은 Pierre Guillaume — L'Eau Rare Matale (조향사가 이 브랜드에서 다른 향수도 만듦)
+135,Pierre_Guillaume:L_Eau_Rare_Matale_No_06,Pierre Guillaume,L'Eau Rare Matale,2005,51,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+136,Compagnia_delle_Indie:Indaco_di_Persia_Persian_Indigo,Compagnia delle Indie,Indaco di Persia Persian Indigo,2001,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+136,DKNY:Delicious_Candy_Apples_Ripe_Raspberry,DKNY / Donna Karan,Delicious Candy Apples Ripe Raspberry,2010,24,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+137,Corday:Gardenia_de_Corday,Corday,Gardenia de,1996,343,excluded,복사본 — 원본은 Yves Rocher — Secrets d'Essences - Voile d'Ambre Yves Rocher 2005 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+137,Yves_Rocher:Secrets_d_Essences_Voile_d_Ambre,Yves Rocher,Secrets d'Essences - Voile d'Ambre Yves Rocher 2005 Eau de Parfum,2005,343,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+138,Corday:Jet_for_Jentlemen_After_Shave_Lotion,Corday,Jet for Jentlemen Corday 1998 After Shave Lotion,1998,146,excluded,복사본 — 원본은 The Different Company — Charmes & Feuilles Un Parfum de Charmes & Feuilles (조향사가 이 브랜드에서 다른 향수도 만듦)
+138,The_Different_Company:Charmes__Feuilles_Un_Parfum_de_Charmes__Feuilles,The Different Company,Charmes & Feuilles Un Parfum de Charmes & Feuilles,2006,146,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+139,Corday:Jet_for_Jentlemen_Cologne,Corday,Jet for Jentlemen Corday 2001 Cologne,2001,432,excluded,복사본 — 원본은 Maison Margiela — (untitled) (조향사가 이 브랜드에서 다른 향수도 만듦)
+139,Maison_Margiela:untitled,Maison Margiela,(untitled),2010,432,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+140,Corday:Le_Muguet,Corday,Le Muguet,1996,659,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+140,Creed:Original_Santal,Creed,Original Santal,2005,659,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+141,Corday:Toujours_Moi_Eau_de_Cologne,Corday,Toujours Moi Corday 1957 Eau de Cologne,1957,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+141,Lanvin:Vetyver_Lanvin_Eau_de_Vetyver_Eau_de_Toilette,Lanvin,Vetyver Lanvin Eau de Vetyver Lanvin 1964 Eau de Toilette,1964,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+142,Corine_de_Farme:Hannah_Montana,Corine de Farme,Hannah Montana,2003,60,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+142,bharara:gold,Bharara,Gold,2003,60,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+142,fang:ink-tattoo,Fang,Ink Tattoo 墨水刺青,2003,60,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+143,Davidoff:Relax_After_Shave,Davidoff,Relax Davidoff 1990 After Shave,1990,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+143,e-s-rasage:citrus-fresh-eau-de-toilette,E&S Rasage,Citrus Fresh E&S Rasage 1988 Eau de Toilette,1988,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+144,Decorte:La_Valliere__Parfum,Decorté,La Vallière ラヴァリエール Decorté 2002 Parfum,2002,210,excluded,복사본 — 원본은 Jul et Mad — Aqua Sextius (조향사가 이 브랜드에서 다른 향수도 만듦)
+144,JUL_ET_MAD:Aqua_Sextius,Jul et Mad,Aqua Sextius,2014,210,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+145,Decorte:kimono-hikari,Decorté,Kimono Hikari,1983,247,excluded,복사본 — 원본은 Givenchy — Xeryus Rouge Givenchy 1995 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+145,Givenchy:Xeryus_Rouge_Eau_de_Toilette,Givenchy,Xeryus Rouge Givenchy 1995 Eau de Toilette,1995,247,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+146,Des_Filles_a_la_Vanille:Cur_de_fille__Jeux_interdits,Des Filles à la Vanille,Cœur de fille... Jeux interdits,2002,140,excluded,복사본 — 원본은 Lalique — Hommage à l'Homme Voyageur (조향사가 이 브랜드에서 다른 향수도 만듦)
+146,Lalique:Hommage_a_l_Homme_Voyageur,Lalique,Hommage à l'Homme Voyageur,2014,140,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+147,Dina_Cosmetics:Bravery,Dina Cosmetics,Bravery,2010,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+147,Lubin:Attique,Lubin,Attique,2017,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+148,Dralle:Dralle_s_Illusion_Heliotrop_Heliotrope,Dralle,Dralle's Illusion - Heliotrop Héliotrope,2003,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+148,Yves_Saint_Laurent:Parisienne_L_Essentiel,Yves Saint Laurent,Parisienne L'Essentiel,2011,13,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+149,Dunhill:desire-silver-eau-de-toilette,Dunhill,Desire Silver Dunhill 2015 Eau de Toilette,2015,13,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+149,En_Voyage_Perfumes:Indigo_Vanilla,En Voyage Perfumes,Indigo Vanilla,2009,13,excluded,복사본 — 원본은 Dunhill — Desire Silver Dunhill 2015 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+150,E__Coudray:Givrine_2004_Eau_de_Toilette,E. Coudray,Givrine,1996,100,excluded,복사본 — 원본은 Kenzo — Summer by (조향사가 이 브랜드에서 다른 향수도 만듦)
+150,Kenzo:SummerbyKenzo,Kenzo,Summer by,2005,100,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+151,E__Coudray:Musc_et_Freesia_Eau_de_toilette_,E. Coudray,Musc et Freesia,2001,30,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+151,d_Orsay:L_Intrigante,d'Orsay,L'Intrigante,2010,30,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+152,E__Coudray:Sorbet_Vanille,E. Coudray,Sorbet Vanille,2002,16,excluded,복사본 — 원본은 Fueguia 1833 — Conquista Fueguia 1833 2014 Perfume (조향사가 이 브랜드에서 다른 향수도 만듦)
+152,Fueguia_1833:conquista-perfume,Fueguia 1833,Conquista Fueguia 1833 2014 Perfume,2014,16,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+153,Enrico_Coveri:coveri-pour-homme,Enrico Coveri,Coveri pour Homme,1971,202,excluded,복사본 — 원본은 Trussardi — Trussardi Uomo Trussardi 1983 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+153,Trussardi:Trussardi_Uomo_1983_Eau_de_Toilette,Trussardi,Trussardi Uomo Trussardi 1983 Eau de Toilette,1983,202,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+154,Enrico_Coveri:green-contemporary,Enrico Coveri,Green Contemporary,2003,363,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+154,Franck_Boclet:woodstock,Franck Boclet,Woodstock,2009,363,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+154,Mancera:roses-vanille-eau-de-parfum,Mancera,Roses Vanille Mancera 2011 Eau de Parfum,2011,363,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+155,Estee_Lauder:Pleasures_Bloom,Estée Lauder,Pleasures Bloom,2010,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+155,The_Body_Shop:apricot-agave,The Body Shop,Apricot & Agave,1995,25,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+156,Estee_Lauder:Wood_Mystique,Estée Lauder,Wood Mystique,2011,147,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+156,Flavia:Ampario_pour_Homme,Flavia,Ampario pour Homme,2003,147,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+157,Etro:Palais_Jamais,Etro,Palais Jamais,1989,182,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+157,ablxs:eimiess-ablxs-pygmalion,Ablxs,eimiess × Ablxs - Pygmalion,1975,182,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+158,Evaflor:Amati_Yours,Evaflor,Amati Yours,2001,62,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+158,s_Oliver:Superior_Women,s.Oliver,Superior Women,2010,62,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+159,FL_Parfums:Air_de_lIle_Maurice,FL Parfums,Air de l’Île Maurice,2002,50,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+159,Floris:Jermyn_Street,Floris,Jermyn Street,2014,50,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+160,Faberge:Audace,Fabergé,Audace,2003,29,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+160,s_Oliver:QS_by_s_Oliver_on_Stage_female,s.Oliver,QS by s.Oliver on Stage Female,2011,29,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+161,Faberge:Touch_of_Class,Fabergé,A touch of Class,2003,12,excluded,복사본 — 원본은 Kenzo — L'Eau par Kenzo Wild Edition pour Femme (조향사가 이 브랜드에서 다른 향수도 만듦)
+161,Kenzo:L_Eau_Par_Kenzo_Wild_Edition,Kenzo,L'Eau par Kenzo Wild Edition pour Femme,2011,12,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+162,Feraud:Feraud_2_Parfum_de_Toilette,Féraud,Féraud 2 Féraud 2001 Parfum de Toilette,2001,153,excluded,복사본 — 원본은 L'Artisan Parfumeur — Cœur de Vétiver Sacré (조향사가 이 브랜드에서 다른 향수도 만듦)
+162,LArtisan_Parfumeur:Coeur_de_Vetiver_Sacre,L'Artisan Parfumeur,Cœur de Vétiver Sacré,2010,153,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+163,Fernanda:caramel-latte-eau-de-cologne,Fernanda / フェルナンダ,Caramel Latte Fernanda / フェルナンダ 2003 Eau de Cologne,2003,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+163,Tonino_Lamborghini:Azione,Tonino Lamborghini,Azione,2011,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+164,Ffern:spring-23,Ffern,Spring 23,,52,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+164,Taif_Al_Emarat:gcc,Taif Al-Emarat / طيف الإمارات,GCC,,52,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+165,For_Or_To:hippy,For Or To,Hippy,2003,40,excluded,복사본 — 원본은 Masakï Matsushïma — Art Homme (조향사가 이 브랜드에서 다른 향수도 만듦)
+165,Masaki_Matsushima:Art_Homme,Masakï Matsushïma,Art Homme,2011,40,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+166,Franck_Boclet:Vanille,Franck Boclet,Vanille,2015,138,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+166,juenger-gebhardt:Filigran,Jünger & Gebhardt / Patrizier Haus Köln,Filigran,2012,138,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+167,Fresh_N_Geeky:Ancient__Forever,Fresh N' Geeky,Ancient & Forever,2001,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+167,Spezierie-Palazzo-Vecchio:La_Notte_di_Angelica_Eau_de_Parfum,Spezierie Palazzo Vecchio / I Profumi di Firenze,La Notte di Angelica Spezierie Palazzo Vecchio / I Profumi di Firenze 2010 Eau de Parfum,2010,14,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+168,GAP:G_Him,GAP,G Him,2019,11,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+168,Mandarina_Duck:vida-loca-for-her,Mandarina Duck,Vida Loca for Her,2023,11,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+169,Gandini:iris-vincent-van-gogh,Gandini,Iris - Vincent van Gogh,2004,124,excluded,복사본 — 원본은 Trussardi — My Land Trussardi 2012 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+169,Trussardi:My_Land_Eau_de_Toilette,Trussardi,My Land Trussardi 2012 Eau de Toilette,2012,124,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+170,Giorgio_Beverly_Hills:Giorgio_Perfume,Giorgio Beverly Hills,Giorgio Giorgio Beverly Hills 2012 Perfume,2012,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+170,Ulric_de_Varens:Mini_Liberty,Ulric de Varens,Mini Liberty,2015,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+171,Guerlain:L_Instant_de_Guerlain_Eau_de_Toilette,Guerlain,L'Instant de Guerlain Guerlain 2005 Eau de Toilette,2005,164,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+171,filigree-shadow:Anonymity_Huile_de_Parfum,Filigree & Shadow,Anonymity Filigree & Shadow 1996 Huile de Parfum,1996,164,excluded,복사본 — 원본은 Guerlain — L'Instant de Guerlain Guerlain 2005 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+172,Guess:sexy-skin-tropical-breeze,Guess,Sexy Skin Tropical Breeze,2016,65,excluded,복사본 — 원본은 Room 1015 — Purple Mantra (조향사가 이 브랜드에서 다른 향수도 만듦)
+172,Room_1015:purple-mantra,Room 1015,Purple Mantra,2022,65,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+173,Hiram_Green:Voyage,Hiram Green,Voyage,2003,25,excluded,복사본 — 원본은 Mauboussin — Aequalis (조향사가 이 브랜드에서 다른 향수도 만듦)
+173,Mauboussin:Aequalis,Mauboussin,Aequalis,2017,25,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+174,IFF:Secret_Smelling_2016__Bruno_Jovanovic,IFF International Flavors & Fragrances,Secret Smelling 2016 - Bruno Jovanovic,2016,59,excluded,복사본 — 원본은 Yves Saint Laurent — Le Vestiaire - Lavallière (조향사가 이 브랜드에서 다른 향수도 만듦)
+174,Yves_Saint_Laurent:le-vestiaire-lavalliere,Yves Saint Laurent,Le Vestiaire - Lavallière,2022,59,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+175,Issey_Miyake:L_Eau_d_Issey_pour_Homme_Yuzu,Issey Miyake,L'Eau d'Issey pour Homme Yuzu,2014,46,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+175,al-shaya:Athkar,Al-Shaya / الشايع,Athkar,2002,46,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+176,Jacques_Bogart:One_Man_Show_Eau_de_Toilette,Jacques Bogart,One Man Show Jacques Bogart 1980 Eau de Toilette,1980,305,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+176,Le_Re_Noir:164__l_Apogee_de_Vert,Le Ré Noir,À L'Apogée de Vert,1971,305,excluded,복사본 — 원본은 Jacques Bogart — One Man Show Jacques Bogart 1980 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+177,Jaguar:Classic_Chromite,Jaguar,Classic Chromite,2017,72,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+177,Mancera:Black_Line,Mancera,Black Line,2003,72,excluded,복사본 — 원본은 Jaguar — Classic Chromite (조향사가 이 브랜드에서 다른 향수도 만듦)
+178,James_Bond_007:007_for_Women_III,James Bond 007,for Women III,2017,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+178,s_Oliver:black-label-eau-legere-women-eau-de-toilette,s.Oliver,Black Label Eau Légère Women s.Oliver 2003 Eau de Toilette,2003,37,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+179,Jil_Sander:N_4_Eau_de_Parfum,Jil Sander,Nº 4 Jil Sander 1990 Eau de Parfum,1990,418,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+179,Rogue:rostracto,Rogue,Rostracto,1981,418,excluded,복사본 — 원본은 Jil Sander — Nº 4 Jil Sander 1990 Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+180,Jil_Sander:Softly_Eau_de_Petales,Jil Sander,Softly Eau de Pétales,2018,112,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+180,akbari-perfume:havana-tobacco,Akbari Perfume,Havana Tobacco,2015,112,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+181,Kajal:kajal-homme-ii,Kajal,Kajal Homme II,2021,65,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+181,alhind-oud:kinamic-hindi,Alhind Oud,Kinamic Hindi,2008,65,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+182,Kenneth_Cole:Kenneth_Cole_Signature_Eau_de_Toilette,Kenneth Cole,Kenneth Cole Signature Kenneth Cole 2005 Eau de Toilette,2005,35,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+182,calyx:bound,Calyx,Bound,1996,35,excluded,복사본 — 원본은 Kenneth Cole — Kenneth Cole Signature Kenneth Cole 2005 Eau de Toilette (조향사가 이 브랜드에서 다른 향수도 만듦)
+183,Kenzo:soleil-the,Kenzo,Soleil Thé,2022,33,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+183,Nina_Ricci:Ricci_for_Men_Cologne,Nina Ricci,Ricci for Men Nina Ricci 2016 Cologne,2016,33,excluded,복사본 — 원본은 Kenzo — Soleil Thé (조향사가 이 브랜드에서 다른 향수도 만듦)
+184,Khas_Oud__Perfumes:Amber_Khas,Khas Oud & Perfumes / خاص للعود والعطور,Amber Khas,1995,17,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+184,Lacoste:Cool_Play,Lacoste,Cool Play,2006,17,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+185,La_Maison_de_la_Vanille:Vanille_Fleurie_de_Tahiti,La Maison de la Vanille,Vanille Fleurie de Tahiti,1995,15,excluded,복사본 — 원본은 Curve / Liz Claiborne — Curve Chill for Men (조향사가 이 브랜드에서 다른 향수도 만듦)
+185,curve:Curve_Chill_for_Men,Curve / Liz Claiborne,Curve Chill for Men,2006,15,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+186,Lacoste:Eau_de_Lacoste_L_12_12_pour_Elle_Elegant,Lacoste,Eau de Lacoste L.12.12 pour Elle Elegant,2015,42,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+186,Lush:alina-perfume,Lush / Cosmetics To Go,Alina Lush / Cosmetics To Go 2012 Perfume,2012,42,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+187,Lancetti:Celebration_I,Lancetti,Celebration I,2016,29,excluded,복사본 — 원본은 Téo Cabanel — Peau Salée (조향사가 이 브랜드에서 다른 향수도 만듦)
+187,Teo_Cabanel:peau-salee,Téo Cabanel,Peau Salée,2022,29,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+188,Ligne_St_Barth:Tiare,Ligne St Barth,Tiaré,2003,81,excluded,복사본 — 원본은 Tiziana Terenzi — Kaff Tiziana Terenzi 2017 Extrait de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+188,Tiziana_Terenzi:Kaff_Extrait_de_Parfum,Tiziana Terenzi,Kaff Tiziana Terenzi 2017 Extrait de Parfum,2017,81,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+189,Lorenzo_Villoresi:Alamut_Eau_de_Parfum,Lorenzo Villoresi,Alamut Lorenzo Villoresi Eau de Parfum,,17,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+189,scentiment:bois-intense,Scentiment,Bois Intense,,17,excluded,복사본 — 원본은 Lorenzo Villoresi — Alamut Lorenzo Villoresi Eau de Parfum (조향사가 이 브랜드에서 다른 향수도 만듦)
+190,Marc_de_la_Morandiere:Gengis_Khan_Eau_de_Toilette,Marc de la Morandière,Gengis Khan Marc de la Morandière 1991 Eau de Toilette,1991,39,kept_original,다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음
+190,Neil_Morris_Fragrances:DevilScent_2,Neil Morris Fragrances,DevilScent #2,1981,39,excluded,복사본 — 원본은 Marc de la Morandière — Gengis Khan Marc de la Morandière 1991 Eau de Toilette (다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음)
+191,Martine_Micallef:Ananda_Osswald_Edition,M. Micallef,Ananda Osswald Edition,2012,33,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+191,Naomi_Campbell:Private,Naomi Campbell,Private,2015,33,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+192,Martine_Micallef:Art_Collection_102_Woman,M. Micallef,Art Collection - 102 Woman,2011,16,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+192,gdk:Al_Bakhoor_Eau_de_Toilette,GDK / Grey de Kouroun,Al Bakhoor GDK / Grey de Kouroun 2003 Eau de Toilette,2003,16,excluded,복사본 — 원본은 M. Micallef — Art Collection - 102 Woman (조향사가 이 브랜드에서 다른 향수도 만듦)
+193,Montale:oud-island,Montale,Oud Island,2023,56,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+193,Penhaligons:the-coveted-duchess-rose,Penhaligon's,The Coveted Duchess Rose,2010,56,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+194,Nikos:sculpture-parfum,Nikos,Sculpture Parfum,2022,213,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+194,Parfum_Satori:Sakura,Parfum Satori,Sakura,2016,213,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+195,O_Boticario:Malbec_Gold,O Boticário,Malbec Gold,2013,74,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+195,Trussardi:Amber_Oud,Trussardi,Amber Oud,2016,74,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+196,Ramon_Monegal:Fiesta,Ramón Monegal,Fiesta,1997,113,excluded,복사본 — 원본은 Van Cleef & Arpels — Gardénia Pétale (조향사가 이 브랜드에서 다른 향수도 만듦)
+196,Van_Cleef_Arpels:gardenia-petale,Van Cleef & Arpels,Gardénia Pétale,2009,113,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+197,Revillon:Carnet_de_Bal,Revillon,Carnet de Bal,1937,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+197,al-nuaim:aseel,Al-Nuaim,Aseel,1932,10,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+198,Rituals:reve-de-hanami,Rituals,Rêve de Hanami,2021,77,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+198,gdk:Debutant,GDK / Grey de Kouroun,Débutant,2008,77,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+199,Roja_Parfums:Lakme,Roja Parfums,Lakmé Roja Parfums 2013 Eau de Parfum,2013,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+199,Van_Cleef_Arpels:So_First,Van Cleef & Arpels,So First,2016,48,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+200,Royal_Crown:Flair,Royal Crown,Flair,2015,11,kept_original,조향사가 이 브랜드에서 다른 향수도 만듦
+200,Vilhelm_Parfumerie:skins-x-vilhelm,Vilhelm Parfumerie,Skins x Vilhelm,2012,11,excluded,복사본 — 원본은 Royal Crown — Flair (조향사가 이 브랜드에서 다른 향수도 만듦)
+201,Solinotes:Ambre,Solinotes,Ambre,2010,28,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+201,abdulwahab:classic,Abdulwahab,Classic,2001,28,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+202,The_Body_Shop:Nigritella__Oriental_Orchid,The Body Shop,Nigritella - Oriental Orchid,2016,34,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+202,fine-ry:magnetic-candy,Fine'ry,Magnetic Candy,2015,34,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+203,Yves_Rocher:Secrets_d_Essences_Iris_Noir_Eau_de_Toilette,Yves Rocher,Secrets d'Essences - Iris Noir Yves Rocher Eau de Toilette,,45,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외
+203,bharara:beauty,Bharara,Beauty,,45,excluded,원본을 가릴 단서 없음 → 묶음 전체 제외

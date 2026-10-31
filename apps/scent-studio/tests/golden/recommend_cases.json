@@ -26,50 +26,34 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 36
+     "percent": 50
     },
     {
      "accord": "floral",
-     "percent": 22
-    },
-    {
-     "accord": "fresh",
-     "percent": 10
-    },
-    {
-     "accord": "chypre",
-     "percent": 6
+     "percent": 19
     },
     {
      "accord": "woody",
-     "percent": 5
+     "percent": 14
     },
     {
-     "accord": "green",
-     "percent": 4
+     "accord": "fresh",
+     "percent": 6
     },
     {
-     "accord": "earthy",
-     "percent": 3
+     "accord": "chypre",
+     "percent": 2
     },
     {
      "accord": "fruity",
-     "percent": 2
-    },
-    {
-     "accord": "powdery",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
      "percent": 1
     },
     {
-     "accord": "gourmand",
+     "accord": "powdery",
+     "percent": 1
+    },
+    {
+     "accord": "sweet",
      "percent": 1
     },
     {
@@ -89,83 +73,37 @@
      "percent": 1
     },
     {
-     "accord": "leathery",
+     "accord": "earthy",
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "green",
      "percent": 1
     }
    ],
    "balanceHints": [],
    "recommendations": [
     {
-     "perfumeKey": "T006",
-     "score": 0.9729322701526066,
-     "accordSim": 0.9303972661067026,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "vanilla",
-      "orange blossom"
-     ]
-    },
-    {
      "perfumeKey": "T003",
-     "score": 0.9691849304105475,
-     "accordSim": 0.9207612496271221,
+     "score": 0.967962980132783,
+     "accordSim": 0.9176190917700137,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -192,26 +130,72 @@
      ]
     },
     {
-     "perfumeKey": "T010",
-     "score": 0.9195447037195558,
-     "accordSim": 0.7931149524217147,
+     "perfumeKey": "T008",
+     "score": 0.9633060306578327,
+     "accordSim": 0.9056440788344271,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 18.87214905479326
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "cedarwood",
+      "iris",
+      "mandarin orange"
+     ]
+    },
+    {
+     "perfumeKey": "T010",
+     "score": 0.9430160368660346,
+     "accordSim": 0.8534698090840891,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.633279871451485
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.703222602762231
+       "blendPct": 18.87214905479326
       }
      ],
      "matchedNotes": [
@@ -238,25 +222,25 @@
     },
     {
      "perfumeKey": "T009",
-     "score": 0.8965832926571581,
-     "accordSim": 0.7340713239755492,
+     "score": 0.8944529458191955,
+     "accordSim": 0.72859328924936,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
-      },
-      {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 4.9131470684117735
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -282,72 +266,26 @@
      ]
     },
     {
-     "perfumeKey": "T012",
-     "score": 0.8899111911489855,
-     "accordSim": 0.7169144915259626,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 6.087890932477941
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "jasmine",
-      "oakmoss"
-     ]
-    },
-    {
      "perfumeKey": "T011",
-     "score": 0.8780515007174574,
-     "accordSim": 0.6864181447020333,
+     "score": 0.8899831874895608,
+     "accordSim": 0.7170996249731565,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
-      },
       {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.9131470684117735
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -374,26 +312,72 @@
      ]
     },
     {
+     "perfumeKey": "T012",
+     "score": 0.882573211162627,
+     "accordSim": 0.6980454001324694,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 18.87214905479326
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "bergamot",
+      "jasmine",
+      "oakmoss"
+     ]
+    },
+    {
      "perfumeKey": "T014",
-     "score": 0.8677931290744816,
-     "accordSim": 0.6600394747629527,
+     "score": 0.814957789975963,
+     "accordSim": 0.5241771742239046,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -420,25 +404,25 @@
     },
     {
      "perfumeKey": "T001",
-     "score": 0.813533179812918,
-     "accordSim": 0.9357965582237748,
+     "score": 0.7875991055843288,
+     "accordSim": 0.8691089387788309,
      "noteMatch": 0.7357292117332819,
-     "grade": "SIMILAR",
+     "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -466,25 +450,25 @@
     },
     {
      "perfumeKey": "T015",
-     "score": 0.7425308936863181,
-     "accordSim": 0.6901893023707487,
+     "score": 0.6893131622175702,
+     "accordSim": 0.553343707165397,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -512,25 +496,25 @@
     },
     {
      "perfumeKey": "T013",
-     "score": 0.7384868252021392,
-     "accordSim": 0.679790269125717,
+     "score": 0.6821509677145708,
+     "accordSim": 0.5349266355862559,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -583,27 +567,19 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 36
+     "percent": 48
     },
     {
      "accord": "floral",
-     "percent": 22
-    },
-    {
-     "accord": "fresh",
-     "percent": 10
-    },
-    {
-     "accord": "chypre",
-     "percent": 5
+     "percent": 16
     },
     {
      "accord": "woody",
-     "percent": 4
+     "percent": 14
     },
     {
-     "accord": "green",
-     "percent": 4
+     "accord": "fresh",
+     "percent": 6
     },
     {
      "accord": "fruity",
@@ -614,31 +590,23 @@
      "percent": 2
     },
     {
+     "accord": "sweet",
+     "percent": 2
+    },
+    {
      "accord": "oriental",
      "percent": 2
     },
     {
-     "accord": "resinous",
+     "accord": "chypre",
      "percent": 2
-    },
-    {
-     "accord": "earthy",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
-     "percent": 1
-    },
-    {
-     "accord": "gourmand",
-     "percent": 1
     },
     {
      "accord": "spicy",
+     "percent": 1
+    },
+    {
+     "accord": "resinous",
      "percent": 1
     },
     {
@@ -646,11 +614,11 @@
      "percent": 1
     },
     {
-     "accord": "leathery",
+     "accord": "earthy",
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "green",
      "percent": 1
     }
    ],
@@ -658,25 +626,25 @@
    "recommendations": [
     {
      "perfumeKey": "T001",
-     "score": 0.9760229944128309,
-     "accordSim": 0.9383448427758511,
+     "score": 0.9456300851732194,
+     "accordSim": 0.8601916475882786,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
@@ -703,72 +671,26 @@
      ]
     },
     {
-     "perfumeKey": "T006",
-     "score": 0.7411833198511583,
-     "accordSim": 0.9295380004133039,
-     "noteMatch": 0.6213212504025201,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "rose",
-      "vanilla"
-     ]
-    },
-    {
      "perfumeKey": "T003",
-     "score": 0.7364101771133199,
-     "accordSim": 0.9172642048017197,
+     "score": 0.7345505274723121,
+     "accordSim": 0.9124822485819855,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
-       "accord": "fresh",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 9.899988542853867
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
@@ -795,26 +717,72 @@
      ]
     },
     {
-     "perfumeKey": "T010",
-     "score": 0.6834069149255999,
-     "accordSim": 0.780970102033297,
+     "perfumeKey": "T005",
+     "score": 0.7312483682813988,
+     "accordSim": 0.9039909820910658,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 20.0,
+       "blendPct": 16.30918804416972
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.631659090237013
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "rose",
+      "vetiver",
+      "grapefruit"
+     ]
+    },
+    {
+     "perfumeKey": "T010",
+     "score": 0.7117732384486273,
+     "accordSim": 0.8539120768067957,
+     "noteMatch": 0.6213212504025201,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.631659090237013
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.899988542853867
+       "blendPct": 16.30918804416972
       }
      ],
      "matchedNotes": [
@@ -841,72 +809,26 @@
      ]
     },
     {
-     "perfumeKey": "T009",
-     "score": 0.6603689104508276,
-     "accordSim": 0.721729519098168,
-     "noteMatch": 0.6213212504025201,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "woody",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 4.218029776579936
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "rose",
-      "patchouli",
-      "pink pepper"
-     ]
-    },
-    {
      "perfumeKey": "T002",
-     "score": 0.6576534194930518,
-     "accordSim": 0.11968022155356178,
+     "score": 0.6913294026987795,
+     "accordSim": 0.2062756069397187,
      "noteMatch": 1.0,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.218029776579936
-      },
-      {
-       "accord": "resinous",
-       "perfumePct": 20.0,
-       "blendPct": 2.2011292003226286
+       "blendPct": 13.631659090237013
       },
       {
        "accord": "oriental",
        "perfumePct": 26.666666666666668,
-       "blendPct": 2.1132148894899685
+       "blendPct": 1.9016431288061613
+      },
+      {
+       "accord": "resinous",
+       "perfumePct": 20.0,
+       "blendPct": 1.4628859232694178
       }
      ],
      "matchedNotes": [
@@ -933,33 +855,38 @@
      ]
     },
     {
-     "perfumeKey": "T026",
-     "score": 0.6567537972909037,
-     "accordSim": 0.4884567655953779,
-     "noteMatch": 0.7638519083698746,
+     "perfumeKey": "T009",
+     "score": 0.6579704789488614,
+     "accordSim": 0.7155621238073977,
+     "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 48.7498926785561
+      },
+      {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
-       "accord": "citrus",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "fruity",
+       "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 2.967872276534936
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
       {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
        "noteKey": "osmanthus",
        "layer": "middle",
-       "match": "same_layer"
+       "match": "same_family"
       },
       {
        "noteKey": "sandalwood",
@@ -968,31 +895,78 @@
       }
      ],
      "missingNotes": [
+      "rose",
+      "patchouli",
+      "pink pepper"
+     ]
+    },
+    {
+     "perfumeKey": "T011",
+     "score": 0.6562763649028727,
+     "accordSim": 0.7112058305462838,
+     "noteMatch": 0.6213212504025201,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 16.30918804416972
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 13.631659090237013
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "bergamot",
       "musk",
-      "mandarin orange"
+      "rose"
      ]
     },
     {
      "perfumeKey": "T012",
-     "score": 0.6510211138954625,
-     "accordSim": 0.6976923279558007,
+     "score": 0.6500047868306963,
+     "accordSim": 0.695078915503545,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.631659090237013
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 5.0127728607922455
+       "blendPct": 16.30918804416972
       }
      ],
      "matchedNotes": [
@@ -1019,26 +993,66 @@
      ]
     },
     {
+     "perfumeKey": "T026",
+     "score": 0.6129668570585426,
+     "accordSim": 0.3758617764264496,
+     "noteMatch": 0.7638519083698746,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 16.30918804416972
+      },
+      {
+       "accord": "citrus",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "fruity",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 2.694743242106177
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "musk",
+      "mandarin orange"
+     ]
+    },
+    {
      "perfumeKey": "T014",
-     "score": 0.6435390527068449,
-     "accordSim": 0.6784527420422124,
+     "score": 0.5844763307054756,
+     "accordSim": 0.5265771711815483,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
+       "blendPct": 6.166743738106248
       }
      ],
      "matchedNotes": [
@@ -1062,52 +1076,6 @@
       "musk",
       "rose",
       "lychee"
-     ]
-    },
-    {
-     "perfumeKey": "T011",
-     "score": 0.6416023660356726,
-     "accordSim": 0.6734726906020551,
-     "noteMatch": 0.6213212504025201,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "woody",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 4.218029776579936
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "musk",
-      "rose"
      ]
     }
    ]
@@ -1139,50 +1107,34 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 36
+     "percent": 50
     },
     {
      "accord": "floral",
-     "percent": 22
-    },
-    {
-     "accord": "fresh",
-     "percent": 10
-    },
-    {
-     "accord": "chypre",
-     "percent": 6
+     "percent": 19
     },
     {
      "accord": "woody",
-     "percent": 5
+     "percent": 14
     },
     {
-     "accord": "green",
-     "percent": 4
+     "accord": "fresh",
+     "percent": 6
     },
     {
-     "accord": "earthy",
-     "percent": 3
+     "accord": "chypre",
+     "percent": 2
     },
     {
      "accord": "fruity",
-     "percent": 2
-    },
-    {
-     "accord": "powdery",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
      "percent": 1
     },
     {
-     "accord": "gourmand",
+     "accord": "powdery",
+     "percent": 1
+    },
+    {
+     "accord": "sweet",
      "percent": 1
     },
     {
@@ -1202,83 +1154,37 @@
      "percent": 1
     },
     {
-     "accord": "leathery",
+     "accord": "earthy",
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "green",
      "percent": 1
     }
    ],
    "balanceHints": [],
    "recommendations": [
     {
-     "perfumeKey": "T006",
-     "score": 0.9729322701526066,
-     "accordSim": 0.9303972661067026,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "vanilla",
-      "orange blossom"
-     ]
-    },
-    {
      "perfumeKey": "T003",
-     "score": 0.9691849304105475,
-     "accordSim": 0.9207612496271221,
+     "score": 0.967962980132783,
+     "accordSim": 0.9176190917700137,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1305,26 +1211,72 @@
      ]
     },
     {
+     "perfumeKey": "T008",
+     "score": 0.9633060306578327,
+     "accordSim": 0.9056440788344271,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 18.87214905479326
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "cedarwood",
+      "iris",
+      "mandarin orange"
+     ]
+    },
+    {
      "perfumeKey": "T012",
-     "score": 0.8899111911489855,
-     "accordSim": 0.7169144915259626,
+     "score": 0.882573211162627,
+     "accordSim": 0.6980454001324694,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 6.087890932477941
+       "blendPct": 18.87214905479326
       }
      ],
      "matchedNotes": [
@@ -1352,25 +1304,25 @@
     },
     {
      "perfumeKey": "T014",
-     "score": 0.8677931290744816,
-     "accordSim": 0.6600394747629527,
+     "score": 0.814957789975963,
+     "accordSim": 0.5241771742239046,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -1397,25 +1349,25 @@
     },
     {
      "perfumeKey": "T001",
-     "score": 0.813533179812918,
-     "accordSim": 0.9357965582237748,
+     "score": 0.7875991055843288,
+     "accordSim": 0.8691089387788309,
      "noteMatch": 0.7357292117332819,
-     "grade": "SIMILAR",
+     "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1443,25 +1395,25 @@
     },
     {
      "perfumeKey": "T015",
-     "score": 0.7425308936863181,
-     "accordSim": 0.6901893023707487,
+     "score": 0.6893131622175702,
+     "accordSim": 0.553343707165397,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1489,25 +1441,25 @@
     },
     {
      "perfumeKey": "T013",
-     "score": 0.7384868252021392,
-     "accordSim": 0.679790269125717,
+     "score": 0.6821509677145708,
+     "accordSim": 0.5349266355862559,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -1535,25 +1487,25 @@
     },
     {
      "perfumeKey": "T017",
-     "score": 0.6197292655692684,
-     "accordSim": 0.615421921858506,
+     "score": 0.6518051684194213,
+     "accordSim": 0.6979028149017561,
      "noteMatch": 0.6224703024761172,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.9131470684117735
+       "blendPct": 13.633279871451485
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -1576,25 +1528,25 @@
     },
     {
      "perfumeKey": "T032",
-     "score": 0.5560712579434922,
-     "accordSim": 0.926679350989079,
+     "score": 0.5219749571907725,
+     "accordSim": 0.839003149053514,
      "noteMatch": 0.3202297441872097,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -1612,25 +1564,25 @@
     },
     {
      "perfumeKey": "T025",
-     "score": 0.5113221819791403,
-     "accordSim": 0.6336320125337723,
+     "score": 0.46916124152629196,
+     "accordSim": 0.5252181656550193,
      "noteMatch": 0.4334886534443745,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -1680,50 +1632,34 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 36
+     "percent": 50
     },
     {
      "accord": "floral",
-     "percent": 22
-    },
-    {
-     "accord": "fresh",
-     "percent": 10
-    },
-    {
-     "accord": "chypre",
-     "percent": 6
+     "percent": 19
     },
     {
      "accord": "woody",
-     "percent": 5
+     "percent": 14
     },
     {
-     "accord": "green",
-     "percent": 4
+     "accord": "fresh",
+     "percent": 6
     },
     {
-     "accord": "earthy",
-     "percent": 3
+     "accord": "chypre",
+     "percent": 2
     },
     {
      "accord": "fruity",
-     "percent": 2
-    },
-    {
-     "accord": "powdery",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
      "percent": 1
     },
     {
-     "accord": "gourmand",
+     "accord": "powdery",
+     "percent": 1
+    },
+    {
+     "accord": "sweet",
      "percent": 1
     },
     {
@@ -1743,83 +1679,37 @@
      "percent": 1
     },
     {
-     "accord": "leathery",
+     "accord": "earthy",
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "green",
      "percent": 1
     }
    ],
    "balanceHints": [],
    "recommendations": [
     {
-     "perfumeKey": "T006",
-     "score": 0.9023057098040126,
-     "accordSim": 0.9303972661067026,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "vanilla",
-      "orange blossom"
-     ]
-    },
-    {
      "perfumeKey": "T003",
-     "score": 0.8989331040361594,
-     "accordSim": 0.9207612496271221,
+     "score": 0.8978333487861714,
+     "accordSim": 0.9176190917700137,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1846,26 +1736,72 @@
      ]
     },
     {
+     "perfumeKey": "T008",
+     "score": 0.8936420942587161,
+     "accordSim": 0.9056440788344271,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 18.87214905479326
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "cedarwood",
+      "iris",
+      "mandarin orange"
+     ]
+    },
+    {
      "perfumeKey": "T010",
-     "score": 0.8409235666809335,
-     "accordSim": 0.7931149524217147,
+     "score": 0.8620477665127645,
+     "accordSim": 0.8534698090840891,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.633279871451485
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.703222602762231
+       "blendPct": 18.87214905479326
       }
      ],
      "matchedNotes": [
@@ -1892,25 +1828,25 @@
     },
     {
      "perfumeKey": "T009",
-     "score": 0.8402582967247756,
-     "accordSim": 0.7340713239755492,
+     "score": 0.8383409845706093,
+     "accordSim": 0.72859328924936,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
-      },
-      {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 4.9131470684117735
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1937,25 +1873,25 @@
     },
     {
      "perfumeKey": "T011",
-     "score": 0.8169130173123783,
-     "accordSim": 0.6864181447020333,
+     "score": 0.8276515354072714,
+     "accordSim": 0.7170996249731565,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
-      },
-      {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.9131470684117735
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -1982,71 +1918,26 @@
      ]
     },
     {
-     "perfumeKey": "T014",
-     "score": 0.8143471495003668,
-     "accordSim": 0.6600394747629527,
-     "noteMatch": 1.0,
-     "grade": "SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "musk",
-      "lychee"
-     ]
-    },
-    {
      "perfumeKey": "T012",
-     "score": 0.8142534053674203,
-     "accordSim": 0.7169144915259626,
+     "score": 0.8076492233796976,
+     "accordSim": 0.6980454001324694,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.633279871451485
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 22.165290427391795
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 6.087890932477941
+       "blendPct": 18.87214905479326
       }
      ],
      "matchedNotes": [
@@ -2073,26 +1964,71 @@
      ]
     },
     {
+     "perfumeKey": "T014",
+     "score": 0.7667953443117,
+     "accordSim": 0.5241771742239046,
+     "noteMatch": 1.0,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 18.87214905479326
+      },
+      {
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 51.05903526041346
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 6.031083129535801
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "musk",
+      "lychee"
+     ]
+    },
+    {
      "perfumeKey": "T001",
-     "score": 0.7588465284982928,
-     "accordSim": 0.9357965582237748,
+     "score": 0.7355058616925625,
+     "accordSim": 0.8691089387788309,
      "noteMatch": 0.7357292117332819,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -2120,25 +2056,25 @@
     },
     {
      "perfumeKey": "T015",
-     "score": 0.7016111376510196,
-     "accordSim": 0.6901893023707487,
+     "score": 0.6537151793291466,
+     "accordSim": 0.553343707165397,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.703222602762231
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.633279871451485
       }
      ],
      "matchedNotes": [
@@ -2166,25 +2102,25 @@
     },
     {
      "perfumeKey": "T013",
-     "score": 0.6979714760152586,
-     "accordSim": 0.679790269125717,
+     "score": 0.6472692042764471,
+     "accordSim": 0.5349266355862559,
      "noteMatch": 0.7758391790689532,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 22.165290427391795
+       "blendPct": 18.87214905479326
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 37.479532125313256
+       "blendPct": 51.05903526041346
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 9.703222602762231
+       "blendPct": 6.031083129535801
       }
      ],
      "matchedNotes": [
@@ -2243,27 +2179,19 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 36
+     "percent": 48
     },
     {
      "accord": "floral",
-     "percent": 22
-    },
-    {
-     "accord": "fresh",
-     "percent": 10
-    },
-    {
-     "accord": "chypre",
-     "percent": 5
+     "percent": 16
     },
     {
      "accord": "woody",
-     "percent": 4
+     "percent": 14
     },
     {
-     "accord": "green",
-     "percent": 4
+     "accord": "fresh",
+     "percent": 6
     },
     {
      "accord": "fruity",
@@ -2274,31 +2202,23 @@
      "percent": 2
     },
     {
+     "accord": "sweet",
+     "percent": 2
+    },
+    {
      "accord": "oriental",
      "percent": 2
     },
     {
-     "accord": "resinous",
+     "accord": "chypre",
      "percent": 2
-    },
-    {
-     "accord": "earthy",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
-     "percent": 1
-    },
-    {
-     "accord": "gourmand",
-     "percent": 1
     },
     {
      "accord": "spicy",
+     "percent": 1
+    },
+    {
+     "accord": "resinous",
      "percent": 1
     },
     {
@@ -2306,11 +2226,11 @@
      "percent": 1
     },
     {
-     "accord": "leathery",
+     "accord": "earthy",
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "green",
      "percent": 1
     }
    ],
@@ -2318,25 +2238,25 @@
    "recommendations": [
     {
      "perfumeKey": "T001",
-     "score": 0.9184206949715479,
-     "accordSim": 0.9383448427758511,
+     "score": 0.8910670766558976,
+     "accordSim": 0.8601916475882786,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
@@ -2363,118 +2283,26 @@
      ]
     },
     {
-     "perfumeKey": "T006",
-     "score": 0.713731654532709,
-     "accordSim": 0.9295380004133039,
-     "noteMatch": 0.6213212504025201,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "rose",
-      "vanilla"
-     ]
-    },
-    {
-     "perfumeKey": "T008",
-     "score": 0.7078151014792166,
-     "accordSim": 0.8935859440699919,
-     "noteMatch": 0.6213212504025201,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.899988542853867
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "rose",
-      "cedarwood",
-      "iris"
-     ]
-    },
-    {
      "perfumeKey": "T010",
-     "score": 0.69506622343304,
-     "accordSim": 0.780970102033297,
+     "score": 0.7205959146037646,
+     "accordSim": 0.8539120768067957,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.631659090237013
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.899988542853867
+       "blendPct": 16.30918804416972
       }
      ],
      "matchedNotes": [
@@ -2501,26 +2329,118 @@
      ]
     },
     {
+     "perfumeKey": "T005",
+     "score": 0.718123531453259,
+     "accordSim": 0.9039909820910658,
+     "noteMatch": 0.6213212504025201,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 20.0,
+       "blendPct": 16.30918804416972
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 13.631659090237013
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "rose",
+      "vetiver",
+      "grapefruit"
+     ]
+    },
+    {
+     "perfumeKey": "T008",
+     "score": 0.7104746219124541,
+     "accordSim": 0.9011845738792421,
+     "noteMatch": 0.6213212504025201,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 16.30918804416972
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.631659090237013
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "rose",
+      "cedarwood",
+      "iris"
+     ]
+    },
+    {
      "perfumeKey": "T012",
-     "score": 0.6659190025059163,
-     "accordSim": 0.6976923279558007,
+     "score": 0.6650043081476267,
+     "accordSim": 0.695078915503545,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 13.631659090237013
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 21.52519186434053
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 5.0127728607922455
+       "blendPct": 16.30918804416972
       }
      ],
      "matchedNotes": [
@@ -2548,25 +2468,25 @@
     },
     {
      "perfumeKey": "T009",
-     "score": 0.6543320194057449,
-     "accordSim": 0.721729519098168,
+     "score": 0.6521734310539753,
+     "accordSim": 0.7155621238073977,
      "noteMatch": 0.6213212504025201,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 21.52519186434053
-      },
-      {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 16.30918804416972
       },
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 4.218029776579936
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
@@ -2594,25 +2514,25 @@
     },
     {
      "perfumeKey": "T017",
-     "score": 0.5264522892054646,
-     "accordSim": 0.6113874070303641,
+     "score": 0.5617761352593718,
+     "accordSim": 0.7123126814700985,
      "noteMatch": 0.45903035771788586,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 36.53639615325605
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.218029776579936
+       "blendPct": 13.631659090237013
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 6.166743738106248
       }
      ],
      "matchedNotes": [
@@ -2635,25 +2555,25 @@
     },
     {
      "perfumeKey": "T015",
-     "score": 0.5140160194744648,
-     "accordSim": 0.6948752772305059,
+     "score": 0.4595026047877968,
+     "accordSim": 0.5391226638400257,
      "noteMatch": 0.45601758626143235,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.52519186434053
+       "blendPct": 16.30918804416972
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.631659090237013
       }
      ],
      "matchedNotes": [
@@ -2681,25 +2601,25 @@
     },
     {
      "perfumeKey": "T027",
-     "score": 0.4513206525433346,
-     "accordSim": 0.7180865568827197,
+     "score": 0.43944427866572155,
+     "accordSim": 0.6841540600895396,
      "noteMatch": 0.30301277145645344,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 36.53639615325605
+       "blendPct": 48.7498926785561
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 9.899988542853867
+       "blendPct": 6.166743738106248
       },
       {
        "accord": "green",
        "perfumePct": 20.0,
-       "blendPct": 3.78855822530235
+       "blendPct": 0.9529144218449174
       }
      ],
      "matchedNotes": [
@@ -2722,25 +2642,25 @@
     },
     {
      "perfumeKey": "T016",
-     "score": 0.3680886960284277,
-     "accordSim": 0.17796761700073457,
+     "score": 0.3870214060867549,
+     "accordSim": 0.2320610743102409,
      "noteMatch": 0.45903035771788586,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 9.899988542853867
-      },
-      {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 4.218029776579936
+       "blendPct": 13.631659090237013
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 6.166743738106248
       },
       {
        "accord": "earthy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 1.9116862604817884
+       "blendPct": 1.152857307551044
       }
      ],
      "matchedNotes": [
@@ -2778,87 +2698,68 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 26
-    },
-    {
-     "accord": "floral",
-     "percent": 14
-    },
-    {
-     "accord": "green",
-     "percent": 14
-    },
-    {
-     "accord": "fresh",
-     "percent": 12
-    },
-    {
-     "accord": "chypre",
-     "percent": 11
-    },
-    {
-     "accord": "fougère",
-     "percent": 6
-    },
-    {
-     "accord": "gourmand",
-     "percent": 4
-    },
-    {
-     "accord": "powdery",
-     "percent": 3
-    },
-    {
-     "accord": "aquatic",
-     "percent": 3
-    },
-    {
-     "accord": "fruity",
-     "percent": 2
-    },
-    {
-     "accord": "animal",
-     "percent": 2
-    },
-    {
-     "accord": "creamy",
-     "percent": 1
-    },
-    {
-     "accord": "sweet",
-     "percent": 1
+     "percent": 71
     },
     {
      "accord": "woody",
+     "percent": 12
+    },
+    {
+     "accord": "fresh",
+     "percent": 8
+    },
+    {
+     "accord": "green",
+     "percent": 3
+    },
+    {
+     "accord": "floral",
+     "percent": 2
+    },
+    {
+     "accord": "spicy",
+     "percent": 1
+    },
+    {
+     "accord": "oriental",
+     "percent": 1
+    },
+    {
+     "accord": "smoky",
+     "percent": 1
+    },
+    {
+     "accord": "aquatic",
      "percent": 1
     }
    ],
    "balanceHints": [
     "EMPTY_LAYER:middle",
-    "EMPTY_LAYER:base"
+    "EMPTY_LAYER:base",
+    "DOMINANT"
    ],
    "recommendations": [
     {
-     "perfumeKey": "T032",
-     "score": 0.9638627051616739,
-     "accordSim": 0.9070755275585902,
+     "perfumeKey": "T006",
+     "score": 0.9089480192861867,
+     "accordSim": 0.7658663353073375,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 25.277
+       "blendPct": 71.54122845877154
       },
       {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.150199999999998
-      },
-      {
-       "accord": "green",
+       "accord": "woody",
        "perfumePct": 13.333333333333334,
-       "blendPct": 13.8743
+       "blendPct": 11.553888446111555
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 8.434391565608435
       }
      ],
      "matchedNotes": [
@@ -2869,104 +2770,32 @@
       }
      ],
      "missingNotes": [
+      "sandalwood",
       "lemon",
-      "musk",
-      "orange blossom"
+      "rose"
      ]
     },
     {
      "perfumeKey": "T001",
-     "score": 0.9606022741594371,
-     "accordSim": 0.8986915621242668,
+     "score": 0.9047671697158745,
+     "accordSim": 0.7551155792693914,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 25.277
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.150199999999998
-      },
-      {
-       "accord": "green",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 13.8743
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "lemon",
-      "jasmine"
-     ]
-    },
-    {
-     "perfumeKey": "T025",
-     "score": 0.9295649309551351,
-     "accordSim": 0.8188812510274905,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 25.277
-      },
-      {
-       "accord": "green",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 13.8743
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 14.150199999999998
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "lemon",
-      "musk",
-      "jasmine"
-     ]
-    },
-    {
-     "perfumeKey": "T006",
-     "score": 0.9237860651547186,
-     "accordSim": 0.8040213103978481,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 25.277
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.150199999999998
+       "blendPct": 71.54122845877154
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 12.4764
+       "blendPct": 8.434391565608435
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 11.553888446111555
       }
      ],
      "matchedNotes": [
@@ -2979,30 +2808,30 @@
      "missingNotes": [
       "sandalwood",
       "lemon",
-      "rose"
+      "jasmine"
      ]
     },
     {
-     "perfumeKey": "T015",
-     "score": 0.9129626079431421,
-     "accordSim": 0.7761895632823653,
+     "perfumeKey": "T027",
+     "score": 0.8995535597288217,
+     "accordSim": 0.7417091535883985,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
-       "accord": "floral",
+       "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 14.150199999999998
+       "blendPct": 71.54122845877154
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 8.434391565608435
       },
       {
        "accord": "green",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 13.8743
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 25.277
+       "perfumePct": 20.0,
+       "blendPct": 2.8690971309028694
       }
      ],
      "matchedNotes": [
@@ -3013,32 +2842,32 @@
       }
      ],
      "missingNotes": [
-      "sandalwood",
-      "rose",
-      "jasmine"
+      "lemon",
+      "vetiver",
+      "grapefruit"
      ]
     },
     {
      "perfumeKey": "T012",
-     "score": 0.8943441892849309,
-     "accordSim": 0.7283136295898223,
+     "score": 0.8466066101579229,
+     "accordSim": 0.6055598546918017,
      "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 25.277
+       "blendPct": 71.54122845877154
       },
       {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 14.150199999999998
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 11.553888446111555
       },
       {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 11.2304
+       "accord": "green",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 2.8690971309028694
       }
      ],
      "matchedNotes": [
@@ -3051,66 +2880,30 @@
      "missingNotes": [
       "sandalwood",
       "lemon",
-      "rose"
-     ]
-    },
-    {
-     "perfumeKey": "T013",
-     "score": 0.8655638623486375,
-     "accordSim": 0.6543070746107819,
-     "noteMatch": 1.0,
-     "grade": "SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 14.150199999999998
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 25.277
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 12.4764
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "musk",
       "rose"
      ]
     },
     {
      "perfumeKey": "T011",
-     "score": 0.8074225280030172,
-     "accordSim": 0.5048007862934728,
+     "score": 0.8129681895292182,
+     "accordSim": 0.5190610587894181,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 25.277
+       "blendPct": 71.54122845877154
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 11.553888446111555
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 14.150199999999998
-      },
-      {
-       "accord": "powdery",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 3.09
+       "blendPct": 2.2161977838022167
       }
      ],
      "matchedNotes": [
@@ -3127,26 +2920,26 @@
      ]
     },
     {
-     "perfumeKey": "T036",
-     "score": 0.7540638049518551,
-     "accordSim": 0.36759264130477015,
+     "perfumeKey": "T025",
+     "score": 0.803281772405814,
+     "accordSim": 0.49415312904352177,
      "noteMatch": 1.0,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 71.54122845877154
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 8.434391565608435
+      },
+      {
        "accord": "green",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 13.8743
-      },
-      {
-       "accord": "chypre",
        "perfumePct": 33.333333333333336,
-       "blendPct": 11.2304
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 14.150199999999998
+       "blendPct": 2.8690971309028694
       }
      ],
      "matchedNotes": [
@@ -3157,32 +2950,104 @@
       }
      ],
      "missingNotes": [
-      "rose",
-      "patchouli",
-      "vetiver"
+      "lemon",
+      "musk",
+      "jasmine"
      ]
     },
     {
-     "perfumeKey": "T030",
-     "score": 0.729480635351473,
-     "accordSim": 0.3043787766180735,
+     "perfumeKey": "T015",
+     "score": 0.7564418890018154,
+     "accordSim": 0.3737077145760966,
      "noteMatch": 1.0,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "green",
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 71.54122845877154
+      },
+      {
+       "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 13.8743
+       "blendPct": 8.434391565608435
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 11.553888446111555
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "rose",
+      "jasmine"
+     ]
+    },
+    {
+     "perfumeKey": "T013",
+     "score": 0.7459734734419412,
+     "accordSim": 0.3467889317078488,
+     "noteMatch": 1.0,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 71.54122845877154
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 8.434391565608435
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 2.2161977838022167
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "musk",
+      "rose"
+     ]
+    },
+    {
+     "perfumeKey": "T030",
+     "score": 0.6726421011548835,
+     "accordSim": 0.15822254582684342,
+     "noteMatch": 1.0,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 11.553888446111555
       },
       {
        "accord": "fresh",
        "perfumePct": 13.333333333333334,
-       "blendPct": 12.4764
+       "blendPct": 8.434391565608435
       },
       {
-       "accord": "aquatic",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 3.4159
+       "accord": "green",
+       "perfumePct": 20.0,
+       "blendPct": 2.8690971309028694
       }
      ],
      "matchedNotes": [
@@ -3196,6 +3061,42 @@
       "musk",
       "hinoki",
       "sea notes"
+     ]
+    },
+    {
+     "perfumeKey": "T036",
+     "score": 0.6499885480637363,
+     "accordSim": 0.09997055216389346,
+     "noteMatch": 1.0,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 11.553888446111555
+      },
+      {
+       "accord": "green",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 2.8690971309028694
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 2.2161977838022167
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "rose",
+      "patchouli",
+      "vetiver"
      ]
     }
    ]
@@ -3224,51 +3125,35 @@
    "k": 10,
    "displayRatios": [
     {
-     "accord": "fougère",
-     "percent": 23
-    },
-    {
      "accord": "fresh",
-     "percent": 15
-    },
-    {
-     "accord": "aquatic",
-     "percent": 14
+     "percent": 30
     },
     {
      "accord": "spicy",
-     "percent": 11
+     "percent": 20
     },
     {
      "accord": "woody",
-     "percent": 7
+     "percent": 19
     },
     {
      "accord": "green",
-     "percent": 7
+     "percent": 9
     },
     {
-     "accord": "oriental",
-     "percent": 4
-    },
-    {
-     "accord": "smoky",
-     "percent": 3
-    },
-    {
-     "accord": "leathery",
-     "percent": 3
-    },
-    {
-     "accord": "chypre",
-     "percent": 3
+     "accord": "fougère",
+     "percent": 8
     },
     {
      "accord": "floral",
+     "percent": 3
+    },
+    {
+     "accord": "sweet",
      "percent": 2
     },
     {
-     "accord": "resinous",
+     "accord": "smoky",
      "percent": 2
     },
     {
@@ -3276,8 +3161,8 @@
      "percent": 2
     },
     {
-     "accord": "citrus",
-     "percent": 1
+     "accord": "chypre",
+     "percent": 2
     },
     {
      "accord": "powdery",
@@ -3288,7 +3173,7 @@
      "percent": 1
     },
     {
-     "accord": "sweet",
+     "accord": "resinous",
      "percent": 1
     }
    ],
@@ -3298,25 +3183,25 @@
    "recommendations": [
     {
      "perfumeKey": "T016",
-     "score": 0.5787112628853041,
-     "accordSim": 0.5191913825249496,
+     "score": 0.7087841855251741,
+     "accordSim": 0.8536646121703294,
      "noteMatch": 0.6165875503873478,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.09789434165391
-      },
-      {
        "accord": "spicy",
        "perfumePct": 26.666666666666668,
-       "blendPct": 11.204877831358761
+       "blendPct": 20.009008575289393
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 29.900455671623856
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 6.69178953816545
+       "blendPct": 18.891336667715713
       }
      ],
      "matchedNotes": [
@@ -3338,26 +3223,67 @@
      ]
     },
     {
+     "perfumeKey": "T017",
+     "score": 0.6033390677148683,
+     "accordSim": 0.7351428933330755,
+     "noteMatch": 0.5194639059578273,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 29.900455671623856
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 18.891336667715713
+      },
+      {
+       "accord": "spicy",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 20.009008575289393
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lavender",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "cedarwood",
+       "layer": "middle",
+       "match": "other_layer"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "lemon",
+      "grapefruit"
+     ]
+    },
+    {
      "perfumeKey": "T020",
-     "score": 0.5577314726318132,
-     "accordSim": 0.6178662202623627,
+     "score": 0.509898258108442,
+     "accordSim": 0.4948665257736937,
      "noteMatch": 0.5194639059578273,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 15.09789434165391
-      },
-      {
-       "accord": "aquatic",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 14.218093838910765
+       "blendPct": 29.900455671623856
       },
       {
        "accord": "green",
        "perfumePct": 13.333333333333334,
-       "blendPct": 7.46463283693305
+       "blendPct": 9.281061120454769
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 18.891336667715713
       }
      ],
      "matchedNotes": [
@@ -3380,25 +3306,25 @@
     },
     {
      "perfumeKey": "T021",
-     "score": 0.5012258304911731,
-     "accordSim": 0.8593366948704818,
+     "score": 0.47045608038156633,
+     "accordSim": 0.7802144803029216,
      "noteMatch": 0.2733370986134312,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "fougère",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 21.14961208549262
-      },
-      {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 15.09789434165391
+       "blendPct": 29.900455671623856
       },
       {
        "accord": "spicy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 11.204877831358761
+       "blendPct": 20.009008575289393
+      },
+      {
+       "accord": "green",
+       "perfumePct": 20.0,
+       "blendPct": 9.281061120454769
       }
      ],
      "matchedNotes": [
@@ -3420,67 +3346,26 @@
      ]
     },
     {
-     "perfumeKey": "T017",
-     "score": 0.49116551227445626,
-     "accordSim": 0.44669660791487326,
-     "noteMatch": 0.5194639059578273,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.09789434165391
-      },
-      {
-       "accord": "spicy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 11.204877831358761
-      },
-      {
-       "accord": "woody",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 6.69178953816545
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lavender",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "cedarwood",
-       "layer": "middle",
-       "match": "other_layer"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "lemon",
-      "grapefruit"
-     ]
-    },
-    {
      "perfumeKey": "T031",
-     "score": 0.4098052958630454,
-     "accordSim": 0.384174956998527,
+     "score": 0.45781002792432135,
+     "accordSim": 0.5076156965846651,
      "noteMatch": 0.42611551150410254,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "spicy",
        "perfumePct": 33.333333333333336,
-       "blendPct": 11.204877831358761
+       "blendPct": 20.009008575289393
       },
       {
        "accord": "woody",
        "perfumePct": 20.0,
-       "blendPct": 6.69178953816545
+       "blendPct": 18.891336667715713
       },
       {
-       "accord": "oriental",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 3.9678879816502746
+       "accord": "sweet",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 1.8450150764350328
       }
      ],
      "matchedNotes": [
@@ -3502,70 +3387,34 @@
      ]
     },
     {
-     "perfumeKey": "T018",
-     "score": 0.35564798670238035,
-     "accordSim": 0.24491330487110263,
-     "noteMatch": 0.42611551150410254,
+     "perfumeKey": "T030",
+     "score": 0.34620328221835817,
+     "accordSim": 0.5812083406186485,
+     "noteMatch": 0.19665460869090073,
      "grade": "REFERENCE",
      "sharedAccords": [
-      {
-       "accord": "spicy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 11.204877831358761
-      },
       {
        "accord": "woody",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 6.69178953816545
-      },
-      {
-       "accord": "oriental",
        "perfumePct": 33.333333333333336,
-       "blendPct": 3.9678879816502746
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "cardamom",
-       "layer": "top",
-       "match": "same_layer"
+       "blendPct": 18.891336667715713
       },
-      {
-       "noteKey": "cedarwood",
-       "layer": "middle",
-       "match": "same_family"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "rose",
-      "vanilla"
-     ]
-    },
-    {
-     "perfumeKey": "T027",
-     "score": 0.24651920744616018,
-     "accordSim": 0.5056294460218183,
-     "noteMatch": 0.08163087380710511,
-     "grade": "REFERENCE",
-     "sharedAccords": [
       {
        "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 15.09789434165391
-      },
-      {
-       "accord": "aquatic",
        "perfumePct": 13.333333333333334,
-       "blendPct": 14.218093838910765
+       "blendPct": 29.900455671623856
       },
       {
        "accord": "green",
        "perfumePct": 20.0,
-       "blendPct": 7.46463283693305
+       "blendPct": 9.281061120454769
       }
      ],
      "matchedNotes": [
+      {
+       "noteKey": "lavender",
+       "layer": "middle",
+       "match": "same_family"
+      },
       {
        "noteKey": "cedarwood",
        "layer": "middle",
@@ -3573,32 +3422,32 @@
       }
      ],
      "missingNotes": [
-      "lemon",
       "bergamot",
-      "vetiver"
+      "musk",
+      "hinoki"
      ]
     },
     {
      "perfumeKey": "T024",
-     "score": 0.2336961298508903,
-     "accordSim": 0.3871377596455855,
+     "score": 0.29782626425025654,
+     "accordSim": 0.5520438195296702,
      "noteMatch": 0.13605145634517518,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 15.09789434165391
-      },
-      {
-       "accord": "green",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 7.46463283693305
+       "blendPct": 29.900455671623856
       },
       {
        "accord": "woody",
        "perfumePct": 13.333333333333334,
-       "blendPct": 6.69178953816545
+       "blendPct": 18.891336667715713
+      },
+      {
+       "accord": "green",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 9.281061120454769
       }
      ],
      "matchedNotes": [
@@ -3615,34 +3464,29 @@
      ]
     },
     {
-     "perfumeKey": "T022",
-     "score": 0.22196391730075618,
-     "accordSim": 0.28008737073362333,
-     "noteMatch": 0.18497626511620432,
+     "perfumeKey": "T027",
+     "score": 0.2549957898644945,
+     "accordSim": 0.5274263722403921,
+     "noteMatch": 0.08163087380710511,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "spicy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 11.204877831358761
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 29.900455671623856
       },
       {
-       "accord": "woody",
+       "accord": "green",
        "perfumePct": 20.0,
-       "blendPct": 6.69178953816545
+       "blendPct": 9.281061120454769
       },
       {
-       "accord": "leathery",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 3.166844666768381
+       "accord": "spicy",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 20.009008575289393
       }
      ],
      "matchedNotes": [
-      {
-       "noteKey": "cardamom",
-       "layer": "top",
-       "match": "same_family"
-      },
       {
        "noteKey": "cedarwood",
        "layer": "middle",
@@ -3650,32 +3494,32 @@
       }
      ],
      "missingNotes": [
-      "patchouli",
-      "incense",
-      "pink pepper"
+      "lemon",
+      "bergamot",
+      "vetiver"
      ]
     },
     {
      "perfumeKey": "T009",
-     "score": 0.1974355371302828,
-     "accordSim": 0.21701439315240614,
+     "score": 0.2535669216690874,
+     "accordSim": 0.3613522391093323,
      "noteMatch": 0.18497626511620432,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 6.69178953816545
+       "blendPct": 18.891336667715713
       },
       {
        "accord": "spicy",
        "perfumePct": 6.666666666666667,
-       "blendPct": 11.204877831358761
+       "blendPct": 20.009008575289393
       },
       {
-       "accord": "earthy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 2.4130013788579308
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 2.878472662202569
       }
      ],
      "matchedNotes": [
@@ -3694,6 +3538,47 @@
       "sandalwood",
       "lemon",
       "rose"
+     ]
+    },
+    {
+     "perfumeKey": "T022",
+     "score": 0.24188952112432383,
+     "accordSim": 0.33132463770851156,
+     "noteMatch": 0.18497626511620432,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 18.891336667715713
+      },
+      {
+       "accord": "spicy",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 20.009008575289393
+      },
+      {
+       "accord": "smoky",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 2.1148009063432456
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "cardamom",
+       "layer": "top",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "cedarwood",
+       "layer": "middle",
+       "match": "same_family"
+      }
+     ],
+     "missingNotes": [
+      "patchouli",
+      "incense",
+      "pink pepper"
      ]
     }
    ]
@@ -3753,70 +3638,46 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 22
+     "percent": 37
     },
     {
      "accord": "floral",
-     "percent": 18
+     "percent": 17
     },
     {
      "accord": "sweet",
-     "percent": 9
+     "percent": 11
+    },
+    {
+     "accord": "woody",
+     "percent": 10
     },
     {
      "accord": "fresh",
-     "percent": 7
+     "percent": 6
     },
     {
      "accord": "powdery",
      "percent": 5
     },
     {
-     "accord": "gourmand",
-     "percent": 5
-    },
-    {
-     "accord": "chypre",
-     "percent": 5
-    },
-    {
-     "accord": "oriental",
-     "percent": 4
-    },
-    {
-     "accord": "green",
-     "percent": 4
-    },
-    {
-     "accord": "fruity",
-     "percent": 3
-    },
-    {
      "accord": "creamy",
      "percent": 3
     },
     {
-     "accord": "animal",
-     "percent": 3
+     "accord": "fruity",
+     "percent": 2
     },
     {
-     "accord": "woody",
-     "percent": 3
+     "accord": "gourmand",
+     "percent": 2
+    },
+    {
+     "accord": "oriental",
+     "percent": 2
     },
     {
      "accord": "resinous",
-     "percent": 2
-    },
-    {
-     "accord": "earthy",
-     "percent": 2
-    },
-    {
-     "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "spicy",
      "percent": 1
     },
     {
@@ -3824,7 +3685,15 @@
      "percent": 1
     },
     {
-     "accord": "fougère",
+     "accord": "earthy",
+     "percent": 1
+    },
+    {
+     "accord": "chypre",
+     "percent": 1
+    },
+    {
+     "accord": "green",
      "percent": 1
     }
    ],
@@ -3832,25 +3701,25 @@
    "recommendations": [
     {
      "perfumeKey": "T006",
-     "score": 0.7125200582159973,
-     "accordSim": 0.8861299466091113,
+     "score": 0.7273478216504733,
+     "accordSim": 0.9242584811549066,
      "noteMatch": 0.6020410383294702,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.943513416945972
+       "blendPct": 34.01160629361653
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 17.695264691420594
+       "blendPct": 17.14957056773619
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 6.820822953753114
+       "accord": "woody",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 10.296944336680614
       }
      ],
      "matchedNotes": [
@@ -3901,25 +3770,25 @@
     },
     {
      "perfumeKey": "T001",
-     "score": 0.7079801942951751,
-     "accordSim": 0.8709466447706078,
+     "score": 0.7057214096274489,
+     "accordSim": 0.8651383413393117,
      "noteMatch": 0.6042742712653545,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.943513416945972
+       "blendPct": 34.01160629361653
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 17.695264691420594
+       "blendPct": 17.14957056773619
       },
       {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 6.820822953753114
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 10.296944336680614
       }
      ],
      "matchedNotes": [
@@ -3969,26 +3838,159 @@
      ]
     },
     {
+     "perfumeKey": "T005",
+     "score": 0.647605038339906,
+     "accordSim": 0.885590761351707,
+     "noteMatch": 0.4961595782414871,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 34.01160629361653
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 20.0,
+       "blendPct": 17.14957056773619
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 10.296944336680614
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "grapefruit",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "jasmine",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "vetiver"
+     ]
+    },
+    {
+     "perfumeKey": "T011",
+     "score": 0.6054886914552325,
+     "accordSim": 0.7356022808539951,
+     "noteMatch": 0.5226891345651109,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 34.01160629361653
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 17.14957056773619
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 10.296944336680614
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "grapefruit",
+       "layer": "top",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "jasmine",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "musk",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "patchouli"
+     ]
+    },
+    {
      "perfumeKey": "T013",
-     "score": 0.6308294517345361,
-     "accordSim": 0.7457989882944437,
+     "score": 0.5962230866489661,
+     "accordSim": 0.656811192360121,
      "noteMatch": 0.5576670193782312,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 17.695264691420594
+       "blendPct": 17.14957056773619
       },
       {
        "accord": "citrus",
        "perfumePct": 13.333333333333334,
-       "blendPct": 21.943513416945972
+       "blendPct": 34.01160629361653
       },
       {
-       "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 6.820822953753114
+       "accord": "sweet",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 10.631499152675465
       }
      ],
      "matchedNotes": [
@@ -4038,26 +4040,90 @@
      ]
     },
     {
-     "perfumeKey": "T003",
-     "score": 0.6170183023621578,
-     "accordSim": 0.8545612383374505,
-     "noteMatch": 0.46585461583242616,
+     "perfumeKey": "T012",
+     "score": 0.5815026548982082,
+     "accordSim": 0.6726707908171872,
+     "noteMatch": 0.5234865684043125,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 34.01160629361653
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 17.14957056773619
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 10.296944336680614
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "bergamot",
+       "layer": "top",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "grapefruit",
+       "layer": "top",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "rose",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "jasmine",
+       "layer": "middle",
+       "match": "same_layer"
+      },
+      {
+       "noteKey": "osmanthus",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "sandalwood",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "oakmoss"
+     ]
+    },
+    {
+     "perfumeKey": "T010",
+     "score": 0.5507726339952349,
+     "accordSim": 0.8164319351491226,
+     "noteMatch": 0.3817167150791246,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.943513416945972
+       "blendPct": 34.01160629361653
       },
       {
        "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 17.695264691420594
+       "perfumePct": 13.333333333333334,
+       "blendPct": 17.14957056773619
       },
       {
-       "accord": "fresh",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 6.820822953753114
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 10.296944336680614
       }
      ],
      "matchedNotes": [
@@ -4095,39 +4161,34 @@
        "noteKey": "sandalwood",
        "layer": "base",
        "match": "same_layer"
-      },
-      {
-       "noteKey": "musk",
-       "layer": "base",
-       "match": "same_layer"
       }
      ],
      "missingNotes": [
-      "mandarin orange",
-      "peony"
+      "patchouli",
+      "geranium"
      ]
     },
     {
      "perfumeKey": "T033",
-     "score": 0.594580960157245,
-     "accordSim": 0.5940770099865564,
+     "score": 0.5364194617415201,
+     "accordSim": 0.4445188712032638,
      "noteMatch": 0.5949016557204105,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 17.695264691420594
+       "blendPct": 17.14957056773619
       },
       {
        "accord": "sweet",
        "perfumePct": 26.666666666666668,
-       "blendPct": 8.740937377718788
+       "blendPct": 10.631499152675465
       },
       {
        "accord": "powdery",
        "perfumePct": 6.666666666666667,
-       "blendPct": 4.55422863373141
+       "blendPct": 5.319122074482859
       }
      ],
      "matchedNotes": [
@@ -4177,223 +4238,26 @@
      ]
     },
     {
-     "perfumeKey": "T012",
-     "score": 0.5796396130124227,
-     "accordSim": 0.6678801116823103,
-     "noteMatch": 0.5234865684043125,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 21.943513416945972
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 17.695264691420594
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 5.158548452435465
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "grapefruit",
-       "layer": "top",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "jasmine",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "oakmoss"
-     ]
-    },
-    {
-     "perfumeKey": "T011",
-     "score": 0.5755953205906511,
-     "accordSim": 0.6587336129165001,
-     "noteMatch": 0.5226891345651109,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 21.943513416945972
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 17.695264691420594
-      },
-      {
-       "accord": "powdery",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 4.55422863373141
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "grapefruit",
-       "layer": "top",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "jasmine",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "musk",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "patchouli"
-     ]
-    },
-    {
-     "perfumeKey": "T015",
-     "score": 0.5646746694494678,
-     "accordSim": 0.7079033921737423,
-     "noteMatch": 0.4735291186249295,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 17.695264691420594
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 21.943513416945972
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 6.820822953753114
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "bergamot",
-       "layer": "top",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "grapefruit",
-       "layer": "top",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "rose",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "jasmine",
-       "layer": "middle",
-       "match": "same_layer"
-      },
-      {
-       "noteKey": "osmanthus",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "sandalwood",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "green tea"
-     ]
-    },
-    {
      "perfumeKey": "T032",
-     "score": 0.5452920799788394,
-     "accordSim": 0.876078330903799,
+     "score": 0.5348301818497425,
+     "accordSim": 0.8491763071432643,
      "noteMatch": 0.3347917384811378,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 21.943513416945972
+       "blendPct": 34.01160629361653
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 17.695264691420594
+       "blendPct": 17.14957056773619
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 6.820822953753114
+       "blendPct": 6.11729663548685
       }
      ],
      "matchedNotes": [
@@ -4429,33 +4293,33 @@
      ]
     },
     {
-     "perfumeKey": "T025",
-     "score": 0.5350161729233152,
-     "accordSim": 0.619318400259459,
-     "noteMatch": 0.4813693009821327,
+     "perfumeKey": "T015",
+     "score": 0.5230748362549157,
+     "accordSim": 0.6009323925306082,
+     "noteMatch": 0.4735291186249295,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 21.943513416945972
-      },
-      {
        "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 17.695264691420594
+       "perfumePct": 33.333333333333336,
+       "blendPct": 17.14957056773619
       },
       {
-       "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 6.820822953753114
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 34.01160629361653
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 10.296944336680614
       }
      ],
      "matchedNotes": [
       {
        "noteKey": "lemon",
        "layer": "top",
-       "match": "same_layer"
+       "match": "same_family"
       },
       {
        "noteKey": "bergamot",
@@ -4470,7 +4334,7 @@
       {
        "noteKey": "rose",
        "layer": "middle",
-       "match": "same_family"
+       "match": "same_layer"
       },
       {
        "noteKey": "jasmine",
@@ -4483,7 +4347,7 @@
        "match": "same_family"
       },
       {
-       "noteKey": "musk",
+       "noteKey": "sandalwood",
        "layer": "base",
        "match": "same_layer"
       }
@@ -4514,62 +4378,46 @@
    "displayRatios": [
     {
      "accord": "woody",
-     "percent": 18
-    },
-    {
-     "accord": "chypre",
-     "percent": 13
+     "percent": 39
     },
     {
      "accord": "earthy",
-     "percent": 10
-    },
-    {
-     "accord": "smoky",
-     "percent": 9
-    },
-    {
-     "accord": "floral",
-     "percent": 7
-    },
-    {
-     "accord": "spicy",
-     "percent": 6
-    },
-    {
-     "accord": "resinous",
-     "percent": 6
-    },
-    {
-     "accord": "leathery",
-     "percent": 6
-    },
-    {
-     "accord": "green",
-     "percent": 6
-    },
-    {
-     "accord": "citrus",
-     "percent": 4
-    },
-    {
-     "accord": "oriental",
-     "percent": 4
-    },
-    {
-     "accord": "fougère",
-     "percent": 4
+     "percent": 11
     },
     {
      "accord": "fresh",
-     "percent": 4
+     "percent": 10
+    },
+    {
+     "accord": "floral",
+     "percent": 9
+    },
+    {
+     "accord": "smoky",
+     "percent": 8
+    },
+    {
+     "accord": "chypre",
+     "percent": 8
+    },
+    {
+     "accord": "spicy",
+     "percent": 5
+    },
+    {
+     "accord": "green",
+     "percent": 5
+    },
+    {
+     "accord": "resinous",
+     "percent": 3
     },
     {
      "accord": "powdery",
-     "percent": 2
+     "percent": 1
     },
     {
-     "accord": "aquatic",
+     "accord": "fougère",
      "percent": 1
     }
    ],
@@ -4580,25 +4428,25 @@
    "recommendations": [
     {
      "perfumeKey": "T029",
-     "score": 0.872391610606523,
-     "accordSim": 0.6718641415596306,
+     "score": 0.9319766768470651,
+     "accordSim": 0.8250828833210243,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
       },
       {
        "accord": "earthy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 10.28125514062757
+       "blendPct": 10.88543367184949
       },
       {
-       "accord": "smoky",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.452504726252362
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 10.083834874247689
       }
      ],
      "matchedNotes": [
@@ -4619,67 +4467,26 @@
      ]
     },
     {
-     "perfumeKey": "T036",
-     "score": 0.6774084841680892,
-     "accordSim": 0.8113267063722663,
-     "noteMatch": 0.5921877973108854,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "woody",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 16.456158228079115
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 12.946406473203234
-      },
-      {
-       "accord": "earthy",
-       "perfumePct": 20.0,
-       "blendPct": 10.28125514062757
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "hinoki",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "vetiver",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "rose",
-      "patchouli"
-     ]
-    },
-    {
      "perfumeKey": "T030",
-     "score": 0.6512797464453576,
-     "accordSim": 0.5624430294908821,
+     "score": 0.7156354146308485,
+     "accordSim": 0.7279290333964299,
      "noteMatch": 0.7078122026891147,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 10.083834874247689
       },
       {
        "accord": "earthy",
        "perfumePct": 6.666666666666667,
-       "blendPct": 10.28125514062757
-      },
-      {
-       "accord": "green",
-       "perfumePct": 20.0,
-       "blendPct": 5.953752976876489
+       "blendPct": 10.88543367184949
       }
      ],
      "matchedNotes": [
@@ -4702,25 +4509,25 @@
     },
     {
      "perfumeKey": "T016",
-     "score": 0.622944909401524,
-     "accordSim": 0.6712775141153846,
+     "score": 0.6818125478544881,
+     "accordSim": 0.8226514415658637,
      "noteMatch": 0.5921877973108854,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
       },
       {
        "accord": "earthy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 10.28125514062757
+       "blendPct": 10.88543367184949
       },
       {
-       "accord": "smoky",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 9.452504726252362
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 10.083834874247689
       }
      ],
      "matchedNotes": [
@@ -4742,26 +4549,67 @@
      ]
     },
     {
-     "perfumeKey": "T005",
-     "score": 0.5704695250799584,
-     "accordSim": 0.536340811574216,
+     "perfumeKey": "T036",
+     "score": 0.6495020432967655,
+     "accordSim": 0.7395672869888628,
      "noteMatch": 0.5921877973108854,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
+      },
+      {
+       "accord": "earthy",
+       "perfumePct": 20.0,
+       "blendPct": 10.88543367184949
+      },
+      {
+       "accord": "chypre",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 7.823788264317604
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "hinoki",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "vetiver",
+       "layer": "base",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "bergamot",
+      "rose",
+      "patchouli"
+     ]
+    },
+    {
+     "perfumeKey": "T005",
+     "score": 0.6052671700976406,
+     "accordSim": 0.6258204701911129,
+     "noteMatch": 0.5921877973108854,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 40.743288885066676
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 10.083834874247689
       },
       {
        "accord": "floral",
        "perfumePct": 20.0,
-       "blendPct": 6.76340338170169
-      },
-      {
-       "accord": "green",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 5.953752976876489
+       "blendPct": 8.712686930969605
       }
      ],
      "matchedNotes": [
@@ -4783,108 +4631,26 @@
      ]
     },
     {
-     "perfumeKey": "T027",
-     "score": 0.47104107936403716,
-     "accordSim": 0.2806676654475614,
-     "noteMatch": 0.5921877973108854,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "green",
-       "perfumePct": 20.0,
-       "blendPct": 5.953752976876489
-      },
-      {
-       "accord": "spicy",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 5.92120296060148
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 4.335752167876084
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "hinoki",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "vetiver",
-       "layer": "base",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "lemon",
-      "bergamot",
-      "grapefruit"
-     ]
-    },
-    {
-     "perfumeKey": "T012",
-     "score": 0.44304073211356004,
-     "accordSim": 0.6678190254348687,
-     "noteMatch": 0.30000000000000004,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "woody",
-       "perfumePct": 20.0,
-       "blendPct": 16.456158228079115
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 12.946406473203234
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 6.76340338170169
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "hinoki",
-       "layer": "middle",
-       "match": "same_family"
-      },
-      {
-       "noteKey": "vetiver",
-       "layer": "base",
-       "match": "same_family"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "lemon",
-      "bergamot"
-     ]
-    },
-    {
      "perfumeKey": "T011",
-     "score": 0.4332375006684838,
-     "accordSim": 0.6426107160046727,
+     "score": 0.4806291442683594,
+     "accordSim": 0.7644749424043528,
      "noteMatch": 0.30000000000000004,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
       },
       {
        "accord": "earthy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 10.28125514062757
+       "blendPct": 10.88543367184949
       },
       {
        "accord": "floral",
        "perfumePct": 26.666666666666668,
-       "blendPct": 6.76340338170169
+       "blendPct": 8.712686930969605
       }
      ],
      "matchedNotes": [
@@ -4906,26 +4672,108 @@
      ]
     },
     {
-     "perfumeKey": "T002",
-     "score": 0.4324011886041512,
-     "accordSim": 0.6404601992678173,
+     "perfumeKey": "T017",
+     "score": 0.46503239717615835,
+     "accordSim": 0.7243690213101215,
      "noteMatch": 0.30000000000000004,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 10.083834874247689
+      },
+      {
+       "accord": "green",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 4.7119929320106015
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "hinoki",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "vetiver",
+       "layer": "base",
+       "match": "same_family"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "lemon",
+      "cedarwood"
+     ]
+    },
+    {
+     "perfumeKey": "T009",
+     "score": 0.4481130138128653,
+     "accordSim": 0.6808620355187963,
+     "noteMatch": 0.30000000000000004,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 40.743288885066676
+      },
+      {
+       "accord": "earthy",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 10.88543367184949
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 8.712686930969605
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "hinoki",
+       "layer": "middle",
+       "match": "same_family"
+      },
+      {
+       "noteKey": "vetiver",
+       "layer": "base",
+       "match": "same_family"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "lemon",
+      "rose"
+     ]
+    },
+    {
+     "perfumeKey": "T002",
+     "score": 0.44655438543011605,
+     "accordSim": 0.6768541339631556,
+     "noteMatch": 0.30000000000000004,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 40.743288885066676
       },
       {
        "accord": "smoky",
        "perfumePct": 13.333333333333334,
-       "blendPct": 9.452504726252362
+       "blendPct": 7.539188691216963
       },
       {
-       "accord": "resinous",
-       "perfumePct": 20.0,
-       "blendPct": 6.217153108576555
+       "accord": "spicy",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 4.504143243785134
       }
      ],
      "matchedNotes": [
@@ -4947,26 +4795,26 @@
      ]
     },
     {
-     "perfumeKey": "T009",
-     "score": 0.4235644556604071,
-     "accordSim": 0.6177371716981899,
+     "perfumeKey": "T010",
+     "score": 0.4371118576853791,
+     "accordSim": 0.652573348333832,
      "noteMatch": 0.30000000000000004,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 26.666666666666668,
-       "blendPct": 16.456158228079115
+       "blendPct": 40.743288885066676
       },
       {
        "accord": "earthy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 10.28125514062757
+       "perfumePct": 20.0,
+       "blendPct": 10.88543367184949
       },
       {
        "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 6.76340338170169
+       "perfumePct": 13.333333333333334,
+       "blendPct": 8.712686930969605
       }
      ],
      "matchedNotes": [
@@ -5009,62 +4857,38 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 27
-    },
-    {
-     "accord": "oriental",
-     "percent": 15
+     "percent": 37
     },
     {
      "accord": "resinous",
-     "percent": 13
+     "percent": 23
     },
     {
      "accord": "spicy",
-     "percent": 11
+     "percent": 14
     },
     {
-     "accord": "fresh",
-     "percent": 8
-    },
-    {
-     "accord": "floral",
-     "percent": 7
-    },
-    {
-     "accord": "smoky",
-     "percent": 6
-    },
-    {
-     "accord": "sweet",
-     "percent": 5
-    },
-    {
-     "accord": "green",
-     "percent": 2
-    },
-    {
-     "accord": "fruity",
-     "percent": 1
-    },
-    {
-     "accord": "gourmand",
-     "percent": 1
+     "accord": "oriental",
+     "percent": 9
     },
     {
      "accord": "woody",
+     "percent": 5
+    },
+    {
+     "accord": "smoky",
+     "percent": 5
+    },
+    {
+     "accord": "fresh",
+     "percent": 5
+    },
+    {
+     "accord": "floral",
      "percent": 1
     },
     {
-     "accord": "chypre",
-     "percent": 1
-    },
-    {
-     "accord": "fougère",
-     "percent": 1
-    },
-    {
-     "accord": "aquatic",
+     "accord": "green",
      "percent": 1
     }
    ],
@@ -5075,25 +4899,25 @@
    "recommendations": [
     {
      "perfumeKey": "T023",
-     "score": 0.6632010544676964,
-     "accordSim": 0.4438331039489915,
+     "score": 0.6764221727161367,
+     "accordSim": 0.47783026515926635,
      "noteMatch": 0.8027988411614179,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "resinous",
        "perfumePct": 26.666666666666668,
-       "blendPct": 13.250106625053313
+       "blendPct": 23.4436
       },
       {
        "accord": "spicy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 11.12705556352778
+       "blendPct": 13.6933
       },
       {
        "accord": "oriental",
        "perfumePct": 6.666666666666667,
-       "blendPct": 14.960807480403739
+       "blendPct": 9.159450000000001
       }
      ],
      "matchedNotes": [
@@ -5116,25 +4940,25 @@
     },
     {
      "perfumeKey": "T018",
-     "score": 0.6613860237927235,
-     "accordSim": 0.571974825920963,
+     "score": 0.6030042186621112,
+     "accordSim": 0.42185018415653147,
      "noteMatch": 0.7182840588020255,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "oriental",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 14.960807480403739
-      },
-      {
        "accord": "resinous",
        "perfumePct": 20.0,
-       "blendPct": 13.250106625053313
+       "blendPct": 23.4436
       },
       {
        "accord": "spicy",
        "perfumePct": 13.333333333333334,
-       "blendPct": 11.12705556352778
+       "blendPct": 13.6933
+      },
+      {
+       "accord": "oriental",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 9.159450000000001
       }
      ],
      "matchedNotes": [
@@ -5152,25 +4976,25 @@
     },
     {
      "perfumeKey": "T031",
-     "score": 0.6385548895263361,
-     "accordSim": 0.5132661949502526,
+     "score": 0.5977015931145,
+     "accordSim": 0.40821486131981705,
      "noteMatch": 0.7182840588020255,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
-       "accord": "oriental",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.960807480403739
-      },
-      {
        "accord": "spicy",
        "perfumePct": 33.333333333333336,
-       "blendPct": 11.12705556352778
+       "blendPct": 13.6933
+      },
+      {
+       "accord": "oriental",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 9.159450000000001
       },
       {
        "accord": "resinous",
        "perfumePct": 6.666666666666667,
-       "blendPct": 13.250106625053313
+       "blendPct": 23.4436
       }
      ],
      "matchedNotes": [
@@ -5187,26 +5011,26 @@
      ]
     },
     {
-     "perfumeKey": "T006",
-     "score": 0.43979831282433546,
-     "accordSim": 0.6882134682371884,
+     "perfumeKey": "T005",
+     "score": 0.41402656191127296,
+     "accordSim": 0.6219432516035993,
      "noteMatch": 0.28171594119797444,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
+       "blendPct": 37.1387
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 5.17165
       },
       {
        "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 7.691553845776922
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 7.466303733151865
+       "perfumePct": 13.333333333333334,
+       "blendPct": 4.50185
       }
      ],
      "matchedNotes": [
@@ -5218,31 +5042,67 @@
      ],
      "missingNotes": [
       "sandalwood",
-      "bergamot",
-      "rose"
+      "rose",
+      "vetiver"
      ]
     },
     {
-     "perfumeKey": "T001",
-     "score": 0.43704213974460837,
-     "accordSim": 0.681126166032176,
+     "perfumeKey": "T027",
+     "score": 0.4139466684547857,
+     "accordSim": 0.6217378112869179,
      "noteMatch": 0.28171594119797444,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
+       "blendPct": 37.1387
+      },
+      {
+       "accord": "spicy",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 13.6933
       },
       {
        "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 7.691553845776922
+       "perfumePct": 26.666666666666668,
+       "blendPct": 4.50185
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "bergamot",
+      "vetiver",
+      "grapefruit"
+     ]
+    },
+    {
+     "perfumeKey": "T017",
+     "score": 0.4096799617124674,
+     "accordSim": 0.6107662796638135,
+     "noteMatch": 0.28171594119797444,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 37.1387
       },
       {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 7.466303733151865
+       "accord": "spicy",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 13.6933
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 5.17165
       }
      ],
      "matchedNotes": [
@@ -5254,67 +5114,31 @@
      ],
      "missingNotes": [
       "sandalwood",
-      "bergamot",
-      "jasmine"
-     ]
-    },
-    {
-     "perfumeKey": "T032",
-     "score": 0.43626053106071033,
-     "accordSim": 0.6791163151307239,
-     "noteMatch": 0.28171594119797444,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 7.691553845776922
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 7.466303733151865
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "musk",
-      "orange blossom"
+      "cedarwood",
+      "grapefruit"
      ]
     },
     {
      "perfumeKey": "T003",
-     "score": 0.4237992601626603,
-     "accordSim": 0.6470730471071667,
+     "score": 0.40917011820846555,
+     "accordSim": 0.6094552535106658,
      "noteMatch": 0.28171594119797444,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
+       "blendPct": 37.1387
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 5.17165
       },
       {
        "accord": "fresh",
        "perfumePct": 13.333333333333334,
-       "blendPct": 7.691553845776922
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 7.466303733151865
+       "blendPct": 4.50185
       }
      ],
      "matchedNotes": [
@@ -5331,62 +5155,26 @@
      ]
     },
     {
-     "perfumeKey": "T035",
-     "score": 0.40844002584388583,
-     "accordSim": 0.6075778731446038,
-     "noteMatch": 0.28171594119797444,
-     "grade": "REFERENCE",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 7.691553845776922
-      },
-      {
-       "accord": "sweet",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 5.013602506801253
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "musk",
-      "grapefruit",
-      "peach"
-     ]
-    },
-    {
      "perfumeKey": "T010",
-     "score": 0.3939178619378191,
-     "accordSim": 0.5702351659575748,
+     "score": 0.4070671375563015,
+     "accordSim": 0.6040475889765298,
      "noteMatch": 0.28171594119797444,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 26.005463002731503
+       "blendPct": 37.1387
       },
       {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 7.466303733151865
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 5.17165
       },
       {
        "accord": "fresh",
        "perfumePct": 6.666666666666667,
-       "blendPct": 7.691553845776922
+       "blendPct": 4.50185
       }
      ],
      "matchedNotes": [
@@ -5403,26 +5191,26 @@
      ]
     },
     {
-     "perfumeKey": "T017",
-     "score": 0.39221341800771736,
-     "accordSim": 0.5658523101373133,
+     "perfumeKey": "T001",
+     "score": 0.40391239146284724,
+     "accordSim": 0.5959353847362188,
      "noteMatch": 0.28171594119797444,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "citrus",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 26.005463002731503
+       "perfumePct": 33.333333333333336,
+       "blendPct": 37.1387
       },
       {
-       "accord": "spicy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 11.12705556352778
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 5.17165
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 7.691553845776922
+       "blendPct": 4.50185
       }
      ],
      "matchedNotes": [
@@ -5434,8 +5222,44 @@
      ],
      "missingNotes": [
       "sandalwood",
-      "cedarwood",
-      "grapefruit"
+      "bergamot",
+      "jasmine"
+     ]
+    },
+    {
+     "perfumeKey": "T035",
+     "score": 0.3921907228523866,
+     "accordSim": 0.5657939511664629,
+     "noteMatch": 0.28171594119797444,
+     "grade": "REFERENCE",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 37.1387
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 4.50185
+      },
+      {
+       "accord": "green",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 0.53185
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "musk",
+      "grapefruit",
+      "peach"
      ]
     }
    ]
@@ -5455,83 +5279,60 @@
    "displayRatios": [
     {
      "accord": "citrus",
-     "percent": 53
-    },
-    {
-     "accord": "floral",
-     "percent": 15
-    },
-    {
-     "accord": "fresh",
-     "percent": 15
-    },
-    {
-     "accord": "green",
-     "percent": 4
-    },
-    {
-     "accord": "chypre",
-     "percent": 3
+     "percent": 75
     },
     {
      "accord": "woody",
-     "percent": 2
+     "percent": 10
+    },
+    {
+     "accord": "fresh",
+     "percent": 9
+    },
+    {
+     "accord": "floral",
+     "percent": 3
+    },
+    {
+     "accord": "oriental",
+     "percent": 1
+    },
+    {
+     "accord": "green",
+     "percent": 1
     },
     {
      "accord": "aquatic",
-     "percent": 2
-    },
-    {
-     "accord": "fruity",
-     "percent": 1
-    },
-    {
-     "accord": "powdery",
-     "percent": 1
-    },
-    {
-     "accord": "animal",
-     "percent": 1
-    },
-    {
-     "accord": "gourmand",
-     "percent": 1
-    },
-    {
-     "accord": "earthy",
-     "percent": 1
-    },
-    {
-     "accord": "fougère",
      "percent": 1
     }
    ],
    "balanceHints": [
     "EMPTY_LAYER:middle",
-    "EMPTY_LAYER:base"
+    "EMPTY_LAYER:base",
+    "DOMINANT"
    ],
    "recommendations": [
     {
-     "perfumeKey": "T001",
-     "score": 0.9592423506815985,
-     "accordSim": 0.895194616038396,
+     "perfumeKey": "T005",
+     "score": 0.9160199551234299,
+     "accordSim": 0.7840513131745341,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 10.3433
       },
       {
        "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.93261493261493
+       "perfumePct": 13.333333333333334,
+       "blendPct": 9.0037
       }
      ],
      "matchedNotes": [
@@ -5543,103 +5344,31 @@
      ],
      "missingNotes": [
       "sandalwood",
-      "bergamot",
-      "jasmine"
-     ]
-    },
-    {
-     "perfumeKey": "T032",
-     "score": 0.9582150932943947,
-     "accordSim": 0.892553097042729,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.93261493261493
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "bergamot",
-      "musk",
-      "orange blossom"
-     ]
-    },
-    {
-     "perfumeKey": "T006",
-     "score": 0.9537590135760856,
-     "accordSim": 0.8810946063385059,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.93261493261493
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "bergamot",
-      "rose"
+      "rose",
+      "vetiver"
      ]
     },
     {
      "perfumeKey": "T003",
-     "score": 0.9418374188293039,
-     "accordSim": 0.8504390769896386,
+     "score": 0.9098976906680689,
+     "accordSim": 0.7683083474321771,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
+       "blendPct": 74.2774
       },
       {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.93261493261493
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 10.3433
       },
       {
        "accord": "fresh",
        "perfumePct": 13.333333333333334,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       }
      ],
      "matchedNotes": [
@@ -5656,62 +5385,26 @@
      ]
     },
     {
-     "perfumeKey": "T035",
-     "score": 0.9034395176237779,
-     "accordSim": 0.7517016167468576,
-     "noteMatch": 1.0,
-     "grade": "VERY_SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "green",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 4.0123040123040115
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "musk",
-      "grapefruit",
-      "peach"
-     ]
-    },
-    {
      "perfumeKey": "T010",
-     "score": 0.9025647140873845,
-     "accordSim": 0.7494521219389887,
+     "score": 0.9072465730015318,
+     "accordSim": 0.7614911877182247,
      "noteMatch": 1.0,
      "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 33.333333333333336,
-       "blendPct": 52.01095201095201
+       "blendPct": 74.2774
       },
       {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 14.93261493261493
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 10.3433
       },
       {
        "accord": "fresh",
        "perfumePct": 6.666666666666667,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       }
      ],
      "matchedNotes": [
@@ -5728,26 +5421,62 @@
      ]
     },
     {
-     "perfumeKey": "T025",
-     "score": 0.8611227373893113,
-     "accordSim": 0.6428870390010861,
+     "perfumeKey": "T001",
+     "score": 0.9032695496783789,
+     "accordSim": 0.7512645563158314,
      "noteMatch": 1.0,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 52.01095201095201
+       "blendPct": 9.0037
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 10.3433
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "bergamot",
+      "jasmine"
+     ]
+    },
+    {
+     "perfumeKey": "T027",
+     "score": 0.8972434940195508,
+     "accordSim": 0.7357689846217019,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 74.2774
       },
       {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       },
       {
-       "accord": "floral",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 14.93261493261493
+       "accord": "green",
+       "perfumePct": 20.0,
+       "blendPct": 1.0637
       }
      ],
      "matchedNotes": [
@@ -5759,31 +5488,67 @@
      ],
      "missingNotes": [
       "bergamot",
-      "musk",
-      "jasmine"
+      "vetiver",
+      "grapefruit"
      ]
     },
     {
-     "perfumeKey": "T017",
-     "score": 0.8595827312061864,
-     "accordSim": 0.6389270231016222,
+     "perfumeKey": "T035",
+     "score": 0.8882271274605548,
+     "accordSim": 0.7125840420414266,
      "noteMatch": 1.0,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 52.01095201095201
+       "perfumePct": 33.333333333333336,
+       "blendPct": 74.2774
       },
       {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       },
       {
        "accord": "green",
        "perfumePct": 6.666666666666667,
-       "blendPct": 4.0123040123040115
+       "blendPct": 1.0637
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "musk",
+      "grapefruit",
+      "peach"
+     ]
+    },
+    {
+     "perfumeKey": "T017",
+     "score": 0.8731889364875672,
+     "accordSim": 0.6739144081108874,
+     "noteMatch": 1.0,
+     "grade": "VERY_SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 10.3433
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 9.0037
       }
      ],
      "matchedNotes": [
@@ -5801,25 +5566,25 @@
     },
     {
      "perfumeKey": "T012",
-     "score": 0.8539367519609269,
-     "accordSim": 0.6244087907566692,
+     "score": 0.8430421494020967,
+     "accordSim": 0.5963940984625341,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 26.666666666666668,
-       "blendPct": 52.01095201095201
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 20.0,
+       "blendPct": 10.3433
       },
       {
        "accord": "floral",
        "perfumePct": 13.333333333333334,
-       "blendPct": 14.93261493261493
-      },
-      {
-       "accord": "green",
-       "perfumePct": 6.666666666666667,
-       "blendPct": 4.0123040123040115
+       "blendPct": 2.5808
       }
      ],
      "matchedNotes": [
@@ -5836,98 +5601,26 @@
      ]
     },
     {
-     "perfumeKey": "T020",
-     "score": 0.8331144827577828,
-     "accordSim": 0.570865812805727,
-     "noteMatch": 1.0,
-     "grade": "SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "citrus",
-       "perfumePct": 20.0,
-       "blendPct": 52.01095201095201
-      },
-      {
-       "accord": "fresh",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "green",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 4.0123040123040115
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "musk",
-      "cedarwood",
-      "lavender"
-     ]
-    },
-    {
-     "perfumeKey": "T014",
-     "score": 0.8247352634533415,
-     "accordSim": 0.5493192488800209,
-     "noteMatch": 1.0,
-     "grade": "SIMILAR",
-     "sharedAccords": [
-      {
-       "accord": "fresh",
-       "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 14.93261493261493
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 52.01095201095201
-      }
-     ],
-     "matchedNotes": [
-      {
-       "noteKey": "lemon",
-       "layer": "top",
-       "match": "same_layer"
-      }
-     ],
-     "missingNotes": [
-      "sandalwood",
-      "musk",
-      "rose"
-     ]
-    },
-    {
      "perfumeKey": "T011",
-     "score": 0.8216037539175591,
-     "accordSim": 0.5412667957880091,
+     "score": 0.8087115629138302,
+     "accordSim": 0.5081154474927061,
      "noteMatch": 1.0,
      "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
        "perfumePct": 20.0,
-       "blendPct": 52.01095201095201
-      },
-      {
-       "accord": "floral",
-       "perfumePct": 26.666666666666668,
-       "blendPct": 14.93261493261493
+       "blendPct": 74.2774
       },
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 1.9084019084019084
+       "blendPct": 10.3433
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 2.5808
       }
      ],
      "matchedNotes": [
@@ -5944,26 +5637,134 @@
      ]
     },
     {
-     "perfumeKey": "T016",
-     "score": 0.6647297602626075,
-     "accordSim": 0.13787652638956197,
+     "perfumeKey": "T020",
+     "score": 0.8018224720376536,
+     "accordSim": 0.4904006423825379,
+     "noteMatch": 1.0,
+     "grade": "SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 9.0037
+      },
+      {
+       "accord": "woody",
+       "perfumePct": 6.666666666666667,
+       "blendPct": 10.3433
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "musk",
+      "cedarwood",
+      "lavender"
+     ]
+    },
+    {
+     "perfumeKey": "T025",
+     "score": 0.7984315108067187,
+     "accordSim": 0.48168102778870525,
+     "noteMatch": 1.0,
+     "grade": "SIMILAR",
+     "sharedAccords": [
+      {
+       "accord": "citrus",
+       "perfumePct": 20.0,
+       "blendPct": 74.2774
+      },
+      {
+       "accord": "fresh",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 9.0037
+      },
+      {
+       "accord": "floral",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 2.5808
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "bergamot",
+      "musk",
+      "jasmine"
+     ]
+    },
+    {
+     "perfumeKey": "T014",
+     "score": 0.7418681604650124,
+     "accordSim": 0.33623241262431747,
      "noteMatch": 1.0,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 74.2774
+      },
+      {
        "accord": "fresh",
        "perfumePct": 20.0,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       },
+      {
+       "accord": "floral",
+       "perfumePct": 33.333333333333336,
+       "blendPct": 2.5808
+      }
+     ],
+     "matchedNotes": [
+      {
+       "noteKey": "lemon",
+       "layer": "top",
+       "match": "same_layer"
+      }
+     ],
+     "missingNotes": [
+      "sandalwood",
+      "musk",
+      "rose"
+     ]
+    },
+    {
+     "perfumeKey": "T016",
+     "score": 0.6670795206829094,
+     "accordSim": 0.14391876747033833,
+     "noteMatch": 1.0,
+     "grade": "REFERENCE",
+     "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 1.9084019084019084
+       "blendPct": 10.3433
       },
       {
-       "accord": "earthy",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 0.5792005792005792
+       "accord": "fresh",
+       "perfumePct": 20.0,
+       "blendPct": 9.0037
+      },
+      {
+       "accord": "spicy",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 0.4626
       }
      ],
      "matchedNotes": [
@@ -5981,25 +5782,25 @@
     },
     {
      "perfumeKey": "T002",
-     "score": 0.6201899880030503,
-     "accordSim": 0.023345683436414685,
+     "score": 0.6511300860473029,
+     "accordSim": 0.10290593555020762,
      "noteMatch": 1.0,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
        "accord": "woody",
        "perfumePct": 33.333333333333336,
-       "blendPct": 1.9084019084019084
+       "blendPct": 10.3433
+      },
+      {
+       "accord": "oriental",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 1.0307
       },
       {
        "accord": "spicy",
        "perfumePct": 6.666666666666667,
-       "blendPct": 0.26020026020026016
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 0.0,
-       "blendPct": 52.01095201095201
+       "blendPct": 0.4626
       }
      ],
      "matchedNotes": [
@@ -6017,25 +5818,25 @@
     },
     {
      "perfumeKey": "T013",
-     "score": 0.4082269373096142,
-     "accordSim": 0.5782978387961508,
+     "score": 0.3203128097252873,
+     "accordSim": 0.35223293929359606,
      "noteMatch": 0.3,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
+       "accord": "citrus",
+       "perfumePct": 13.333333333333334,
+       "blendPct": 74.2774
+      },
+      {
        "accord": "fresh",
        "perfumePct": 26.666666666666668,
-       "blendPct": 15.383115383115381
+       "blendPct": 9.0037
       },
       {
        "accord": "floral",
        "perfumePct": 33.333333333333336,
-       "blendPct": 14.93261493261493
-      },
-      {
-       "accord": "citrus",
-       "perfumePct": 13.333333333333334,
-       "blendPct": 52.01095201095201
+       "blendPct": 2.5808
       }
      ],
      "matchedNotes": [
@@ -6053,25 +5854,25 @@
     },
     {
      "perfumeKey": "T036",
-     "score": 0.22672979433262155,
-     "accordSim": 0.11159089971245537,
+     "score": 0.21529754412317192,
+     "accordSim": 0.08219368488815634,
      "noteMatch": 0.3,
      "grade": "REFERENCE",
      "sharedAccords": [
       {
+       "accord": "woody",
+       "perfumePct": 26.666666666666668,
+       "blendPct": 10.3433
+      },
+      {
        "accord": "floral",
        "perfumePct": 6.666666666666667,
-       "blendPct": 14.93261493261493
+       "blendPct": 2.5808
       },
       {
        "accord": "green",
        "perfumePct": 13.333333333333334,
-       "blendPct": 4.0123040123040115
-      },
-      {
-       "accord": "chypre",
-       "perfumePct": 33.333333333333336,
-       "blendPct": 2.905102905102905
+       "blendPct": 1.0637
       }
      ],
      "matchedNotes": [

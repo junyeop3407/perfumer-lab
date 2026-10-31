@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # 같은 폴더의 규
 import catalog_rules as R  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 4  # 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
+ENGINE_VERSION = 5  # v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
 
 
 @dataclass
@@ -36,6 +36,7 @@ class Perfume:
     rating_count: int
     accords: list[str]
     layers: dict[str, list[str]]  # top/middle/base → note keys (순서 유지, 중복 제거)
+    perfumers: tuple[str, ...] = ()
 
     @property
     def all_notes(self) -> set[str]:
@@ -95,6 +96,86 @@ def read_korean(path: Path | None) -> dict[str, tuple[str, str]]:
     }
 
 
+def _perfumers(value: str | None) -> tuple[str, ...]:
+    return tuple(sorted(x for x in R.split_list(value) if x))
+
+
+def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> tuple[list[Perfume], list[dict]]:
+    """원본 데이터셋의 복사 오류 (2026-10-31 사장 결정): 브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같은 묶음.
+    원본 데이터셋(TidyTuesday Parfumo)에서 한 향수의 상세 정보(노트·어코드·평점·조향사)가 다른 향수에 들어간 것으로 보인다.
+    묶음 안에서 원본을 가릴 수 있으면 원본만 남기고, 못 가리면 묶음 전체를 후보에서 뺀다(지우지 않고 목록으로 남김).
+    원본 가리기: ① 그 조향사가 그 브랜드에서 다른 향수도 만든 향수가 하나뿐이면 그것
+                ② 출시 연도가 브랜드의 다른 향수들보다 10년 넘게 이른(말이 안 되는) 향수를 빼고 하나만 남으면 그것
+    평가 수·어코드가 다른 묶음(진짜 클론일 수 있음)은 건드리지 않는다."""
+    by_brand_perfumer: dict[str, Counter] = defaultdict(Counter)
+    years: dict[str, list[int]] = defaultdict(list)
+    for r in rows:
+        brand = brand_of(r)
+        for name in _perfumers(r.get("Perfumers")):
+            by_brand_perfumer[brand][name] += 1
+        y = _int(r.get("Release_Year"))
+        if y:
+            years[brand].append(y)
+
+    def related(p: Perfume) -> int:  # 같은 브랜드에서 같은 조향사가 만든 다른 향수 수
+        return sum(by_brand_perfumer[p.brand][name] - 1 for name in p.perfumers)
+
+    def implausible_year(p: Perfume) -> bool:
+        ys = sorted(years[p.brand])
+        return bool(p.year and len(ys) >= 3 and p.year < ys[len(ys) // 10] - 10)
+
+    sets: dict[tuple, list[Perfume]] = defaultdict(list)
+    for p in perfumes:
+        sig = (tuple(tuple(p.layers[layer]) for layer in ("top", "middle", "base")),
+               p.rating_count, tuple(p.accords), p.perfumers)
+        sets[sig].append(p)
+    excluded: set[str] = set()
+    records: list[dict] = []
+    for no, members in enumerate((m for m in sets.values() if len({p.brand for p in m}) > 1), 1):
+        members = sorted(members, key=lambda p: p.key)
+        rel = [p for p in members if related(p) > 0]
+        plausible = [p for p in members if not implausible_year(p)]
+        if len(rel) == 1:
+            original, reason = rel[0], "조향사가 이 브랜드에서 다른 향수도 만듦"
+        elif len(plausible) == 1:
+            original, reason = plausible[0], "다른 향수들은 출시 연도가 브랜드 역사와 맞지 않음"
+        else:
+            original, reason = None, "원본을 가릴 단서 없음 → 묶음 전체 제외"
+        for p in members:
+            keep = p is original
+            if not keep:
+                excluded.add(p.key)
+            why = reason if keep or original is None else f"복사본 — 원본은 {original.brand} — {original.name} ({reason})"
+            records.append({"set": no, "key": p.key, "brand": p.brand, "name": p.name, "year": p.year or "",
+                            "rating_count": p.rating_count, "decision": "kept_original" if keep else "excluded",
+                            "reason": why})
+    return [p for p in perfumes if p.key not in excluded], records
+
+
+def deconvolve(perfumes: list[Perfume], vec: dict[str, dict[str, float]],
+               start: dict[str, dict[str, float]], iterations: int) -> dict[str, dict[str, float]]:
+    """함께 든 노트의 몫 빼기 (design.md 8-2절, 2026-10-31 사장 결정, engine v5).
+    향수의 어코드 비중 ≈ 그 향수 노트 프로필들의 평균 이라고 보고, 음수 없는 최소제곱으로 노트 프로필을 푼다
+    (곱셈 갱신, 특징 강조 프로필에서 출발). 머스크가 든 플로럴 향수의 플로럴은 함께 든 장미·자스민이 가져가고
+    머스크에는 자기 몫만 남는다. numpy를 쓴다(pipeline/requirements.txt)."""
+    import numpy as np
+
+    keys = sorted(start)
+    idx = {k: i for i, k in enumerate(keys)}
+    Y = np.array([[vec[p.key].get(a, 0.0) / 100.0 for a in R.ACCORD_KEYS] for p in perfumes])
+    X = np.zeros((len(perfumes), len(keys)))
+    for row, p in enumerate(perfumes):
+        notes = p.all_notes
+        for k in notes:
+            X[row, idx[k]] = 1.0 / len(notes)
+    F = np.array([[start[k][a] for a in R.ACCORD_KEYS] for k in keys])
+    F = F / np.maximum(F.sum(axis=1, keepdims=True), 1e-12) + 1e-3
+    XtY, XtX = X.T @ Y, X.T @ X
+    for _ in range(iterations):
+        F *= XtY / (XtX @ F + 1e-12)
+    return {k: {a: float(F[idx[k], j]) for j, a in enumerate(R.ACCORD_KEYS)} for k in keys}
+
+
 def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           overrides: dict[str, str], korean: dict[str, tuple[str, str]],
           version: str, source_note: str, junk: set[str] = frozenset(),
@@ -143,7 +224,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
             year=_int(r["Release_Year"]),
             concentration=None if R.is_na(r["Concentration"]) else r["Concentration"].strip(),
             rating=_float(r["Rating_Value"]), rating_count=votes,
-            accords=accords[:5], layers=layers,
+            accords=accords[:5], layers=layers, perfumers=_perfumers(r.get("Perfumers")),
         ))
     report["junk_accord_values"] = junk_accords
     report["junk_note_values"] = junk_notes
@@ -161,6 +242,15 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     dup_keys = [k for k, c in keys.items() if c > 1]
     if dup_keys:
         raise SystemExit(f"향수 key가 겹칩니다: {dup_keys[:10]}")
+    # 4-1: 원본 데이터셋의 복사 오류 빼기 (2026-10-31)
+    def brand_of(r: dict) -> str:
+        return (brand_fixes or {}).get(r["Brand"].strip(), r["Brand"].strip())
+
+    perfumes, copy_records = mark_copy_suspects(perfumes, rows, brand_of)
+    report["copy_suspects"] = copy_records
+    report["copy_sets"] = len({r["set"] for r in copy_records})
+    report["copy_excluded"] = sum(1 for r in copy_records if r["decision"] == "excluded")
+    report["copy_kept_original"] = sum(1 for r in copy_records if r["decision"] == "kept_original")
     report["candidates"] = len(perfumes)
     group_of = R.split_groups_by_notes(
         [(p.key, R.group_key(p.brand, p.name, p.concentration), p.all_notes, p.rating_count) for p in perfumes])
@@ -217,6 +307,9 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
         m = {a: sum(vec[p.key].get(a, 0.0) for p in ps) / len(ps) for a in R.ACCORD_KEYS}
         feature[k] = {a: m[a] * max(0.0, math.log(m[a] / g[a])) if m[a] > 0 and g[a] > 0 else 0.0
                       for a in R.ACCORD_KEYS}
+
+    if params.profile_method == "deconv":
+        feature = deconvolve(perfumes, vec, feature, params.deconv_iterations)
 
     # 계열 평균(끌어당기기 목표) f_c: 같은 계열 노트들의 특징을 df로 가중 평균.
     # 적게 나오는 노트(df < min_profile_df)는 특징이 부풀려지기 쉬워 평균에 넣지 않는다 (그런 노트뿐이면 모두 넣음)
@@ -345,6 +438,8 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 원본 행: {r['rows']:,} · 잘못된 어코드 값 버림: {r['junk_accord_values']:,} · 실재하지 않는 노트 이름 버림: {r['junk_note_values']:,}",
         f"- 후보(중복 합치기 전): {r['candidates_before_dedupe']:,} · 중복 합침: {r['duplicates_merged']:,} · **후보: {r['candidates']:,}**",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
+        f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
+        f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 (`pipeline/copy_suspects.csv`, 2026-10-31)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
@@ -407,6 +502,10 @@ def main() -> None:
     assets = APP_DIR / "app" / "assets" / "catalog" / "catalog.json.gz"
     write_catalog(result.catalog, assets)
     write_report(result, APP_DIR / "pipeline" / "report.md", "카탈로그 보고서")
+    with (APP_DIR / "pipeline" / "copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["set", "key", "brand", "name", "year", "rating_count", "decision", "reason"])
+        w.writeheader()
+        w.writerows(result.report["copy_suspects"])
     print(f"카탈로그: {out.relative_to(APP_DIR)} · 후보 {result.report['candidates']:,} · "
           f"미매핑 {result.report['unmapped_ratio']:.1%} · 크기 {out.stat().st_size / 1024:.0f}KB")
 
