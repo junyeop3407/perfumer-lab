@@ -10,9 +10,27 @@
           {
             "type": "command",
             "shell": "bash",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-git.sh\"",
+            "timeout": 30,
+            "statusMessage": "위험한 git 동작·비밀값 확인 중..."
+          },
+          {
+            "type": "command",
+            "shell": "bash",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-tests.sh\" commit",
             "timeout": 300,
             "statusMessage": "커밋 전 테스트 확인 중..."
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect-tests.sh\"",
+            "timeout": 10
           }
         ]
       }

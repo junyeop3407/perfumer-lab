@@ -26,3 +26,6 @@ Thumbs.db
 
 # 교차 리뷰에 보낸 내용 (다시 만들 수 있음)
 review_input.txt
+
+# test-runner 에이전트의 전체 테스트 로그 (다시 만들 수 있음)
+test-log.txt
