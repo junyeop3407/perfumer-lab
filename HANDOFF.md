@@ -1,6 +1,6 @@
 # HANDOFF — 다음 세션 시작 가이드
 
-마지막 갱신: 2026-10-31
+마지막 갱신: 2026-11-01 (ai-workflow 견본의 웹·앱 동시 제작, 스킬 사용 규칙, 보안 규칙, 레드팀 공격 반영)
 
 ## 1. 한 줄 요약
 이석균 선배님 특강(AI 기초)의 방식대로 앱을 만드는 **작업장 견본**이다. 사용자는 **사장**, Claude의 팀들(기획·디자인·프론트엔드·백엔드·QA)은 **직원**이고, 모든 팀의 결과물은 사장 검토를 받는다. 규칙, `/build-app` 스킬, 교차 리뷰, 훅이 준비되어 있다. **진행 중인 앱: `apps/scent-studio`(향 조합 → 비슷한 향수 추천, 웹·안드로이드·아이폰 공통 Expo 앱) — 4단계 구현 중, 엔진 v6 완료·사장 블라인드 답 대기. 이어 할 때는 브랜치 `wip/scent-studio-stage4`로 바꾸고(`git switch wip/scent-studio-stage4`) `apps/scent-studio/HANDOFF.md`의 "새 세션 시작"과 "다음 세션에서 할 일"부터** (2026-10-31).
@@ -20,7 +20,7 @@
    - Java (백엔드팀): `winget install --id EclipseAdoptium.Temurin.21.JDK -e` (Mac `brew install --cask temurin@21`)
    - Node.js (프론트엔드팀·디자인팀·QA팀의 React, Vite, Tailwind, Playwright, Vitest): `winget install --id OpenJS.NodeJS.LTS -e` (Mac `brew install node`)
    - Playwright 브라우저 (QA팀, 앱 폴더에서 한 번): `npx playwright install chromium`
-   - 안드로이드 앱 전용일 때만: Android Studio `winget install --id Google.AndroidStudio -e` (Mac `brew install --cask android-studio`) → 처음 실행해서 SDK 설치 마법사를 끝까지 진행. 에뮬레이터는 Device Manager에서 하나 만든다
+   - 안드로이드 앱을 빌드할 때: Android Studio `winget install --id Google.AndroidStudio -e` (Mac `brew install --cask android-studio`) → 처음 실행해서 SDK 설치 마법사를 끝까지 진행. 에뮬레이터는 Device Manager에서 하나 만든다
    - 파이썬으로 테스트하는 앱일 때만: `py -m pip install pytest playwright` → `py -m playwright install chromium` (Mac은 `python3`)
 
 ## 4. 로드맵

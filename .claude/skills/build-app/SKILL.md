@@ -21,10 +21,10 @@ description: Use when the user asks to build a new app or program in this reposi
 |---|---|---|---|
 | 1 ★ | **기획팀**: 요구사항 질문(AskUserQuestion으로 보기 + 추천을 붙여 클릭으로 답하게. 최소한 "누가, 어디서(폰/PC), 꼭 되어야 할 기능, 저장이 필요한지") → 기획서(목표·사용자·기능 우선순위·하지 않을 것·화면 흐름도 Mermaid)로 정리 → **사장 검토** → OK 뒤 Claude가 스스로 파악용 명세서 작성(아래 "명세서" 절, 사장 검토 대상 아님). 명세서를 쓰다 "아직 안 정한 것"이 나오면 AskUserQuestion으로 물어 채운다 | `docs/requirements.md`, `docs/spec.md` | superpowers:brainstorming |
 | 2 ★ | 설계안 3개(CLAUDE.md "팀별 기본 기술" 안에서, 초보가 쓰기 쉬운 순서, 설치 필요 여부·장단점·추천 표시) + 화면이 있는 앱이면 디자인 방향 보기 2~3개(예: 깔끔한 흰색, 토스 느낌) → 사용자가 고름 | `docs/design.md` (고른 안 + 버린 안과 이유) | superpowers:brainstorming |
-| 3 ★ | **QA팀**: "뭐가 되면 끝인가" 테스트 목록을 쉬운 말로 → **사장 검토(승인)**. 승인 후 테스트 코드 작성(승인 목록은 Playwright — 안드로이드 앱 전용이면 Robolectric으로 돌리는 Compose UI 테스트, 까다로운 계산·날짜는 부품 단위 테스트 추가) | `docs/tests.md`, `tests/` | superpowers:test-driven-development |
+| 3 ★ | **QA팀**: "뭐가 되면 끝인가" 테스트 목록을 쉬운 말로 → **사장 검토(승인)**. 승인 후 테스트 코드 작성(승인 목록은 Playwright, 까다로운 계산·날짜는 부품 단위 테스트 추가) | `docs/tests.md`, `tests/` | superpowers:test-driven-development |
 | 4 ★ | **계획 모드로 계획**(아래 "계획 모드" 절, 작은 앱이어도 단계 3~6줄) → (화면이 있으면) **디자인팀** `docs/DESIGN.md` + 시안 캡처 → **사장 검토** → (서버가 있으면) **백엔드팀** 저장할 데이터·기능 목록(쉬운 말로) → **사장 검토** → 구현 → 테스트 → 실패한 것만 고치기, 전부 통과까지 | `docs/plan.md`, `docs/NOTES.md` | superpowers:writing-plans, superpowers:subagent-driven-development |
 | 5 | **QA팀**: ① 새 에이전트(Agent 도구, 구현 대화를 넘기지 않음)에게 `docs/tests.md`와 코드·테스트 파일 경로만 주고 리뷰 ② **교차 리뷰(필수, Gemini)**: 아래 "교차 리뷰" 절 순서대로 → 둘에서 나온 진짜 문제만 고치고 테스트 다시 실행 | `docs/review.md`, `docs/review_result.md` | superpowers:requesting-code-review |
-| 6 ★ | 테스트를 직접 돌려 통과 확인 → (공개가 필요하면 아래 "올리기") → **QA 보고**(테스트 N/N 통과, 리뷰에서 찾고 고친 것, 교차 리뷰 "반영한 지적 / 반영 안 한 지적(이유) / 사장 확인 필요한 것") + 실행 방법 한두 줄 → **사장 검토**: 써 보고 OK → **저장소 공개 여부 묻기**(아래 "저장소 공개 여부") | `HANDOFF.md`, 루트 `HANDOFF.md` | superpowers:verification-before-completion |
+| 6 ★ | 테스트를 직접 돌려 통과 확인 → **레드팀 공격**(아래 "레드팀 공격" 절) → (공개가 필요하면 아래 "올리기") → **QA 보고**(테스트 N/N 통과, 리뷰에서 찾고 고친 것, 교차 리뷰 "반영한 지적 / 반영 안 한 지적(이유) / 사장 확인 필요한 것", 보안 점검 "서버 분리 ✓ / 암호화 ✓ / 인프라 ✓ · 레드팀에서 찾은 구멍 N개 → 고침") + 실행 방법 한두 줄 → **사장 검토**: 써 보고 OK → **저장소 공개 여부 묻기**(아래 "저장소 공개 여부") | `HANDOFF.md`, 루트 `HANDOFF.md` | superpowers:verification-before-completion |
 
 ★ 단계에서는 사장의 OK를 받기 전에 그 결과물을 바탕으로 다음 일을 시작하지 않는다. 수정 지시를 받으면 고쳐서 다시 검토받는다. 코드는 3단계 승인 뒤에만 쓴다.
 
@@ -66,7 +66,7 @@ description: Use when the user asks to build a new app or program in this reposi
 - 실패한 테스트가 있으면 커밋하지 않는다. 남은 실패와 이유는 `NOTES.md`에.
 - 테스트 하나를 3번 고쳐도 통과하지 않으면 멈추고 superpowers:systematic-debugging으로 원인부터 찾는다.
 - 대화가 길어져 흐름을 놓칠 것 같으면 HANDOFF를 갱신하고 커밋한 다음, 새 세션에서 "/build-app 이어서"를 하자고 제안한다.
-- 기술은 CLAUDE.md "팀별 기본 기술"(기획 기획서, 디자인 DESIGN.md+Tailwind, 프론트엔드 React, 백엔드 Java+Spring, QA Playwright+Vitest/JUnit)을 따른다. 안드로이드 앱 전용이면 CLAUDE.md의 "안드로이드 앱 전용" 항목(Kotlin + Compose, Robolectric, Roborazzi)을 따른다. 그 안의 세부(버전, 빌드 도구 등)는 초보가 실행하기 쉬운 쪽을 추천한다. 다른 기술은 사용자가 원할 때만. 경로는 저장소 기준 상대 경로만.
+- 기술은 CLAUDE.md "팀별 기본 기술"(기획 기획서, 디자인 DESIGN.md+Tailwind, 프론트엔드 React, 백엔드 Java+Spring, QA Playwright+Vitest/JUnit)을 따른다. 그 안의 세부(버전, 빌드 도구 등)는 초보가 실행하기 쉬운 쪽을 추천한다. 다른 기술은 사용자가 원할 때만. 경로는 저장소 기준 상대 경로만.
 
 ## apps/<앱>/HANDOFF.md 형식
 ```markdown
@@ -101,6 +101,21 @@ description: Use when the user asks to build a new app or program in this reposi
    - Claude 리뷰와 같은 걸 지적하면 우선순위를 높인다.
 4. **마무리**: 고친 뒤 테스트를 다시 돌려 깨진 게 없는지 확인한다. **리뷰는 1라운드만.** 고친 코드를 다시 Gemini에 돌리지 않는다. 6단계 QA 보고에 "반영한 지적 / 반영 안 한 지적(이유) / 사장 확인 필요한 것" 세 가지로 짧게 정리한다.
 
+## 레드팀 공격 (6단계, QA 보고 전, 필수)
+코드를 읽는 리뷰(5단계)와 달리, **실행 중인 앱을 해커처럼 직접 공격**한다. "구멍이 최소 1개는 있다"고 보고 찾는다.
+
+1. 구현하지 않은 새 QA팀 에이전트에게 앱 실행 방법과 CLAUDE.md "보안 규칙"만 주고, 로컬에서 앱을 띄워 아래를 시도하게 한다.
+   - **비밀값 찾기**: 빌드된 프론트 파일(웹 번들, 앱 패키지)과 커밋 기록에서 키·토큰·비밀번호 검색
+   - **요청 조작**: 금액·수량·권한 값을 바꿔 API에 직접 보내기(예: 53,000원 → 0원, 일반 사용자 → 관리자)
+   - **남의 데이터**: 다른 사용자의 ID로 조회·수정·삭제 요청
+   - **잘못된 입력**: 빈 값, 아주 긴 값, 스크립트·SQL 조각을 넣어 서버가 막는지
+   - **저장 확인**: DB에 비밀번호·민감정보가 평문으로 남는지
+   - **인프라**: DB·저장소에 외부에서 바로 붙는지, 공개 범위가 기획서대로인지
+2. 결과는 `docs/redteam.md`에 "시도 / 결과(막힘·뚫림) / 고친 것"으로 적는다.
+3. 뚫린 것은 고치기 전에 그 공격을 재현하는 회귀 테스트를 `tests/test_review_fixes.py`(또는 같은 위치의 회귀 테스트 파일)에 먼저 넣어 실패를 확인하고, 고친 뒤 전체 테스트를 다시 돌린다.
+4. 서버가 없는 앱은 "비밀값 찾기"와 "잘못된 입력"만 한다.
+5. 인프라 설정을 바꿔야 하면 혼자 바꾸지 말고 사장에게 쉬운 말로 확인받는다.
+
 ## 올리기 (친구에게 링크로 보여 줘야 할 때)
 - 작업 저장소에는 문서·테스트·기록이 섞여 있으므로 그대로 내보내지 않는다. 앱 파일만 담은 **공개 저장소 + GitHub Pages**를 쓴다(내역은 각자 기기에만 저장되는 앱일 때).
 - 공개는 바깥에 내보내는 일이라 Claude가 직접 못 한다(안전장치가 막음). 사용자에게 **짧은 한 줄**로 실행을 부탁한다. 긴 명령은 붙여 넣다 줄이 깨지므로 스크립트 파일로 준다.
@@ -133,4 +148,5 @@ description: Use when the user asks to build a new app or program in this reposi
 | "디자인(또는 데이터 목록)은 사소하니 사장 검토 없이 진행" | 모든 팀 결과물은 사장 검토. 짧게 요약과 캡처를 올리고 OK를 받는다 |
 | "애매하지만 이 정도면 되겠지, 추측해서 진행" | 추측하지 않는다. AskUserQuestion으로 보기 + 추천을 붙여 묻는다 |
 | "spec.md는 1단계에 썼으니 됐다" | 설계 선택, 계획 모드의 답, 수정 지시로 바뀌면 그때그때 고친다. 낡은 spec은 없는 것보다 나쁘다 |
+| "security-audit·교차 리뷰를 했으니 레드팀은 생략" | 리뷰는 코드를 읽는 검사다. 레드팀은 실행 중인 앱을 직접 공격한다. 둘 다 한다 |
 | "작은 앱이니 계획 모드 없이 바로 구현" | 계획 모드에서 질문과 승인을 거친다. 계획이 3줄이어도 승인받고 시작한다 |
