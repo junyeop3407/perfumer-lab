@@ -33,6 +33,13 @@
   - 두 문서는 사장 답을 받기 전에 **다시 만들지 않는다**. `py pipeline/evaluate.py`는 블라인드 문서가 이미 있으면 덮어쓰지 않으니 그냥 돌려도 된다(다시 만들 때만 `--rebuild-blind`). 줄별 A/B 고정본: `engine_blind_v6_pairs.json`, `engine_blind_vs_v3_pairs.json`.
   - 예전 v3 문서와 Claude 임시 답안은 `engine_blind_v3.md`, `engine_blind_answers_v3.txt`로 보관(지우지 않음).
 
+## 2026-11-01 세션 기록 (사장이 "이어서"라고 하면 여기부터)
+- 사장이 깃허브에서 한 작업(이 브랜치 22커밋)을 받아 확인했다. 브랜치는 그대로 `wip/scent-studio-stage4`.
+- ai-workflow 견본의 최신 규칙(d88021a까지)을 반영했다: 웹·앱 동시 제작(React+Capacitor), **스킬 사용 규칙** 표, 보안 규칙, 6단계 레드팀 공격. 이 저장소에만 있던 "안드로이드 앱 전용" 규칙은 뺐고, scent-studio는 Expo 유지라고 CLAUDE.md에 적었다.
+- 클라우드 세션에서 확인한 스킬: 있음 — awesome-design, hallmark, emil-design-eng, ponytail, web-design-guidelines, break-ui, junyeop-clean-ppt, code-review. **없음** — superpowers, agent-reach, graphify, frontend-design, webapp-testing, security-guidance, security-audit, **Gemini CLI(5단계 교차 리뷰 필수)**.
+  - 사장에게 보기 3개를 드렸고 아직 답 없음: ① 클라우드 환경 Setup script에서 `junyeop3407/claude-setup`의 `install.sh` 실행(추천) ② agent-reach·webapp-testing을 claude.ai 스킬로 올리기 ③ 디자인·화면 단계 전까지 보류. 블라인드 평가에는 필요 없다.
+- 이어서 할 일: 아래 1번(주 비교 블라인드 답 받기)부터. 스킬 설치 답은 디자인·화면 단계 전까지 받는다.
+
 ## 다음 세션에서 할 일
 1. **사장에게 주 비교 블라인드 답 받기**: `docs/engine_blind_vs_v3.md`를 보여 주고 조합 단위 답을 받는다(일부만 가능). 답을 `docs/engine_blind_vs_v3_answers.txt`에 적는다:
    ```
