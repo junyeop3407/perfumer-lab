@@ -40,6 +40,10 @@
   - 사장에게 보기 3개를 드렸고 아직 답 없음: ① 클라우드 환경 Setup script에서 `junyeop3407/claude-setup`의 `install.sh` 실행(추천) ② agent-reach·webapp-testing을 claude.ai 스킬로 올리기 ③ 디자인·화면 단계 전까지 보류. 블라인드 평가에는 필요 없다.
 - 이어서 할 일: 아래 1번(주 비교 블라인드 답 받기)부터. 스킬 설치 답은 디자인·화면 단계 전까지 받는다.
 
+## 2026-11-02 세션 기록
+- 사장 요청으로 엔진 계산 설명서 `docs/engine_how_it_works.md`를 썼다(예시 숫자: `pipeline/experiments/explain_example.py`). 엔진 동작은 그대로. 블라인드 답은 아직 없다.
+- 설명서를 쓰다 찾은 확인 거리(사장 미확인): ① 선호 계열을 켜면 점수가 낮아져 등급이 내려갈 수 있음 ② 어코드 "목록이 진한 순서" 가정의 사이트 대조 기록을 찾지 못함.
+
 ## 다음 세션에서 할 일
 1. **사장에게 주 비교 블라인드 답 받기**: `docs/engine_blind_vs_v3.md`를 보여 주고 조합 단위 답을 받는다(일부만 가능). 답을 `docs/engine_blind_vs_v3_answers.txt`에 적는다:
    ```
@@ -61,5 +65,5 @@
 ## 주요 파일
 - 앱: `app/` (Expo Router 화면 `app/app/`, 엔진 `app/src/engine/`, 이름표 `app/src/ui/testIds.ts`, 승인 테스트 `app/tests/acceptance/`, 부품 테스트 `app/tests/unit/`)
 - 데이터·검증: `pipeline/` (build_catalog, engine_ref, evaluate, make_golden, experiments/, tests/), 보고서 `pipeline/report.md`, 복사 오류 목록 `pipeline/copy_suspects.csv`
-- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
+- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
 - 가짜 데이터·골든: `tests/fixtures/`, `tests/golden/recommend_cases.json`
