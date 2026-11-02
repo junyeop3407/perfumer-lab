@@ -1,0 +1,17 @@
+[
+  {"id": 1, "brand": "Aurelle", "name": "Lumiere d'Agrumes", "year": 2019, "votes": 930,
+   "notes": {"Lemon": 100, "Bergamot": 60, "Osmanthus": 40, "Jasmine": 30, "Sandalwood": 20, "White Musk": 0},
+   "accords": {"citrus": 100, "white floral": 70, "fresh": 40, "woody": 20, "bbq": 5}},
+  {"id": 2, "brand": "Noirwood", "name": "Santal Profond", "year": 2017, "votes": 1400,
+   "notes": {"Sandalwood": 100, "Agarwood (Oud)": 80, "Incense": 40, "Patchouli": 30, "Lemon": 5, "Osmanthus": 0},
+   "accords": {"woody": 100, "oud": 70, "smoky": 30, "amber": 25, "warm spicy": 10}},
+  {"id": 3, "brand": "Maison Verte", "name": "Verte No.1", "year": 2015, "votes": 40,
+   "notes": {"Lemon": 15, "Mandarin Orange": 100, "Rose": 70, "Peony": 50, "Sandalwood": 10, "Musk": 5},
+   "accords": {"fruity": 100, "rose": 80, "citrus": 30}},
+  {"id": 4, "brand": "Maison Verte", "name": "Verte No.2", "year": 2015, "votes": 300,
+   "notes": {"Lemon": 0, "Rose": 0, "Jasmine": 0, "Sandalwood": 0, "Cedar": 0},
+   "accords": {"bbq": 100}},
+  {"id": 5, "brand": "Maison Verte", "name": "Verte No.3", "year": 2016, "votes": 500,
+   "notes": {"Oud": 100, "Leather": 90, "Tobacco": 80},
+   "accords": {"leather": 100, "smoky": 90}}
+]

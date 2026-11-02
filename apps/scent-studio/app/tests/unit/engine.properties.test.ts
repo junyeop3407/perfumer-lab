@@ -17,6 +17,19 @@ const A3: BlendNote[] = [
 const none = new Set<string>();
 
 describe('엔진 성질', () => {
+  it('선호를 켜도 유사도와 등급은 그대로이고 순위 점수만 바뀐다', () => {
+    const off = new Map(engine.recommend(A3, none, none, 1000).map((r) => [r.perfumeKey, r]));
+    const on = engine.recommend(A3, none, new Set(['floral']), 1000);
+    expect(on.length).toBeGreaterThan(0);
+    for (const r of on) {
+      const base = off.get(r.perfumeKey);
+      if (!base) continue;
+      expect(Math.abs(r.similarity - base.similarity)).toBeLessThanOrEqual(1e-12);
+      expect(r.grade).toBe(base.grade);
+    }
+    for (const r of off.values()) expect(r.score).toBe(r.similarity);
+  });
+
   it('화면 비율의 합은 100', () => {
     expect(engine.displayRatios(A3).reduce((s, r) => s + r.percent, 0)).toBe(100);
   });

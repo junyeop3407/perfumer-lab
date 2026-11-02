@@ -26,6 +26,7 @@ describe('추천 결과가 Python과 같다', () => {
         const at = `${c.name} ${i + 1}위`;
         expect(r.perfumeKey, `${at} 향수`).toBe(x.perfumeKey);
         near(r.score, x.score, `${at} 점수`);
+        near(r.similarity, x.similarity, `${at} 유사도`);
         near(r.accordSim, x.accordSim, `${at} 어코드 유사도`);
         near(r.noteMatch, x.noteMatch, `${at} 노트 일치도`);
         expect(r.grade, `${at} 등급`).toBe(x.grade);

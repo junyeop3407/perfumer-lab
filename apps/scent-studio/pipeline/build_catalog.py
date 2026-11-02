@@ -20,9 +20,10 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # 같은 폴더의 규칙 파일
 import catalog_rules as R  # noqa: E402
+import decant_join as D  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 6  # v6: 강 3.0 · v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
+ENGINE_VERSION = 7  # v7: 어코드·노트 강도(Decant), 일치도 × 강도 몫, 선호를 뺀 등급 · v6: 강 3.0 · v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
 
 
 @dataclass
@@ -179,11 +180,13 @@ def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> t
 
 
 def deconvolve(perfumes: list[Perfume], vec: dict[str, dict[str, float]],
-               start: dict[str, dict[str, float]], iterations: int) -> dict[str, dict[str, float]]:
+               start: dict[str, dict[str, float]], iterations: int,
+               weights: dict[str, dict[str, float]] | None = None) -> dict[str, dict[str, float]]:
     """함께 든 노트의 몫 빼기 (design.md 8-2절, 2026-10-31 사장 결정, engine v5).
     향수의 어코드 비중 ≈ 그 향수 노트 프로필들의 평균 이라고 보고, 음수 없는 최소제곱으로 노트 프로필을 푼다
     (곱셈 갱신, 특징 강조 프로필에서 출발). 머스크가 든 플로럴 향수의 플로럴은 함께 든 장미·자스민이 가져가고
-    머스크에는 자기 몫만 남는다. numpy를 쓴다(pipeline/requirements.txt)."""
+    머스크에는 자기 몫만 남는다. numpy를 쓴다(pipeline/requirements.txt).
+    weights(engine v7): 향수 key → 노트 강도 몫. 없는 향수는 모든 노트를 같은 몫으로 본다."""
     import numpy as np
 
     keys = sorted(start)
@@ -192,8 +195,9 @@ def deconvolve(perfumes: list[Perfume], vec: dict[str, dict[str, float]],
     X = np.zeros((len(perfumes), len(keys)))
     for row, p in enumerate(perfumes):
         notes = p.all_notes
+        share = (weights or {}).get(p.key)
         for k in notes:
-            X[row, idx[k]] = 1.0 / len(notes)
+            X[row, idx[k]] = share[k] if share else 1.0 / len(notes)
     F = np.array([[start[k][a] for a in R.ACCORD_KEYS] for k in keys])
     F = F / np.maximum(F.sum(axis=1, keepdims=True), 1e-12) + 1e-3
     XtY, XtX = X.T @ Y, X.T @ X
@@ -205,7 +209,9 @@ def deconvolve(perfumes: list[Perfume], vec: dict[str, dict[str, float]],
 def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           overrides: dict[str, str], korean: dict[str, tuple[str, str]],
           version: str, source_note: str, junk: set[str] = frozenset(),
-          brand_fixes: dict[str, str] | None = None) -> BuildResult:
+          brand_fixes: dict[str, str] | None = None, decant: dict | None = None,
+          source_name: str = "Parfumo") -> BuildResult:
+    """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용)."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -300,6 +306,27 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     vec = {p.key: R.rank_weights(p.accords) for p in perfumes}
     g = {a: sum(vec[p.key].get(a, 0.0) for p in perfumes) / n for a in R.ACCORD_KEYS}
 
+    # 5-1: 어코드·노트 강도 (engine v7). 노트 계열과 프로필의 출발점은 위 순위 비중으로 정하고, 프로필을 풀 때만 강도를 쓴다
+    shares: dict[str, dict[str, float]] = {}
+    note_share: dict[str, dict[str, float]] = {}
+    if decant:
+        index = D.source_index(decant["rows"], decant["aliases"])
+        matched = 0
+        for p in perfumes:
+            hit = D.match(p.brand, p.name, p.year, p.all_notes, index)
+            if not hit:
+                continue
+            matched += 1
+            s = D.accord_shares(hit["accords"], decant["accord_map"])
+            if s:
+                shares[p.key] = s
+            w = D.note_weights(p.all_notes, hit["notes"], hit["votes"])
+            if w:
+                note_share[p.key] = w
+        report["decant_matched"] = matched
+    report["decant_accord_shares"] = len(shares)
+    report["decant_note_weights"] = len(note_share)
+
     # 6: 노트 프로필 (8-2절)
     by_note: dict[str, list[Perfume]] = defaultdict(list)
     for p in perfumes:
@@ -337,7 +364,8 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
                       for a in R.ACCORD_KEYS}
 
     if params.profile_method == "deconv":
-        feature = deconvolve(perfumes, vec, feature, params.deconv_iterations)
+        final_vec = {p.key: shares.get(p.key, vec[p.key]) for p in perfumes}
+        feature = deconvolve(perfumes, final_vec, feature, params.deconv_iterations, note_share)
 
     # 계열 평균(끌어당기기 목표) f_c: 같은 계열 노트들의 특징을 df로 가중 평균.
     # 적게 나오는 노트(df < min_profile_df)는 특징이 부풀려지기 쉬워 평균에 넣지 않는다 (그런 노트뿐이면 모두 넣음)
@@ -426,17 +454,26 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
             "description": desc or f"{fam_name[family_of[k]]} 계열의 노트",
         })
 
+    # 강도는 연결된 향수에만 넣는다. 반올림한 값을 Python·TypeScript 엔진이 똑같이 읽는다
+    def strength_fields(p: Perfume) -> dict:
+        out: dict = {}
+        if p.key in shares:
+            out["accordShares"] = {a: round(v, 3) for a, v in sorted(shares[p.key].items())}
+        if p.key in note_share:
+            out["noteWeights"] = {k: round(v, 5) for k, v in sorted(note_share[p.key].items())}
+        return out
+
     perfumes_out = [{
         "key": p.key, "brand": p.brand, "name": p.name, "year": p.year,
         "concentration": p.concentration, "rating": p.rating, "ratingCount": p.rating_count,
         "accords": p.accords, "top": p.layers["top"], "middle": p.layers["middle"], "base": p.layers["base"],
-        "group": group_of[p.key],
+        "group": group_of[p.key], **strength_fields(p),
     } for p in perfumes]
 
     catalog = {
         "version": version,
         "engineVersion": ENGINE_VERSION,
-        "source": {"name": "Parfumo", "note": source_note},
+        "source": {"name": source_name, "note": source_note},
         "families": [{"code": c, "nameKo": ko, "wheelOrder": i + 1} for i, (c, ko) in enumerate(R.FAMILIES)],
         "accords": [{"key": a, "nameKo": ko, "family": fam} for a, (ko, fam) in R.ACCORDS.items()],
         "globalMean": [round(g[a], 6) for a in R.ACCORD_KEYS],
@@ -471,6 +508,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
+        f"- Decant(Fragrantica) 연결: {r.get('decant_matched', 0):,}개 · 어코드 강도 {r.get('decant_accord_shares', 0):,}개 · 노트 강도 {r.get('decant_note_weights', 0):,}개 (engine v7)",
         f"- 노트: 전체 {r['notes_total']:,} · 목록 {r['notes_browse']:,} · 검색 전용 {r['notes_search']:,} · 고를 수 없음 {r['notes_hidden']:,}",
         f"- **미매핑 비율(후보 향수의 노트 중 고를 수 없는 노트의 비율): {r['unmapped_ratio']:.1%}** (기준 5% 이하)",
         f"- 한글명이 없는 고를 수 있는 노트: {r['selectable_without_korean']:,}",
@@ -492,10 +530,14 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
 def build_fixture() -> BuildResult:
     """가짜 테스트 데이터(tests/fixtures)로 만든다. 테스트도 이 함수를 쓴다."""
     fx = APP_DIR / "tests" / "fixtures"
+    manual = APP_DIR / "pipeline" / "manual"
     return build(
         read_csv(fx / "synthetic_parfumo.csv"), R.FIXTURE, {}, read_overrides(fx / "note_family_override.csv"),
         read_korean(fx / "notes_ko.csv"), version="test-1",
         source_note="테스트용 가짜 데이터 (tests/fixtures)",
+        decant={"rows": json.loads((fx / "synthetic_decant.json").read_text(encoding="utf-8")),
+                "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
+                "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv")},
     )
 
 
@@ -517,11 +559,18 @@ def main() -> None:
     if not raw.exists():
         raise SystemExit("원본이 없습니다. 먼저  py pipeline/fetch.py")
     manual = APP_DIR / "pipeline" / "manual"
+    decant_db = APP_DIR / "pipeline" / "data" / "raw" / "decant" / "perfumes.db"
+    if not decant_db.exists():
+        raise SystemExit("Decant 데이터가 없습니다. 먼저  py pipeline/fetch_decant.py")
     version = dt.date.today().strftime("%Y.%m.%d")
     result = build(
         read_csv(raw), R.REAL, read_aliases(manual / "aliases.csv"),
         read_overrides(manual / "note_family_override.csv"), read_korean(manual / "notes_ko.csv"),
-        version=version, source_note="Parfumo (TidyTuesday 2024-12-10 정리본). 커뮤니티 데이터 기반 추정치",
+        version=version, source_name="Parfumo, Fragrantica(Decant)",
+        source_note="Parfumo (TidyTuesday 2024-12-10 정리본) + Decant의 Fragrantica 어코드·노트 강도(CC BY-NC-SA 4.0, 변형함). "
+                    "함량 측정값이 아니라 커뮤니티가 느낀 강도 기반 추정치",
+        decant={"rows": D.load_rows(decant_db), "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
+                "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"),
     )
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"

@@ -54,7 +54,7 @@ export class RecommendationEngine {
     for (const p of catalog.perfumes) {
       this.perfumes.push({
         perfume: p,
-        vector: this.perfumeVector(p.accords),
+        vector: p.accordShares ? this.accords.map((a) => p.accordShares![a] ?? 0) : this.perfumeVector(p.accords),
         layers: { top: new Set(p.top), middle: new Set(p.middle), base: new Set(p.base) },
         all: new Set([...p.top, ...p.middle, ...p.base]),
       });
@@ -155,7 +155,7 @@ export class RecommendationEngine {
       wSum += w;
     }
 
-    type Scored = { p: Indexed; score: number; accordSim: number; noteMatch: number; matched: MatchedNote[] };
+    type Scored = { p: Indexed; score: number; similarity: number; accordSim: number; noteMatch: number; matched: MatchedNote[] };
     const scored: Scored[] = [];
     for (const p of this.perfumes) {
       if ([...disliked].some((d) => p.all.has(d))) continue;
@@ -183,7 +183,13 @@ export class RecommendationEngine {
         nm += weights.get(x.noteKey)! * c;
         if (kind) matched.push({ noteKey: x.noteKey, layer: x.layer, match: kind });
       }
-      const noteMatch = nm / wSum;
+      let held = 0;
+      for (const x of blend) {
+        if (p.all.has(x.noteKey)) held += p.perfume.noteWeights ? p.perfume.noteWeights[x.noteKey] : 1.0 / p.all.size;
+      }
+      const noteMatch = (nm / wSum) * (P.STRENGTH_BASE + (1.0 - P.STRENGTH_BASE) * Math.sqrt(Math.min(held, 1.0)));
+      // 등급과 화면 점수는 선호를 뺀 유사도로, 선호는 순위에만 쓴다 (2026-11-02 사장 결정)
+      const similarity = (P.W_ACCORD * accordSim + P.W_NOTE * noteMatch) / (P.W_ACCORD + P.W_NOTE);
       let score: number;
       if (preferredFamilies.size > 0) {
         let pref = 0;
@@ -193,9 +199,9 @@ export class RecommendationEngine {
         pref = pref / 100.0;
         score = P.W_ACCORD * accordSim + P.W_NOTE * noteMatch + P.W_PREF * pref;
       } else {
-        score = (P.W_ACCORD * accordSim + P.W_NOTE * noteMatch) / (P.W_ACCORD + P.W_NOTE);
+        score = similarity;
       }
-      scored.push({ p, score, accordSim, noteMatch, matched });
+      scored.push({ p, score, similarity, accordSim, noteMatch, matched });
     }
 
     scored.sort(
@@ -233,9 +239,10 @@ export class RecommendationEngine {
       out.push({
         perfumeKey: perfume.key,
         score: s.score,
+        similarity: s.similarity,
         accordSim: s.accordSim,
         noteMatch: s.noteMatch,
-        grade: grade(s.score),
+        grade: grade(s.similarity),
         sharedAccords: shared.slice(0, 3),
         matchedNotes: s.matched,
         missingNotes: missing.slice(0, 3),

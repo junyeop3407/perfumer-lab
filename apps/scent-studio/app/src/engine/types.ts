@@ -40,6 +40,10 @@ export type Perfume = {
   middle: string[];
   base: string[];
   group: string;
+  /** 어코드 강도(합 100). Fragrantica와 연결된 향수만. 없으면 accords 순위 비중으로 계산 */
+  accordShares?: Record<string, number>;
+  /** 향수 안의 노트 강도 몫(합 1). 없으면 모든 노트를 같은 몫으로 계산 */
+  noteWeights?: Record<string, number>;
 };
 
 export type Catalog = {
@@ -67,7 +71,10 @@ export type SharedAccord = { accord: string; perfumePct: number; blendPct: numbe
 
 export type Recommendation = {
   perfumeKey: string;
+  /** 순위용 점수. 선호 계열이 있으면 반영된다 */
   score: number;
+  /** 화면 점수·등급용 유사도. 선호 계열과 무관하다 */
+  similarity: number;
   accordSim: number;
   noteMatch: number;
   grade: Grade;

@@ -23,6 +23,7 @@ export type GoldenCase = {
   recommendations: {
     perfumeKey: string;
     score: number;
+    similarity: number;
     accordSim: number;
     noteMatch: number;
     grade: string;

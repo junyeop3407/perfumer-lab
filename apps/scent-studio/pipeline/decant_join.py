@@ -95,9 +95,16 @@ def note_weights(notes: set[str], raw: dict[str, int], votes: int) -> dict[str, 
     return {k: v / total for k, v in vals.items()}
 
 
+def open_db(db: Path) -> sqlite3.Connection:
+    """받은 DB는 외부 파일이므로 읽기 전용으로 열고, 파일 안의 스키마에 든 함수를 믿지 않는다."""
+    c = sqlite3.connect(f"file:{db.as_posix()}?mode=ro", uri=True)
+    c.execute("PRAGMA trusted_schema=OFF")
+    return c
+
+
 def load_rows(db: Path) -> list[dict]:
     """perfumes.db → 원본 행 목록"""
-    c = sqlite3.connect(f"file:{db.as_posix()}?mode=ro", uri=True)
+    c = open_db(db)
     try:
         brands = dict(c.execute("select id,name from brands"))
         note_names = dict(c.execute("select id,name from notes"))

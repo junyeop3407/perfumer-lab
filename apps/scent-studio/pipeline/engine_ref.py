@@ -13,13 +13,18 @@ C_SAME_LAYER, C_OTHER_LAYER, C_SAME_FAMILY = 1.0, 0.5, 0.3
 LAYER_WEIGHT = {"top": 1.0, "middle": 1.0, "base": 1.0}
 BRAND_CAP = 2
 # 2026-10-31 v3: "그 향수의 노트를 그대로 넣었을 때 그 향수 자신의 점수" 중앙값·하위 25% (docs/engine_variants.md)
-GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.87, 0.79
+# 2026-11-02 v7: 같은 규칙으로 다시 잰 임시값. 짧은 조합은 대부분 '참고'가 되어(docs/engine_grades.md) 눈으로 평가 뒤 사장이 확정한다
+GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.87, 0.81
 SCORE_QUANTUM = 1e9  # 정렬은 round(score × 1e9)로 (차이 1e-9 이하는 같은 점수)
 RANK_WEIGHTS = [5, 4, 3, 2, 1]
 LAYERS = ("top", "middle", "base")
 # 약 · 중 · 강. 2026-10-31 사장 결정: 강 1.5 → 2.0 (v3) → 3.0 (v6, 어코드 쪽에만. docs/engine_strong_both.md)
 INTENSITIES = (0.5, 1.0, 3.0)
 STRENGTH_NAMES = ("weak", "medium", "strong")
+# 2026-11-02 v7: 일치도 × (STRENGTH_BASE + (1 - STRENGTH_BASE) × √(고른 노트의 강도 몫 합)). docs/engine_v2_trial.md
+STRENGTH_BASE = 0.3
+# 비교용 스위치: False면 강도 몫을 곱하지 않는다(v6 계산 재현, evaluate.py). 엔진은 True가 기준
+NOTE_MATCH_BY_STRENGTH = True
 # 시험용 스위치: 노트 일치도에도 강도를 반영할지 (pipeline/experiments/strong_both.py). 엔진은 꺼진 상태(False)가 기준
 NOTE_MATCH_BY_INTENSITY = False
 
@@ -45,9 +50,15 @@ class Engine:
         self.notes = {n["key"]: n for n in catalog["notes"]}
         self.perfumes = catalog["perfumes"]
         self.n = len(self.perfumes)
-        self.vec = {p["key"]: self.perfume_vector(p["accords"]) for p in self.perfumes}
+        self.vec = {p["key"]: self.vector_of(p) for p in self.perfumes}
 
-    # 8-1절
+    # 8-1절: 어코드 강도가 있으면 그 값(합 100), 없으면 순위 비중
+    def vector_of(self, p: dict) -> list[float]:
+        shares = p.get("accordShares")
+        if not shares:
+            return self.perfume_vector(p["accords"])
+        return [shares.get(a, 0.0) for a in self.accords]
+
     def perfume_vector(self, accords: list[str]) -> list[float]:
         w = RANK_WEIGHTS[: len(accords)]
         total = sum(w)
@@ -118,12 +129,51 @@ class Engine:
         return min(d, len(self.wheel) - d)
 
     # 8-4~8-6절
+    def scores(self, blend: list[BlendNote]) -> dict[str, float]:
+        """향수 key → 점수 (시험용: 다양성 정리 전 전체 순위를 잴 때)"""
+        return {t[0]["key"]: t[1] for t in self._score_all(blend, frozenset(), frozenset(), False)}
+
     def recommend(self, blend: list[BlendNote], disliked: set[str] = frozenset(),
                   preferred: set[str] = frozenset(), k: int = 10, note_only: bool = False) -> list[dict]:
         """note_only=True 는 엔진 검증(블라인드 비교)용: 노트 일치도만으로 순위를 매긴다."""
         self.validate(blend)
         b = self.blend_vector(blend)
         b_total = sum(b)
+        scored = self._score_all(blend, disliked, preferred, note_only)
+        scored.sort(key=lambda t: (-round_half_up(t[1] * SCORE_QUANTUM), -t[0]["ratingCount"], t[0]["key"]))
+
+        out, per_brand, groups = [], {}, set()
+        for p, score, similarity, accord_sim, note_match, matched, all_notes in scored:
+            if p["group"] in groups:  # 농도만 다른 같은 향수는 점수가 가장 높은 하나만
+                continue
+            if per_brand.get(p["brand"], 0) >= BRAND_CAP:
+                continue
+            groups.add(p["group"])
+            per_brand[p["brand"]] = per_brand.get(p["brand"], 0) + 1
+            a = self.vec[p["key"]]
+            shared = sorted(
+                ((self.accords[i], a[i], 100.0 * b[i] / b_total) for i in range(len(self.accords))),
+                key=lambda t: (-min(t[1], t[2]), self.accords.index(t[0])),
+            )[:3]
+            blend_keys = {x.note_key for x in blend}
+            missing = sorted(all_notes - blend_keys, key=lambda k: (-self.notes[k]["df"], k))[:3]
+            out.append({
+                "perfumeKey": p["key"],
+                "score": score,
+                "similarity": similarity,
+                "accordSim": accord_sim,
+                "noteMatch": note_match,
+                "grade": grade(similarity),
+                "sharedAccords": [{"accord": s[0], "perfumePct": s[1], "blendPct": s[2]} for s in shared],
+                "matchedNotes": matched,
+                "missingNotes": missing,
+            })
+            if len(out) == k:
+                break
+        return out
+
+    def _score_all(self, blend: list[BlendNote], disliked, preferred, note_only: bool) -> list[tuple]:
+        b = self.blend_vector(blend)
         # 시험용(기본 꺼짐, 2026-10-31): 켜면 노트 일치도에서도 고른 노트를 강도(약/중/강)로 가중한다
         weights = {x.note_key: math.log(1 + self.n / self.notes[x.note_key]["df"]) * (x.intensity if NOTE_MATCH_BY_INTENSITY else 1.0)
                    for x in blend}
@@ -152,45 +202,21 @@ class Engine:
                 if kind:
                     matched.append({"noteKey": x.note_key, "layer": x.layer, "match": kind})
             note_match = nm / w_sum
+            if NOTE_MATCH_BY_STRENGTH and not note_only:
+                shares = p.get("noteWeights")
+                held = sum((shares[x.note_key] if shares else 1.0 / len(all_notes)) for x in blend if x.note_key in all_notes)
+                note_match *= STRENGTH_BASE + (1.0 - STRENGTH_BASE) * math.sqrt(min(held, 1.0))
+            # 등급과 화면 점수는 선호를 뺀 유사도로, 선호는 순위에만 쓴다 (2026-11-02 사장 결정)
+            similarity = (W_ACCORD * accord_sim + W_NOTE * note_match) / (W_ACCORD + W_NOTE)
             if note_only:
                 score = note_match
             elif preferred:
                 pref = sum(v for i, v in enumerate(a) if self.accord_family[self.accords[i]] in preferred) / 100.0
                 score = W_ACCORD * accord_sim + W_NOTE * note_match + W_PREF * pref
             else:
-                score = (W_ACCORD * accord_sim + W_NOTE * note_match) / (W_ACCORD + W_NOTE)
-            scored.append((p, score, accord_sim, note_match, matched, all_notes))
-
-        scored.sort(key=lambda t: (-round_half_up(t[1] * SCORE_QUANTUM), -t[0]["ratingCount"], t[0]["key"]))
-
-        out, per_brand, groups = [], {}, set()
-        for p, score, accord_sim, note_match, matched, all_notes in scored:
-            if p["group"] in groups:  # 농도만 다른 같은 향수는 점수가 가장 높은 하나만
-                continue
-            if per_brand.get(p["brand"], 0) >= BRAND_CAP:
-                continue
-            groups.add(p["group"])
-            per_brand[p["brand"]] = per_brand.get(p["brand"], 0) + 1
-            a = self.vec[p["key"]]
-            shared = sorted(
-                ((self.accords[i], a[i], 100.0 * b[i] / b_total) for i in range(len(self.accords))),
-                key=lambda t: (-min(t[1], t[2]), self.accords.index(t[0])),
-            )[:3]
-            blend_keys = {x.note_key for x in blend}
-            missing = sorted(all_notes - blend_keys, key=lambda k: (-self.notes[k]["df"], k))[:3]
-            out.append({
-                "perfumeKey": p["key"],
-                "score": score,
-                "accordSim": accord_sim,
-                "noteMatch": note_match,
-                "grade": grade(score),
-                "sharedAccords": [{"accord": s[0], "perfumePct": s[1], "blendPct": s[2]} for s in shared],
-                "matchedNotes": matched,
-                "missingNotes": missing,
-            })
-            if len(out) == k:
-                break
-        return out
+                score = similarity
+            scored.append((p, score, similarity, accord_sim, note_match, matched, all_notes))
+        return scored
 
 
 def cosine(a: list[float], b: list[float]) -> float:
