@@ -6,9 +6,9 @@
   - docs/engine_blind.md   블라인드 비교만 (A/B 중 어느 쪽이 지금 엔진인지 숨김)
   - docs/engine_report.md  나머지 기준표. 지금 엔진의 추천 목록이 보이는 표(맹점 Top 5, 눈으로 평가)는
                            사장이 블라인드 비교 답을 낸 뒤에만 넣는다 (먼저 보면 A/B가 드러나므로)
-블라인드 문서(engine_blind.md, engine_blind_vs_v3.md)는 이미 있으면 덮어쓰지 않는다. 다시 만들 때만 --rebuild-blind.
-주 비교(지금 엔진 vs 예전 엔진 v3) 문서는  py pipeline/evaluate.py --compare-v3  로 docs/engine_blind_vs_v3.md 를 만들고,
-답은 docs/engine_blind_vs_v3_answers.txt 에 조합 단위로 적는다(블라인드: 1A 2B … 12A).
+블라인드 문서(engine_blind.md, engine_blind_vs_v6.md)는 이미 있으면 덮어쓰지 않는다. 다시 만들 때만 --rebuild-blind.
+주 비교(지금 엔진 vs 예전 엔진 v6) 문서는  py pipeline/evaluate.py --compare-v6  로 docs/engine_blind_vs_v6.md 를 만들고,
+답은 docs/engine_blind_vs_v6_answers.txt 에 조합 단위로 적는다(블라인드: 1A 2B … 12A).
 기준선(지금 엔진 vs 노트만) 답은 docs/engine_blind_answers.txt 에 적는다. 예:
   출처: 사장                      (Claude가 대신 고른 임시 답안이면 claude-provisional)
   고정본: engine_blind_v3_pairs.json   (답을 단 문서의 줄별 A/B 향수. 문서를 다시 만들어도 이걸로 채점)
@@ -93,8 +93,25 @@ def reproduction_picks(catalog: dict, eng: Engine, n: int) -> list[tuple[dict, l
 
 
 REPRO_DROP_SEED = 20261031
-V3_COMPARE_SEED = 20261101  # 지금 엔진 vs v3 블라인드의 A/B 배치
-V3_ANSWERS = DOCS / "engine_blind_vs_v3_answers.txt"
+V3_COMPARE_SEED = 20261101  # 지금 엔진 vs v3 블라인드의 A/B 배치 (보관)
+V6_COMPARE_SEED = 20261102  # 지금 엔진 vs v6 블라인드의 A/B 배치
+V6_ANSWERS = DOCS / "engine_blind_vs_v6_answers.txt"
+# v7 vs v6 비교 조합 (2026-11-02): experiments/pick_v6_combos.py가 "두 엔진이 다른가"만 보고 고름 (docs/engine_v6_combo_pick.md).
+# 예전 v6 vs v3 문서에 있던 조합은 뺐다. 그 문서를 봤다면 v6 목록을 알아볼 수 있어서
+V6_COMPARE_COMBOS = [
+    ("핑크 페퍼 · 아이리스 · 시더우드", [("pink pepper", "top", "medium"), ("iris", "middle", "medium"), ("cedarwood", "base", "medium")]),
+    ("레몬 · 녹차 · 화이트 머스크", [("lemon", "top", "medium"), ("green tea", "middle", "medium"), ("white musk", "base", "medium")]),
+    ("카다멈 · 타바코 · 우드 · 앰버", [("cardamom", "top", "medium"), ("tobacco", "middle", "medium"), ("oud", "base", "strong"), ("amber", "base", "medium")]),
+    ("마린 노트 · 세이지 · 시더우드 약", [("marine notes", "top", "strong"), ("sage", "middle", "medium"), ("cedarwood", "base", "weak")]),
+    ("레몬 강 · 장미 · 머스크", [("lemon", "top", "strong"), ("rose", "middle", "medium"), ("musk", "base", "medium")]),
+    ("베르가못 · 라벤더 · 바닐라 강", [("bergamot", "top", "medium"), ("lavender", "middle", "medium"), ("vanilla", "base", "strong")]),
+    ("배 · 아이리스 · 패출리", [("pear", "top", "medium"), ("iris", "middle", "medium"), ("patchouli", "base", "medium")]),
+    ("만다린 · 은방울꽃 · 화이트 머스크", [("mandarin orange", "top", "medium"), ("lily of the valley", "middle", "medium"), ("white musk", "base", "medium")]),
+    ("배 · 프리지아 · 머스크", [("pear", "top", "medium"), ("freesia", "middle", "medium"), ("musk", "base", "medium")]),
+    ("베르가못 · 라벤더 · 오크모스", [("bergamot", "top", "medium"), ("lavender", "middle", "medium"), ("oakmoss", "base", "medium")]),
+    ("라벤더 강 · 제라늄 · 베티버", [("lavender", "top", "strong"), ("geranium", "middle", "medium"), ("vetiver", "base", "medium")]),
+    ("민트 · 라벤더 · 시더우드", [("mint", "top", "medium"), ("lavender", "middle", "medium"), ("cedarwood", "base", "medium")]),
+]
 # v6 vs v3 비교 조합 (2026-10-31 사장 지시): 기준선 조합 중 두 엔진 Top 5가 2개 이상 다른 1·2·3·4·8·10번 +
 # 새 조합 6개(experiments/pick_v3_combos.py가 "두 엔진이 다른가"만 보고 적은 순서대로 고름, docs/engine_v3_combo_pick.md)
 V3_EXTRA_COMBOS = [
@@ -107,7 +124,8 @@ V3_EXTRA_COMBOS = [
     ("오렌지 · 카다멈 · 패출리", [("orange", "top", "medium"), ("cardamom", "middle", "medium"), ("patchouli", "base", "medium")]),
 ]
 # 눈으로 평가 점수로 등급 기준값을 고를 때 비교할 후보 (매우 비슷, 비슷)
-GRADE_CANDIDATES = [(0.87, 0.79), (0.89, 0.82), (0.90, 0.84), (0.92, 0.87)]
+# 2026-11-02 v7: 짧은 조합의 점수가 낮아져 더 낮은 범위를 비교한다
+GRADE_CANDIDATES = [(0.87, 0.81), (0.80, 0.72), (0.75, 0.65), (0.70, 0.60)]
 
 
 def combo_result(ans: dict, side: dict[int, str], combos: list) -> list[str]:
@@ -122,6 +140,12 @@ def combo_result(ans: dict, side: dict[int, str], combos: list) -> list[str]:
                 f"판정(기준 {need}개)은 모든 조합에 답한 뒤에")
     return [head, "", "| 조합 | 고른 쪽 | 지금 엔진 쪽 |", "|---|---|---|",
             *[f"| {i}. {combos[i - 1][0]} | {got[i]} | {side[i]} |" for i in sorted(got)]]
+
+
+def write_pairs(path: Path, combos: list, pairs: list) -> None:
+    """답을 단 문서의 줄별 A/B 향수를 고정한다. 문서를 다시 만들어도 이 파일로 채점한다"""
+    path.write_text(json.dumps({"combos": [{"name": c[0], "lines": ls} for c, ls in zip(combos, pairs)]},
+                               ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 def v3_combos() -> list:
@@ -204,6 +228,29 @@ def blind_doc(header: str, who: str, pairs_by_combo: list, seed: int, label, acc
     return doc, side, pairs
 
 
+def v6_engine():
+    """예전 엔진 v6: 강도 없는 카탈로그 + 강도 몫을 곱하지 않는 일치도. 데이터 정리는 지금과 같다. 원본 CSV가 필요하다.
+    → (엔진, 카탈로그, 함수를 v6 계산으로 돌리는 도우미)"""
+    import build_catalog as B
+    import catalog_rules as R
+
+    manual = APP / "pipeline" / "manual"
+    cat = B.build(B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv"), R.REAL,
+                  B.read_aliases(manual / "aliases.csv"), B.read_overrides(manual / "note_family_override.csv"),
+                  B.read_korean(manual / "notes_ko.csv"), version="v6", source_note="v6",
+                  junk=B.read_junk(manual / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv")).catalog
+    eng6 = Engine(cat)
+
+    def with_v6(fn):
+        saved = engine_ref.NOTE_MATCH_BY_STRENGTH
+        engine_ref.NOTE_MATCH_BY_STRENGTH = False
+        try:
+            return fn()
+        finally:
+            engine_ref.NOTE_MATCH_BY_STRENGTH = saved
+    return eng6, cat, with_v6
+
+
 def v3_recommender():
     """예전 엔진 v3: 프로필 특징 강조(PPMI), 어코드 0.45 : 노트 0.45, 강 2.0. 데이터 정리(묶음·복사 오류·브랜드 표기)는 지금과 같게 해서
     엔진 차이만 비교한다. 원본 CSV가 필요하다."""
@@ -220,12 +267,13 @@ def v3_recommender():
     eng3 = Engine(cat)
 
     def recommend(spec):
-        saved = (engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES)
+        saved = (engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES, engine_ref.NOTE_MATCH_BY_STRENGTH)
         engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES = 0.45, 0.45, (0.5, 1.0, 2.0)
+        engine_ref.NOTE_MATCH_BY_STRENGTH = False
         try:
             return eng3.recommend(blend(spec), k=5)
         finally:
-            engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES = saved
+            engine_ref.W_ACCORD, engine_ref.W_NOTE, engine_ref.INTENSITIES, engine_ref.NOTE_MATCH_BY_STRENGTH = saved
     return recommend
 
 
@@ -359,17 +407,20 @@ def main() -> None:
     # 블라인드 문서는 사장이 답하는 동안 바뀌면 안 되므로, 이미 있으면 --rebuild-blind 일 때만 다시 쓴다 (2026-10-31)
     if "--rebuild-blind" in sys.argv or not (DOCS / "engine_blind.md").exists():
         (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
+        write_pairs(DOCS / "engine_blind_v7_pairs.json", BLENDS, current_pairs)
 
-    # 주 비교(2026-10-31): 지금 엔진 v6 vs 엔진 v3. 문서는 --compare-v3 로만 만든다(사장이 정할 때까지)
-    v3_side = {}
-    if "--compare-v3" in sys.argv or V3_ANSWERS.exists():
-        v3 = v3_recommender()
-        pairs_v3 = [(name, eng.recommend(blend(spec), k=5), v3(spec)) for name, spec in v3_combos()]
-        doc_v3, v3_side, _ = blind_doc(
-            header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v3)입니다. 어느 쪽인지는 숨겨 두었습니다.",
-            pairs_v3, V3_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v3)")
-        if "--compare-v3" in sys.argv and ("--rebuild-blind" in sys.argv or not (DOCS / "engine_blind_vs_v3.md").exists()):
-            (DOCS / "engine_blind_vs_v3.md").write_text("\n".join(doc_v3), encoding="utf-8")
+    # 주 비교(2026-11-02): 지금 엔진 v7 vs 엔진 v6. 문서는 --compare-v6 으로 만든다
+    v6_side = {}
+    if "--compare-v6" in sys.argv or V6_ANSWERS.exists():
+        eng6, _, with_v6 = v6_engine()
+        pairs_v6 = [(name, eng.recommend(blend(spec), k=5), with_v6(lambda spec=spec: eng6.recommend(blend(spec), k=5)))
+                    for name, spec in V6_COMPARE_COMBOS]
+        doc_v6, v6_side, lines_v6 = blind_doc(
+            header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v6)입니다. 어느 쪽인지는 숨겨 두었습니다.",
+            pairs_v6, V6_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v6)")
+        if "--compare-v6" in sys.argv and ("--rebuild-blind" in sys.argv or not (DOCS / "engine_blind_vs_v6.md").exists()):
+            (DOCS / "engine_blind_vs_v6.md").write_text("\n".join(doc_v6), encoding="utf-8")
+            write_pairs(DOCS / "engine_blind_vs_v6_pairs.json", V6_COMPARE_COMBOS, lines_v6)
 
     # ---------- 기준표 ----------
     lines = ["# 추천 엔진 합격 기준표", "", header,
@@ -431,7 +482,7 @@ def main() -> None:
               f"- Top 5 중 1위 어코드가 시트러스인 향수: {citrus_first}개 (참고: 레몬을 '강'으로 골랐을 때 시트러스가 앞서는지)", ""]
     if answers is not None:
         def family_share(key: str, family: str) -> str:
-            vec = eng.perfume_vector(by_key[key]["accords"])
+            vec = eng.vec[key]
             share = sum(v for a, v in zip(eng.accords, vec) if acc_family[a] == family)
             ranks = [str(i + 1) for i, a in enumerate(by_key[key]["accords"]) if acc_family[a] == family]
             return f"{share:.0f}% ({','.join(ranks)}번째)" if ranks else "없음"
@@ -440,17 +491,16 @@ def main() -> None:
                   *[f"| {i + 1} | {cell(label(r['perfumeKey']))} | {accords_ko(r['perfumeKey'])} "
                     f"| {family_share(r['perfumeKey'], 'citrus')} | {family_share(r['perfumeKey'], 'floral')} | {r['score']:.3f} |"
                     for i, r in enumerate(recs)], "",
-                  "비중 = 향수 어코드 벡터(목록 순서대로 5·4·3·2·1, 합 100)에서 그 계열 어코드가 차지하는 몫.", ""]
+                  "비중 = 향수 어코드 벡터(어코드 강도, 없으면 목록 순서대로 5·4·3·2·1, 합 100)에서 그 계열 어코드가 차지하는 몫.", ""]
 
     # 3. 블라인드 비교 결과
     need = math.ceil(0.6 * len(BLENDS))  # 기준: 조합의 60% 이상 (10개면 6개, 12개면 8개)
-    if V3_ANSWERS.exists():
-        combos3 = v3_combos()
-        v3_ans = read_answers(V3_ANSWERS, len(combos3))
-        lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v3 "
-                  f"(기준: 지금 엔진 쪽을 {len(combos3)}개 중 {math.ceil(0.6 * len(combos3))}개 이상)", "",
-                  *combo_result(v3_ans, v3_side, combos3), ""]
-        results["blind_v3"] = sum(1 for i, ab in v3_ans["combos"].items() if v3_side[i] == ab)
+    if V6_ANSWERS.exists():
+        v6_ans = read_answers(V6_ANSWERS, len(V6_COMPARE_COMBOS))
+        lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v6 "
+                  f"(기준: 지금 엔진 쪽을 {len(V6_COMPARE_COMBOS)}개 중 {math.ceil(0.6 * len(V6_COMPARE_COMBOS))}개 이상)", "",
+                  *combo_result(v6_ans, v6_side, V6_COMPARE_COMBOS), ""]
+        results["blind_v6"] = sum(1 for i, ab in v6_ans["combos"].items() if v6_side[i] == ab)
     lines += [f"## 3. 블라인드 비교 — 기준선: 지금 엔진 vs 노트만 보는 방식 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]
     if answers is None:
         lines += ["`engine_blind.md`에서 답을 받은 뒤 채웁니다.", ""]

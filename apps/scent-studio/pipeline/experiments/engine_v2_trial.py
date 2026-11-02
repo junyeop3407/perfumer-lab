@@ -9,6 +9,8 @@
   어느 시험판도 이 투표를 계산에 쓰지 않으므로 답을 미리 본 시험이 아니다.
 - 개발 절반으로 시험판을 고르고, --holdout은 그 뒤 나머지 절반으로 마지막에 한 번 확인한다.
 - 블라인드 문서가 무효가 되지 않게 조합별 추천 목록은 출력하지 않는다(모든 수치는 집계).
+
+기록용: v6 카탈로그(engine_version 6)를 기준으로 쓴 스크립트다. 엔진 v7 뒤의 비교는 similar_votes.py를 쓴다.
 """
 from __future__ import annotations
 
@@ -90,6 +92,8 @@ def name_key(brand: str, name: str) -> tuple[str, str]:
 class Data:
     def __init__(self) -> None:
         self.catalog = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+        if self.catalog["engineVersion"] != 6:
+            raise SystemExit("이 스크립트는 v6 카탈로그 기준의 기록입니다. 지금 엔진 비교는 experiments/similar_votes.py")
         self.eng = E.Engine(self.catalog)
         self.perfumes = self.catalog["perfumes"]
         self.keys = [p["key"] for p in self.perfumes]

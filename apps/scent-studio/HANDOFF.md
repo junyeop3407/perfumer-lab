@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan.md "★엔진 마무리": 엔진 v6 완료, 사장 블라인드 답·눈으로 평가 점수 대기)
+현재 단계: 4 (구현 — docs/plan.md "★엔진 마무리": 엔진 v7 완료, 사장 블라인드 답·눈으로 평가 점수 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 21/21 · TS 엔진(Vitest) 36/36 통과 (2026-10-31 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 엔진 v2 후보로 갈지(데이터 이용 조건 확인 포함, 아래 "2026-11-02 세션 기록") → 그 뒤 블라인드 답 → 눈으로 평가 점수 → 등급 기준값
-다음 할 일: 사장의 v2 결정을 받는다. v6 유지로 정하면 아래 "다음 세션에서 할 일" 1번부터
+결과: 파이프라인 43/43 · TS 엔진(Vitest) 37/37 통과 (2026-11-02 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 블라인드 답(주 비교 v7 vs v6, 기준선 v7 vs 노트만) → 눈으로 평가 점수 → 등급 기준값 (아래 "다음 세션에서 할 일")
+다음 할 일: 아래 "다음 세션에서 할 일" 1번부터
 
 ## 새 세션 시작 (이 순서대로)
 1. 브랜치: **`wip/scent-studio-stage4`** (main 아님. 승인 41/41 + 5단계 리뷰 뒤 main에 합침) — `git fetch && git switch wip/scent-studio-stage4 && git pull`
@@ -14,10 +14,16 @@
 3. 새 컴퓨터 준비(한 번):
    - `py -m pip install -r pipeline/requirements.txt` (numpy, pytest)
    - `cd app && npm install && npx playwright install chromium`
-   - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 21 + Vitest 36 통과
+   - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
+4. 확인: `bash tests/run.sh` → 파이프라인 43 + Vitest 37 통과
 
-## 지금 상태 (2026-10-31)
+## 지금 상태 (2026-11-02)
+- **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
+- **블라인드 문서** (아래 v6 설명보다 이것이 우선. 조합 12개, 답은 조합 단위): 주 비교 `docs/engine_blind_vs_v6.md` → 답 `docs/engine_blind_vs_v6_answers.txt` / 기준선 `docs/engine_blind.md` → 답 `docs/engine_blind_answers.txt`. 기준선의 5·6·7·9·11·12번이 주 비교와 겹치니 **주 비교 답을 받은 뒤에** 기준선을 보여 준다. 재생성은 `py pipeline/evaluate.py --compare-v6 --rebuild-blind` (답 받기 전에는 하지 않는다).
+- **비상업 운영, 내부 테스트까지** (D4). Decant는 CC BY-NC-SA 4.0. Fragrantica 약관은 자동 접근이 막혀 못 읽음: 정식 공개 전 사장 확인 필요.
+- **사장에게 알려 둔 한계**: 강도 있는 향수로 쏠림(Top 10의 81%, v6 58%), 등급이 대부분 참고(82%, 기준값 임시 0.87/0.81). 눈으로 평가 때 함께 본다.
+
+### 아래는 v6 때의 기록
 - **단계 1·2 끝**: Expo 뼈대(`app/`) + 승인 테스트 41개(`app/tests/acceptance/`, 지금 1/41), TS 엔진(`app/src/engine/`, Python 골든과 일치). Java 엔진·Kotlin 앱은 지웠다.
 - **엔진 v6** (사장 결정 순서대로, 이유·수치는 `docs/NOTES.md`):
   - 노트 프로필 = **함께 든 노트의 몫 빼기**(향수 어코드 ≈ 노트 프로필 평균, 음수 없는 최소제곱, numpy). 향수 20개 미만 노트는 계열 평균.
@@ -45,24 +51,24 @@
 - 설명서를 쓰다 찾은 확인 거리(사장 미확인): ① 선호 계열을 켜면 점수가 낮아져 등급이 내려갈 수 있음 ② 어코드 "목록이 진한 순서" 가정의 사이트 대조 기록을 찾지 못함.
 - 사장이 쓴 Claude 문서 "조향 추천 엔진 설계서 v2"(https://claude.ai/artifact/3FPLdg3ZG1ETHVMoYScVKM)의 방안을 시험판으로 돌렸다. 결과 `docs/engine_v2_trial.md`, 스크립트 `pipeline/experiments/engine_v2_trial.py`. **엔진·카탈로그·승인 테스트·골든·블라인드 문서는 그대로.**
   - 어코드·노트 강도 + "지금 일치도 × 강도 몫" 시험판이 사람 유사 시험 Top 50 38.4% → 44.3% (남겨 둔 절반, 구간 +2.8~+9.1). 기존 기준 통과.
-  - 막힌 것: Decant·Fragrantica 데이터 이용 조건 미확인. 채택하면 Top 10이 크게 바뀌어(42/120만 겹침) 블라인드 문서를 다시 만들어야 하므로, **사장 결정 전에는 블라인드 답을 먼저 받지 않는다.**
-  - 받은 데이터: `pipeline/data/raw/decant/` (커밋 안 함). 받는 주소는 스크립트 맨 위에.
+  - 사장이 v2 진행을 결정해 계획 모드 승인 후 엔진 v7로 옮겼다. 위 "지금 상태" 참고. 받은 데이터: `pipeline/data/raw/decant/` (커밋 안 함, `fetch_decant.py`).
 
 ## 다음 세션에서 할 일
-1. **사장에게 주 비교 블라인드 답 받기**: `docs/engine_blind_vs_v3.md`를 보여 주고 조합 단위 답을 받는다(일부만 가능). 답을 `docs/engine_blind_vs_v3_answers.txt`에 적는다:
+1. **사장에게 주 비교 블라인드 답 받기**: `docs/engine_blind_vs_v6.md`를 보여 주고 조합 단위 답을 받는다(일부만 가능). 답을 `docs/engine_blind_vs_v6_answers.txt`에 적는다:
    ```
    출처: 사장
    블라인드: 1A 2B 3A …
    ```
-   그다음 `py pipeline/evaluate.py` → 기준표 3절(주 비교)에 집계. 판정 기준: 12개 중 8개(60%) 이상 지금 엔진 쪽. 판정은 모든 조합에 답한 뒤에만.
+   그다음 `py pipeline/evaluate.py` (원본 CSV 필요) → 기준표 3절(주 비교)에 집계. 판정 기준: 12개 중 8개(60%) 이상 지금 엔진 쪽. 판정은 모든 조합에 답한 뒤에만.
 2. **기준선 블라인드 답**: `docs/engine_blind.md` → `docs/engine_blind_answers.txt`에 같은 형식(`출처: 사장`, `블라인드: …`).
 3. **눈으로 평가**: 블라인드 답을 받은 조합만 기준표 4절에 지금 엔진 Top 5가 나온다. 사장에게 보여 주고 1~5점을 받아 `engine_blind_answers.txt`의 `점수: 1=4 2=3 …`(일부만 가능)에 적고 `py pipeline/evaluate.py`. 기준: 평균 3.5 이상.
-4. **등급 기준값**: 점수가 들어오면 기준표 6절 "등급 기준값 후보" 표(0.87/0.79, 0.89/0.82, 0.90/0.84, 0.92/0.87)가 채워진다. 사장이 고르면 `pipeline/engine_ref.py` GRADE_*·`app/src/engine/params.ts` GRADE_*·`ENGINE_VERSION` 7·설계서 8-6절을 함께 바꾸고 `py pipeline/build_catalog.py --fixture && py pipeline/build_catalog.py && py pipeline/make_golden.py` → `bash tests/run.sh`.
+4. **등급 기준값**: 점수가 들어오면 기준표 6절 "등급 기준값 후보" 표(0.87/0.81, 0.80/0.72, 0.75/0.65, 0.70/0.60)가 채워진다. 사장이 고르면 `pipeline/engine_ref.py` GRADE_*·`app/src/engine/params.ts` GRADE_*·설계서 8-6절을 함께 바꾸고 `py pipeline/build_catalog.py --fixture && py pipeline/build_catalog.py && py pipeline/make_golden.py` → `bash tests/run.sh`.
 5. 기준을 다 넘으면 ★엔진 마무리 끝 → `docs/plan.md` 단계 3(DB 구축) → 4(서버) → ★디자인 → 5(화면) → 6.
    - 못 넘으면 원인을 찾아 사장과 다시 정한다(엔진 실험 스크립트는 `pipeline/experiments/`).
 
 ## 사장 결정 기록 (짧게, 자세한 이유는 NOTES.md)
 - 2026-10-31 웹 + 안드로이드 + 아이폰, 설계 E안(Expo). 앱 이름 Perfumer-LAB(향수 공방소), 앱 ID com.perfumerlab.scentstudio. 4단계 계획 승인(DB 구축 단계 포함).
+- 2026-11-02 엔진 v7로 진행. 어코드 연결표 OK. 비상업 운영. 등급은 선호와 무관.
 - 2026-10-31 엔진: 레몬 '강' 문제 → 특징 강조 + 강 2.0(v3) → 어코드 0.35 : 노트 0.55(v4) → 함께 든 노트 몫 빼기 + 복사 오류 제외(v5) → 강 3.0, 어코드 쪽에만(v6). 거의 복사도 제외. 블라인드는 조합 단위 답, 주 비교는 v6 vs v3.
 - 블라인드·눈으로 평가에 Claude가 매긴 임시 답(claude-provisional)은 v3 문서용으로 보관만 하고, v6 판정에는 쓰지 않는다.
 

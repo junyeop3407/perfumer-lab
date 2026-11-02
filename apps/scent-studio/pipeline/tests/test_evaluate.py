@@ -39,9 +39,16 @@ def test_순환과_한_칸_밀림을_표시한다():
 
 def test_등급_기준값_후보를_사람_점수와_비교한다():
     rec = lambda *scores: [{"score": s} for s in scores]  # noqa: E731
-    tops = {1: rec(0.95, 0.90, 0.85), 2: rec(0.88, 0.86, 0.80)}
+    tops = {1: rec(0.95, 0.90, 0.85), 2: rec(0.72, 0.66, 0.60)}
     rows = V.grade_candidate_rows(tops, {1: 5, 2: 2})
-    first = rows[0]  # 0.87 / 0.79: 1번(5점) 1위 매우 비슷, 2번(2점)에도 매우 비슷 있음
-    assert first.startswith("| 0.87 / 0.79 | 1/1 (100%) | 1/1 (100%) | 0 |")
-    last = rows[-1]  # 0.92 / 0.87: 2번에는 매우 비슷 없음
-    assert last.startswith("| 0.92 / 0.87 | 1/1 (100%) | 0/1 (0%) | 1 |")
+    first = rows[0]  # 0.87 / 0.81: 1번(5점) 1위 매우 비슷, 2번(2점)에는 매우 비슷 없음
+    assert first.startswith("| 0.87 / 0.81 | 1/1 (100%) | 0/1 (0%) | 1 |")
+    last = rows[-1]  # 0.70 / 0.60: 2번(2점)에도 매우 비슷 있음
+    assert last.startswith("| 0.7 / 0.6 | 1/1 (100%) | 1/1 (100%) | 0 |")
+
+
+def test_v7_비교_조합은_예전_v3_문서에_없던_것만_쓴다():
+    names = [c[0] for c in V.V6_COMPARE_COMBOS]
+    assert len(names) == len(set(names)) == 12
+    assert not set(names) & {c[0] for c in V.v3_combos()}  # 그 문서를 봤다면 v6 목록을 알아볼 수 있다
+    assert sum(any(s == "strong" for _, _, s in c[1]) for c in V.V6_COMPARE_COMBOS) >= 2

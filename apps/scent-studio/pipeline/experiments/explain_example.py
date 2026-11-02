@@ -25,11 +25,11 @@ STRONG = [("lime", "top", "medium"), ("lily of the valley", "middle", "medium"),
 ALL_STRONG = [(k, layer, "strong") for k, layer, _ in BASE]
 SWAPPED = [("lime", "base", "medium"), ("lily of the valley", "middle", "medium"), ("cedarwood", "top", "medium")]
 
-used = [{k for k, _, _ in spec} for _, spec in V.BLENDS + V.v3_combos()]
+used = [{k for k, _, _ in spec} for _, spec in V.BLENDS + V.v3_combos() + V.V6_COMPARE_COMBOS]
 if {k for k, _, _ in BASE} in used:
     raise SystemExit("예시 조합이 블라인드 조합과 겹칩니다")
 
-blind_text = (APP / "docs" / "engine_blind.md").read_text(encoding="utf-8") + (APP / "docs" / "engine_blind_vs_v3.md").read_text(encoding="utf-8")
+blind_text = "".join((APP / "docs" / f).read_text(encoding="utf-8") for f in ("engine_blind.md", "engine_blind_vs_v6.md"))
 catalog = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
 eng = E.Engine(catalog)
 by_key = {p["key"]: p for p in catalog["perfumes"]}
@@ -52,23 +52,30 @@ def hand_score(p, spec):
     for k, _, s in spec:
         for i, v in enumerate(eng.notes[k]["profile"]):
             b[i] += E.intensity(s) * v
-    w = len(p["accords"])
-    weights = [5, 4, 3, 2, 1][:w]
     a = [0.0] * len(names)
-    for acc, x in zip(p["accords"], weights):
-        a[names.index(acc)] = 100.0 * x / sum(weights)
+    if p.get("accordShares"):
+        for acc, x in p["accordShares"].items():
+            a[names.index(acc)] = x
+    else:
+        weights = [5, 4, 3, 2, 1][:len(p["accords"])]
+        for acc, x in zip(p["accords"], weights):
+            a[names.index(acc)] = 100.0 * x / sum(weights)
     cos = sum(x * y for x, y in zip(a, b)) / (math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b)))
     all_notes = set(p["top"]) | set(p["middle"]) | set(p["base"])
     fams = {eng.notes[k]["family"] for k in all_notes}
-    nm = ws = 0.0
+    nm = ws = held = 0.0
     rows = []
+    shares = p.get("noteWeights")
     for k, layer, _ in spec:
+        if k in all_notes:
+            held += shares[k] if shares else 1 / len(all_notes)
         wn = math.log(1 + eng.n / eng.notes[k]["df"])
         c = 1.0 if k in p[layer] else 0.5 if k in all_notes else 0.3 if eng.notes[k]["family"] in fams else 0.0
         nm += wn * c
         ws += wn
         rows.append((k, round(wn, 3), c))
-    return cos, nm / ws, (0.35 * cos + 0.55 * nm / ws) / 0.9, rows
+    match = nm / ws * (0.3 + 0.7 * math.sqrt(min(held, 1.0)))
+    return cos, match, (0.35 * cos + 0.55 * match) / 0.9, rows + [("강도 몫 합", round(held, 4), round(nm / ws, 4))]
 
 
 print(f"후보 N = {eng.n:,} · 엔진 v{catalog['engineVersion']} · 어코드 {len(names)}개")
@@ -95,6 +102,7 @@ for title, spec in (("중·중·중", BASE), ("시더우드 강", STRONG), ("모
         assert abs(score - r["score"]) < 1e-9 and abs(cos - r["accordSim"]) < 1e-9 and abs(nm - r["noteMatch"]) < 1e-9
         print(f"{rank}. {p['brand']} — {p['name']}{flag}")
         print(f"   점수 {r['score']:.4f} ({r['grade']}) = 어코드 {r['accordSim']:.4f} · 노트 {r['noteMatch']:.4f} | 노트별 {rows}")
+        print(f"   어코드 강도 {p.get('accordShares')} · 노트 강도 {p.get('noteWeights')}")
         print(f"   어코드 {p['accords']} · 탑 {p['top']} · 미들 {p['middle']} · 베이스 {p['base']} · 평가 {p['ratingCount']}")
 
 base = {r["perfumeKey"]: r for r in eng.recommend(blend(BASE), k=eng.n)}
@@ -111,4 +119,4 @@ scores = [x["score"] for x in eng.recommend(blend(BASE), preferred={"citrus"}, k
 print("시트러스 선호 1위 점수:", [round(s, 4) for s in scores])
 
 print("\n## 향수 어코드 비중 예시 (순위 5·4·3·2·1)")
-print([(a, round(eng.vec[first][names.index(a)], 1)) for a in p["accords"]])
+print([(a, round(v, 1)) for a, v in zip(names, eng.vec[first]) if v > 0])
