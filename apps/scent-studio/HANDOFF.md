@@ -31,7 +31,7 @@
 - 5·4·3·2·1 추정치를 연결된 향수에서는 실제 강도로 바꿨다. 추정치는 5위 어코드를 절반쯤 낮게 잡고 있었다(실제 13.3%, 추정 6.7%).
 
 ### 남은 확인 사항
-- **Fragrantica 약관:** 사이트가 자동 접근을 막아 읽지 못했다. 정식 공개 전에 사장이 브라우저로 직접 확인해야 한다. 그 전까지 배포는 초대제 내부 테스트까지(D4).
+- **Fragrantica 약관:** 사장 확인 결과 배포에 허가가 필요하다. 사장이 허가 요청 메일을 보냈고 회신 대기 중이다(2026-11-02 기록). 그 전까지 배포는 초대제 내부 테스트까지(D4).
 - **라이선스:** Decant는 Kaggle 표기 CC BY-NC-SA 4.0. 사장이 비상업 운영으로 정했다. 이 조건에 맞는다는 판단은 Claude의 해석이고 법률 자문이 아니다.
 - **어코드 순서 가정:** 사이트 20건 대조 기록은 여전히 없다. Fragrantica 강도와의 상관(중앙값 0.53, 양의 상관 81%)으로 방향이 대체로 맞다는 것만 확인했고, Parfumo 자체를 대조한 것은 아니다.
 - **아직 하지 않은 것:** Tversky 계수 조정, TGSC 기본 비중, 노트 상호작용.
@@ -56,7 +56,7 @@
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
 - **블라인드 문서** (아래 v6 설명보다 이것이 우선. 조합 12개, 답은 조합 단위): 주 비교 `docs/engine_blind_vs_v6.md` → 답 `docs/engine_blind_vs_v6_answers.txt` / 기준선 `docs/engine_blind.md` → 답 `docs/engine_blind_answers.txt`. 기준선의 5·6·7·9·11·12번이 주 비교와 겹치니 **주 비교 답을 받은 뒤에** 기준선을 보여 준다. 재생성은 `py pipeline/evaluate.py --compare-v6 --rebuild-blind` (답 받기 전에는 하지 않는다).
-- **비상업 운영, 내부 테스트까지** (D4). Decant는 CC BY-NC-SA 4.0. Fragrantica 약관은 자동 접근이 막혀 못 읽음: 정식 공개 전 사장 확인 필요.
+- **비상업 운영, 내부 테스트까지** (D4). Decant는 CC BY-NC-SA 4.0. Fragrantica는 허가 요청 메일 회신 대기.
 - **사장에게 알려 둔 한계**: 강도 있는 향수로 쏠림(Top 10의 81%, v6 58%), 등급이 대부분 참고(82%, 기준값 임시 0.87/0.81). 눈으로 평가 때 함께 본다.
 
 ### 아래는 v6 때의 기록
@@ -111,5 +111,5 @@
 ## 주요 파일
 - 앱: `app/` (Expo Router 화면 `app/app/`, 엔진 `app/src/engine/`, 이름표 `app/src/ui/testIds.ts`, 승인 테스트 `app/tests/acceptance/`, 부품 테스트 `app/tests/unit/`)
 - 데이터·검증: `pipeline/` (build_catalog, engine_ref, evaluate, make_golden, experiments/, tests/), 보고서 `pipeline/report.md`, 복사 오류 목록 `pipeline/copy_suspects.csv`
-- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
+- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/problem-solving.md`(포트폴리오용 문제 해결 기록) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
 - 가짜 데이터·골든: `tests/fixtures/`, `tests/golden/recommend_cases.json`
