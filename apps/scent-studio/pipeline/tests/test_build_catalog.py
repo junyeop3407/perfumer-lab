@@ -20,6 +20,14 @@ def catalog():
     return B.build_fixture().catalog
 
 
+def test_공개_복사_목록에는_향수_이름과_평가_수가_없다():
+    record = {"set": 1, "kind": "copy", "key": "a:secret", "brand": "A", "name": "Secret", "year": 2000, "rating_count": 63,
+              "decision": "excluded", "reason": "복사본 — 원본은 B — Origin (2023) Noble (조향사 단서)", "perfumer_clue_brands": 1}
+    public = B.public_copy_record(record)
+    assert not {"key", "name", "rating_count"} & public.keys()
+    assert public["reason"] == "복사본 (조향사 단서)"
+
+
 def perfume(catalog, key):
     return next((p for p in catalog["perfumes"] if p["key"] == key), None)
 

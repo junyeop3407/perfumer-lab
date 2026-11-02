@@ -104,6 +104,18 @@ def _perfumers(value: str | None) -> tuple[str, ...]:
 NEAR_COPY_MAX_VOTE_DIFF = 5  # 실제 데이터의 거의 복사 4쌍은 모두 차이 1~2 (2026-10-31)
 
 
+COPY_FIELDS = ["set", "kind", "key", "brand", "name", "year", "rating_count", "decision", "reason", "perfumer_clue_brands"]
+COPY_PUBLIC_FIELDS = ["set", "kind", "brand", "year", "decision", "reason", "perfumer_clue_brands"]
+
+
+def public_copy_record(record: dict) -> dict:
+    """공개 저장소에 올리는 복사 오류 기록: 향수 이름과 평가 수를 뺀다(사유에 적힌 원본 향수 이름 포함)."""
+    public = {k: record[k] for k in COPY_PUBLIC_FIELDS}
+    if public["reason"].startswith("복사본 — 원본은 "):
+        public["reason"] = "복사본 (" + public["reason"][public["reason"].rindex("(") + 1:]
+    return public
+
+
 def mark_copy_suspects(perfumes: list[Perfume], rows: list[dict], brand_of) -> tuple[list[Perfume], list[dict]]:
     """원본 데이터셋의 복사 오류 (2026-10-31 사장 결정): 브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같은 묶음.
     원본 데이터셋(TidyTuesday Parfumo)에서 한 향수의 상세 정보(노트·어코드·평점·조향사)가 다른 향수에 들어간 것으로 보인다.
@@ -579,10 +591,15 @@ def main() -> None:
     assets = APP_DIR / "app" / "assets" / "catalog" / "catalog.json.gz"
     write_catalog(result.catalog, assets)
     write_report(result, APP_DIR / "pipeline" / "report.md", "카탈로그 보고서")
-    with (APP_DIR / "pipeline" / "copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["set", "kind", "key", "brand", "name", "year", "rating_count", "decision", "reason", "perfumer_clue_brands"])
+    # 전체 기록은 커밋하지 않는다(.gitignore). 공개 저장소에는 이름·평가 수를 뺀 기록만 둔다
+    with (out.parent / "copy_suspects_full.csv").open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=COPY_FIELDS)
         w.writeheader()
         w.writerows(result.report["copy_suspects"])
+    with (APP_DIR / "pipeline" / "copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=COPY_PUBLIC_FIELDS)
+        w.writeheader()
+        w.writerows(public_copy_record(e) for e in result.report["copy_suspects"])
     print(f"카탈로그: {out.relative_to(APP_DIR)} · 후보 {result.report['candidates']:,} · "
           f"미매핑 {result.report['unmapped_ratio']:.1%} · 크기 {out.stat().st_size / 1024:.0f}KB")
 

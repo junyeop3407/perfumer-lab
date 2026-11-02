@@ -111,5 +111,7 @@
 ## 주요 파일
 - 앱: `app/` (Expo Router 화면 `app/app/`, 엔진 `app/src/engine/`, 이름표 `app/src/ui/testIds.ts`, 승인 테스트 `app/tests/acceptance/`, 부품 테스트 `app/tests/unit/`)
 - 데이터·검증: `pipeline/` (build_catalog, engine_ref, evaluate, make_golden, experiments/, tests/), 보고서 `pipeline/report.md`, 복사 오류 목록 `pipeline/copy_suspects.csv`
-- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/problem-solving.md`(포트폴리오용 문제 해결 기록) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
+- 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
 - 가짜 데이터·골든: `tests/fixtures/`, `tests/golden/recommend_cases.json`
+- 포트폴리오용 문제 해결 기록: 저장소 루트 `portfolio/problem-solving.md`
+- 복사 오류 목록: 공개 `pipeline/copy_suspects.csv`(향수 이름·평가 수 없음) / 전체는 `pipeline/data/out/copy_suspects_full.csv`(커밋 안 함, `build_catalog.py`가 만듦)
