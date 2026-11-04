@@ -1,20 +1,20 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan.md "★엔진 마무리": v7 채택, 오염 행 제외 확정, 재측정 완료, v8 계획 전)
+현재 단계: 4 (구현 — docs/plan_v8.md: 0~5단계 끝, ★6 사장 검토 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 44/44 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 재측정 결과 검토와 v8 방향 ("★ 지금 멈춘 곳")
-다음 할 일: 재측정 결과 사장 검토 → 계획 모드로 v8 계획 (아래 "다음 세션에서 할 일" 5번)
+결과: 파이프라인 67/67 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-04 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: ★6 결정 (아래)
+다음 할 일: 사장 결정을 받아 docs/plan_v8.md 7단계(v8 적용) → 새 블라인드 → 눈 평가 → 등급
 
 ## ★ 지금 멈춘 곳 (2026-11-04)
-- v7은 **기준 엔진으로 채택**(블라인드 7:5). 측정 결과는 `docs/engine_v8_trial.md`, 이유는 `docs/NOTES.md` 맨 아래. 엔진·카탈로그는 아직 그대로다.
-- 오염 1,015개 제외 확정(남는 12,438개), 복원은 v8 뒤로, 의심 108개는 빼지 않고 표시만(사장 결정). **카탈로그 파일에는 아직 반영하지 않았다.** 재측정은 메모리에서만 다시 만들어 했다.
-- 재측정 완료: `docs/engine_v8_remeasure.md`. 대조 근거: `docs/data_cleaning_words.md`(최신 수치는 10절).
-- 다시 돌리는 법: `py pipeline/experiments/decant_audit.py` → `py pipeline/experiments/engine_v8_remeasure.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `hold_list_50.csv`, `excluded_keys.csv`, `suspect_keys.csv`, `remeasure_traces.txt`.
-- 사장 검토 대기: 재측정 결과. OK를 받으면 "다음 세션에서 할 일" 5번의 계획 모드로 간다.
-- v8 계획에서 정할 것: P1 / P1-half 중 무엇을 쓸지(맹점 3/5), M1을 넣을지, 개선한 대조 도구를 강도 연결에도 쓸지(405행 추가, 55.9% → 59.2%).
+- v8 계획 승인 `docs/plan_v8.md`, 결과 `docs/engine_v8_final.md`, 이유 `docs/NOTES.md` 맨 아래. **엔진과 실제 카탈로그 파일은 아직 그대로다.** 측정은 메모리에서 했다.
+- 정리 확정값: 후보 12,394, 제외 키 1,079, 표시 36. 기준 목록은 `pipeline/manual/*_key_hashes.csv` (`pipeline/experiments/freeze_exclusions.py`).
+- 사장이 정할 것: ① P1 채택(추천) ② M1 포함 여부(규칙상 제외) ③ 맹점 판단 ④ 제외 목록을 공개 저장소에 둘지(해시는 공개 원본으로 되돌릴 수 있고, 첫 커밋 4166095에 사유 칸이 남아 있음) ⑤ 합치기 대표 제외 2건 처리.
+- 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에는 없다.
+- `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
+- **v8 뒤 할 일:** 이름 오류 복원(유명 향수가 카탈로그에서 빠진 상태일 수 있음), 웹 재출시작 확인 후보 10개 확인, 복구 후 오염 규칙을 통과한 2개 처리.
 
 ## 새 세션 시작 (이 순서대로)
 1. 브랜치: **`wip/scent-studio-stage4`** (main 아님. 승인 41/41 + 5단계 리뷰 뒤 main에 합침) — `git fetch && git switch wip/scent-studio-stage4 && git pull`
@@ -23,7 +23,7 @@
    - `py -m pip install -r pipeline/requirements.txt` (numpy, pytest)
    - `cd app && npm install && npx playwright install chromium`
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 43 + Vitest 37 통과
+4. 확인: `bash tests/run.sh` → 파이프라인 67 + Vitest 37 통과
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
@@ -72,7 +72,7 @@
 4. (끝남) **정리된 데이터로 재측정**: M1, P1, M1+P1, **P1-half(보정 강도 절반)**. 강도 보유 목표치도 정리된 데이터 기준으로 다시 계산한다(지금 추정 약 55.5%).
    - P1에서 맹점이 3/5로 떨어지는 케이스가 무엇인지 찾는다.
    - M1 적용 후에도 Kaleidoscope가 민트·라벤더·시더우드 1위인 이유를 점수 구성(어코드/노트 기여)으로 분해한다.
-5. **결과를 표 + 새로 발견한 문제 + 남은 확인 사항 형식으로 보고**한 뒤 **계획 모드로 v8 계획**을 올려 승인받는다(`/build-app` "계획 모드").
+5. (끝남, 2026-11-04) 재측정 보고와 v8 계획 승인. 이어서는 `docs/plan_v8.md`.
 6. 승인 뒤: v8 구현 → 측정 → 새 조합 20개 이상 블라인드(A/B/비슷함, 비슷함은 집계 제외, 승률 + 이항검정 p값, 프레시·플로럴·우디 오리엔탈·구르망 고르게) → 눈으로 평가 → 등급 확정.
 7. 그 뒤: Tversky 계수, TGSC 비중, 노트 상호작용 → `docs/plan.md` 단계 3(DB 구축) → 4(서버) → ★디자인 → 5(화면) → 6. 스킬 설치 답은 디자인 단계 전까지 받는다.
 
