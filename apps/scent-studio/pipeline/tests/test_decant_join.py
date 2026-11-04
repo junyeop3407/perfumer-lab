@@ -72,3 +72,9 @@ def test_데이터에_없는_노트는_있는_노트의_평균_강도를_쓴다(
 def test_아무도_투표하지_않은_향수는_값이_없다():
     assert D.note_weights({"rose", "lemon"}, {"rose": 0, "lemon": 0}, votes=500) is None
     assert D.note_weights({"rose"}, {}, votes=500) is None
+
+
+def test_숫자로_시작하는_이름은_연도로_지우지_않는다():
+    assert D.name_key("Floris", "1962 Floris") == ("floris", "1962")
+    assert D.name_key("Acme", "2022 Generation Man") == ("acme", "2022 generation man")
+    assert D.name_key("Acme", "Acme 2010 Eau de Parfum") == ("acme", "")  # 브랜드 뒤 연도는 예전처럼 지운다

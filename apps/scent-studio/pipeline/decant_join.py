@@ -13,6 +13,8 @@ import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
+from catalog_rules import split_lead_number
+
 MIN_NOTE_OVERLAP = 0.3
 VOTE_HALF = 70  # 신뢰 하한 참고값 약 70표. α = 표 / (표 + 70)
 WEIGHT_FLOOR = 0.05  # 강도 0 = 아무도 안 뽑은 노트. 0으로 두면 노트가 사라지므로 아주 작은 값을 준다
@@ -30,10 +32,48 @@ def norm(s: str | None) -> str:
 def name_key(brand: str, name: str) -> tuple[str, str]:
     """(브랜드, 이름에서 브랜드·연도·농도를 뺀 것)"""
     n, b = norm(name), norm(brand)
+    lead, n = split_lead_number(n, b) if b else ("", n)
     if b:
         n = n.replace(b, " ")
     n = re.sub(r"\b(19|20)\d{2}\b", " ", n)
-    return b, " ".join(_WORDS.sub(" ", n).split())
+    return b, " ".join(f"{lead} {_WORDS.sub(' ', n)}".split())
+
+
+_MODIFIERS = set("candied wild golden white absolute nectar zest juice skin peel sambac co2 essence extract oil".split())
+_ORIGINS = set("indian italian brazilian moroccan morocco french madagascan madagascar sicilian egyptian chinese peru sichuan tunisian spanish "
+               "indonesian bulgarian bourbon calabrian somalian paraguayan persian californian california japanese damask grasse turkish haitian "
+               "mexican virginia virginian texas american caribbean guatemalan amalfi mysore tahitian australian english russian african "
+               "florida ceylon tonkin siberian himalayan".split())
+_GENDER = re.compile(r"\b(for women|pour femme|femme|for men|pour homme|homme)\b")
+
+
+def norm_note(k: str) -> str:
+    """수식어·산지를 뗀 노트 이름 (대조 도구 개선, docs/data_cleaning_words.md 10절)"""
+    n = norm(k)
+    return " ".join(w for w in n.split() if w not in _MODIFIERS and w not in _ORIGINS) or n
+
+
+def name_gender(name: str) -> str | None:
+    found = {"f" if x in ("for women", "pour femme", "femme") else "m" for x in _GENDER.findall(norm(name))}
+    return found.pop() if len(found) == 1 else None
+
+
+def _source_gender(r: dict) -> str:
+    return name_gender(r["name"]) or {"female": "f", "male": "m"}.get(r.get("gender"), "u")
+
+
+def candidates(brand: str, name: str, year: int | None, index: dict) -> list[dict]:
+    """같은 이름 후보: 성별이 맞는 것만, 표 많은 순, 연도가 맞는 것 우선"""
+    cs = list(index.get(name_key(brand, name), ()))
+    mine = name_gender(name)
+    if mine:
+        cs = [x for x in cs if _source_gender(x) in (mine, "u")]
+    else:
+        cs = [x for x in cs if not name_gender(x["name"])] or cs
+    cs.sort(key=lambda r: -r["votes"])
+    if year:
+        cs = [r for r in cs if r["year"] and abs(r["year"] - year) <= YEAR_TOLERANCE] or cs
+    return cs
 
 
 def read_accord_map(path: Path) -> dict[str, str]:
@@ -116,8 +156,8 @@ def load_rows(db: Path) -> list[dict]:
         accords: dict[int, dict[str, int]] = defaultdict(dict)
         for pid, aid, s in c.execute("select perfume_id,accord_id,strength from perfume_accords"):
             accords[pid][accord_names[aid]] = s
-        return [{"id": pid, "brand": brands.get(bid, ""), "name": name or "", "year": year, "votes": votes,
+        return [{"id": pid, "brand": brands.get(bid, ""), "name": name or "", "year": year, "votes": votes, "gender": gender,
                  "notes": notes[pid], "accords": accords[pid]}
-                for pid, name, bid, year, votes in c.execute("select id,name,brand_id,year,vote_count from perfumes")]
+                for pid, name, bid, year, votes, gender in c.execute("select id,name,brand_id,year,vote_count,gender from perfumes")]
     finally:
         c.close()

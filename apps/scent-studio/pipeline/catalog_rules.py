@@ -112,6 +112,21 @@ _CONCENTRATION_WORDS = re.compile(
 )
 
 
+def restore_name(number: str | None, name: str) -> str:
+    """원본 CSV는 이름 맨 앞 숫자를 Number 칸으로 떼어 놓았다(2026-11-04). 숫자로 시작할 때만 다시 붙인다."""
+    number, name = (number or "").strip(), name.strip()
+    if not number[:1].isdigit():
+        return name
+    glue = "" if number.endswith(".") or re.match(r"[^\w\s]", name) else " "
+    return f"{number}{glue}{name}"
+
+
+def split_lead_number(text: str, brand: str) -> tuple[str, str]:
+    """이름 맨 앞 번호(1962 등)를 떼어 낸다. 연도 지우기에서 보호하려는 것. 브랜드가 그 숫자로 시작하면 번호가 아니다."""
+    m = re.match(r"\s*\d+\b", text)
+    return ("", text) if not m or text.strip().startswith(brand) else (m.group().strip(), text[m.end():])
+
+
 def dedupe_name(brand: str, name: str) -> tuple[str, str]:
     """같은 향수의 농도만 다른 것을 묶는 key (7절 4번)."""
     n = _CONCENTRATION_WORDS.sub("", name.lower())
@@ -158,15 +173,15 @@ def group_key(brand: str, name: str, concentration: str | None) -> str:
     """추천에서 하나로 묶는 key: 이름에서 브랜드·연도·농도를 뺀 것 (design.md 8-5절).
     예: "Mediterraneo Carthusia 2018 Eau de Parfum" → "carthusia|mediterraneo"
     Intense·Sport처럼 이름에 남는 말은 다른 향수로 본다."""
-    n = name.lower()
     b = brand.strip().lower()
+    lead, n = split_lead_number(name.lower(), b) if b else ("", name.lower())
     if b:
         n = n.replace(b, " ")
     if concentration:
         n = n.replace(concentration.strip().lower(), " ")
     n = re.sub(r"\b(19|20)\d{2}\b", " ", n)
     n = _GROUP_WORDS.sub(" ", n)
-    n = re.sub(r"[^\w]+", " ", n).strip()
+    n = f'{lead} {re.sub(r"[^\w]+", " ", n).strip()}'.strip()
     return f"{b}|{n or name.strip().lower()}"
 
 

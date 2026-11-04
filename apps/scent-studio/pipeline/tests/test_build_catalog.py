@@ -208,3 +208,102 @@ def test_거의_복사도_원본만_남기거나_묶음째_뺀다():
     marked = {e["key"]: e for e in res.report["copy_suspects"]}
     assert marked["L1"]["kind"] == marked["Z1"]["kind"] == "near_copy"
     assert marked["L1"]["decision"] == "excluded" and "F1" not in marked
+
+
+# ---------- v8 0단계: 제외는 빼기만 한다, 이름 앞 번호 복구 (2026-11-04 사장 요청) ----------
+def _build(rows, exclude=frozenset()):
+    return B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", exclude=exclude)
+
+
+def _keys(res):
+    return {p["key"] for p in res.catalog["perfumes"]}
+
+
+def _cleanup_rows():
+    a = ("lemon, bergamot", "rose", "musk")
+    b = ("cardamom, pink pepper", "iris", "vetiver")
+    c = ("lemon", "jasmine", "sandalwood")
+    return [
+        _copy_row("W1", "Dup", "Same Name", "2001", 500, a),     # 합치기 대표
+        _copy_row("W2", "Dup", "Same Name", "2001", 90, b),      # 합치기에서 진 행
+        _copy_row("X1", "Xhouse", "Original", "2001", 300, c, accords="citrus, woody", perfumer="Pierre"),  # 복사 원본
+        _copy_row("X2", "Xhouse", "Other", "2005", 40, a, accords="citrus, fresh", perfumer="Pierre"),
+        _copy_row("Y1", "Yhouse", "Copied", "2015", 300, c, accords="citrus, woody", perfumer="Pierre"),    # 복사본
+        _copy_row("N1", "Nhouse", "Normal", "2010", 70, b, accords="spicy, woody"),
+    ]
+
+
+def test_정리_후_행은_정리_전_행의_부분집합이고_제외한_만큼만_빠진다():
+    before = _keys(_build(_cleanup_rows()))
+    for exclude in ({"W1"}, {"X2"}, {"N1"}, {"W1", "X1"}, {"없는 행"}):
+        after = _keys(_build(_cleanup_rows(), exclude=exclude))
+        assert after <= before
+        assert after == before - exclude
+
+
+def test_합치기_대표를_빼도_진_행이_되살아나지_않는다():
+    assert "W2" not in _keys(_build(_cleanup_rows(), exclude={"W1"}))
+
+
+def test_복사_묶음의_행을_빼도_나머지_판정이_그대로다():
+    # X2를 미리 빼면 조향사 단서가 사라져 X1도 '원본을 못 가림'으로 빠지던 문제
+    res = _build(_cleanup_rows(), exclude={"X2"})
+    assert "X1" in _keys(res) and "Y1" not in _keys(res)
+    assert {e["key"]: e["decision"] for e in res.report["copy_suspects"]}["X1"] == "kept_original"
+
+
+def test_제외한_행의_노트는_프로필_계산에_쓰지_않는다():
+    rows = _cleanup_rows() + [_copy_row("Z1", "Zhouse", "Foul", "2010", 60, ("sewer", "rose", "musk"), accords="floral, sweet")]
+    assert "sewer" in {n["key"] for n in _build(rows).catalog["notes"]}
+    res = _build(rows, exclude={"Z1"})
+    assert "sewer" not in {n["key"] for n in res.catalog["notes"]}
+    assert res.report["excluded_rows"] == 1
+
+
+@pytest.mark.parametrize("number,name,expected", [
+    ("400", "XerJoff", "400 XerJoff"),
+    ("24", ", Faubourg", "24, Faubourg"),
+    ("360", "° Red for Men", "360° Red for Men"),
+    ("20", "|20", "20|20"),
+    ("12.", "Un Crime", "12.Un Crime"),
+    ("NA", "Plain", "Plain"),
+    ("", "Plain", "Plain"),
+    (None, "Plain", "Plain"),
+    ("T001", "Plain", "Plain"),  # 가짜 데이터의 일련번호
+    (".", "Plain", "Plain"),
+])
+def test_Number_칸이_있으면_이름에_붙는다(number, name, expected):
+    assert R.restore_name(number, name) == expected
+
+
+def _numbered(number, key, name, votes, notes):
+    return {**_copy_row(key, "Houseo", name, "2010", votes, notes), "Number": number}
+
+
+def test_복구_뒤_합치기에서_서로_다른_향수가_합쳐지지_않는다():
+    a = ("lemon, bergamot", "rose", "musk")
+    b = ("cardamom, pink pepper", "iris", "vetiver")
+    rows = [_numbered("1962", "F62", "Houseo", 300, a), _numbered("1976", "F76", "Houseo", 200, b),
+            _numbered("NA", "F00", "Houseo", 100, a)]
+    res = _build(rows)
+    assert _keys(res) == {"F62", "F76", "F00"}
+    names = {p["key"]: p["name"] for p in res.catalog["perfumes"]}
+    assert names == {"F62": "1962 Houseo", "F76": "1976 Houseo", "F00": "Houseo"}
+    assert len({p["group"] for p in res.catalog["perfumes"]}) == 3
+
+
+def test_숫자로_시작하는_이름이_연도로_지워지지_않는다():
+    assert R.group_key("Floris", "1962 Floris", None) != R.group_key("Floris", "1976 Floris", None)
+    assert R.group_key("Acme", "2022 Generation Man", None) == "acme|2022 generation man"
+    # 브랜드 뒤에 오는 연도는 예전처럼 지운다
+    assert R.group_key("Joop!", "Joop! Homme Joop! 1989 Eau de Toilette", "Eau de Toilette") == "joop!|homme"
+    assert R.group_key("Carolina Herrera", "Carolina Herrera Carolina Herrera 1988 Eau de Parfum", "Eau de Parfum") != \
+        R.group_key("Carolina Herrera", "1988 Carolina Herrera", None)
+
+
+def test_커밋한_제외_목록에는_향수_이름이_없고_해시만_있다():
+    for name, count in (("excluded_key_hashes.csv", 1079), ("suspect_key_hashes.csv", 36)):
+        rows = B.read_csv(PIPELINE / "manual" / name)
+        assert len(rows) == count == len({r["key_sha256"] for r in rows})
+        assert all(len(r["key_sha256"]) == 64 and set(r["key_sha256"]) <= set("0123456789abcdef") for r in rows)
+    assert B.read_key_hashes(PIPELINE / "manual" / "excluded_key_hashes.csv").isdisjoint(B.read_key_hashes(PIPELINE / "manual" / "suspect_key_hashes.csv"))

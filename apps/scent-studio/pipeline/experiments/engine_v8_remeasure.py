@@ -43,11 +43,10 @@ def build(exclude: set[str], m1: bool) -> dict:
     if m1:
         assert amap["aromatic"] == "green"
         amap["aromatic"] = "fresh"
-    rows = [r for r in RAW if R.perfume_key(r["URL"]) not in exclude]
-    return B.build(rows, R.REAL, B.read_aliases(MANUAL / "aliases.csv"), B.read_overrides(MANUAL / "note_family_override.csv"),
+    return B.build(RAW, R.REAL, B.read_aliases(MANUAL / "aliases.csv"), B.read_overrides(MANUAL / "note_family_override.csv"),
                    B.read_korean(MANUAL / "notes_ko.csv"), version="remeasure", source_name="x", source_note="x",
                    decant={"rows": DECANT, "accord_map": amap, "aliases": D.read_note_aliases(MANUAL / "fragrantica_note_aliases.csv")},
-                   junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv")).catalog
+                   junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv"), exclude=exclude).catalog
 
 
 def half(cat: dict, eng: E.Engine, est: tuple) -> tuple:

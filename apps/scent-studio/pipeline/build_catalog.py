@@ -10,9 +10,11 @@ import argparse
 import csv
 import datetime as dt
 import gzip
+import hashlib
 import json
 import math
 from collections import Counter, defaultdict
+from collections.abc import Collection
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -61,6 +63,15 @@ def _float(v):
 def read_csv(path: Path) -> list[dict]:
     with path.open(encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
+
+
+def key_hash(key: str) -> str:
+    """제외 목록은 공개 저장소에 올리므로 향수 이름이 든 key 대신 해시로 둔다 (2026-11-04)"""
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()
+
+
+def read_key_hashes(path: Path) -> set[str]:
+    return {r["key_sha256"] for r in read_csv(path)}
 
 
 def read_aliases(path: Path | None) -> dict[str, str]:
@@ -222,8 +233,9 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           overrides: dict[str, str], korean: dict[str, tuple[str, str]],
           version: str, source_note: str, junk: set[str] = frozenset(),
           brand_fixes: dict[str, str] | None = None, decant: dict | None = None,
-          source_name: str = "Parfumo") -> BuildResult:
-    """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용)."""
+          source_name: str = "Parfumo", exclude: Collection[str] = frozenset()) -> BuildResult:
+    """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용).
+    exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -264,7 +276,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
             continue
         candidates.append(Perfume(
             key=R.perfume_key(r["URL"]), brand=(brand_fixes or {}).get(r["Brand"].strip(), r["Brand"].strip()),
-            name=r["Name"].strip(),
+            name=R.restore_name(r.get("Number"), r["Name"]),
             year=_int(r["Release_Year"]),
             concentration=None if R.is_na(r["Concentration"]) else r["Concentration"].strip(),
             rating=_float(r["Rating_Value"]), rating_count=votes,
@@ -292,6 +304,8 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
 
     perfumes, copy_records = mark_copy_suspects(perfumes, rows, brand_of)
     report["copy_suspects"] = copy_records
+    report["excluded_rows"] = sum(p.key in exclude for p in perfumes)
+    perfumes = [p for p in perfumes if p.key not in exclude]
     report["copy_sets"] = len({r["set"] for r in copy_records if r["kind"] == "copy"})
     report["copy_excluded"] = sum(1 for r in copy_records if r["kind"] == "copy" and r["decision"] == "excluded")
     report["copy_kept_original"] = sum(1 for r in copy_records if r["kind"] == "copy" and r["decision"] == "kept_original")
@@ -517,6 +531,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
         f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/copy_suspects.csv`, 2026-10-31)",
+        f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 숨은 가짜 의심으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/*_key_hashes.csv`, 2026-11-04)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
@@ -575,16 +590,24 @@ def main() -> None:
     if not decant_db.exists():
         raise SystemExit("Decant 데이터가 없습니다. 먼저  py pipeline/fetch_decant.py")
     version = dt.date.today().strftime("%Y.%m.%d")
+    rows = read_csv(raw)
+    all_keys = {R.perfume_key(r["URL"]) for r in rows}
+    hashes = read_key_hashes(manual / "excluded_key_hashes.csv")
+    exclude = {k for k in all_keys if key_hash(k) in hashes}
+    if len(exclude) != len(hashes):
+        raise SystemExit(f"제외 목록 {len(hashes)}개 중 원본에서 찾은 것은 {len(exclude)}개입니다. 원본이나 목록이 바뀌었습니다.")
+    flags = read_key_hashes(manual / "suspect_key_hashes.csv")
     result = build(
-        read_csv(raw), R.REAL, read_aliases(manual / "aliases.csv"),
+        rows, R.REAL, read_aliases(manual / "aliases.csv"),
         read_overrides(manual / "note_family_override.csv"), read_korean(manual / "notes_ko.csv"),
         version=version, source_name="Parfumo, Fragrantica(Decant)",
         source_note="Parfumo (TidyTuesday 2024-12-10 정리본) + Decant의 Fragrantica 어코드·노트 강도(CC BY-NC-SA 4.0, 변형함). "
                     "함량 측정값이 아니라 커뮤니티가 느낀 강도 기반 추정치",
         decant={"rows": D.load_rows(decant_db), "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
                 "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv")},
-        junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"),
+        junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
     )
+    result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"
     write_catalog(result.catalog, out)
     # 앱에 넣는 카탈로그 (커밋하지 않음, .gitignore)
