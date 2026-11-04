@@ -1,17 +1,18 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan_v8.md: 0~5단계 끝, ★6 사장 검토 대기)
+현재 단계: 4 (구현 — docs/plan_v8.md: ★6 결정 완료, 7단계 시작 전)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 67/67 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-04 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: ★6 결정 (아래)
-다음 할 일: 사장 결정을 받아 docs/plan_v8.md 7단계(v8 적용) → 새 블라인드 → 눈 평가 → 등급
+결과: 파이프라인 69/69 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-04 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 저장소 비공개 전환, 합치기 규칙 변경, 7단계 시작 지시
+다음 할 일: 사장 지시 뒤 docs/plan_v8.md 7단계(P1 적용) → 새 블라인드 → 눈 평가 → 등급
 
 ## ★ 지금 멈춘 곳 (2026-11-04)
 - v8 계획 승인 `docs/plan_v8.md`, 결과 `docs/engine_v8_final.md`, 이유 `docs/NOTES.md` 맨 아래. **엔진과 실제 카탈로그 파일은 아직 그대로다.** 측정은 메모리에서 했다.
-- 정리 확정값: 후보 12,394, 제외 키 1,079, 표시 36. 기준 목록은 `pipeline/manual/*_key_hashes.csv` (`pipeline/experiments/freeze_exclusions.py`).
-- 사장이 정할 것: ① P1 채택(추천) ② M1 포함 여부(규칙상 제외) ③ 맹점 판단 ④ 제외 목록을 공개 저장소에 둘지(해시는 공개 원본으로 되돌릴 수 있고, 첫 커밋 4166095에 사유 칸이 남아 있음) ⑤ 합치기 대표 제외 2건 처리.
+- 정리 확정값: 후보 12,397, 제외 키 1,077, 표시 38. 기준 목록은 `pipeline/manual/*_key_hashes.csv` (`pipeline/experiments/freeze_exclusions.py`).
+- ★6 결정(2026-11-04): P1 채택, M1 제외, 맹점 공식 4/5 통과. **7단계는 사장의 다음 지시 뒤에 시작한다.** 대기 중: ① 저장소 비공개 전환(사장이 실행) ② 합치기 규칙 변경 여부(묶음 261개 중 겹침 0.5 미만 72개).
+- P1-half는 블라인드 미달 시 예비안.
 - 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에는 없다.
 - `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
 - **v8 뒤 할 일:** 이름 오류 복원(유명 향수가 카탈로그에서 빠진 상태일 수 있음), 웹 재출시작 확인 후보 10개 확인, 복구 후 오염 규칙을 통과한 2개 처리.
@@ -23,7 +24,7 @@
    - `py -m pip install -r pipeline/requirements.txt` (numpy, pytest)
    - `cd app && npm install && npx playwright install chromium`
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 67 + Vitest 37 통과
+4. 확인: `bash tests/run.sh` → 파이프라인 69 + Vitest 37 통과
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.

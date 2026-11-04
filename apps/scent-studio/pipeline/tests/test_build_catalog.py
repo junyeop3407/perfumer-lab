@@ -302,8 +302,28 @@ def test_숫자로_시작하는_이름이_연도로_지워지지_않는다():
 
 
 def test_커밋한_제외_목록에는_향수_이름이_없고_해시만_있다():
-    for name, count in (("excluded_key_hashes.csv", 1079), ("suspect_key_hashes.csv", 36)):
+    for name, count in (("excluded_key_hashes.csv", 1077), ("suspect_key_hashes.csv", 38)):
         rows = B.read_csv(PIPELINE / "manual" / name)
         assert len(rows) == count == len({r["key_sha256"] for r in rows})
         assert all(len(r["key_sha256"]) == 64 and set(r["key_sha256"]) <= set("0123456789abcdef") for r in rows)
     assert B.read_key_hashes(PIPELINE / "manual" / "excluded_key_hashes.csv").isdisjoint(B.read_key_hashes(PIPELINE / "manual" / "suspect_key_hashes.csv"))
+
+
+def test_따로_두라고_한_행은_이름이_같아도_합치지_않는다():
+    a = ("lemon, bergamot", "rose", "musk")
+    b = ("cardamom, pink pepper", "iris", "vetiver")
+    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, a), _copy_row("A2", "Dup", "Same Name", "2004", 70, b),
+            _copy_row("B1", "Dup", "Other Name", "2013", 200, a), _copy_row("B2", "Dup", "Other Name", "2004", 60, b)]
+    res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", keep_separate={"A2"})
+    assert _keys(res) == {"A1", "A2", "B1"}, "지정한 행만 분리하고 합치기 규칙은 그대로다"
+    g = {p["key"]: p["group"] for p in res.catalog["perfumes"]}
+    assert g["A1"] != g["A2"]
+
+
+def test_해시_목록의_행을_원본에서_찾고_없으면_멈춘다(tmp_path):
+    f = tmp_path / "h.csv"
+    f.write_text("key_sha256\n" + B.key_hash("X1") + "\n", encoding="utf-8")
+    rows = [{"URL": "https://example.invalid/X1"}, {"URL": "https://example.invalid/X2"}]
+    assert B.keys_from_hashes(rows, f) == {"X1"}
+    with pytest.raises(SystemExit):
+        B.keys_from_hashes(rows[1:], f)

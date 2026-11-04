@@ -140,6 +140,7 @@ def main() -> None:
 
     cat = B.build(RAW, R.REAL, ALIASES, B.read_overrides(MANUAL / "note_family_override.csv"), B.read_korean(MANUAL / "notes_ko.csv"),
                   version="freeze", source_name="x", source_note="x", junk=JUNK, brand_fixes=BRAND_FIXES,
+                  keep_separate=B.keys_from_hashes(RAW, MANUAL / "dedupe_keep_separate_hashes.csv"),
                   decant={"rows": DECANT, "accord_map": AMAP, "aliases": NOTE_ALIASES}).catalog["perfumes"]
     ps = {p["key"]: p for p in cat}
     print("복구 후 정리 전 후보", len(ps), "새로 들어옴", len(set(ps) - set(old)), "빠짐", len(set(old) - set(ps)))
@@ -153,8 +154,10 @@ def main() -> None:
     print("오염 확정 중 복구 후 규칙을 통과", len(passes))
 
     sus = {k: j for k, j in suspects_of(list(ps.values())).items() if k not in pollution}
-    hidden = excluded_by(sus)
+    cleared = B.keys_from_hashes(RAW, MANUAL / "owner_cleared_hashes.csv")  # 사장이 웹으로 진짜임을 확인한 행은 제외하지 않고 표시만
+    hidden = excluded_by(sus) - cleared
     flags = set(sus) - hidden
+    assert cleared <= flags
     print("숨은 가짜: 의심", len(sus), "제외", len(hidden), "표시", len(flags))
     print("제외 키", len(pollution | hidden), "최종 후보", len(set(ps) - pollution - hidden))
     strength = sum(bool(p.get("noteWeights")) for k, p in ps.items() if k not in pollution | hidden)

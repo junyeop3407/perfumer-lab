@@ -70,7 +70,8 @@ def build(old: bool, m1: bool) -> dict:
         decant["brand_aliases"] = D.read_brand_aliases(MANUAL / "decant_brand_aliases.csv")
     return B.build(RAW, R.REAL, B.read_aliases(MANUAL / "aliases.csv"), B.read_overrides(MANUAL / "note_family_override.csv"),
                    B.read_korean(MANUAL / "notes_ko.csv"), version="final", source_name="x", source_note="x", decant=decant,
-                   junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv"), exclude=EXCLUDE).catalog
+                   junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv"), exclude=EXCLUDE,
+                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "dedupe_keep_separate_hashes.csv")).catalog
 
 
 def half(cat: dict, eng: E.Engine, est: tuple) -> tuple:

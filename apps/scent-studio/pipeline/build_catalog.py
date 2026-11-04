@@ -75,6 +75,15 @@ def read_key_hashes(path: Path) -> set[str]:
     return {r["key_sha256"] for r in read_csv(path)}
 
 
+def keys_from_hashes(rows: list[dict], path: Path) -> set[str]:
+    """해시 목록 → 원본의 향수 key. 원본에서 못 찾는 항목이 있으면 멈춘다."""
+    hashes = read_key_hashes(path)
+    keys = {k for k in (R.perfume_key(r["URL"]) for r in rows) if key_hash(k) in hashes}
+    if len(keys) != len(hashes):
+        raise SystemExit(f"{path.name}: {len(hashes)}개 중 원본에서 찾은 것은 {len(keys)}개입니다. 원본이나 목록이 바뀌었습니다.")
+    return keys
+
+
 def read_aliases(path: Path | None) -> dict[str, str]:
     if path is None or not path.exists():
         return {}
@@ -234,9 +243,11 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           overrides: dict[str, str], korean: dict[str, tuple[str, str]],
           version: str, source_note: str, junk: set[str] = frozenset(),
           brand_fixes: dict[str, str] | None = None, decant: dict | None = None,
-          source_name: str = "Parfumo", exclude: Collection[str] = frozenset()) -> BuildResult:
+          source_name: str = "Parfumo", exclude: Collection[str] = frozenset(),
+          keep_separate: Collection[str] = frozenset()) -> BuildResult:
     """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용).
-    exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다."""
+    exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다.
+    keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/dedupe_keep_separate_hashes.csv)."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -290,7 +301,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     # 4: 중복 합치기 (평가 수 많은 것 하나만)
     best: dict[tuple[str, str], Perfume] = {}
     for p in candidates:
-        k = R.dedupe_name(p.brand, p.name)
+        k = (p.brand, p.key) if p.key in keep_separate else R.dedupe_name(p.brand, p.name)
         if k not in best or p.rating_count > best[k].rating_count:
             best[k] = p
     perfumes = sorted(best.values(), key=lambda p: p.key)
@@ -592,11 +603,7 @@ def main() -> None:
         raise SystemExit("Decant 데이터가 없습니다. 먼저  py pipeline/fetch_decant.py")
     version = dt.date.today().strftime("%Y.%m.%d")
     rows = read_csv(raw)
-    all_keys = {R.perfume_key(r["URL"]) for r in rows}
-    hashes = read_key_hashes(manual / "excluded_key_hashes.csv")
-    exclude = {k for k in all_keys if key_hash(k) in hashes}
-    if len(exclude) != len(hashes):
-        raise SystemExit(f"제외 목록 {len(hashes)}개 중 원본에서 찾은 것은 {len(exclude)}개입니다. 원본이나 목록이 바뀌었습니다.")
+    exclude = keys_from_hashes(rows, manual / "excluded_key_hashes.csv")
     flags = read_key_hashes(manual / "suspect_key_hashes.csv")
     result = build(
         rows, R.REAL, read_aliases(manual / "aliases.csv"),
@@ -608,6 +615,7 @@ def main() -> None:
                 "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv"),
                 "brand_aliases": D.read_brand_aliases(manual / "decant_brand_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
+        keep_separate=keys_from_hashes(rows, manual / "dedupe_keep_separate_hashes.csv"),
     )
     result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"
