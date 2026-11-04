@@ -52,3 +52,10 @@ def test_v7_비교_조합은_예전_v3_문서에_없던_것만_쓴다():
     assert len(names) == len(set(names)) == 12
     assert not set(names) & {c[0] for c in V.v3_combos()}  # 그 문서를 봤다면 v6 목록을 알아볼 수 있다
     assert sum(any(s == "strong" for _, _, s in c[1]) for c in V.V6_COMPARE_COMBOS) >= 2
+
+
+def test_W는_사람_유사와_가림을_강도_보유_비율로_평균한다():
+    # 데이터 A 재측정 값으로 사장이 계산한 40.7 / 43.4 / 41.9를 재현한다
+    assert round(V.weighted_hit(44.3, 36.2, 0.559), 1) == 40.7
+    assert round(V.weighted_hit(41.6, 45.6, 0.559), 1) == 43.4
+    assert round(V.weighted_hit(42.3, 41.4, 0.559), 1) == 41.9

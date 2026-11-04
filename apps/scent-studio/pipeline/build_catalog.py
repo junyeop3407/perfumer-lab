@@ -66,7 +66,8 @@ def read_csv(path: Path) -> list[dict]:
 
 
 def key_hash(key: str) -> str:
-    """제외 목록은 공개 저장소에 올리므로 향수 이름이 든 key 대신 해시로 둔다 (2026-11-04)"""
+    """제외 목록에 향수 이름이 그대로 보이지 않게 해시로 둔다 (2026-11-04).
+    주의: 익명화가 아니다. 원본 CSV의 주소는 공개라 누구나 같은 해시를 계산해 어떤 향수인지 알아낼 수 있다."""
     return hashlib.sha256(key.encode("utf-8")).hexdigest()
 
 
@@ -336,7 +337,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     shares: dict[str, dict[str, float]] = {}
     note_share: dict[str, dict[str, float]] = {}
     if decant:
-        index = D.source_index(decant["rows"], decant["aliases"])
+        index = D.source_index(decant["rows"], decant["aliases"], decant.get("brand_aliases"))
         matched = 0
         for p in perfumes:
             hit = D.match(p.brand, p.name, p.year, p.all_notes, index)
@@ -604,7 +605,8 @@ def main() -> None:
         source_note="Parfumo (TidyTuesday 2024-12-10 정리본) + Decant의 Fragrantica 어코드·노트 강도(CC BY-NC-SA 4.0, 변형함). "
                     "함량 측정값이 아니라 커뮤니티가 느낀 강도 기반 추정치",
         decant={"rows": D.load_rows(decant_db), "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
-                "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv")},
+                "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv"),
+                "brand_aliases": D.read_brand_aliases(manual / "decant_brand_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
     )
     result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])

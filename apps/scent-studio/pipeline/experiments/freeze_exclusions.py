@@ -2,7 +2,7 @@
 
 앱 폴더에서:  py pipeline/experiments/freeze_exclusions.py
 읽는 것: pipeline/data/out/의 정리 전 catalog.json.gz, excluded_keys.csv, suspect_keys.csv (decant_audit.py의 결과)
-만드는 것: pipeline/manual/{excluded,suspect}_key_hashes.csv (이름 없음, 커밋), pipeline/data/out/의 이름 든 표 (커밋 안 함)
+만드는 것: pipeline/manual/{excluded,suspect}_key_hashes.csv (이름은 안 보이지만 원본 주소로 되돌릴 수 있음, 커밋), pipeline/data/out/의 이름 든 표 (커밋 안 함)
 
 - 오염 1,015개는 확정이라 다시 판정하지 않는다. 복구로 새로 후보가 된 행에만 같은 규칙을 쓴다.
 - 숨은 가짜는 decant_audit.py의 정의 그대로 다시 판정한다. 연도 차이 5년 이상이면서 어코드 겹침 50% 미만이면 제외, 나머지는 표시.
@@ -104,11 +104,9 @@ def excluded_by(sus: dict[str, dict]) -> set[str]:
     return {k for k, j in sus.items() if j["gap"] >= 5 and j["acc"] < 0.5}
 
 
-def write_hashes(path: Path, rows: list[tuple[str, str]]) -> None:
-    with path.open("w", encoding="utf-8", newline="\n") as f:
-        w = csv.writer(f, lineterminator="\n")
-        w.writerow(["key_sha256", "reason"])
-        w.writerows(sorted((B.key_hash(k), why) for k, why in rows))
+def write_hashes(path: Path, keys: set[str]) -> None:
+    # 사유는 적지 않는다. 해시는 원본 주소로 되돌릴 수 있어서 '가짜 의심' 표시가 특정 향수에 붙게 된다
+    path.write_text("key_sha256\n" + "".join(h + "\n" for h in sorted(map(B.key_hash, keys))), encoding="utf-8", newline="\n")
 
 
 def write_table(name: str, rows: list[dict]) -> None:
@@ -162,8 +160,8 @@ def main() -> None:
     strength = sum(bool(p.get("noteWeights")) for k, p in ps.items() if k not in pollution | hidden)
     print("강도 보유(옛 연결)", strength, f"{100 * strength / len(set(ps) - pollution - hidden):.2f}%")
 
-    write_hashes(MANUAL / "excluded_key_hashes.csv", [(k, "pollution") for k in pollution] + [(k, "hidden_fake") for k in hidden])
-    write_hashes(MANUAL / "suspect_key_hashes.csv", [(k, "flag_only") for k in flags])
+    write_hashes(MANUAL / "excluded_key_hashes.csv", pollution | hidden)
+    write_hashes(MANUAL / "suspect_key_hashes.csv", flags)
 
     # 표시 40개가 어떻게 바뀌었나
     changes = []

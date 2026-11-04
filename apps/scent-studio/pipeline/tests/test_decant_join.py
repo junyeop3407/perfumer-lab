@@ -78,3 +78,32 @@ def test_숫자로_시작하는_이름은_연도로_지우지_않는다():
     assert D.name_key("Floris", "1962 Floris") == ("floris", "1962")
     assert D.name_key("Acme", "2022 Generation Man") == ("acme", "2022 generation man")
     assert D.name_key("Acme", "Acme 2010 Eau de Parfum") == ("acme", "")  # 브랜드 뒤 연도는 예전처럼 지운다
+
+
+def test_수식어와_산지를_떼고_노트를_맞춘다():
+    idx = D.source_index([{"id": 1, "brand": "Acme", "name": "X", "year": 2010, "votes": 100,
+                           "notes": {"Jasmine": 90, "Bergamot": 50, "Orange": 10}, "accords": {}}], {})
+    notes = {"jasmine sambac", "italian bergamot", "orange zest"}
+    assert D.match("Acme", "X", 2010, notes, idx)["id"] == 1
+    w = D.note_weights(notes, idx[("acme", "x")][0]["notes"], votes=10_000)
+    assert w["jasmine sambac"] > w["italian bergamot"] > w["orange zest"]
+
+
+def test_성별이_다른_같은_이름은_고르지_않는다():
+    idx = D.source_index([
+        {"id": 1, "brand": "Acme", "name": "Indigo", "gender": "male", "year": 2010, "votes": 9000, "notes": {"Rose": 100}, "accords": {}},
+        {"id": 2, "brand": "Acme", "name": "Indigo", "gender": "female", "year": 2010, "votes": 50, "notes": {"Rose": 100}, "accords": {}},
+    ], {})
+    assert D.match("Acme", "Indigo for Women", 2010, {"rose"}, idx)["id"] == 2
+
+
+def test_브랜드_별칭으로_표기가_다른_브랜드를_연결한다():
+    rows = [{"id": 1, "brand": "Lattafa Perfumes", "name": "Dubai Lattafa Perfumes", "year": 2023, "votes": 100, "notes": {"Rose": 100}, "accords": {}}]
+    assert D.match("Lattafa", "Dubai", 2023, {"rose"}, D.source_index(rows, {})) is None
+    assert D.match("Lattafa", "Dubai", 2023, {"rose"}, D.source_index(rows, {}, {"lattafa perfumes": "lattafa"}))["id"] == 1
+
+
+def test_브랜드_별칭표는_한_브랜드가_여러_곳으로_갈리지_않는다():
+    aliases = D.read_brand_aliases(Path(__file__).resolve().parent.parent / "manual" / "decant_brand_aliases.csv")
+    assert aliases["lattafa perfumes"] == "lattafa"
+    assert len(set(aliases.values())) == len(aliases)

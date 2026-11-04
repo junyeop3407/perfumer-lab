@@ -65,6 +65,11 @@ def blend(spec):
     return [BlendNote(k, layer, engine_ref.intensity(s)) for k, layer, s in spec]
 
 
+def weighted_hit(real: float, masked: float, share: float) -> float:
+    """W: 강도 있는 향수 쪽은 사람 유사, 없는 쪽은 가림 시험으로 보고 카탈로그 비율로 평균한다 (2026-11-04 사장 요청)"""
+    return share * real + (1 - share) * masked
+
+
 def cell(text: str) -> str:
     """마크다운 표 칸: 이름 안의 | 가 칸을 밀지 않게"""
     return text.replace("|", "\\|")

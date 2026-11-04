@@ -87,7 +87,13 @@ def read_note_aliases(path: Path) -> dict[str, str]:
         return {norm(r["fragrantica"]): norm(r["catalog"]) for r in csv.DictReader(f)}
 
 
-def source_index(rows: list[dict], aliases: dict[str, str]) -> dict[tuple[str, str], list[dict]]:
+def read_brand_aliases(path: Path) -> dict[str, str]:
+    """Decant 브랜드(정규화) → 카탈로그 브랜드(정규화). 표기만 다른 같은 브랜드 (manual/decant_brand_aliases.csv)"""
+    with path.open(encoding="utf-8", newline="") as f:
+        return {r["decant"]: r["catalog"] for r in csv.DictReader(f)}
+
+
+def source_index(rows: list[dict], aliases: dict[str, str], brand_aliases: dict[str, str] | None = None) -> dict[tuple[str, str], list[dict]]:
     """원본 행 {id, brand, name, year, votes, notes{이름: 강도}, accords{이름: 강도}} → 이름으로 찾는 표"""
     out: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for r in rows:
@@ -95,19 +101,18 @@ def source_index(rows: list[dict], aliases: dict[str, str]) -> dict[tuple[str, s
         for raw, weight in r["notes"].items():
             k = aliases.get(norm(raw), norm(raw))
             notes[k] = max(weight, notes.get(k, 0))
-        out[name_key(r["brand"], r["name"])].append({**r, "notes": notes})
+        brand, name = name_key(r["brand"], r["name"])
+        out[(brand_aliases or {}).get(brand, brand), name].append({**r, "notes": notes})
     return out
 
 
 def match(brand: str, name: str, year: int | None, notes: set[str], index: dict) -> dict | None:
-    """같은 이름 중 표가 많은 향수(연도가 맞는 것 우선). 노트가 MIN_NOTE_OVERLAP 미만 겹치면 다른 향수로 본다."""
-    cands = sorted(index.get(name_key(brand, name), ()), key=lambda r: -r["votes"])
+    """같은 이름 후보 중 첫째(candidates). 노트가 MIN_NOTE_OVERLAP 미만 겹치면 다른 향수로 본다."""
+    cands = candidates(brand, name, year, index)
     if not cands:
         return None
-    if year:
-        cands = [r for r in cands if r["year"] and abs(r["year"] - year) <= YEAR_TOLERANCE] or cands
     hit = cands[0]
-    mine, other = {norm(k) for k in notes}, set(hit["notes"])
+    mine, other = {norm_note(k) for k in notes}, {norm_note(k) for k in hit["notes"]}
     union = mine | other
     return hit if union and len(mine & other) / len(union) >= MIN_NOTE_OVERLAP else None
 
@@ -125,12 +130,15 @@ def accord_shares(strengths: dict[str, int], accord_map: dict[str, str]) -> dict
 
 def note_weights(notes: set[str], raw: dict[str, int], votes: int) -> dict[str, float] | None:
     """향수 안의 노트 강도 몫 w (합 1). w ∝ max(강도, 하한)^α. 투표가 없는 향수는 None(같은 몫으로 계산)."""
-    found = [raw[norm(k)] / 100 for k in notes if norm(k) in raw]
+    by_note: dict[str, int] = {}
+    for k, v in raw.items():
+        by_note[norm_note(k)] = max(v, by_note.get(norm_note(k), 0))
+    found = [by_note[norm_note(k)] / 100 for k in notes if norm_note(k) in by_note]
     if not found or max(found) == 0:
         return None
     alpha = votes / (votes + VOTE_HALF)
     fill = statistics.mean(found)
-    vals = {k: max(raw[norm(k)] / 100 if norm(k) in raw else fill, WEIGHT_FLOOR) ** alpha for k in notes}
+    vals = {k: max(by_note[norm_note(k)] / 100 if norm_note(k) in by_note else fill, WEIGHT_FLOOR) ** alpha for k in notes}
     total = sum(vals.values())
     return {k: v / total for k, v in vals.items()}
 
