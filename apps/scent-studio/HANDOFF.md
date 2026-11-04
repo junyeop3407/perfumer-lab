@@ -24,7 +24,7 @@
 - 위 세 가지를 사장에게 그대로 보여 주고 답을 받은 뒤 진행한다. 답 없이 7단계를 시작하지 않는다.
 - `engine_v8_final.md`는 후보 12,394개 때 잰 값이다. 7단계에서 다시 만든다.
 - 합치기 규칙을 바꾸면 후보 수와 정리 목록의 판정이 달라질 수 있으므로 `freeze_exclusions.py`를 다시 돌려 확정값을 보고한다. 이 스크립트는 `pipeline/data/out/`의 정리 전 카탈로그를 읽으니, 7단계에서 카탈로그를 다시 만들기 전에 돌린다.
-- 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에는 없다.
+- 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에서는 비공개 저장소 `junyeop3407/perfumer-lab-private`에서 받아 이 폴더에 복사한다. 자동으로 맞춰지지 않으니 표가 바뀌면 다시 올린다(마지막 백업 2026-11-04).
 - `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
 - **v8 뒤 할 일:** 이름 오류 복원(유명 향수가 카탈로그에서 빠진 상태일 수 있음), 웹 재출시작 확인 후보 10개 확인, 복구 후 오염 규칙을 통과한 2개 처리.
 
