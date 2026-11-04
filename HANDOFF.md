@@ -1,9 +1,9 @@
 # HANDOFF — 다음 세션 시작 가이드
 
-마지막 갱신: 2026-11-02 (엔진 v7 완료: 어코드·노트 강도, 비상업 운영) / 2026-11-01 (ai-workflow 견본 최신판 반영: CLAUDE.md를 rules·skills·hooks·agents로 나눔, /handoff 스킬, guard-git·protect-tests 훅, test-runner·qa-reviewer·red-team 에이전트)
+마지막 갱신: 2026-11-04 (v7 채택, v8 후보 측정) / 2026-11-02 (엔진 v7 완료: 어코드·노트 강도, 비상업 운영) / 2026-11-01 (ai-workflow 견본 최신판 반영: CLAUDE.md를 rules·skills·hooks·agents로 나눔, /handoff 스킬, guard-git·protect-tests 훅, test-runner·qa-reviewer·red-team 에이전트)
 
 ## 1. 한 줄 요약
-이석균 선배님 특강(AI 기초)의 방식대로 앱을 만드는 **작업장 견본**이다. 사용자는 **사장**, Claude의 팀들(기획·디자인·프론트엔드·백엔드·QA)은 **직원**이고, 모든 팀의 결과물은 사장 검토를 받는다. 규칙, `/build-app` 스킬, 교차 리뷰, 훅이 준비되어 있다. **진행 중인 앱: `apps/scent-studio`(향 조합 → 비슷한 향수 추천, 웹·안드로이드·아이폰 공통 Expo 앱) — 4단계 구현 중, 엔진 v7 완료·사장 블라인드 답 대기. 이어 할 때는 브랜치 `wip/scent-studio-stage4`로 바꾸고(`git switch wip/scent-studio-stage4`) `apps/scent-studio/HANDOFF.md`의 "★ 세션을 시작하면 사장에게 먼저 말할 것"을 사장에게 그대로 전한 뒤 → "새 세션 시작" → "지금 상태" → "다음 세션에서 할 일"부터** (2026-11-02).
+이석균 선배님 특강(AI 기초)의 방식대로 앱을 만드는 **작업장 견본**이다. 사용자는 **사장**, Claude의 팀들(기획·디자인·프론트엔드·백엔드·QA)은 **직원**이고, 모든 팀의 결과물은 사장 검토를 받는다. 규칙, `/build-app` 스킬, 교차 리뷰, 훅이 준비되어 있다. **진행 중인 앱: `apps/scent-studio`(향 조합 → 비슷한 향수 추천, 웹·안드로이드·아이폰 공통 Expo 앱) — 4단계 구현 중, v7 채택·v8 후보 측정 끝, 사장 결정 대기. 이어 할 때는 브랜치 `wip/scent-studio-stage4`로 바꾸고(`git switch wip/scent-studio-stage4`) `apps/scent-studio/HANDOFF.md`의 "★ 지금 멈춘 곳"부터** (2026-11-04).
 
 ## 2. 새 세션 시작 방법
 - 인텔리제이(또는 터미널)에서 이 폴더를 열고 `claude` 실행
@@ -27,7 +27,7 @@
 | 단계 | 내용 | 상태 |
 |---|---|---|
 | 0~3 | 폴더 구조, 규칙(CLAUDE.md), `/build-app` 스킬, 훅 | ✅ 준비됨 |
-| 4 | 첫 앱 만들기 (`apps/scent-studio/`) | 🔄 4단계(구현) 중 — 엔진 v7 완료, 사장 블라인드 답·눈으로 평가 대기 → 그다음 DB·서버·디자인·화면 |
+| 4 | 첫 앱 만들기 (`apps/scent-studio/`) | 🔄 4단계(구현) 중 — v7 채택, v8 결정 대기 → 눈으로 평가 → 그다음 DB·서버·디자인·화면 |
 | 교차 리뷰 | 5단계에 Gemini CLI 리뷰 (**필수**, 변경분 1라운드, README 참고) | ✅ 준비됨 |
 
 ## 5. 파일 구조
