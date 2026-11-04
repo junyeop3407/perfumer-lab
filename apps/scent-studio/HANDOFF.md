@@ -4,14 +4,14 @@
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 69/69 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-04 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 저장소 비공개 전환, 합치기 규칙 변경, 7단계 시작 지시
+결과: 파이프라인 72/72 · TS 엔진(Vitest) 37/37 통과 (2026-11-04 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-04 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 합치기 규칙 변경, 7단계 시작 지시
 다음 할 일: 사장 지시 뒤 docs/plan_v8.md 7단계(P1 적용) → 새 블라인드 → 눈 평가 → 등급
 
 ## ★ 지금 멈춘 곳 (2026-11-04)
 - v8 계획 승인 `docs/plan_v8.md`, 결과 `docs/engine_v8_final.md`, 이유 `docs/NOTES.md` 맨 아래. **엔진과 실제 카탈로그 파일은 아직 그대로다.** 측정은 메모리에서 했다.
-- 정리 확정값: 후보 12,397, 제외 키 1,077, 표시 38. 기준 목록은 `pipeline/manual/*_key_hashes.csv` (`pipeline/experiments/freeze_exclusions.py`).
-- ★6 결정(2026-11-04): P1 채택, M1 제외, 맹점 공식 4/5 통과. **7단계는 사장의 다음 지시 뒤에 시작한다.** 대기 중: ① 저장소 비공개 전환(사장이 실행) ② 합치기 규칙 변경 여부(묶음 261개 중 겹침 0.5 미만 72개).
+- 정리 확정값: 후보 12,397, 제외 키 1,077, 표시 38. 기준 목록은 `pipeline/manual/{filtered,review}_keys.csv` (`pipeline/experiments/freeze_exclusions.py`).
+- ★6 결정(2026-11-04): P1 채택, M1 제외, 맹점 공식 4/5 통과. **7단계는 사장의 다음 지시 뒤에 시작한다.** 대기 중: 합치기 규칙 변경 여부(묶음 261개 중 겹침 0.5 미만 72개).
 - P1-half는 블라인드 미달 시 예비안.
 - 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에는 없다.
 - `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
@@ -23,8 +23,9 @@
 3. 새 컴퓨터 준비(한 번):
    - `py -m pip install -r pipeline/requirements.txt` (numpy, pytest)
    - `cd app && npm install && npx playwright install chromium`
+   - 비밀 키: 환경 변수 `SCENT_KEY_SECRET` (저장소 README "데이터 정리 목록의 비밀 키"). 없으면 실제 카탈로그를 만들 수 없다. 테스트 1개는 키와 원본이 있을 때만 돈다
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 69 + Vitest 37 통과
+4. 확인: `bash tests/run.sh` → 파이프라인 72 + Vitest 37 (키와 원본이 없으면 71, 1개 건너뜀) 통과
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.

@@ -11,8 +11,10 @@ import csv
 import datetime as dt
 import gzip
 import hashlib
+import hmac
 import json
 import math
+import os
 from collections import Counter, defaultdict
 from collections.abc import Collection
 from dataclasses import dataclass, field
@@ -65,14 +67,19 @@ def read_csv(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+SECRET_ENV = "SCENT_KEY_SECRET"
+
+
 def key_hash(key: str) -> str:
-    """제외 목록에 향수 이름이 그대로 보이지 않게 해시로 둔다 (2026-11-04).
-    주의: 익명화가 아니다. 원본 CSV의 주소는 공개라 누구나 같은 해시를 계산해 어떤 향수인지 알아낼 수 있다."""
-    return hashlib.sha256(key.encode("utf-8")).hexdigest()
+    """정리 목록의 향수 key를 비밀 키를 섞은 HMAC으로 둔다 (2026-11-04). 원본 주소는 공개라 키 없는 해시는 되돌릴 수 있다."""
+    secret = os.environ.get(SECRET_ENV)
+    if not secret:
+        raise SystemExit(f"환경 변수 {SECRET_ENV}가 없습니다. 설정 방법은 저장소 README의 '데이터 정리 목록의 비밀 키'를 보세요.")
+    return hmac.new(secret.encode("utf-8"), key.encode("utf-8"), hashlib.sha256).hexdigest()
 
 
 def read_key_hashes(path: Path) -> set[str]:
-    return {r["key_sha256"] for r in read_csv(path)}
+    return {r["key_hmac"] for r in read_csv(path)}
 
 
 def keys_from_hashes(rows: list[dict], path: Path) -> set[str]:
@@ -247,7 +254,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           keep_separate: Collection[str] = frozenset()) -> BuildResult:
     """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용).
     exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다.
-    keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/dedupe_keep_separate_hashes.csv)."""
+    keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/separate_keys.csv)."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -543,7 +550,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
         f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/copy_suspects.csv`, 2026-10-31)",
-        f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 숨은 가짜 의심으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/*_key_hashes.csv`, 2026-11-04)",
+        f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 검토 대상으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/{filtered,review}_keys.csv`, 2026-11-04)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
@@ -603,8 +610,8 @@ def main() -> None:
         raise SystemExit("Decant 데이터가 없습니다. 먼저  py pipeline/fetch_decant.py")
     version = dt.date.today().strftime("%Y.%m.%d")
     rows = read_csv(raw)
-    exclude = keys_from_hashes(rows, manual / "excluded_key_hashes.csv")
-    flags = read_key_hashes(manual / "suspect_key_hashes.csv")
+    exclude = keys_from_hashes(rows, manual / "filtered_keys.csv")
+    flags = read_key_hashes(manual / "review_keys.csv")
     result = build(
         rows, R.REAL, read_aliases(manual / "aliases.csv"),
         read_overrides(manual / "note_family_override.csv"), read_korean(manual / "notes_ko.csv"),
@@ -615,7 +622,7 @@ def main() -> None:
                 "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv"),
                 "brand_aliases": D.read_brand_aliases(manual / "decant_brand_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
-        keep_separate=keys_from_hashes(rows, manual / "dedupe_keep_separate_hashes.csv"),
+        keep_separate=keys_from_hashes(rows, manual / "separate_keys.csv"),
     )
     result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"

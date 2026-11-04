@@ -2,7 +2,7 @@
 
 앱 폴더에서:  py pipeline/experiments/decant_audit.py
 표준 출력은 이름 없는 집계만. 향수 이름이 든 표는 커밋 안 하는 pipeline/data/out/ 에 쓴다.
-기록용: 정리·이름 복구 전 카탈로그 기준이다. 제외 목록은 freeze_exclusions.py가 만든 pipeline/manual/*_key_hashes.csv가 기준이고,
+기록용: 정리·이름 복구 전 카탈로그 기준이다. 제외 목록은 freeze_exclusions.py가 만든 pipeline/manual/{filtered,review}_keys.csv가 기준이고,
 정리된 카탈로그로 다시 돌리면 결과가 달라지므로 다시 돌리지 않는다.
 """
 from __future__ import annotations
@@ -359,7 +359,7 @@ with (OUT / "excluded_keys.csv").open("w", encoding="utf-8", newline="") as f:
     w = csv.writer(f)
     w.writerow(["key"])
     w.writerows([r["p"]["key"]] for r in ex_sorted)
-with (OUT / "suspect_keys.csv").open("w", encoding="utf-8", newline="") as f:
+with (OUT / "review_candidates.csv").open("w", encoding="utf-8", newline="") as f:
     w = csv.writer(f)
     w.writerow(["key", "year_gap"])
     w.writerows([r["p"]["key"], r["gap2"]] for r in sus2)

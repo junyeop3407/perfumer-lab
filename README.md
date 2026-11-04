@@ -63,6 +63,15 @@ Git Bash(또는 Mac 터미널)에서, GitHub 로그인(`gh auth login --web`) �
 GH=gh; command -v gh >/dev/null || GH="/c/Program Files/GitHub CLI/gh.exe"; mkdir -p ~/.claude/skills/new-project && "$GH" api repos/junyeop3407/ai-workflow/contents/setup/new-project/SKILL.md -H "Accept: application/vnd.github.raw" > ~/.claude/skills/new-project/SKILL.md
 ```
 
+## 데이터 정리 목록의 비밀 키 (scent-studio)
+`apps/scent-studio/pipeline/manual/`의 `*_keys.csv`는 비밀 키를 섞은 HMAC으로 되어 있습니다. 실제 카탈로그를 만들려면 모든 컴퓨터에 **같은 키**가 있어야 합니다.
+
+- 환경 변수 이름: `SCENT_KEY_SECRET`. 값은 저장소에 넣지 않습니다.
+- 값 확인 (키가 있는 컴퓨터의 PowerShell): `[Environment]::GetEnvironmentVariable("SCENT_KEY_SECRET", "User")`
+- 설정 (새 컴퓨터의 PowerShell, 비밀번호 관리자에 보관한 값으로): `[Environment]::SetEnvironmentVariable("SCENT_KEY_SECRET", "<값>", "User")` 뒤 터미널을 새로 엽니다. Mac은 `~/.zshrc`에 `export SCENT_KEY_SECRET="<값>"`.
+- 대화창이나 파일에 값을 붙여 넣지 않습니다. 키를 잃으면 목록을 원본과 맞출 수 없습니다.
+- 확인: `bash tests/run.sh` (앱 폴더에서). 키가 틀리면 목록 테스트가 실패합니다.
+
 ## 교차 리뷰 (필수)
 5단계에서 Claude 리뷰에 더해 **Gemini CLI**에게 이번 작업의 변경분을 리뷰받습니다. 건너뛰지 않습니다(없으면 Claude가 설치를 부탁함).
 - 설치: Node.js `winget install --id OpenJS.NodeJS.LTS -e` → Gemini CLI `npm install -g @google/gemini-cli` → https://aistudio.google.com/apikey 에서 무료 API 키를 만들고 PowerShell에서 `[Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "<키>", "User")` 실행 (Google 계정 로그인 방식은 개인 무료 사용이 막혀 안 됨. 무료 키는 flash 모델만 쓸 수 있어 스크립트가 flash를 기본으로 씀)

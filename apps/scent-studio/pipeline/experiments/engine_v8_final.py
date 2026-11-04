@@ -25,8 +25,8 @@ OUT_DIR, MANUAL = APP / "pipeline" / "data" / "out", APP / "pipeline" / "manual"
 DOC = APP / "docs" / "engine_v8_final.md"
 RAW = B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv")
 DECANT = D.load_rows(APP / "pipeline" / "data" / "raw" / "decant" / "perfumes.db")
-HASHES = B.read_key_hashes(MANUAL / "excluded_key_hashes.csv")
-FLAGS = B.read_key_hashes(MANUAL / "suspect_key_hashes.csv")
+HASHES = B.read_key_hashes(MANUAL / "filtered_keys.csv")
+FLAGS = B.read_key_hashes(MANUAL / "review_keys.csv")
 EXCLUDE = {k for k in (R.perfume_key(r["URL"]) for r in RAW) if B.key_hash(k) in HASHES}
 NEW_MATCH, NEW_WEIGHTS = D.match, D.note_weights
 
@@ -71,7 +71,7 @@ def build(old: bool, m1: bool) -> dict:
     return B.build(RAW, R.REAL, B.read_aliases(MANUAL / "aliases.csv"), B.read_overrides(MANUAL / "note_family_override.csv"),
                    B.read_korean(MANUAL / "notes_ko.csv"), version="final", source_name="x", source_note="x", decant=decant,
                    junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv"), exclude=EXCLUDE,
-                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "dedupe_keep_separate_hashes.csv")).catalog
+                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "separate_keys.csv")).catalog
 
 
 def half(cat: dict, eng: E.Engine, est: tuple) -> tuple:

@@ -1,7 +1,10 @@
 """파이프라인 테스트 (QA팀 추가 테스트, 승인 대상 아님). 가짜 데이터(tests/fixtures)로 확인한다."""
 import dataclasses
 import gzip
+import hashlib
 import json
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -302,11 +305,11 @@ def test_숫자로_시작하는_이름이_연도로_지워지지_않는다():
 
 
 def test_커밋한_제외_목록에는_향수_이름이_없고_해시만_있다():
-    for name, count in (("excluded_key_hashes.csv", 1077), ("suspect_key_hashes.csv", 38)):
+    for name, count in (("filtered_keys.csv", 1077), ("review_keys.csv", 38)):
         rows = B.read_csv(PIPELINE / "manual" / name)
-        assert len(rows) == count == len({r["key_sha256"] for r in rows})
-        assert all(len(r["key_sha256"]) == 64 and set(r["key_sha256"]) <= set("0123456789abcdef") for r in rows)
-    assert B.read_key_hashes(PIPELINE / "manual" / "excluded_key_hashes.csv").isdisjoint(B.read_key_hashes(PIPELINE / "manual" / "suspect_key_hashes.csv"))
+        assert len(rows) == count == len({r["key_hmac"] for r in rows})
+        assert all(len(r["key_hmac"]) == 64 and set(r["key_hmac"]) <= set("0123456789abcdef") for r in rows)
+    assert B.read_key_hashes(PIPELINE / "manual" / "filtered_keys.csv").isdisjoint(B.read_key_hashes(PIPELINE / "manual" / "review_keys.csv"))
 
 
 def test_따로_두라고_한_행은_이름이_같아도_합치지_않는다():
@@ -320,10 +323,41 @@ def test_따로_두라고_한_행은_이름이_같아도_합치지_않는다():
     assert g["A1"] != g["A2"]
 
 
-def test_해시_목록의_행을_원본에서_찾고_없으면_멈춘다(tmp_path):
+def test_해시_목록의_행을_원본에서_찾고_없으면_멈춘다(tmp_path, monkeypatch):
+    monkeypatch.setenv(B.SECRET_ENV, "test-secret")
     f = tmp_path / "h.csv"
-    f.write_text("key_sha256\n" + B.key_hash("X1") + "\n", encoding="utf-8")
+    f.write_text("key_hmac\n" + B.key_hash("X1") + "\n", encoding="utf-8")
     rows = [{"URL": "https://example.invalid/X1"}, {"URL": "https://example.invalid/X2"}]
     assert B.keys_from_hashes(rows, f) == {"X1"}
     with pytest.raises(SystemExit):
         B.keys_from_hashes(rows[1:], f)
+
+
+def test_키_해시는_비밀_키를_섞고_어느_컴퓨터에서나_같다(monkeypatch):
+    monkeypatch.setenv(B.SECRET_ENV, "test-secret")
+    # 파이썬 표준 hmac으로 따로 계산해 고정한 값: 코드나 환경이 달라져도 이 값이 나와야 한다
+    expected = "bbac92f46ab534fe0052d853d38413cfb17dfc42585c8ec28b5a0d97fd301668"
+    assert B.key_hash("Brand:perfume-1") == expected
+    assert expected != hashlib.sha256(b"Brand:perfume-1").hexdigest(), "공개 주소만으로 계산할 수 없어야 한다"
+    monkeypatch.setenv(B.SECRET_ENV, "other-secret")
+    assert B.key_hash("Brand:perfume-1") != expected
+    code = f"import sys; sys.path.insert(0, {str(PIPELINE)!r}); import build_catalog as B; print(B.key_hash('Brand:perfume-1'))"
+    for seed in ("1", "2"):
+        env = {**os.environ, B.SECRET_ENV: "test-secret", "PYTHONHASHSEED": seed, "PYTHONUTF8": "1"}
+        assert subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, check=True).stdout.strip() == expected
+
+
+def test_비밀_키가_없으면_알려_주고_멈춘다(monkeypatch):
+    monkeypatch.delenv(B.SECRET_ENV, raising=False)
+    with pytest.raises(SystemExit, match=B.SECRET_ENV):
+        B.key_hash("X1")
+
+
+RAW_CSV = PIPELINE / "data" / "raw" / "parfumo_data_clean.csv"
+
+
+@pytest.mark.skipif(not (os.environ.get(B.SECRET_ENV) and RAW_CSV.exists()), reason="비밀 키와 원본 데이터가 있는 컴퓨터에서만 돈다")
+def test_이_컴퓨터의_비밀_키로_목록이_원본과_모두_맞는다():
+    rows = B.read_csv(RAW_CSV)
+    for name, count in (("filtered_keys.csv", 1077), ("review_keys.csv", 38), ("reviewed_keys.csv", 2), ("separate_keys.csv", 1)):
+        assert len(B.keys_from_hashes(rows, PIPELINE / "manual" / name)) == count

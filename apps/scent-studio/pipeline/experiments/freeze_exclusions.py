@@ -1,11 +1,11 @@
 """v8 제외 목록을 복구된 이름 기준으로 다시 판정해 해시로 고정한다 (2026-11-04 사장 결정). 한 번 돌리면 된다.
 
 앱 폴더에서:  py pipeline/experiments/freeze_exclusions.py
-읽는 것: pipeline/data/out/의 정리 전 catalog.json.gz, excluded_keys.csv, suspect_keys.csv (decant_audit.py의 결과)
-만드는 것: pipeline/manual/{excluded,suspect}_key_hashes.csv (이름은 안 보이지만 원본 주소로 되돌릴 수 있음, 커밋), pipeline/data/out/의 이름 든 표 (커밋 안 함)
+읽는 것: pipeline/data/out/의 정리 전 catalog.json.gz, excluded_keys.csv, review_candidates.csv (decant_audit.py의 결과)
+만드는 것: pipeline/manual/{filtered,review}_keys.csv (비밀 키를 섞은 HMAC, 커밋), pipeline/data/out/의 이름 든 표 (커밋 안 함)
 
 - 오염 1,015개는 확정이라 다시 판정하지 않는다. 복구로 새로 후보가 된 행에만 같은 규칙을 쓴다.
-- 숨은 가짜는 decant_audit.py의 정의 그대로 다시 판정한다. 연도 차이 5년 이상이면서 어코드 겹침 50% 미만이면 제외, 나머지는 표시.
+- 검토 대상는 decant_audit.py의 정의 그대로 다시 판정한다. 연도 차이 5년 이상이면서 어코드 겹침 50% 미만이면 제외, 나머지는 표시.
 - 먼저 정리 전 카탈로그로 지난 판정을 그대로 재현하는지 확인한다.
 """
 from __future__ import annotations
@@ -78,7 +78,7 @@ def polluted(p: dict) -> tuple[str, bool]:
 
 
 def judge(p: dict) -> dict | None:
-    """숨은 가짜 정의(decant_audit.py sus2). 해당하지 않으면 None"""
+    """검토 대상 정의(decant_audit.py sus2). 해당하지 않으면 None"""
     cs = D.candidates(p["brand"], p["name"], int(p["year"]) if p["year"] else None, IDX)
     h = cs[0] if cs and cs[0]["notes"] else None
     if not h or not p["year"] or not h["year"]:
@@ -105,8 +105,8 @@ def excluded_by(sus: dict[str, dict]) -> set[str]:
 
 
 def write_hashes(path: Path, keys: set[str]) -> None:
-    # 사유는 적지 않는다. 해시는 원본 주소로 되돌릴 수 있어서 '가짜 의심' 표시가 특정 향수에 붙게 된다
-    path.write_text("key_sha256\n" + "".join(h + "\n" for h in sorted(map(B.key_hash, keys))), encoding="utf-8", newline="\n")
+    # 사유는 적지 않는다. 목록은 어떤 판단도 드러내지 않게 둔다
+    path.write_text("key_hmac\n" + "".join(h + "\n" for h in sorted(map(B.key_hash, keys))), encoding="utf-8", newline="\n")
 
 
 def write_table(name: str, rows: list[dict]) -> None:
@@ -124,7 +124,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     with (OUT / "excluded_keys.csv").open(encoding="utf-8", newline="") as f:
         frozen = {r["key"] for r in csv.DictReader(f)}
-    with (OUT / "suspect_keys.csv").open(encoding="utf-8", newline="") as f:
+    with (OUT / "review_candidates.csv").open(encoding="utf-8", newline="") as f:
         old_gap = {r["key"]: int(r["year_gap"]) for r in csv.DictReader(f)}
     old_cat = json.loads(gzip.open(OUT / "catalog.json.gz", "rb").read())["perfumes"]
     old = {p["key"]: p for p in old_cat}
@@ -140,7 +140,7 @@ def main() -> None:
 
     cat = B.build(RAW, R.REAL, ALIASES, B.read_overrides(MANUAL / "note_family_override.csv"), B.read_korean(MANUAL / "notes_ko.csv"),
                   version="freeze", source_name="x", source_note="x", junk=JUNK, brand_fixes=BRAND_FIXES,
-                  keep_separate=B.keys_from_hashes(RAW, MANUAL / "dedupe_keep_separate_hashes.csv"),
+                  keep_separate=B.keys_from_hashes(RAW, MANUAL / "separate_keys.csv"),
                   decant={"rows": DECANT, "accord_map": AMAP, "aliases": NOTE_ALIASES}).catalog["perfumes"]
     ps = {p["key"]: p for p in cat}
     print("복구 후 정리 전 후보", len(ps), "새로 들어옴", len(set(ps) - set(old)), "빠짐", len(set(old) - set(ps)))
@@ -154,17 +154,17 @@ def main() -> None:
     print("오염 확정 중 복구 후 규칙을 통과", len(passes))
 
     sus = {k: j for k, j in suspects_of(list(ps.values())).items() if k not in pollution}
-    cleared = B.keys_from_hashes(RAW, MANUAL / "owner_cleared_hashes.csv")  # 사장이 웹으로 진짜임을 확인한 행은 제외하지 않고 표시만
+    cleared = B.keys_from_hashes(RAW, MANUAL / "reviewed_keys.csv")  # 사장이 웹으로 진짜임을 확인한 행은 제외하지 않고 표시만
     hidden = excluded_by(sus) - cleared
     flags = set(sus) - hidden
     assert cleared <= flags
-    print("숨은 가짜: 의심", len(sus), "제외", len(hidden), "표시", len(flags))
+    print("검토 대상: 의심", len(sus), "제외", len(hidden), "표시", len(flags))
     print("제외 키", len(pollution | hidden), "최종 후보", len(set(ps) - pollution - hidden))
     strength = sum(bool(p.get("noteWeights")) for k, p in ps.items() if k not in pollution | hidden)
     print("강도 보유(옛 연결)", strength, f"{100 * strength / len(set(ps) - pollution - hidden):.2f}%")
 
-    write_hashes(MANUAL / "excluded_key_hashes.csv", pollution | hidden)
-    write_hashes(MANUAL / "suspect_key_hashes.csv", flags)
+    write_hashes(MANUAL / "filtered_keys.csv", pollution | hidden)
+    write_hashes(MANUAL / "review_keys.csv", flags)
 
     # 표시 40개가 어떻게 바뀌었나
     changes = []
@@ -238,7 +238,7 @@ def main() -> None:
             overlap = jac({D.norm_note(k) for k in notes}, {D.norm_note(k) for k in h["notes"]}) if h else None
             if overlap is not None and overlap >= 0.3:
                 lost.append({"brand": rp["brand"], "excluded_name": rp["name"], "excluded_year": rp["year"] or "", "excluded_ratings": rp["ratingCount"],
-                             "reason": "오염" if rp["key"] in pollution else "숨은 가짜", "clean_slug": R.perfume_key(r["URL"]).split(":", 1)[-1],
+                             "reason": "오염" if rp["key"] in pollution else "검토 대상", "clean_slug": R.perfume_key(r["URL"]).split(":", 1)[-1],
                              "clean_year": r["Release_Year"], "clean_ratings": r["Rating_Count"], "overlap": round(overlap, 2)})
     lost.sort(key=lambda x: -int(x["clean_ratings"]))
     write_table("merged_rep_excluded.csv", lost)

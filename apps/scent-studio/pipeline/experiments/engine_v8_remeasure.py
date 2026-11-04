@@ -3,7 +3,7 @@
 앱 폴더에서:  py pipeline/experiments/decant_audit.py  →  py pipeline/experiments/engine_v8_remeasure.py
 만드는 파일: docs/engine_v8_remeasure.md (향수 이름 없음), pipeline/data/out/remeasure_traces.txt (이름 있음, 커밋 안 함)
 
-데이터 A: 오염 1,015개 제외. 데이터 B: A에서 숨은 가짜 의심 행까지 제외.
+데이터 A: 오염 1,015개 제외. 데이터 B: A에서 검토 대상 행까지 제외.
 """
 from __future__ import annotations
 
@@ -101,7 +101,7 @@ def traces(s_name: str, s: T.Scorer, f) -> None:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    excluded, suspects = keys_of("excluded_keys.csv"), keys_of("suspect_keys.csv")
+    excluded, suspects = keys_of("excluded_keys.csv"), keys_of("review_candidates.csv")
     orig = json.loads(gzip.open(OUT_DIR / "catalog.json.gz", "rb").read())
     orig_s = T.Scorer(orig, True)
     T.install_group_mask(orig_s)
