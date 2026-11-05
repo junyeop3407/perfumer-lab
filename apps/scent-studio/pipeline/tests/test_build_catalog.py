@@ -439,7 +439,7 @@ def test_옛_스크립트용_읽기는_v8_카탈로그면_멈춘다(tmp_path):
 
 
 def test_옛_스크립트는_모두_버전을_확인하고_읽는다():
-    current = {"engine_v8_check.py", "freeze_exclusions.py", "save_v7_compare.py"}  # v8을 일부러 읽거나 v7 파일만 읽는 것
+    current = {"blind_v8_make.py", "engine_v8_check.py", "freeze_exclusions.py", "save_v7_compare.py"}  # v8을 일부러 읽거나 v7 파일만 읽는 것
     for path in (PIPELINE / "experiments").glob("*.py"):
         if path.name not in current:
             assert "gzip.open(" not in path.read_text(encoding="utf-8"), f"{path.name}: load_old_catalog를 쓰지 않음"

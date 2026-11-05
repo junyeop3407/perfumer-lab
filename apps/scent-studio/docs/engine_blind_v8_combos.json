@@ -1,0 +1,845 @@
+{
+ "seed": 20261105,
+ "combos": [
+  {
+   "no": 1,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "galbanum",
+     "top",
+     "medium"
+    ],
+    [
+     "waterlily",
+     "middle",
+     "medium"
+    ],
+    [
+     "sandalwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 2,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "neroli",
+     "top",
+     "medium"
+    ],
+    [
+     "iris",
+     "middle",
+     "medium"
+    ],
+    [
+     "gaiac wood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 3,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "black pepper",
+     "top",
+     "medium"
+    ],
+    [
+     "leather",
+     "middle",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 4,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "labdanum",
+     "top",
+     "medium"
+    ],
+    [
+     "beeswax",
+     "middle",
+     "medium"
+    ],
+    [
+     "caramel",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 5,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lemon",
+     "top",
+     "medium"
+    ],
+    [
+     "lavender",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 6,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "plum",
+     "top",
+     "medium"
+    ],
+    [
+     "orchid",
+     "middle",
+     "medium"
+    ],
+    [
+     "vetiver",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 7,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "frankincense",
+     "top",
+     "medium"
+    ],
+    [
+     "lily of the valley",
+     "middle",
+     "medium"
+    ],
+    [
+     "woody notes",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 8,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "heliotrope",
+     "top",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "middle",
+     "medium"
+    ],
+    [
+     "milk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 9,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lemon",
+     "top",
+     "medium"
+    ],
+    [
+     "myrtle",
+     "middle",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 10,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "cyclamen",
+     "top",
+     "medium"
+    ],
+    [
+     "tuberose",
+     "middle",
+     "medium"
+    ],
+    [
+     "sandalwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 11,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "saffron",
+     "top",
+     "medium"
+    ],
+    [
+     "sandalwood",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 12,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "middle",
+     "medium"
+    ],
+    [
+     "tonka bean",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 13,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "bitter orange",
+     "top",
+     "medium"
+    ],
+    [
+     "lavender",
+     "middle",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 14,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "tagetes",
+     "top",
+     "medium"
+    ],
+    [
+     "pineapple",
+     "middle",
+     "medium"
+    ],
+    [
+     "amber",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 15,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "middle",
+     "medium"
+    ],
+    [
+     "amber",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 16,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "milk",
+     "middle",
+     "medium"
+    ],
+    [
+     "almond",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 17,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "grapefruit",
+     "top",
+     "medium"
+    ],
+    [
+     "lavender",
+     "middle",
+     "medium"
+    ],
+    [
+     "labdanum",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 18,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "aldehydes",
+     "top",
+     "medium"
+    ],
+    [
+     "iris",
+     "middle",
+     "medium"
+    ],
+    [
+     "tonka bean",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 19,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "mandarin orange",
+     "top",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "middle",
+     "medium"
+    ],
+    [
+     "tobacco",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 20,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "vanilla",
+     "top",
+     "medium"
+    ],
+    [
+     "heliotrope",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 21,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "clary sage",
+     "middle",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 22,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "plum",
+     "top",
+     "medium"
+    ],
+    [
+     "rose",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 23,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "gurjum balsam",
+     "top",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 24,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "vanilla",
+     "top",
+     "medium"
+    ],
+    [
+     "carrot seed",
+     "middle",
+     "medium"
+    ],
+    [
+     "tonka bean",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 25,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "spearmint",
+     "top",
+     "medium"
+    ],
+    [
+     "galbanum",
+     "middle",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 26,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "lychee",
+     "top",
+     "medium"
+    ],
+    [
+     "geranium",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 27,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "labdanum",
+     "top",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "middle",
+     "medium"
+    ],
+    [
+     "rose",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 28,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "caramel",
+     "top",
+     "medium"
+    ],
+    [
+     "rose",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 29,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lemon",
+     "top",
+     "medium"
+    ],
+    [
+     "cucumber",
+     "middle",
+     "medium"
+    ],
+    [
+     "texas cedar",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 30,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "orange blossom",
+     "top",
+     "medium"
+    ],
+    [
+     "wisteria",
+     "middle",
+     "medium"
+    ],
+    [
+     "almond",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 31,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "frankincense",
+     "top",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "middle",
+     "medium"
+    ],
+    [
+     "amber",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 32,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "grapefruit",
+     "top",
+     "medium"
+    ],
+    [
+     "heliotrope",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 33,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lemon",
+     "top",
+     "medium"
+    ],
+    [
+     "lavender",
+     "middle",
+     "medium"
+    ],
+    [
+     "cardamom",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 34,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "lavender",
+     "top",
+     "medium"
+    ],
+    [
+     "pomegranate",
+     "middle",
+     "medium"
+    ],
+    [
+     "white musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 35,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "pepper",
+     "top",
+     "medium"
+    ],
+    [
+     "vetiver",
+     "middle",
+     "medium"
+    ],
+    [
+     "frankincense",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 36,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "rose",
+     "top",
+     "medium"
+    ],
+    [
+     "praline",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 37,
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lime",
+     "top",
+     "medium"
+    ],
+    [
+     "petitgrain",
+     "middle",
+     "medium"
+    ],
+    [
+     "vetiver",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 38,
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "hyacinth",
+     "top",
+     "medium"
+    ],
+    [
+     "orange blossom",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 39,
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "myrrh",
+     "top",
+     "medium"
+    ],
+    [
+     "cocoa",
+     "middle",
+     "medium"
+    ],
+    [
+     "sandalwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 40,
+   "bucket": "구르망",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "heliotrope",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  }
+ ]
+}
