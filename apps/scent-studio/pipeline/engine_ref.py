@@ -12,9 +12,8 @@ W_ACCORD, W_NOTE, W_PREF = 0.35, 0.55, 0.1  # 2026-10-31 사장 결정 v4: 45/45
 C_SAME_LAYER, C_OTHER_LAYER, C_SAME_FAMILY = 1.0, 0.5, 0.3
 LAYER_WEIGHT = {"top": 1.0, "middle": 1.0, "base": 1.0}
 BRAND_CAP = 2
-# 2026-10-31 v3: "그 향수의 노트를 그대로 넣었을 때 그 향수 자신의 점수" 중앙값·하위 25% (docs/engine_variants.md)
-# 2026-11-02 v7: 같은 규칙으로 다시 잰 임시값. 짧은 조합은 대부분 '참고'가 되어(docs/engine_grades.md) 눈으로 평가 뒤 사장이 확정한다
-GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.87, 0.81
+# 2026-11-05 v8 확정: 무작위 조합 Top 10 유사도의 상위 10%·40% (docs/engine_grade_v8_rules.md, docs/engine_grade_v8.md)
+GRADE_VERY_SIMILAR, GRADE_SIMILAR = 0.763, 0.647
 SCORE_QUANTUM = 1e9  # 정렬은 round(score × 1e9)로 (차이 1e-9 이하는 같은 점수)
 RANK_WEIGHTS = [5, 4, 3, 2, 1]
 LAYERS = ("top", "middle", "base")

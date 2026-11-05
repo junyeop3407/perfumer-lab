@@ -307,7 +307,7 @@
      "similarity": 0.85585567438091,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.7961859530458314,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -354,7 +354,7 @@
      "similarity": 0.8555416957835462,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.7956721698865088,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -401,7 +401,7 @@
      "similarity": 0.7205523028618751,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5747804360146833,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -448,7 +448,7 @@
      "similarity": 0.7176545285324104,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5700386234755593,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -495,7 +495,7 @@
      "similarity": 0.70228739382631,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.544892403047395,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -661,7 +661,7 @@
      "similarity": 0.7397526636025556,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.6060349487616802,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -702,7 +702,7 @@
      "similarity": 0.6525218466743585,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46329361197008484,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -749,7 +749,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -796,7 +796,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -843,7 +843,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -890,7 +890,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1285,7 +1285,7 @@
      "similarity": 0.85585567438091,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.7961859530458314,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1332,7 +1332,7 @@
      "similarity": 0.7205523028618751,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5747804360146833,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1379,7 +1379,7 @@
      "similarity": 0.7176545285324104,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5700386234755593,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1426,7 +1426,7 @@
      "similarity": 0.70228739382631,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.544892403047395,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1473,7 +1473,7 @@
      "similarity": 0.6611457028154525,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.4775696359387191,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1515,7 +1515,7 @@
      "similarity": 0.6527316262163563,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.4638011469583796,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1557,7 +1557,7 @@
      "similarity": 0.6527316262163563,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.4638011469583796,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1903,7 +1903,7 @@
      "similarity": 0.85585567438091,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.7961859530458314,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1950,7 +1950,7 @@
      "similarity": 0.8555416957835462,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.7956721698865088,
-     "grade": "SIMILAR",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -1997,7 +1997,7 @@
      "similarity": 0.7205523028618751,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5747804360146833,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2044,7 +2044,7 @@
      "similarity": 0.7176545285324104,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.5700386234755593,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2091,7 +2091,7 @@
      "similarity": 0.70228739382631,
      "accordSim": 0.9496223793360338,
      "noteMatch": 0.544892403047395,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2263,7 +2263,7 @@
      "similarity": 0.6525218466743585,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46329361197008484,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2310,7 +2310,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2357,7 +2357,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2404,7 +2404,7 @@
      "similarity": 0.652308800514909,
      "accordSim": 0.9498805012096456,
      "noteMatch": 0.46294499098189473,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2721,7 +2721,7 @@
      "similarity": 0.7432041588790975,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6535311867431217,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2758,7 +2758,7 @@
      "similarity": 0.7425722122056604,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6524970921865881,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2795,7 +2795,7 @@
      "similarity": 0.7339780349871421,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6384338931017399,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2832,7 +2832,7 @@
      "similarity": 0.7206197929770813,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6165749516307315,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2869,7 +2869,7 @@
      "similarity": 0.7203737055863065,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6161722631730999,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2906,7 +2906,7 @@
      "similarity": 0.7201604920872292,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6158233683564279,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2943,7 +2943,7 @@
      "similarity": 0.7199185650225762,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6154274877051776,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -2980,7 +2980,7 @@
      "similarity": 0.7199185650225762,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6154274877051776,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3017,7 +3017,7 @@
      "similarity": 0.7190193517956613,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.613956047879317,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3054,7 +3054,7 @@
      "similarity": 0.7187807588846232,
      "accordSim": 0.8841188293784882,
      "noteMatch": 0.6135656231158001,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3683,7 +3683,7 @@
      "similarity": 0.7259061220734576,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.5993430501281233,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3753,7 +3753,7 @@
      "similarity": 0.7053309447128818,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.5656745780835446,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3823,7 +3823,7 @@
      "similarity": 0.6963635729838381,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.5510006970723822,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3893,7 +3893,7 @@
      "similarity": 0.679590282116579,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.5235534938350491,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3963,7 +3963,7 @@
      "similarity": 0.6601835530580661,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.49179702810293713,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4028,7 +4028,7 @@
      "similarity": 0.6597673378353686,
      "accordSim": 0.924790949416126,
      "noteMatch": 0.49111594864761376,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5324,7 +5324,7 @@
      "similarity": 0.7897105107276199,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.7291804981589913,
-     "grade": "REFERENCE",
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5361,7 +5361,7 @@
      "similarity": 0.7459940773356338,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6576445162448321,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5398,7 +5398,7 @@
      "similarity": 0.7239135075095728,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6215126747112778,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5435,7 +5435,7 @@
      "similarity": 0.7236665415679072,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6211085486249159,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5472,7 +5472,7 @@
      "similarity": 0.7236665415679072,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6211085486249159,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5509,7 +5509,7 @@
      "similarity": 0.7236665415679072,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6211085486249159,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5546,7 +5546,7 @@
      "similarity": 0.7236665415679072,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6211085486249159,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5583,7 +5583,7 @@
      "similarity": 0.7236665415679072,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6211085486249159,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5620,7 +5620,7 @@
      "similarity": 0.7230828400775394,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6201534007315868,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5657,7 +5657,7 @@
      "similarity": 0.7228395067228396,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.6197552188784414,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5694,7 +5694,7 @@
      "similarity": 0.7065800087762596,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.5931487676931289,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5731,7 +5731,7 @@
      "similarity": 0.7063960486361988,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.5928477420093929,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -5768,7 +5768,7 @@
      "similarity": 0.7063295720965218,
      "accordSim": 0.8848291019068937,
      "noteMatch": 0.5927389622171944,
-     "grade": "REFERENCE",
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",

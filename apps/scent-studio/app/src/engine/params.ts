@@ -26,9 +26,9 @@ export const EngineParams = {
   LAYER_WEIGHT: { top: 1.0, middle: 1.0, base: 1.0 },
 
   BRAND_CAP: 2,
-  /** "그 향수의 노트를 그대로 넣었을 때 그 향수 자신의 점수" 중앙값·하위 25% (docs/engine_variants.md) */
-  GRADE_VERY_SIMILAR: 0.87,
-  GRADE_SIMILAR: 0.81, // 2026-11-02 v7 임시값. 눈으로 평가 뒤 사장이 확정
+  /** 2026-11-05 v8 확정: 무작위 조합 Top 10 유사도의 상위 10%·40% (docs/engine_grade_v8_rules.md, docs/engine_grade_v8.md) */
+  GRADE_VERY_SIMILAR: 0.763,
+  GRADE_SIMILAR: 0.647,
   /** 정렬은 round(score × 1e9) 로 (차이 1e-9 이하는 같은 점수) */
   SCORE_QUANTUM: 1e9,
   RANK_WEIGHTS: [5, 4, 3, 2, 1],
