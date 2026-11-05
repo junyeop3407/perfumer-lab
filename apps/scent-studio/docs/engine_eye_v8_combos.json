@@ -1,0 +1,345 @@
+{
+ "seed": 20261106,
+ "combos": [
+  {
+   "no": 1,
+   "kind": "기본",
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "pink pepper",
+     "top",
+     "medium"
+    ],
+    [
+     "rose",
+     "middle",
+     "medium"
+    ],
+    [
+     "patchouli",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 2,
+   "kind": "기본",
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "bergamot",
+     "top",
+     "medium"
+    ],
+    [
+     "rose",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 3,
+   "kind": "기본",
+   "bucket": "프레시",
+   "notes": [
+    [
+     "grapefruit",
+     "top",
+     "medium"
+    ],
+    [
+     "lavender",
+     "middle",
+     "medium"
+    ],
+    [
+     "vetiver",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 4,
+   "kind": "기본",
+   "bucket": "혼합",
+   "notes": [
+    [
+     "mandarin orange",
+     "top",
+     "medium"
+    ],
+    [
+     "jasmine",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 5,
+   "kind": "기본",
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "pink pepper",
+     "top",
+     "medium"
+    ],
+    [
+     "iris",
+     "middle",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 6,
+   "kind": "기본",
+   "bucket": "프레시",
+   "notes": [
+    [
+     "lemon",
+     "top",
+     "medium"
+    ],
+    [
+     "green tea",
+     "middle",
+     "medium"
+    ],
+    [
+     "white musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 7,
+   "kind": "기본",
+   "bucket": "우디 오리엔탈",
+   "notes": [
+    [
+     "cardamom",
+     "top",
+     "medium"
+    ],
+    [
+     "tobacco",
+     "middle",
+     "medium"
+    ],
+    [
+     "oud",
+     "base",
+     "strong"
+    ],
+    [
+     "amber",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 8,
+   "kind": "기본",
+   "bucket": "플로럴",
+   "notes": [
+    [
+     "peach",
+     "top",
+     "medium"
+    ],
+    [
+     "peony",
+     "middle",
+     "medium"
+    ],
+    [
+     "musk",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 9,
+   "kind": "기본",
+   "bucket": "프레시",
+   "notes": [
+    [
+     "marine notes",
+     "top",
+     "strong"
+    ],
+    [
+     "sage",
+     "middle",
+     "medium"
+    ],
+    [
+     "cedarwood",
+     "base",
+     "weak"
+    ]
+   ]
+  },
+  {
+   "no": 10,
+   "kind": "기본",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "cinnamon",
+     "top",
+     "medium"
+    ],
+    [
+     "tonka bean",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "strong"
+    ],
+    [
+     "sandalwood",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 11,
+   "kind": "구르망",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "laurel",
+     "top",
+     "medium"
+    ],
+    [
+     "heliotrope",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 12,
+   "kind": "구르망",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "clove",
+     "top",
+     "medium"
+    ],
+    [
+     "honey",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 13,
+   "kind": "구르망",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "caramel",
+     "top",
+     "medium"
+    ],
+    [
+     "honey",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 14,
+   "kind": "구르망",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "lily of the valley",
+     "top",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "middle",
+     "medium"
+    ],
+    [
+     "cream",
+     "base",
+     "medium"
+    ]
+   ]
+  },
+  {
+   "no": 15,
+   "kind": "구르망",
+   "bucket": "구르망",
+   "notes": [
+    [
+     "neroli",
+     "top",
+     "medium"
+    ],
+    [
+     "tonka bean",
+     "middle",
+     "medium"
+    ],
+    [
+     "vanilla",
+     "base",
+     "medium"
+    ]
+   ]
+  }
+ ]
+}
