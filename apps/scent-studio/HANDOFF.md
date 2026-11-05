@@ -5,7 +5,7 @@
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 단계 3(DB) 시작 지시
+사용자에게 남은 질문: ① `plan.md`에 Claude가 정해 넣은 두 가지 OK 여부: 카탈로그 크기는 방향만 단계 3에서 정하고 배포에 맞추는 일은 단계 4 / 이름 오류 복원처럼 후보·노트가 바뀌는 수정은 앱이 돌아간 뒤로. ② 단계 3(DB) 시작 지시
 다음 할 일: 사장 지시 뒤 `plan.md` 단계 3(DB) → 4(서버) → ★디자인 → 5(화면). 엔진은 v8로 동결하고 v8.1 후보(추정치 보정)는 앱이 돌아간 뒤 검토
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
@@ -38,7 +38,8 @@
 - 저장소는 공개 유지(사장 결정). 정리 목록은 비밀 키를 섞은 HMAC이고, 예전 커밋은 그대로 둔다. **비밀 키 `SCENT_KEY_SECRET`은 작업한 컴퓨터의 사용자 환경 변수에 있다.** 비밀번호 관리자에 옮겼는지는 아직 확인받지 못했다. 다른 컴퓨터에서는 같은 키를 설정해야 실제 카탈로그를 만들 수 있다.
 
 ### 이어서 시작할 때
-- 사장의 9단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
+- 위 남은 질문에 답을 받은 뒤 단계 3을 진행한다. 지시 없이 시작하지 않는다.
+- 커밋하지 않는 `pipeline/data/out/`은 비공개 저장소 `junyeop3407/perfumer-lab-private`에서 받는다. 채운 시트는 경로가 따로다: `blind_v8/sheet_judged.md` → `blind_v8_sheet.md`, `eye_v8/sheet_scored.md` → `eye_v8_sheet.md`. 다른 컴퓨터에서는 `SCENT_KEY_SECRET`도 같은 값으로 설정해야 한다.
 - `freeze_exclusions.py`는 정리 전 카탈로그 `pipeline/data/out/catalog_precleanup.json.gz`를 읽는다. `catalog.json.gz`는 이제 v8이다.
 - 보류 목록의 합치기 분리 후 제외 4개는 `pipeline/manual/hold_keys.csv`에서 읽으므로 `freeze_exclusions.py`를 다시 돌려도 남는다. (손으로 다시 넣으라던 예전 메모는 이 수정으로 대체됐다.)
 - 옛 실험 스크립트는 v8 카탈로그를 읽으면 경고하고 멈춘다(`catalog_rules.load_old_catalog`). v7 기준 비교는 `catalog_v7_compare.json.gz`를 쓴다.
