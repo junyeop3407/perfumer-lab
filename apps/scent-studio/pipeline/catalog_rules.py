@@ -145,6 +145,11 @@ _GROUP_WORDS = re.compile(
 GROUP_MIN_NOTE_OVERLAP = 0.5
 
 
+def same_notes(a: set[str], b: set[str]) -> bool:
+    """노트 겹침(자카드)이 기준 이상이면 같은 향수로 본다. 합치기와 묶음 나누기가 같은 기준을 쓴다."""
+    return bool(a | b) and len(a & b) / len(a | b) >= GROUP_MIN_NOTE_OVERLAP
+
+
 def split_groups_by_notes(items: list[tuple[str, str, set[str], int]]) -> dict[str, str]:
     """(향수 key, 이름 묶음 group_key, 노트 집합, 평가 수) → {향수 key: 최종 묶음}.
     이름에서 연도를 지우므로 "Joop! Homme 1989"와 노트가 전혀 다른 "Joop! Homme 2021", 해마다 다른
@@ -159,7 +164,7 @@ def split_groups_by_notes(items: list[tuple[str, str, set[str], int]]) -> dict[s
         clusters: list[tuple[str, set[str]]] = []  # (묶음 값, 대표 노트)
         for key, notes, _ in sorted(members, key=lambda m: (-m[2], m[0])):
             for group, rep in clusters:
-                if rep | notes and len(rep & notes) / len(rep | notes) >= GROUP_MIN_NOTE_OVERLAP:
+                if same_notes(rep, notes):
                     out[key] = group
                     break
             else:

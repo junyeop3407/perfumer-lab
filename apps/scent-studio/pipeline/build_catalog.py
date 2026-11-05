@@ -251,10 +251,11 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           version: str, source_note: str, junk: set[str] = frozenset(),
           brand_fixes: dict[str, str] | None = None, decant: dict | None = None,
           source_name: str = "Parfumo", exclude: Collection[str] = frozenset(),
-          keep_separate: Collection[str] = frozenset()) -> BuildResult:
+          keep_separate: Collection[str] = frozenset(), keep_merged: Collection[str] = frozenset()) -> BuildResult:
     """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용).
     exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다.
-    keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/separate_keys.csv)."""
+    keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/separate_keys.csv).
+    keep_merged: 노트 겹침이 낮아도 합칠 향수 key (사장 결정, manual/merge_keys.csv)."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -305,13 +306,21 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
     report["junk_note_values"] = junk_notes
     report["candidates_before_dedupe"] = len(candidates)
 
-    # 4: 중복 합치기 (평가 수 많은 것 하나만)
-    best: dict[tuple[str, str], Perfume] = {}
+    # 4: 중복 합치기 (평가 수 많은 것 하나만). 이름이 같아도 대표와 노트 겹침이 기준 미만이면 다른 향수로 남긴다 (2026-11-05 사장 결정)
+    named: dict[tuple[str, str], list[Perfume]] = defaultdict(list)
     for p in candidates:
-        k = (p.brand, p.key) if p.key in keep_separate else R.dedupe_name(p.brand, p.name)
-        if k not in best or p.rating_count > best[k].rating_count:
-            best[k] = p
-    perfumes = sorted(best.values(), key=lambda p: p.key)
+        named[(p.brand, p.key) if p.key in keep_separate else R.dedupe_name(p.brand, p.name)].append(p)
+    perfumes = []
+    report["merge_split_groups"] = report["merge_split_rows"] = 0
+    for members in named.values():
+        reps: list[Perfume] = []
+        for p in sorted(members, key=lambda p: -p.rating_count):  # 평가 수가 같으면 원본 순서대로 (앞 행이 대표)
+            if not reps or (p.key not in keep_merged and not any(R.same_notes(q.all_notes, p.all_notes) for q in reps)):
+                reps.append(p)
+        perfumes += reps
+        report["merge_split_groups"] += len(reps) > 1
+        report["merge_split_rows"] += len(reps) - 1
+    perfumes.sort(key=lambda p: p.key)
     report["duplicates_merged"] = len(candidates) - len(perfumes)
     keys = Counter(p.key for p in perfumes)
     dup_keys = [k for k, c in keys.items() if c > 1]
@@ -547,6 +556,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 만든 날: {dt.date.today().isoformat()} · 카탈로그 버전 `{result.catalog['version']}`",
         f"- 원본 행: {r['rows']:,} · 잘못된 어코드 값 버림: {r['junk_accord_values']:,} · 실재하지 않는 노트 이름 버림: {r['junk_note_values']:,}",
         f"- 후보(중복 합치기 전): {r['candidates_before_dedupe']:,} · 중복 합침: {r['duplicates_merged']:,} · **후보: {r['candidates']:,}**",
+        f"- 이름이 같아도 노트가 달라 합치지 않은 행: {r.get('merge_split_rows', 0):,} ({r.get('merge_split_groups', 0):,}묶음, 2026-11-05)",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
         f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/copy_suspects.csv`, 2026-10-31)",
@@ -623,6 +633,7 @@ def main() -> None:
                 "brand_aliases": D.read_brand_aliases(manual / "decant_brand_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
         keep_separate=keys_from_hashes(rows, manual / "separate_keys.csv"),
+        keep_merged=keys_from_hashes(rows, manual / "merge_keys.csv"),
     )
     result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"

@@ -228,7 +228,7 @@ def _cleanup_rows():
     c = ("lemon", "jasmine", "sandalwood")
     return [
         _copy_row("W1", "Dup", "Same Name", "2001", 500, a),     # 합치기 대표
-        _copy_row("W2", "Dup", "Same Name", "2001", 90, b),      # 합치기에서 진 행
+        _copy_row("W2", "Dup", "Same Name", "2001", 90, a),      # 합치기에서 진 행 (노트가 같아 겹침 검사도 통과)
         _copy_row("X1", "Xhouse", "Original", "2001", 300, c, accords="citrus, woody", perfumer="Pierre"),  # 복사 원본
         _copy_row("X2", "Xhouse", "Other", "2005", 40, a, accords="citrus, fresh", perfumer="Pierre"),
         _copy_row("Y1", "Yhouse", "Copied", "2015", 300, c, accords="citrus, woody", perfumer="Pierre"),    # 복사본
@@ -305,22 +305,62 @@ def test_숫자로_시작하는_이름이_연도로_지워지지_않는다():
 
 
 def test_커밋한_제외_목록에는_향수_이름이_없고_해시만_있다():
-    for name, count in (("filtered_keys.csv", 1077), ("review_keys.csv", 38)):
+    for name, count in (("filtered_keys.csv", 1081), ("review_keys.csv", 40)):
         rows = B.read_csv(PIPELINE / "manual" / name)
         assert len(rows) == count == len({r["key_hmac"] for r in rows})
         assert all(len(r["key_hmac"]) == 64 and set(r["key_hmac"]) <= set("0123456789abcdef") for r in rows)
     assert B.read_key_hashes(PIPELINE / "manual" / "filtered_keys.csv").isdisjoint(B.read_key_hashes(PIPELINE / "manual" / "review_keys.csv"))
 
 
-def test_따로_두라고_한_행은_이름이_같아도_합치지_않는다():
+def test_따로_두라고_한_행은_노트가_겹쳐도_합치지_않는다():
     a = ("lemon, bergamot", "rose", "musk")
-    b = ("cardamom, pink pepper", "iris", "vetiver")
-    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, a), _copy_row("A2", "Dup", "Same Name", "2004", 70, b),
-            _copy_row("B1", "Dup", "Other Name", "2013", 200, a), _copy_row("B2", "Dup", "Other Name", "2004", 60, b)]
+    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, a), _copy_row("A2", "Dup", "Same Name", "2004", 70, a),
+            _copy_row("B1", "Dup", "Other Name", "2013", 200, a), _copy_row("B2", "Dup", "Other Name", "2004", 60, a)]
     res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", keep_separate={"A2"})
-    assert _keys(res) == {"A1", "A2", "B1"}, "지정한 행만 분리하고 합치기 규칙은 그대로다"
+    assert _keys(res) == {"A1", "A2", "B1"}, "지정한 행만 분리하고, 노트가 같은 B2는 그대로 합친다"
+    # 노트가 다르면 추천에서도 다른 향수로 본다
+    rows = [_copy_row("C1", "Dup", "Same Name", "2013", 300, _A), _copy_row("C2", "Dup", "Same Name", "2004", 70, _B)]
+    g = {p["key"]: p["group"] for p in B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", keep_separate={"C2"}).catalog["perfumes"]}
+    assert g["C1"] != g["C2"]
+
+
+# ---------- 합치기 노트 겹침 검사 (2026-11-05 사장 결정) ----------
+_A = ("lemon, bergamot", "rose", "musk")
+_B = ("cardamom, pink pepper", "iris", "vetiver")
+
+
+def test_이름이_같아도_대표와_노트_겹침이_05_미만이면_합치지_않는다():
+    # 대표와의 겹침: A2는 3/4 = 0.75라 합치고, A3는 0이라 따로 둔다
+    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, _A),
+            _copy_row("A2", "Dup", "Same Name", "2010", 90, ("lemon", "rose", "musk")),
+            _copy_row("A3", "Dup", "Same Name", "2004", 70, _B)]
+    res = _build(rows)
+    assert _keys(res) == {"A1", "A3"}
+    assert res.report["merge_split_rows"] == 1
     g = {p["key"]: p["group"] for p in res.catalog["perfumes"]}
-    assert g["A1"] != g["A2"]
+    assert g["A1"] != g["A3"], "살아난 행은 추천에서도 다른 향수로 본다"
+
+
+def test_겹침이_정확히_05면_합친다():
+    # 공통 2개 / 합집합 4개 = 0.5
+    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, ("lemon", "rose", "musk")),
+            _copy_row("A2", "Dup", "Same Name", "2004", 70, ("lemon", "rose", "iris"))]
+    assert _keys(_build(rows)) == {"A1"}
+
+
+def test_분리된_행끼리_노트가_겹치면_그_둘은_합친다():
+    rows = [_copy_row("A1", "Dup", "Same Name", "2013", 300, _A), _copy_row("A2", "Dup", "Same Name", "2004", 70, _B),
+            _copy_row("A3", "Dup", "Same Name", "2005", 50, _B)]
+    res = _build(rows)
+    assert _keys(res) == {"A1", "A2"}, "A3는 A1과 다르지만 A2와 같다"
+    assert res.report["merge_split_groups"] == 1 and res.report["merge_split_rows"] == 1
+
+
+def test_합친_채_두라고_한_행은_겹침이_낮아도_합친다():
+    rows = [_copy_row("A1", "Dup", "Same Name", "2011", 151, _A), _copy_row("A2", "Dup", "Same Name", "1998", 90, _B),
+            _copy_row("B1", "Dup", "Other Name", "2011", 200, _A), _copy_row("B2", "Dup", "Other Name", "1998", 60, _B)]
+    res = B.build(rows, R.FIXTURE, {}, {}, {}, version="t", source_note="t", keep_merged={"A2"})
+    assert _keys(res) == {"A1", "B1", "B2"}, "지정한 행만 합치고 나머지는 규칙대로"
 
 
 def test_해시_목록의_행을_원본에서_찾고_없으면_멈춘다(tmp_path, monkeypatch):
@@ -359,5 +399,5 @@ RAW_CSV = PIPELINE / "data" / "raw" / "parfumo_data_clean.csv"
 @pytest.mark.skipif(not (os.environ.get(B.SECRET_ENV) and RAW_CSV.exists()), reason="비밀 키와 원본 데이터가 있는 컴퓨터에서만 돈다")
 def test_이_컴퓨터의_비밀_키로_목록이_원본과_모두_맞는다():
     rows = B.read_csv(RAW_CSV)
-    for name, count in (("filtered_keys.csv", 1077), ("review_keys.csv", 38), ("reviewed_keys.csv", 2), ("separate_keys.csv", 1)):
+    for name, count in (("filtered_keys.csv", 1081), ("review_keys.csv", 40), ("reviewed_keys.csv", 2), ("separate_keys.csv", 1), ("merge_keys.csv", 0)):
         assert len(B.keys_from_hashes(rows, PIPELINE / "manual" / name)) == count

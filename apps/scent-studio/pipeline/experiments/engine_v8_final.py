@@ -71,7 +71,8 @@ def build(old: bool, m1: bool) -> dict:
     return B.build(RAW, R.REAL, B.read_aliases(MANUAL / "aliases.csv"), B.read_overrides(MANUAL / "note_family_override.csv"),
                    B.read_korean(MANUAL / "notes_ko.csv"), version="final", source_name="x", source_note="x", decant=decant,
                    junk=B.read_junk(MANUAL / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(MANUAL / "brand_fixes.csv"), exclude=EXCLUDE,
-                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "separate_keys.csv")).catalog
+                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "separate_keys.csv"),
+                   keep_merged=B.keys_from_hashes(RAW, MANUAL / "merge_keys.csv")).catalog
 
 
 def half(cat: dict, eng: E.Engine, est: tuple) -> tuple:
@@ -130,7 +131,7 @@ def main() -> None:
     share0 = float(base.has.mean())
     new_share = float(variants["v7 새 연결"].has.mean())
     doc = ["# 엔진 v8 재측정", "",
-           "> 2026-11-04 · `py pipeline/experiments/engine_v8_final.py`. **엔진·카탈로그 파일은 바꾸지 않았습니다.** 판정 규칙은 측정 전에 정했습니다(`docs/plan_v8.md`).", "",
+           "> 2026-11-05 · `py pipeline/experiments/engine_v8_final.py`. **엔진·카탈로그 파일은 바꾸지 않았습니다.** 판정 규칙은 측정 전에 정했습니다(`docs/plan_v8.md`).", "",
            f"후보 {len(base.ps):,}개. 강도 보유: 옛 연결 {100 * share0:.1f}%, 새 연결 {100 * new_share:.1f}%. 사람 유사 쿼리 {len(qs):,}개(옛 연결로 만들어 고정), 남겨 둔 절반 {len(hold):,}개.", "",
            "W = r × 사람 유사 Top 50 + (1 − r) × 가림 Top 50. r은 그 데이터의 강도 보유 비율입니다. W는 결과를 본 뒤 만든 지표라 블라인드 진출 판단에만 씁니다.", "",
            "| 방안 | 사람 유사 Top 50 | v7 대비 %p (95% 구간) | 가림 Top 50 | 가림 v7 대비 %p | W | W v7 대비 %p (95% 구간) | W (r 고정) | Top 10 강도 보유 (24조합) | Top 10 강도 보유 (무작위 300) | Top 10 표시 행 | 재현 20 | 맹점 | 다양성 |",

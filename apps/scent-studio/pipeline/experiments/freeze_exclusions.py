@@ -141,6 +141,7 @@ def main() -> None:
     cat = B.build(RAW, R.REAL, ALIASES, B.read_overrides(MANUAL / "note_family_override.csv"), B.read_korean(MANUAL / "notes_ko.csv"),
                   version="freeze", source_name="x", source_note="x", junk=JUNK, brand_fixes=BRAND_FIXES,
                   keep_separate=B.keys_from_hashes(RAW, MANUAL / "separate_keys.csv"),
+                  keep_merged=B.keys_from_hashes(RAW, MANUAL / "merge_keys.csv"),
                   decant={"rows": DECANT, "accord_map": AMAP, "aliases": NOTE_ALIASES}).catalog["perfumes"]
     ps = {p["key"]: p for p in cat}
     print("복구 후 정리 전 후보", len(ps), "새로 들어옴", len(set(ps) - set(old)), "빠짐", len(set(old) - set(ps)))
