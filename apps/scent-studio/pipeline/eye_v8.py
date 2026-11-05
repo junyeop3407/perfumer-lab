@@ -1,12 +1,17 @@
 """9단계 눈으로 평가 부품 (규칙: docs/engine_eye_v8_rules.md). 조합 만들기와 시트 문서. 추천 계산은 하지 않는다."""
 from __future__ import annotations
 
+import re
 from collections import Counter
 
 import blind_v8 as BL
 
 SEED = 20261106
 GOURMAND = "구르망"
+TOP = 5
+PASS = 3.5
+SCORE_RANGE = range(1, 6)
+BLANK = " 점수: _ |"
 STRENGTH_KO = {"strong": " (강)", "weak": " (약)"}
 
 
@@ -51,3 +56,50 @@ def sheet_text(scored: list[dict], reference: list[dict], cat: dict) -> str:
         for e in reference:
             lines += section("참고 ", e)
     return "\n".join(lines)
+
+
+def fill_scores(text: str, scores: dict[int, list[int]]) -> str:
+    """평가 조합의 빈 점수 칸을 위에서부터 채운다. 참고 조합은 건드리지 않는다. 번호·개수·범위가 어긋나면 멈춘다."""
+    parts = re.split(r"(?m)^(## \d+\. .*)$", text)
+    seen = set()
+    for i in range(1, len(parts), 2):
+        no = int(re.match(r"## (\d+)\.", parts[i]).group(1))
+        seen.add(no)
+        body, rest = (parts[i + 1].split("# 참고", 1) + [None])[:2]
+        values = scores.get(no, [])
+        if body.count(BLANK) != TOP or len(values) != TOP or any(v not in SCORE_RANGE for v in values):
+            raise SystemExit(f"{no}번 조합: 빈 칸 {body.count(BLANK)}개, 점수 {values}")
+        for v in values:
+            body = body.replace(BLANK, f" 점수: {v} |", 1)
+        parts[i + 1] = body if rest is None else f"{body}# 참고{rest}"
+    if seen != set(scores):
+        raise SystemExit(f"조합 번호가 시트와 다릅니다: {sorted(seen ^ set(scores))}")
+    return "".join(parts)
+
+
+def read_scores(text: str) -> dict[int, list[int]]:
+    """평가 조합의 점수를 읽는다. 참고 조합은 읽지 않는다. 빈 칸이 있으면 멈춘다."""
+    parts = re.split(r"(?m)^## (\d+)\. .*$", text.split("# 참고 (집계하지 않습니다)")[0])
+    out = {}
+    for i in range(1, len(parts), 2):
+        values = [int(v) for v in re.findall(r"(?m) 점수: (\d) \|$", parts[i + 1])]
+        if len(values) != TOP or BLANK in parts[i + 1]:
+            raise SystemExit(f"{parts[i]}번 조합의 점수가 {len(values)}개입니다")
+        out[int(parts[i])] = values
+    return out
+
+
+def tally(scores: dict[int, list[int]], combos: list[dict]) -> dict:
+    """규칙 문서의 집계. 조합 점수는 Top 5 평균이고, 묶음 평균은 조합 점수의 평균이다."""
+    if set(scores) != {c["no"] for c in combos}:
+        raise SystemExit("점수와 조합의 번호가 다릅니다")
+    means = {no: sum(v) / TOP for no, v in sorted(scores.items())}
+    avg = lambda nos: sum(means[n] for n in nos) / len(nos)  # noqa: E731
+    base = avg([c["no"] for c in combos if c["kind"] == "기본"])
+    new = avg([c["no"] for c in combos if c["kind"] == GOURMAND])
+    every = avg([c["no"] for c in combos if c["bucket"] == GOURMAND])
+    verdict = "합격" if base >= PASS else "불합격"
+    if min(new, every) < PASS:
+        verdict += ", 구르망 평균 미달: 고치지 않고 보고 후 멈춤"
+    return {"combos": means, "base": base, "new_gourmand": new, "all_gourmand": every, "all": avg(list(means)),
+            "ranks": [sum(v[i] for v in scores.values()) / len(scores) for i in range(TOP)], "verdict": verdict}

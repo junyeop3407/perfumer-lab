@@ -2,6 +2,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import eye_v8 as EY  # noqa: E402
 
@@ -52,6 +54,45 @@ def test_향수마다_점수_칸이_비어_있고_칸은_블라인드와_같다(
     assert text.count(" 점수: _ |") == 3
     assert "| 순위 | 향수 | 브랜드 | 주요 노트 (탑 / 미들 / 베이스) | 주요 어코드 | 점수 |" in text
     assert "Name\\|citrus0" in text and "CITRUS · WOODY" in text
+
+
+def _five():
+    combo = [["c1", "top", "medium"], ["f1", "middle", "medium"], ["w1", "base", "medium"]]
+    keys = [f"citrus{i}" for i in range(5)]
+    return EY.sheet_text([{"no": 1, "notes": combo, "keys": keys}, {"no": 2, "notes": combo, "keys": keys}], [{"no": 8, "notes": combo, "keys": keys}], _cat())
+
+
+def test_점수를_채우고_다시_읽으며_참고는_비워_둔다():
+    text = EY.fill_scores(_five(), {1: [5, 4, 3, 2, 1], 2: [5, 5, 5, 5, 4]})
+    assert EY.read_scores(text) == {1: [5, 4, 3, 2, 1], 2: [5, 5, 5, 5, 4]}
+    assert text.split("# 참고 (집계")[1].count(EY.BLANK) == 5
+
+
+@pytest.mark.parametrize("scores", [{1: [5, 5, 5, 5], 2: [5, 5, 5, 5, 5]}, {1: [5, 5, 5, 5, 6], 2: [5, 5, 5, 5, 5]}, {1: [5, 5, 5, 5, 5]},
+                                    {1: [5, 5, 5, 5, 5], 2: [5, 5, 5, 5, 5], 3: [5, 5, 5, 5, 5]}])
+def test_점수가_어긋나면_멈춘다(scores):
+    with pytest.raises(SystemExit):
+        EY.fill_scores(_five(), scores)
+
+
+def test_이미_채운_시트는_다시_채우지_않고_빈_칸이_있으면_읽지_않는다():
+    done = EY.fill_scores(_five(), {1: [5, 5, 5, 5, 5], 2: [5, 5, 5, 5, 5]})
+    with pytest.raises(SystemExit):
+        EY.fill_scores(done, {1: [1, 1, 1, 1, 1], 2: [1, 1, 1, 1, 1]})
+    with pytest.raises(SystemExit):
+        EY.read_scores(_five())
+
+
+COMBOS = [{"no": 1, "kind": "기본", "bucket": "플로럴"}, {"no": 2, "kind": "기본", "bucket": "구르망"}, {"no": 3, "kind": "구르망", "bucket": "구르망"}]
+
+
+def test_집계와_판정():
+    r = EY.tally({1: [5] * 5, 2: [4] * 5, 3: [3, 3, 3, 3, 4]}, COMBOS)
+    assert r["base"] == 4.5 and r["new_gourmand"] == pytest.approx(3.2)
+    assert r["all_gourmand"] == pytest.approx(3.6) and r["ranks"][4] == pytest.approx(13 / 3)
+    assert r["verdict"] == "합격, 구르망 평균 미달: 고치지 않고 보고 후 멈춤"
+    assert EY.tally({1: [5] * 5, 2: [4] * 5, 3: [4] * 5}, COMBOS)["verdict"] == "합격"
+    assert EY.tally({1: [3] * 5, 2: [3] * 5, 3: [4] * 5}, COMBOS)["verdict"].startswith("불합격")
 
 
 def test_조합의_강도를_보여_주고_참고는_끝에_따로_둔다():
