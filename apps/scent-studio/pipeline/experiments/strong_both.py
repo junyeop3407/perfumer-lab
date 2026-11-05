@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 from strong_value_test import COMBOS  # noqa: E402
@@ -25,7 +26,7 @@ SETTINGS = [(s, both) for s in (2.0, 2.5, 3.0) for both in (False, True)]
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng = E.Engine(cat)
     by = {p["key"]: p for p in cat["perfumes"]}
     ko = {a["key"]: a["nameKo"] for a in cat["accords"]}

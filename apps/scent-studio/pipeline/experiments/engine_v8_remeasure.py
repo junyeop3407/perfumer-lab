@@ -17,6 +17,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import build_catalog as B  # noqa: E402
 import catalog_rules as R  # noqa: E402
 import decant_join as D  # noqa: E402
@@ -102,7 +103,7 @@ def traces(s_name: str, s: T.Scorer, f) -> None:
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     excluded, suspects = keys_of("excluded_keys.csv"), keys_of("review_candidates.csv")
-    orig = json.loads(gzip.open(OUT_DIR / "catalog.json.gz", "rb").read())
+    orig = load_old_catalog(OUT_DIR / "catalog.json.gz")
     orig_s = T.Scorer(orig, True)
     T.install_group_mask(orig_s)
     orig_keys = {p["key"] for p in orig["perfumes"]}

@@ -424,3 +424,22 @@ def test_보고서를_쓸_수_있다(tmp_path, catalog):
     B.write_report(B.build_fixture(), out, "t")
     text = out.read_text(encoding="utf-8")
     assert "manual/{filtered,review}_keys.csv" in text and "강도 추정치" in text
+
+
+def _write_cat(path, version):
+    with gzip.open(path, "wt", encoding="utf-8") as f:
+        json.dump({"engineVersion": version, "perfumes": []}, f)
+    return path
+
+
+def test_옛_스크립트용_읽기는_v8_카탈로그면_멈춘다(tmp_path):
+    assert R.load_old_catalog(_write_cat(tmp_path / "v7.json.gz", 7))["engineVersion"] == 7
+    with pytest.raises(SystemExit, match="catalog_v7_compare"):
+        R.load_old_catalog(_write_cat(tmp_path / "v8.json.gz", 8))
+
+
+def test_옛_스크립트는_모두_버전을_확인하고_읽는다():
+    current = {"engine_v8_check.py", "freeze_exclusions.py", "save_v7_compare.py"}  # v8을 일부러 읽거나 v7 파일만 읽는 것
+    for path in (PIPELINE / "experiments").glob("*.py"):
+        if path.name not in current:
+            assert "gzip.open(" not in path.read_text(encoding="utf-8"), f"{path.name}: load_old_catalog를 쓰지 않음"

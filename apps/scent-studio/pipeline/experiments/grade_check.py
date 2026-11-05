@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
@@ -22,7 +23,7 @@ APP = Path(__file__).resolve().parent.parent.parent
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng = E.Engine(cat)
     by = {p["key"]: p for p in cat["perfumes"]}
     selfs = []

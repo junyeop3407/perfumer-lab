@@ -30,6 +30,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
@@ -91,7 +92,7 @@ def name_key(brand: str, name: str) -> tuple[str, str]:
 
 class Data:
     def __init__(self) -> None:
-        self.catalog = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+        self.catalog = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
         if self.catalog["engineVersion"] != 6:
             raise SystemExit("이 스크립트는 v6 카탈로그 기준의 기록입니다. 지금 엔진 비교는 experiments/similar_votes.py")
         self.eng = E.Engine(self.catalog)

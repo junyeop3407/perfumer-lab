@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
@@ -77,7 +78,7 @@ def deconvolved(cat: dict, min_df: int = 20, iters: int = 400) -> dict:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     ko = {a["key"]: a["nameKo"] for a in cat["accords"]}
     acc = [a["key"] for a in cat["accords"]]
     alt = deconvolved(cat)

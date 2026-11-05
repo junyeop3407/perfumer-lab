@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import evaluate as V  # noqa: E402
 from engine_ref import Engine  # noqa: E402
 
@@ -99,7 +100,7 @@ def pick(rows: list[dict], n: int = 6) -> list[dict]:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(V.CATALOG, "rt", encoding="utf-8"))
+    cat = load_old_catalog(V.CATALOG)
     eng = Engine(cat)
     v3 = V.v3_recommender()
     rows = []

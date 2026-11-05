@@ -18,6 +18,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.path.insert(0, "pipeline")
+from catalog_rules import load_old_catalog  # noqa: E402
 import catalog_rules as R  # noqa: E402
 import decant_join as D  # noqa: E402
 
@@ -30,7 +31,7 @@ AMB = set("gasoline|asphalt|rubber|dust|mud|fish|grease|chlorine|melting plastic
 NEW = "onion|charcoal|fermented almond|aged pepper|must|brine|tar|cabbage|black truffle|hay absolute".split("|")
 JUNK = {r["note_key"] for r in csv.DictReader(open("pipeline/manual/junk_notes.csv", encoding="utf-8"))}
 
-cat = json.load(gzip.open(OUT / "catalog.json.gz", "rt", encoding="utf-8"))
+cat = load_old_catalog(OUT / "catalog.json.gz")
 ps = cat["perfumes"]
 known = set(cat["notes"]) if isinstance(cat["notes"], dict) else {n["key"] for n in cat["notes"]}
 DB = Path("pipeline/data/raw/decant/perfumes.db")

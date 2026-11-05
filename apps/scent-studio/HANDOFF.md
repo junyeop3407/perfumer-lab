@@ -14,9 +14,12 @@
 - 정리 확정값: **후보 12,469, 제외 키 1,081, 표시 40.** 기준 목록은 `pipeline/manual/{filtered,review}_keys.csv` (`pipeline/experiments/freeze_exclusions.py`). `merge_keys.csv`는 비어 있고(예외 없음), `separate_keys.csv`는 겹침 규칙으로 대체됐지만 남겨 둔다.
 - **측정 기준: 쿼리 893 / 남겨 둔 절반 474가 새 기준이다.** ★6 표(882/466)는 쿼리 집합이 달라 참고용이고 직접 비교하지 않는다. 지금 표는 `docs/engine_v8_final.md`, `docs/engine_v8_check.md`. 쿼리 목록은 `pipeline/data/out/queries_v8.json`.
 - ★6 결정(2026-11-04): P1 채택, M1 제외, 맹점 공식 4/5 통과. P1-half는 블라인드 미달 시 예비안.
-- **카탈로그 크기:** 2,287KB (v7 비교본 1,574KB, 이전 기록 1,660KB). 추정치를 넣어 늘었다. 화면 단계에서 앱 용량과 함께 본다.
+
+### 미뤄 둔 항목
+- **P1 전체 재학습 (10단계 이후 필요하면 검토):** 지금은 개발 절반으로만 학습한다(사장 결정). 남겨 둔 절반을 평가용으로 깨끗하게 두기 위해서다.
 
 ### 미뤄 둔 항목 (화면 단계)
+- **카탈로그 크기 줄이기:** gzip 압축 후 2,287KB, 풀면 10.7MB (v7 비교본 압축 1,574KB, 이전 기록 1,660KB). 추정치를 넣어 늘었다. 앱 용량과 함께 본다.
 - **같은 해 분리 행:** 대표와 출시 연도가 같은 분리 행은 농도 차이일 수 있어 추천에 두 번 나올 수 있다. 같은 브랜드 + 기본 이름을 묶어 보여 준다.
 - **승인 목록 H1·H2 글자 잘림:** 하단 탭 글자가 잘리는 기존 문제다(629b522에서도 같은 위치·같은 글자로 실패). 화면 단계에서 고친다.
 - 저장소는 공개 유지(사장 결정). 정리 목록은 비밀 키를 섞은 HMAC이고, 예전 커밋은 그대로 둔다. **비밀 키 `SCENT_KEY_SECRET`은 작업한 컴퓨터의 사용자 환경 변수에 있다.** 비밀번호 관리자에 옮겼는지는 아직 확인받지 못했다. 다른 컴퓨터에서는 같은 키를 설정해야 실제 카탈로그를 만들 수 있다.
@@ -25,7 +28,7 @@
 - 사장의 8단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
 - `freeze_exclusions.py`는 정리 전 카탈로그 `pipeline/data/out/catalog_precleanup.json.gz`를 읽는다. `catalog.json.gz`는 이제 v8이다.
 - 보류 목록의 합치기 분리 후 제외 4개는 `pipeline/manual/hold_keys.csv`에서 읽으므로 `freeze_exclusions.py`를 다시 돌려도 남는다. (손으로 다시 넣으라던 예전 메모는 이 수정으로 대체됐다.)
-- 옛 실험 스크립트 중 `catalog.json.gz`를 읽는 것은 v8부터 모든 향수를 강도 보유로 본다. v7 기준 비교는 `catalog_v7_compare.json.gz`를 쓴다.
+- 옛 실험 스크립트는 v8 카탈로그를 읽으면 경고하고 멈춘다(`catalog_rules.load_old_catalog`). v7 기준 비교는 `catalog_v7_compare.json.gz`를 쓴다.
 - 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`(메모리 측정), `py pipeline/experiments/engine_v8_check.py`(v8 파일 확인). 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에서는 비공개 저장소 `junyeop3407/perfumer-lab-private`에서 받아 이 폴더에 복사한다. 자동으로 맞춰지지 않으니 표가 바뀌면 다시 올린다(마지막 백업 2026-11-05).
 - `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
 - **v8 뒤 할 일:** 이름 오류 복원(유명 향수가 카탈로그에서 빠진 상태일 수 있음), 보류 목록 14개(웹 재출시작 확인 후보 10개 + 합치기 분리 후 새로 제외된 4개) 확인, 복구 후 오염 규칙을 통과한 2개 처리.

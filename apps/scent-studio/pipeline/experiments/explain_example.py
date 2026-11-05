@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
@@ -30,7 +31,7 @@ if {k for k, _, _ in BASE} in used:
     raise SystemExit("예시 조합이 블라인드 조합과 겹칩니다")
 
 blind_text = "".join((APP / "docs" / f).read_text(encoding="utf-8") for f in ("engine_blind.md", "engine_blind_vs_v6.md"))
-catalog = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+catalog = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
 eng = E.Engine(catalog)
 by_key = {p["key"]: p for p in catalog["perfumes"]}
 names = eng.accords

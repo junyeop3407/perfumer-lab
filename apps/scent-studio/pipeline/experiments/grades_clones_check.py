@@ -14,6 +14,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import catalog_rules as R  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
@@ -28,7 +29,7 @@ def esc(text: str) -> str:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng = E.Engine(cat)
     out = ["# 등급 기준값 비교 · 클론 표본", "",
            f"> `py pipeline/experiments/grades_clones_check.py` (2026-10-31). 엔진 v{cat['engineVersion']} (어코드 {E.W_ACCORD} : 노트 {E.W_NOTE}, 강 {E.INTENSITIES[-1]}).", ""]

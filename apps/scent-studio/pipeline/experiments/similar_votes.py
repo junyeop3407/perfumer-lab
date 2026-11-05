@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import decant_join as D  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
@@ -89,7 +90,7 @@ def compare(a: dict[str, int], b: dict[str, int], keys: list[str], k: int) -> tu
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat7 = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+    cat7 = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng7 = E.Engine(cat7)
     eng6, cat6, with_v6 = V.v6_engine()
     qs = build_queries(cat7, eng7)

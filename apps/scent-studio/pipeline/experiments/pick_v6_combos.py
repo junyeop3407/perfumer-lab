@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import evaluate as V  # noqa: E402
 from engine_ref import Engine  # noqa: E402
 from pick_v3_combos import CANDIDATES  # noqa: E402
@@ -25,7 +26,7 @@ APP = Path(__file__).resolve().parent.parent.parent
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng = Engine(cat)
     eng6, _, with_v6 = V.v6_engine()
     shown = {name for name, _ in V.v3_combos()}

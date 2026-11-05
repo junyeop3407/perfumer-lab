@@ -19,6 +19,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 import estimate as EST  # noqa: E402
 from estimate import is_dev  # noqa: E402,F401
@@ -529,7 +530,7 @@ def alt_catalog() -> dict:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.loads(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rb").read())
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     eng = E.Engine(cat)
     eng6, cat6, with_v6 = V.v6_engine()
     v6 = Scorer(cat6, strength=False)

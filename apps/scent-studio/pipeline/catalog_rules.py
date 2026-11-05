@@ -5,6 +5,8 @@ Python 기본 기능만 쓴다. 이 파일의 규칙은 TypeScript 엔진(`app/s
 """
 from __future__ import annotations
 
+import gzip
+import json
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -143,6 +145,16 @@ _GROUP_WORDS = re.compile(
 
 # 같은 이름 묶음 안에서 노트가 이만큼 이상 겹쳐야 같은 향수(농도만 다른 버전)로 본다 (자카드, 2026-10-31)
 GROUP_MIN_NOTE_OVERLAP = 0.5
+
+
+def load_old_catalog(path) -> dict:
+    """v7까지의 카탈로그를 전제한 옛 스크립트용. v8은 모든 향수에 강도 값(추정치 포함)이 있어 v7처럼 읽으면 측정이 틀어지므로 멈춘다."""
+    with gzip.open(path, "rt", encoding="utf-8") as f:
+        cat = json.load(f)
+    if cat.get("engineVersion", 0) >= 8:
+        raise SystemExit(f"경고: {path}는 엔진 v{cat['engineVersion']} 카탈로그입니다. 이 스크립트는 v7까지를 전제합니다. "
+                         "v7 기준으로 재려면 pipeline/data/out/catalog_v7_compare.json.gz를 읽도록 바꾸세요.")
+    return cat
 
 
 def hold_list_keys(candidates, ratings: dict[str, int], always, top: int = 10) -> list[str]:

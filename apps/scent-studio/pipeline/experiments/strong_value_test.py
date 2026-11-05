@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from catalog_rules import load_old_catalog  # noqa: E402
 import engine_ref as E  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
@@ -33,7 +34,7 @@ COMBOS = [
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    cat = json.load(gzip.open(APP / "pipeline" / "data" / "out" / "catalog.json.gz", "rt", encoding="utf-8"))
+    cat = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
     out_file, profile_note = "engine_strong.md", "엔진 v3 프로필"
     if "--candidate" in sys.argv:  # 후보 프로필("함께 든 노트 몫 빼기", note_profile_check.py)로 같은 시험
         from note_profile_check import deconvolved
