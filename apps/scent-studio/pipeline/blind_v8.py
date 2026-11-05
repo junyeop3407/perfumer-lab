@@ -1,6 +1,9 @@
 """8단계 블라인드 부품 (규칙: docs/engine_blind_v8_rules.md). 조합 생성과 판정 시트 문서. 추천 계산은 하지 않는다."""
 from __future__ import annotations
 
+import re
+from math import comb
+
 import numpy as np
 
 SEED = 20261105
@@ -10,6 +13,8 @@ BUCKET_OF = {"citrus": "프레시", "fresh": "프레시", "green": "프레시", 
 LAYERS = ("top", "middle", "base")
 LAYER_KO = {"top": "탑", "middle": "미들", "base": "베이스"}
 MAX_TRIES = 1_000_000
+CHOICES = ("A", "B", "비슷함")
+MIN_VALID = 20
 
 
 def generate(cat: dict, per_bucket: int, used: set[frozenset], seed: int = SEED) -> list[dict]:
@@ -68,3 +73,57 @@ def sheet_text(entries: list[dict], cat: dict) -> str:
         else:
             lines += ["- 판정: ☐ A  ☐ B  ☐ 비슷함", "- 근거: ", "- 채팅 AI 의견(집계 제외): ", ""]
     return "\n".join(lines)
+
+
+def fill_sheet(text: str, picks: dict[int, str], reason: str) -> str:
+    """빈 판정 칸을 채운다. 판정 칸이 있는 번호와 picks 번호가 정확히 같아야 한다. 표는 건드리지 않는다."""
+    blank = "- 판정: ☐ A  ☐ B  ☐ 비슷함\n- 근거: \n"
+    parts = re.split(r"(?m)^(## \d+\. .*)$", text)
+    seen = set()
+    for i in range(1, len(parts), 2):
+        no = int(re.match(r"## (\d+)\.", parts[i]).group(1))
+        if blank in parts[i + 1]:
+            seen.add(no)
+            if no in picks:
+                marks = {c: "☑" if picks[no] == c else "☐" for c in CHOICES}
+                parts[i + 1] = parts[i + 1].replace(blank, f"- 판정: {marks['A']} A  {marks['B']} B  {marks['비슷함']} 비슷함\n- 근거: {reason}\n")
+    if seen != set(picks):
+        raise SystemExit(f"판정 번호가 시트와 다릅니다: 빠짐 {sorted(seen - set(picks))}, 없는 번호 {sorted(set(picks) - seen)}")
+    return "".join(parts)
+
+
+def read_judgements(text: str) -> dict[int, str]:
+    """시트에서 판정을 읽는다. 표시가 하나가 아닌 칸이 있으면 멈춘다. 자동 비슷함 조합은 칸이 없어 결과에 없다."""
+    parts = re.split(r"(?m)^## (\d+)\. .*$", text)
+    out = {}
+    for i in range(1, len(parts), 2):
+        line = re.search(r"(?m)^- 판정: (.*)$", parts[i + 1])
+        if line:
+            picked = re.findall(r"☑ (A|B|비슷함)", line.group(1))
+            if len(picked) != 1:
+                raise SystemExit(f"{parts[i]}번 판정 칸의 표시가 {len(picked)}개입니다")
+            out[int(parts[i])] = picked[0]
+    return out
+
+
+def sign_p(wins_a: int, wins_b: int) -> float:
+    """양측 부호 검정의 정확한 p값."""
+    n = wins_a + wins_b
+    if n == 0:
+        return 1.0
+    tail = sum(comb(n, i) for i in range(max(wins_a, wins_b), n + 1))
+    return min(1.0, 2 * tail / 2**n)
+
+
+def winners(judgements: dict[int, str], key: dict[str, dict[str, str]]) -> dict[int, str]:
+    """{번호: 'v7'|'v8'}. 비슷함은 뺀다."""
+    return {no: key[str(no)][pick] for no, pick in judgements.items() if pick != "비슷함"}
+
+
+def verdict(v8: int, v7: int) -> str:
+    """규칙 문서의 결과 표. 유효 20 미만이면 결론을 내지 않는다."""
+    if v8 + v7 < MIN_VALID:
+        return "유효 부족(8개 추가)"
+    if sign_p(v8, v7) >= 0.05:
+        return "유의차 없음"
+    return "v8 유의 승" if v8 > v7 else "v7 유의 승"
