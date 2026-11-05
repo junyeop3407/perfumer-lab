@@ -109,14 +109,16 @@ def test_연결된_향수만_강도가_들어간다(fixture_catalog):
     assert sum(t1["noteWeights"].values()) == pytest.approx(1, abs=0.001)
     assert t1["noteWeights"]["lemon"] > t1["noteWeights"]["jasmine"]
     assert set(t1["noteWeights"]) == set(t1["top"]) | set(t1["middle"]) | set(t1["base"])
-    assert "noteWeights" not in _by(fixture_catalog, "T005")  # 이름은 같아도 노트가 다른 향수
-    assert "accordShares" not in _by(fixture_catalog, "T006")  # 데이터에 없는 향수
+    assert "estimatedNotes" not in t1 and "estimatedAccords" not in t1
+    # v8부터 연결되지 않은 향수는 값이 없는 대신 추정치로 채우고 표시한다
+    assert _by(fixture_catalog, "T005")["estimatedNotes"] is True  # 이름은 같아도 노트가 다른 향수
+    assert _by(fixture_catalog, "T006")["estimatedAccords"] is True  # 데이터에 없는 향수
 
 
-def test_투표가_없는_향수는_노트_강도가_없다(fixture_catalog):
-    assert "noteWeights" not in _by(fixture_catalog, "T004")
-    assert "accordShares" not in _by(fixture_catalog, "T004")  # 연결되는 어코드도 없음
+def test_투표가_없는_향수는_노트_강도가_실제값이_아니다(fixture_catalog):
+    assert _by(fixture_catalog, "T004")["estimatedNotes"] is True
+    assert _by(fixture_catalog, "T004")["estimatedAccords"] is True  # 연결되는 어코드도 없음
 
 
 def test_엔진_버전(fixture_catalog):
-    assert fixture_catalog["engineVersion"] == 7
+    assert fixture_catalog["engineVersion"] == 8

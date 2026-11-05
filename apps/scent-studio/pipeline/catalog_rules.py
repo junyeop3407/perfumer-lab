@@ -145,6 +145,13 @@ _GROUP_WORDS = re.compile(
 GROUP_MIN_NOTE_OVERLAP = 0.5
 
 
+def hold_list_keys(candidates, ratings: dict[str, int], always, top: int = 10) -> list[str]:
+    """보류 목록: candidates 중 평가 수 상위 top개 + 항상 남길 행(always). 다시 만들어도 always는 사라지지 않는다."""
+    order = lambda k: (-ratings[k], k)  # noqa: E731
+    head = sorted(candidates, key=order)[:top]
+    return head + sorted(set(always) - set(head), key=order)
+
+
 def same_notes(a: set[str], b: set[str]) -> bool:
     """노트 겹침(자카드)이 기준 이상이면 같은 향수로 본다. 합치기와 묶음 나누기가 같은 기준을 쓴다."""
     return bool(a | b) and len(a & b) / len(a | b) >= GROUP_MIN_NOTE_OVERLAP

@@ -40,10 +40,14 @@ export type Perfume = {
   middle: string[];
   base: string[];
   group: string;
-  /** 어코드 강도(합 100). Fragrantica와 연결된 향수만. 없으면 accords 순위 비중으로 계산 */
+  /** 어코드 강도(합 100). 없으면 accords 순위 비중으로 계산 */
   accordShares?: Record<string, number>;
   /** 향수 안의 노트 강도 몫(합 1). 없으면 모든 노트를 같은 몫으로 계산 */
   noteWeights?: Record<string, number>;
+  /** accordShares가 실제 자료가 아니라 추정치(엔진 v8) */
+  estimatedAccords?: boolean;
+  /** noteWeights가 실제 자료가 아니라 추정치(엔진 v8) */
+  estimatedNotes?: boolean;
 };
 
 export type Catalog = {

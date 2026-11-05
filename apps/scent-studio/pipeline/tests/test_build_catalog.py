@@ -401,3 +401,26 @@ def test_이_컴퓨터의_비밀_키로_목록이_원본과_모두_맞는다():
     rows = B.read_csv(RAW_CSV)
     for name, count in (("filtered_keys.csv", 1081), ("review_keys.csv", 40), ("reviewed_keys.csv", 2), ("separate_keys.csv", 1), ("merge_keys.csv", 0)):
         assert len(B.keys_from_hashes(rows, PIPELINE / "manual" / name)) == count
+
+
+def test_보류_목록은_상위_행과_고정_행을_함께_남긴다():
+    # 2026-11-05: freeze_exclusions.py를 다시 돌리면 손으로 넣은 행이 사라지던 문제. 고정 행은 manual/hold_keys.csv에서 읽는다
+    ratings = {"a": 300, "b": 200, "c": 100, "d": 50, "e": 40}
+    assert R.hold_list_keys({"a", "b", "c"}, ratings, {"e", "d"}, top=2) == ["a", "b", "d", "e"]
+    assert R.hold_list_keys({"a", "b", "c"}, ratings, {"a", "e"}, top=2) == ["a", "b", "e"], "상위 행과 겹쳐도 한 번만"
+    assert R.hold_list_keys({"a"}, ratings, set(), top=10) == ["a"]
+
+
+@pytest.mark.skipif(not (os.environ.get(B.SECRET_ENV) and RAW_CSV.exists()), reason="비밀 키와 원본 데이터가 있는 컴퓨터에서만 돈다")
+def test_보류_고정_행은_제외_목록에_있고_원본에서_찾을_수_있다():
+    keys = B.keys_from_hashes(B.read_csv(RAW_CSV), PIPELINE / "manual" / "hold_keys.csv")
+    assert len(keys) == 4
+    assert B.read_key_hashes(PIPELINE / "manual" / "hold_keys.csv") <= B.read_key_hashes(PIPELINE / "manual" / "filtered_keys.csv")
+
+
+def test_보고서를_쓸_수_있다(tmp_path, catalog):
+    # 2026-11-05: 문구의 {filtered,review}를 변수로 읽어 실제 빌드가 카탈로그를 쓴 뒤 멈추던 문제
+    out = tmp_path / "report.md"
+    B.write_report(B.build_fixture(), out, "t")
+    text = out.read_text(encoding="utf-8")
+    assert "manual/{filtered,review}_keys.csv" in text and "강도 추정치" in text

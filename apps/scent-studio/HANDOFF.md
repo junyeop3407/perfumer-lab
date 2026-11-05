@@ -1,26 +1,32 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan_v8.md: ★6 결정·합치기 겹침 검사 완료, 7단계 시작 전)
+현재 단계: 4 (구현 — docs/plan_v8.md: 7단계 완료(엔진 v8 적용), 8단계 블라인드 시작 전)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 76/76 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다. H1·H2는 629b522에서도 같은 글자 잘림으로 실패)
-사용자에게 남은 질문: 7단계 시작 지시
-다음 할 일: 사장 지시를 받은 뒤 docs/plan_v8.md 7단계(P1 적용) → 새 블라인드 → 눈 평가 → 등급
+결과: 파이프라인 84/84 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 8단계 블라인드 시작 지시
+다음 할 일: 사장 지시를 받은 뒤 docs/plan_v8.md 8단계(v7 vs v8 새 조합 40개 블라인드) → 눈 평가 → 등급
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
-- 합치기 노트 겹침 검사를 넣었고(사장 결정) P1 결론이 유지됨을 확인했다. **7단계는 시작하지 않았다. 사장의 다음 지시 뒤에 시작한다.** 엔진(v7)과 실제 카탈로그 파일은 아직 그대로이고, 측정은 메모리에서 했다.
+- **7단계 완료: 엔진 v8 적용.** P1은 `pipeline/estimate.py`, 강도 없는 향수의 추정값에는 `estimatedAccords`·`estimatedNotes` 표시. 앱 계산은 그대로다. v8 카탈로그 파일로 잰 값이 메모리 측정과 같음(W 42.8, 사람 유사 -2.5, `docs/engine_v8_check.md`). **8단계 블라인드는 시작하지 않았다. 사장의 다음 지시 뒤에 시작한다.**
+- **v7 비교본:** `pipeline/data/out/catalog_v7_compare.json.gz`(정리 데이터 + 옛 연결, `save_v7_compare.py`). 8단계 블라인드의 v7 쪽으로 쓴다. 커밋 안 함, 비공개 백업에 있음.
 - 정리 확정값: **후보 12,469, 제외 키 1,081, 표시 40.** 기준 목록은 `pipeline/manual/{filtered,review}_keys.csv` (`pipeline/experiments/freeze_exclusions.py`). `merge_keys.csv`는 비어 있고(예외 없음), `separate_keys.csv`는 겹침 규칙으로 대체됐지만 남겨 둔다.
-- **측정 기준: 쿼리 893 / 남겨 둔 절반 474가 새 기준이다.** ★6 표(882/466)는 쿼리 집합이 달라 참고용이고 직접 비교하지 않는다. 지금 표는 `docs/engine_v8_final.md`.
+- **측정 기준: 쿼리 893 / 남겨 둔 절반 474가 새 기준이다.** ★6 표(882/466)는 쿼리 집합이 달라 참고용이고 직접 비교하지 않는다. 지금 표는 `docs/engine_v8_final.md`, `docs/engine_v8_check.md`. 쿼리 목록은 `pipeline/data/out/queries_v8.json`.
 - ★6 결정(2026-11-04): P1 채택, M1 제외, 맹점 공식 4/5 통과. P1-half는 블라인드 미달 시 예비안.
-- **미뤄 둔 위험:** 대표와 출시 연도가 같은 분리 행은 농도 차이일 수 있어 추천에 두 번 나올 수 있다. 화면 단계에서 같은 브랜드 + 기본 이름을 묶어 보여 준다.
+- **카탈로그 크기:** 2,287KB (v7 비교본 1,574KB, 이전 기록 1,660KB). 추정치를 넣어 늘었다. 화면 단계에서 앱 용량과 함께 본다.
+
+### 미뤄 둔 항목 (화면 단계)
+- **같은 해 분리 행:** 대표와 출시 연도가 같은 분리 행은 농도 차이일 수 있어 추천에 두 번 나올 수 있다. 같은 브랜드 + 기본 이름을 묶어 보여 준다.
+- **승인 목록 H1·H2 글자 잘림:** 하단 탭 글자가 잘리는 기존 문제다(629b522에서도 같은 위치·같은 글자로 실패). 화면 단계에서 고친다.
 - 저장소는 공개 유지(사장 결정). 정리 목록은 비밀 키를 섞은 HMAC이고, 예전 커밋은 그대로 둔다. **비밀 키 `SCENT_KEY_SECRET`은 작업한 컴퓨터의 사용자 환경 변수에 있다.** 비밀번호 관리자에 옮겼는지는 아직 확인받지 못했다. 다른 컴퓨터에서는 같은 키를 설정해야 실제 카탈로그를 만들 수 있다.
 
 ### 이어서 시작할 때
-- 사장의 7단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
-- `freeze_exclusions.py`는 `pipeline/data/out/`의 정리 전 카탈로그를 읽는다. 7단계에서 카탈로그를 다시 만들기 전에 v7 비교본을 먼저 저장한다.
-- `freeze_exclusions.py`를 다시 돌리면 `hold_list_web_check_10.csv`가 상위 10개로 다시 써진다. 합치기 분리 후 새로 제외된 4개는 그 뒤에 손으로 추가한 행이니 다시 넣어야 한다(비공개 백업에 있음).
-- 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`. 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에서는 비공개 저장소 `junyeop3407/perfumer-lab-private`에서 받아 이 폴더에 복사한다. 자동으로 맞춰지지 않으니 표가 바뀌면 다시 올린다(마지막 백업 2026-11-05).
+- 사장의 8단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
+- `freeze_exclusions.py`는 정리 전 카탈로그 `pipeline/data/out/catalog_precleanup.json.gz`를 읽는다. `catalog.json.gz`는 이제 v8이다.
+- 보류 목록의 합치기 분리 후 제외 4개는 `pipeline/manual/hold_keys.csv`에서 읽으므로 `freeze_exclusions.py`를 다시 돌려도 남는다. (손으로 다시 넣으라던 예전 메모는 이 수정으로 대체됐다.)
+- 옛 실험 스크립트 중 `catalog.json.gz`를 읽는 것은 v8부터 모든 향수를 강도 보유로 본다. v7 기준 비교는 `catalog_v7_compare.json.gz`를 쓴다.
+- 다시 돌리는 법: `py pipeline/experiments/engine_v8_final.py`(메모리 측정), `py pipeline/experiments/engine_v8_check.py`(v8 파일 확인). 이름이 든 표는 `pipeline/data/out/`(커밋 안 함): `final_traces.txt`, `exclusion_changes.csv`, `merged_rep_excluded.csv`, `hold_list_web_check_10.csv`, `hold_list_ambiguous_pass.csv`, `number_not_in_slug.csv`. 다른 컴퓨터에서는 비공개 저장소 `junyeop3407/perfumer-lab-private`에서 받아 이 폴더에 복사한다. 자동으로 맞춰지지 않으니 표가 바뀌면 다시 올린다(마지막 백업 2026-11-05).
 - `decant_audit.py`는 기록용이다. 다시 돌리지 않는다.
 - **v8 뒤 할 일:** 이름 오류 복원(유명 향수가 카탈로그에서 빠진 상태일 수 있음), 보류 목록 14개(웹 재출시작 확인 후보 10개 + 합치기 분리 후 새로 제외된 4개) 확인, 복구 후 오염 규칙을 통과한 2개 처리.
 
@@ -32,7 +38,7 @@
    - `cd app && npm install && npx playwright install chromium`
    - 비밀 키: 환경 변수 `SCENT_KEY_SECRET` (저장소 README "데이터 정리 목록의 비밀 키"). 없으면 실제 카탈로그를 만들 수 없다. 테스트 1개는 키와 원본이 있을 때만 돈다
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 72 + Vitest 37 (키와 원본이 없으면 71, 1개 건너뜀) 통과
+4. 확인: `bash tests/run.sh` → 파이프라인 84 + Vitest 37 (키와 원본이 없으면 일부 건너뜀) 통과
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.

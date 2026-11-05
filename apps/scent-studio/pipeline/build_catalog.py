@@ -27,7 +27,7 @@ import catalog_rules as R  # noqa: E402
 import decant_join as D  # noqa: E402
 
 APP_DIR = Path(__file__).resolve().parent.parent
-ENGINE_VERSION = 7  # v7: 어코드·노트 강도(Decant), 일치도 × 강도 몫, 선호를 뺀 등급 · v6: 강 3.0 · v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
+ENGINE_VERSION = 8  # v8: 강도 없는 향수에 P1 추정치(pipeline/estimate.py), 앱 계산은 그대로 · v7: 어코드·노트 강도(Decant), 일치도 × 강도 몫, 선호를 뺀 등급 · v6: 강 3.0 · v5: 프로필 = 함께 든 노트의 몫 빼기 + 복사 오류 제외 · 2026-10-31 v3: 프로필 특징 강조(PPMI)·최소 등장 수 20, 강 2.0, 등급 0.87/0.79 · v4: 어코드 0.35 : 노트 0.55
 
 
 @dataclass
@@ -251,11 +251,13 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
           version: str, source_note: str, junk: set[str] = frozenset(),
           brand_fixes: dict[str, str] | None = None, decant: dict | None = None,
           source_name: str = "Parfumo", exclude: Collection[str] = frozenset(),
-          keep_separate: Collection[str] = frozenset(), keep_merged: Collection[str] = frozenset()) -> BuildResult:
+          keep_separate: Collection[str] = frozenset(), keep_merged: Collection[str] = frozenset(),
+          estimate: bool = False) -> BuildResult:
     """decant(engine v7): {rows, accord_map, aliases}. 없으면 강도 없이 v6처럼 만든다(비교용).
     exclude: 뺄 향수 key. 합치기·복사 판정이 끝난 뒤에 빼므로, 없던 행이 되살아나거나 다른 행의 판정이 바뀌지 않는다.
     keep_separate: 이름이 같아도 합치지 않을 향수 key (사장이 다른 향수로 확인한 것, manual/separate_keys.csv).
-    keep_merged: 노트 겹침이 낮아도 합칠 향수 key (사장 결정, manual/merge_keys.csv)."""
+    keep_merged: 노트 겹침이 낮아도 합칠 향수 key (사장 결정, manual/merge_keys.csv).
+    estimate: 강도 없는 향수에 P1 추정치를 넣는다(engine v8, 앱 카탈로그). 비교·측정용 빌드는 끈다."""
     report: dict = {"rows": len(rows)}
     display_name: dict[str, Counter] = defaultdict(Counter)  # note key → 원래 표기들
 
@@ -534,6 +536,10 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
         "notes": notes_out,
         "perfumes": perfumes_out,
     }
+    if estimate:
+        import estimate as EST
+
+        report.update(EST.apply(catalog))
     report["families_of_selectable_notes"] = dict(Counter(
         family_of[k] for k, t in tiers.items() if t != "hidden").most_common())
     report["no_korean_examples"] = sorted(no_korean, key=lambda k: -df[k])[:30]
@@ -560,11 +566,12 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
         f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/copy_suspects.csv`, 2026-10-31)",
-        f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 검토 대상으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/{filtered,review}_keys.csv`, 2026-11-04)",
+        f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 검토 대상으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/{{filtered,review}}_keys.csv`, 2026-11-04)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
         f"- 이름은 같지만 노트가 절반 넘게 달라 따로 나눈 묶음: {r.get('groups_split_by_notes', 0):,} (연도만 다른 새 향수 등, 2026-10-31)",
         f"- Decant(Fragrantica) 연결: {r.get('decant_matched', 0):,}개 · 어코드 강도 {r.get('decant_accord_shares', 0):,}개 · 노트 강도 {r.get('decant_note_weights', 0):,}개 (engine v7)",
+        f"- 강도 추정치(engine v8, P1): 어코드 {r.get('estimated_accords', 0):,}개 · 노트 {r.get('estimated_notes', 0):,}개 (estimatedAccords·estimatedNotes로 표시)",
         f"- 노트: 전체 {r['notes_total']:,} · 목록 {r['notes_browse']:,} · 검색 전용 {r['notes_search']:,} · 고를 수 없음 {r['notes_hidden']:,}",
         f"- **미매핑 비율(후보 향수의 노트 중 고를 수 없는 노트의 비율): {r['unmapped_ratio']:.1%}** (기준 5% 이하)",
         f"- 한글명이 없는 고를 수 있는 노트: {r['selectable_without_korean']:,}",
@@ -594,6 +601,7 @@ def build_fixture() -> BuildResult:
         decant={"rows": json.loads((fx / "synthetic_decant.json").read_text(encoding="utf-8")),
                 "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
                 "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv")},
+        estimate=True,
     )
 
 
@@ -627,13 +635,14 @@ def main() -> None:
         read_overrides(manual / "note_family_override.csv"), read_korean(manual / "notes_ko.csv"),
         version=version, source_name="Parfumo, Fragrantica(Decant)",
         source_note="Parfumo (TidyTuesday 2024-12-10 정리본) + Decant의 Fragrantica 어코드·노트 강도(CC BY-NC-SA 4.0, 변형함). "
-                    "함량 측정값이 아니라 커뮤니티가 느낀 강도 기반 추정치",
+                    "함량 측정값이 아니라 커뮤니티가 느낀 강도 기반 추정치. "
+                    "강도 자료가 없는 향수의 값은 같은 자료에서 배운 추정치이고 estimatedAccords·estimatedNotes로 표시",
         decant={"rows": D.load_rows(decant_db), "accord_map": D.read_accord_map(manual / "fragrantica_accords.csv"),
                 "aliases": D.read_note_aliases(manual / "fragrantica_note_aliases.csv"),
                 "brand_aliases": D.read_brand_aliases(manual / "decant_brand_aliases.csv")},
         junk=read_junk(manual / "junk_notes.csv"), brand_fixes=read_brand_fixes(manual / "brand_fixes.csv"), exclude=exclude,
         keep_separate=keys_from_hashes(rows, manual / "separate_keys.csv"),
-        keep_merged=keys_from_hashes(rows, manual / "merge_keys.csv"),
+        keep_merged=keys_from_hashes(rows, manual / "merge_keys.csv"), estimate=True,
     )
     result.report["flagged_rows"] = sum(key_hash(p["key"]) in flags for p in result.catalog["perfumes"])
     out = APP_DIR / "pipeline" / "data" / "out" / "catalog.json.gz"

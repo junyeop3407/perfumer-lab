@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 import gzip
-import hashlib
 import json
 import math
 import sys
@@ -21,13 +20,14 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import engine_ref as E  # noqa: E402
+import estimate as EST  # noqa: E402
+from estimate import is_dev  # noqa: E402,F401
 import evaluate as V  # noqa: E402
 import similar_votes as SV  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
 OUT = APP / "docs" / "engine_v8_trial.md"
 SEED = 20261104
-RIDGE = 1.0
 SHIFT_TOP = 50  # P2: 두 묶음을 맞출 때 보는 묶음별 상위 향수 수
 
 # 프레시 점검에 더 넣는 조합 (마린·민트·시트러스 계열). 사장에게 보인 적 없는 조합이다
@@ -181,38 +181,9 @@ class Scorer:
         return self.top(self.scored(spec)[0], k, cap)
 
 
-def is_dev(key: str) -> bool:
-    return int(hashlib.sha1(key.encode()).hexdigest(), 16) % 2 == 0
-
-
 def fit_estimate(cat: dict, eng: E.Engine) -> tuple[np.ndarray, dict[str, float]]:
-    """P1 추정치 보정. 개발 절반의 강도 있는 향수에서 배운다.
-    어코드: 어코드 목록(순위 × 이름) → 전체 21개 비중을 능형 회귀로 예측. 노트: 노트마다 '평균보다 얼마나 강한가'"""
-    ps, accords = cat["perfumes"], eng.accords
-    idx = {a: i for i, a in enumerate(accords)}
-
-    def features(p: dict) -> np.ndarray:
-        x = np.zeros(5 * len(accords) + 1)
-        x[-1] = 1.0
-        for r, a in enumerate(p["accords"][:5]):
-            x[r * len(accords) + idx[a]] = 1.0
-        return x
-
-    train = [p for p in ps if p.get("accordShares") and is_dev(p["key"])]
-    X = np.array([features(p) for p in train])
-    Y = np.array([eng.vec[p["key"]] for p in train])
-    coef = np.linalg.solve(X.T @ X + RIDGE * np.eye(X.shape[1]), X.T @ Y)
-    pred = np.clip(np.array([features(p) for p in ps]) @ coef, 0.0, None)
-    pred = 100.0 * pred / np.maximum(pred.sum(axis=1, keepdims=True), 1e-9)
-
-    ratio: dict[str, list[float]] = {}
-    for p in train:
-        w = p.get("noteWeights") or {}
-        for k, v in w.items():
-            ratio.setdefault(k, []).append(v * len(w))
-    # 데이터 적은 노트는 1(평균)로 끌어당긴다
-    prior = {k: (sum(v) + 20.0) / (len(v) + 20.0) for k, v in ratio.items()}
-    return pred, prior
+    """P1 추정치 보정. 계산은 pipeline/estimate.py로 옮겼다 (v8 7단계)"""
+    return EST.fit(cat)
 
 
 def check_same(s: Scorer, ref_scores, specs) -> None:

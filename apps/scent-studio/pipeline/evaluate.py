@@ -233,6 +233,16 @@ def blind_doc(header: str, who: str, pairs_by_combo: list, seed: int, label, acc
     return doc, side, pairs
 
 
+def cleanup_args(rows: list[dict]) -> dict:
+    """지금 카탈로그와 같은 데이터 정리 (제외·합치기 예외). 예전 엔진과 비교할 때 엔진 차이만 보려고 쓴다."""
+    import build_catalog as B
+
+    manual = APP / "pipeline" / "manual"
+    return {"exclude": B.keys_from_hashes(rows, manual / "filtered_keys.csv"),
+            "keep_separate": B.keys_from_hashes(rows, manual / "separate_keys.csv"),
+            "keep_merged": B.keys_from_hashes(rows, manual / "merge_keys.csv")}
+
+
 def v6_engine():
     """예전 엔진 v6: 강도 없는 카탈로그 + 강도 몫을 곱하지 않는 일치도. 데이터 정리는 지금과 같다. 원본 CSV가 필요하다.
     → (엔진, 카탈로그, 함수를 v6 계산으로 돌리는 도우미)"""
@@ -240,10 +250,12 @@ def v6_engine():
     import catalog_rules as R
 
     manual = APP / "pipeline" / "manual"
-    cat = B.build(B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv"), R.REAL,
+    rows = B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv")
+    cat = B.build(rows, R.REAL,
                   B.read_aliases(manual / "aliases.csv"), B.read_overrides(manual / "note_family_override.csv"),
                   B.read_korean(manual / "notes_ko.csv"), version="v6", source_note="v6",
-                  junk=B.read_junk(manual / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv")).catalog
+                  junk=B.read_junk(manual / "junk_notes.csv"), brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv"),
+                  **cleanup_args(rows)).catalog
     eng6 = Engine(cat)
 
     def with_v6(fn):
@@ -264,11 +276,12 @@ def v3_recommender():
     import catalog_rules as R
 
     manual = APP / "pipeline" / "manual"
-    cat = B.build(B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv"),
+    rows = B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv")
+    cat = B.build(rows,
                   dataclasses.replace(R.REAL, profile_method="ppmi"), B.read_aliases(manual / "aliases.csv"),
                   B.read_overrides(manual / "note_family_override.csv"), B.read_korean(manual / "notes_ko.csv"),
                   version="v3", source_note="v3", junk=B.read_junk(manual / "junk_notes.csv"),
-                  brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv")).catalog
+                  brand_fixes=B.read_brand_fixes(manual / "brand_fixes.csv"), **cleanup_args(rows)).catalog
     eng3 = Engine(cat)
 
     def recommend(spec):
@@ -504,6 +517,7 @@ def main() -> None:
         v6_ans = read_answers(V6_ANSWERS, len(V6_COMPARE_COMBOS))
         lines += [f"## 3. 블라인드 비교 — 주 비교: 지금 엔진 vs 예전 엔진 v6 "
                   f"(기준: 지금 엔진 쪽을 {len(V6_COMPARE_COMBOS)}개 중 {math.ceil(0.6 * len(V6_COMPARE_COMBOS))}개 이상)", "",
+                  "> ⚠️ 이 답은 엔진 v7 때 받았다. 표의 '지금 엔진'은 그때의 v7이고, v8의 블라인드는 새 조합으로 따로 받는다.", "",
                   *combo_result(v6_ans, v6_side, V6_COMPARE_COMBOS), ""]
         results["blind_v6"] = sum(1 for i, ab in v6_ans["combos"].items() if v6_side[i] == ab)
     lines += [f"## 3. 블라인드 비교 — 기준선: 지금 엔진 vs 노트만 보는 방식 (기준: 지금 엔진 쪽을 {len(BLENDS)}개 중 {need}개 이상 고름)", ""]

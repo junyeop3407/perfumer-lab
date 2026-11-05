@@ -1,7 +1,7 @@
 """v8 제외 목록을 복구된 이름 기준으로 다시 판정해 해시로 고정한다 (2026-11-04 사장 결정). 한 번 돌리면 된다.
 
 앱 폴더에서:  py pipeline/experiments/freeze_exclusions.py
-읽는 것: pipeline/data/out/의 정리 전 catalog.json.gz, excluded_keys.csv, review_candidates.csv (decant_audit.py의 결과)
+읽는 것: pipeline/data/out/의 정리 전 catalog_precleanup.json.gz, excluded_keys.csv, review_candidates.csv (decant_audit.py의 결과)
 만드는 것: pipeline/manual/{filtered,review}_keys.csv (비밀 키를 섞은 HMAC, 커밋), pipeline/data/out/의 이름 든 표 (커밋 안 함)
 
 - 오염 1,015개는 확정이라 다시 판정하지 않는다. 복구로 새로 후보가 된 행에만 같은 규칙을 쓴다.
@@ -126,7 +126,7 @@ def main() -> None:
         frozen = {r["key"] for r in csv.DictReader(f)}
     with (OUT / "review_candidates.csv").open(encoding="utf-8", newline="") as f:
         old_gap = {r["key"]: int(r["year_gap"]) for r in csv.DictReader(f)}
-    old_cat = json.loads(gzip.open(OUT / "catalog.json.gz", "rb").read())["perfumes"]
+    old_cat = json.loads(gzip.open(OUT / "catalog_precleanup.json.gz", "rb").read())["perfumes"]  # 7단계부터 catalog.json.gz는 v8이다
     old = {p["key"]: p for p in old_cat}
 
     # 자체 확인: 복구 전 카탈로그로 지난 판정을 재현한다
@@ -181,8 +181,15 @@ def main() -> None:
         print("  ", c["before"], "→", c["after"], "|", c["brand"], "|", c["name"], "|", c["year"], "| 평가", c["ratings"], "| gap", c["gap"], "| 겹침", c["accord_overlap"])
 
     # 보류 목록
-    write_table("hold_list_web_check_10.csv", [row(ps[k], label="웹 재출시작 확인 후보", gap=sus[k]["gap"], accord_overlap=round(sus[k]["acc"], 2))
-                                               for k in sorted(hidden, key=lambda k: (-ps[k]["ratingCount"], k))[:10]])
+    # 상위 10개 + 고정 행(manual/hold_keys.csv: 합치기 분리 후 새로 제외된 행, 2026-11-05 사장 요청)
+    fixed = B.keys_from_hashes(RAW, MANUAL / "hold_keys.csv")
+    top10 = set(R.hold_list_keys(hidden, {k: ps[k]["ratingCount"] for k in hidden}, set()))
+
+    def hold_row(k: str) -> dict:
+        label = "웹 재출시작 확인 후보" if k in top10 else f"합치기 분리 후 제외({'오염' if k in pollution else '검토 대상'})"
+        return row(ps[k], label=label, gap=sus[k]["gap"] if k in sus else "", accord_overlap=round(sus[k]["acc"], 2) if k in sus else "")
+
+    write_table("hold_list_web_check_10.csv", [hold_row(k) for k in R.hold_list_keys(hidden, {k: ps[k]["ratingCount"] for k in hidden | fixed}, fixed)])
     write_table("hold_list_ambiguous_pass.csv", [row(p, label="이름 복구 후 오염 규칙 통과") for p in sorted(passes, key=lambda p: -p["ratingCount"])])
     print("-- 복구 후 규칙을 통과하는 오염 행")
     for p in passes:
