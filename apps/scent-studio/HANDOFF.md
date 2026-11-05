@@ -1,17 +1,22 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan_v8.md: 8단계 블라인드 시트 준비 완료, 사장 판정 대기)
+현재 단계: 4 (구현 — docs/plan_v8.md: 8단계 블라인드 채점 완료, 유의차 없음, 9단계 시작 전 사장 지시 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 84/84 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 8단계 블라인드 판정 (시트에 적어서)
-다음 할 일: 사장 판정을 받은 뒤 집계(`docs/engine_blind_v8_rules.md`) → 눈 평가 → 등급
+결과: 파이프라인 102/102 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 확신 낮은 판정 5개 중 5번째 번호(지시에 13, 16, 19, 26만 있음), 9단계 시작 지시
+다음 할 일: 사장 지시 뒤 눈 평가(9단계) → 등급(10단계)
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
-- **8단계 준비 완료, 사장 판정 대기.** 규칙 `docs/engine_blind_v8_rules.md`, 조합 `docs/engine_blind_v8_combos.json`(40개, 분류별 10개, 커밋해 고정), 시트 `pipeline/data/out/blind_v8_sheet.md`(커밋 안 함, 비공개 백업에 있음). 자동 비슷함 8개라 판정할 조합은 32개다.
-- **정답 키는 비공개 저장소 `blind_v8/answer_key.json`에만 있다.** 이 컴퓨터에 받지 않고 대화에 출력하지 않는다. **판정을 받기 전에는 Claude도 v7·v8 결과 비교 집계를 하지 않고 시트 내용을 읽지 않는다.** `blind_v8_make.py sheet`는 다시 돌리지 않는다(A/B가 바뀐다).
-- **7단계 완료: 엔진 v8 적용.** P1은 `pipeline/estimate.py`, 강도 없는 향수의 추정값에는 `estimatedAccords`·`estimatedNotes` 표시. 앱 계산은 그대로다. v8 카탈로그 파일로 잰 값이 메모리 측정과 같음(W 42.8, 사람 유사 -2.5, `docs/engine_v8_check.md`). **8단계 블라인드는 시작하지 않았다. 사장의 다음 지시 뒤에 시작한다.**
+- **8단계 블라인드 채점 완료: 유의차 없음(v8 13 : v7 13, 유효 26, 양측 부호 검정 p=1.000).** 규칙대로 **v8 유지**, "블라인드 비유의"를 위험에 기록했다(`docs/plan_v8.md` 위험). v8이 더 낫다는 근거가 나온 것은 아니다. **9단계는 시작하지 않았다. 사장 지시를 기다린다.**
+  - 판정 32개: A 12, B 14, 비슷함 6. 자동 비슷함 8개는 따로다.
+  - 분류별 v8 : v7 — 프레시 3:4, 플로럴 5:2, 우디 오리엔탈 4:2, 구르망 1:5. 분류별 표본이 작아 참고용이다.
+  - **판정자 변경:** 사장 결정으로 사람 → 채팅 AI(`docs/engine_blind_v8_rules.md` "판정자 변경 (채점 전)", 정답 키를 열기 전 커밋 `c9453c4`). 한계는 위험 목록에 있다.
+  - **확신 낮은 판정:** 지시받은 번호는 13, 16, 19, 26 네 개다. 이 넷을 빼면 11:11, p=1.000. 5번째가 어느 번호든 유의차 없음은 그대로다(10:11, 11:10, 11:11).
+- **블라인드 파일:** 규칙 `docs/engine_blind_v8_rules.md`, 조합 `docs/engine_blind_v8_combos.json`, 채점 도구 `pipeline/experiments/blind_v8_score.py`. 판정 채운 시트 `pipeline/data/out/blind_v8_sheet.md`는 커밋하지 않고 비공개 저장소 `blind_v8/sheet_judged.md`에 백업했다.
+- **정답 키는 비공개 저장소 `blind_v8/answer_key.json`에만 있다.** 이 컴퓨터에 파일로 받지 않고 대화에 출력하지 않는다. 채점은 표준 입력으로만 읽었다. `blind_v8_make.py sheet`는 다시 돌리지 않는다.
+- **7단계 완료: 엔진 v8 적용.** P1은 `pipeline/estimate.py`, 강도 없는 향수의 추정값에는 `estimatedAccords`·`estimatedNotes` 표시. 앱 계산은 그대로다. v8 카탈로그 파일로 잰 값이 메모리 측정과 같음(W 42.8, 사람 유사 -2.5, `docs/engine_v8_check.md`).
 - **v7 비교본:** `pipeline/data/out/catalog_v7_compare.json.gz`(정리 데이터 + 옛 연결, `save_v7_compare.py`). 8단계 블라인드의 v7 쪽으로 쓴다. 커밋 안 함, 비공개 백업에 있음.
 - 정리 확정값: **후보 12,469, 제외 키 1,081, 표시 40.** 기준 목록은 `pipeline/manual/{filtered,review}_keys.csv` (`pipeline/experiments/freeze_exclusions.py`). `merge_keys.csv`는 비어 있고(예외 없음), `separate_keys.csv`는 겹침 규칙으로 대체됐지만 남겨 둔다.
 - **측정 기준: 쿼리 893 / 남겨 둔 절반 474가 새 기준이다.** ★6 표(882/466)는 쿼리 집합이 달라 참고용이고 직접 비교하지 않는다. 지금 표는 `docs/engine_v8_final.md`, `docs/engine_v8_check.md`. 쿼리 목록은 `pipeline/data/out/queries_v8.json`.
@@ -28,7 +33,7 @@
 - 저장소는 공개 유지(사장 결정). 정리 목록은 비밀 키를 섞은 HMAC이고, 예전 커밋은 그대로 둔다. **비밀 키 `SCENT_KEY_SECRET`은 작업한 컴퓨터의 사용자 환경 변수에 있다.** 비밀번호 관리자에 옮겼는지는 아직 확인받지 못했다. 다른 컴퓨터에서는 같은 키를 설정해야 실제 카탈로그를 만들 수 있다.
 
 ### 이어서 시작할 때
-- 사장의 8단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
+- 사장의 9단계 지시를 받은 뒤 진행한다. 지시 없이 시작하지 않는다.
 - `freeze_exclusions.py`는 정리 전 카탈로그 `pipeline/data/out/catalog_precleanup.json.gz`를 읽는다. `catalog.json.gz`는 이제 v8이다.
 - 보류 목록의 합치기 분리 후 제외 4개는 `pipeline/manual/hold_keys.csv`에서 읽으므로 `freeze_exclusions.py`를 다시 돌려도 남는다. (손으로 다시 넣으라던 예전 메모는 이 수정으로 대체됐다.)
 - 옛 실험 스크립트는 v8 카탈로그를 읽으면 경고하고 멈춘다(`catalog_rules.load_old_catalog`). v7 기준 비교는 `catalog_v7_compare.json.gz`를 쓴다.
