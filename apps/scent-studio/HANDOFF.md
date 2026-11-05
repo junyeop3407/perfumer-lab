@@ -1,14 +1,16 @@
 # scent-studio
-현재 단계: 4 (구현 — docs/plan_v8.md: 7단계 완료(엔진 v8 적용), 8단계 블라인드 시작 전)
+현재 단계: 4 (구현 — docs/plan_v8.md: 8단계 블라인드 시트 준비 완료, 사장 판정 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 84/84 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 8단계 블라인드 시작 지시
-다음 할 일: 사장 지시를 받은 뒤 docs/plan_v8.md 8단계(v7 vs v8 새 조합 40개 블라인드) → 눈 평가 → 등급
+사용자에게 남은 질문: 8단계 블라인드 판정 (시트에 적어서)
+다음 할 일: 사장 판정을 받은 뒤 집계(`docs/engine_blind_v8_rules.md`) → 눈 평가 → 등급
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
+- **8단계 준비 완료, 사장 판정 대기.** 규칙 `docs/engine_blind_v8_rules.md`, 조합 `docs/engine_blind_v8_combos.json`(40개, 분류별 10개, 커밋해 고정), 시트 `pipeline/data/out/blind_v8_sheet.md`(커밋 안 함, 비공개 백업에 있음). 자동 비슷함 8개라 판정할 조합은 32개다.
+- **정답 키는 비공개 저장소 `blind_v8/answer_key.json`에만 있다.** 이 컴퓨터에 받지 않고 대화에 출력하지 않는다. **판정을 받기 전에는 Claude도 v7·v8 결과 비교 집계를 하지 않고 시트 내용을 읽지 않는다.** `blind_v8_make.py sheet`는 다시 돌리지 않는다(A/B가 바뀐다).
 - **7단계 완료: 엔진 v8 적용.** P1은 `pipeline/estimate.py`, 강도 없는 향수의 추정값에는 `estimatedAccords`·`estimatedNotes` 표시. 앱 계산은 그대로다. v8 카탈로그 파일로 잰 값이 메모리 측정과 같음(W 42.8, 사람 유사 -2.5, `docs/engine_v8_check.md`). **8단계 블라인드는 시작하지 않았다. 사장의 다음 지시 뒤에 시작한다.**
 - **v7 비교본:** `pipeline/data/out/catalog_v7_compare.json.gz`(정리 데이터 + 옛 연결, `save_v7_compare.py`). 8단계 블라인드의 v7 쪽으로 쓴다. 커밋 안 함, 비공개 백업에 있음.
 - 정리 확정값: **후보 12,469, 제외 키 1,081, 표시 40.** 기준 목록은 `pipeline/manual/{filtered,review}_keys.csv` (`pipeline/experiments/freeze_exclusions.py`). `merge_keys.csv`는 비어 있고(예외 없음), `separate_keys.csv`는 겹침 규칙으로 대체됐지만 남겨 둔다.
