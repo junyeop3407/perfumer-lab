@@ -26,6 +26,7 @@
    | Gemini CLI (교차 리뷰) | `npm install -g @google/gemini-cli` | `gemini --version` |
    | Claude Code | `npm install -g @anthropic-ai/claude-code` | `claude --version` |
 
+   - **Mac**: 기본 `python3`는 3.9라 파이프라인이 안 돈다(3.12 문법). `brew install python@3.12` → `python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt` (`tests/run.sh`가 `-I`로 돌려 `--user` 설치는 안 보인다). npm 캐시 권한 오류가 나면 `npm install --cache <임시 폴더>`.
    - Gemini API 키: https://aistudio.google.com/apikey 에서 만들거나 기존 키를 써서 PowerShell `[Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "<키>", "User")`. 루트 README "교차 리뷰" 참고.
    - 카탈로그를 다시 만들 때만: 환경 변수 `SCENT_KEY_SECRET` (루트 README "데이터 정리 목록의 비밀 키", 값은 비밀번호 관리자).
 3. **GitHub 로그인**: `gh auth login --web` → `gh auth setup-git`.

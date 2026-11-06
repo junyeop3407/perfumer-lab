@@ -286,3 +286,8 @@
   3. 꺼졌으면 `gh workflow enable supabase-keepalive.yml` 후 `gh workflow run supabase-keepalive.yml`로 한 번 돌린다
   4. Supabase 대시보드 프로젝트 목록에서 "Paused"가 아닌지. 정지됐으면 "Restore project"
   - 두 달 넘게 쉴 예정이면 쉬기 전에 위 2·3을 하고 달력에 50일 뒤 알림을 둔다.
+
+## 2026-11-06 Mac에서 파이프라인 테스트가 안 돈 이유 (tests/run.sh 수정)
+- Mac 기본 `python3`는 3.9.6이라 `pipeline/catalog_rules.py`의 f-string 안 백슬래시(3.12부터 허용)에서 SyntaxError로 수집이 멈췄다.
+- 또 `run.sh`는 `-I`로 pytest를 돌려 `pip --user`로 넣은 pytest가 보이지 않았다.
+- 고친 것(테스트 준비 코드만, 검사 내용은 그대로): 후보에 `python3.13`·`python3.12`를 더하고, `-I`로 pytest가 보이며 3.12 이상인 파이썬만 고른다. Mac 설치 방법은 `docs/new_computer_setup.md` B-2.

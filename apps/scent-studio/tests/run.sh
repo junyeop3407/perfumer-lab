@@ -6,13 +6,14 @@
 #   cd app && npx playwright test   → 결과 N/41을 HANDOFF.md·docs/NOTES.md에 적는다 (docs/plan.md)
 cd "$(dirname "$0")/.." || exit 1
 
-# 1. 파이프라인 (Python). 컴퓨터마다 명령이 달라서(Windows: py, Mac: python3) pytest가 있는 것을 찾는다
+# 1. 파이프라인 (Python 3.12 이상, f-string 문법 때문). 컴퓨터마다 명령이 달라서(Windows: py, Mac: python3.12) pytest가 있는 것을 찾는다
+#    Mac 기본 python3(3.9)는 버전 검사에서 걸러진다. -I로 돌리므로 pip --user 설치는 보이지 않는다
 PY=""
-for cmd in py python3 python; do
-  if command -v "$cmd" >/dev/null 2>&1 && "$cmd" -c "import pytest" >/dev/null 2>&1; then PY="$cmd"; break; fi
+for cmd in py python3 python3.13 python3.12 python; do
+  if command -v "$cmd" >/dev/null 2>&1 && "$cmd" -I -c "import sys, pytest; sys.exit(sys.version_info < (3, 12))" >/dev/null 2>&1; then PY="$cmd"; break; fi
 done
 if [ -z "$PY" ]; then
-  echo "pytest가 설치된 파이썬을 찾지 못했습니다: py -m pip install pytest (Mac은 python3)" >&2
+  echo "pytest가 설치된 Python 3.12 이상을 찾지 못했습니다: Windows py -m pip install -r pipeline/requirements.txt / Mac brew install python@3.12 → python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt" >&2
   exit 1
 fi
 "$PY" -I -m pytest -q pipeline/tests || exit 1
