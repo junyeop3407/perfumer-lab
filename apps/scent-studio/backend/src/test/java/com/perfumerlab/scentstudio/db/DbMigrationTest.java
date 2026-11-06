@@ -1,19 +1,10 @@
 package com.perfumerlab.scentstudio.db;
 
-import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,111 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Flyway 마이그레이션을 처음부터 돌린 뒤, 검사 규칙·삭제 규칙·권한·RLS를 확인한다.
  * 테스트마다 새 사용자를 만들어 서로 섞이지 않게 한다.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DbMigrationTest {
-
-    private static final String CHECK = "23514", UNIQUE = "23505", FOREIGN_KEY = "23503", NO_PRIVILEGE = "42501";
-    private static final String[] TABLES = {"user_preferences", "blends", "favorites", "tasting_feedback", "events", "consents"};
-
-    private EmbeddedPostgres pg;
-    private DataSource ds;
-
-    @BeforeAll
-    void startDatabase() throws Exception {
-        pg = EmbeddedPostgres.builder().start();
-        ds = pg.getPostgresDatabase();
-        try (Connection c = ds.getConnection(); Statement s = c.createStatement()) {
-            s.execute(resource("/supabase_stub.sql"));
-        }
-        Flyway.configure().dataSource(ds).locations("classpath:db/migration").load().migrate();
-    }
-
-    @AfterAll
-    void stopDatabase() throws IOException {
-        if (pg != null) pg.close();
-    }
-
-    // ---------- 도우미 ----------
-
-    private static String resource(String path) throws IOException {
-        try (InputStream in = DbMigrationTest.class.getResourceAsStream(path)) {
-            assertNotNull(in, path);
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
-
-    /** 표 주인(postgres)으로 실행 */
-    private void sql(String sql, Object... args) throws SQLException {
-        try (Connection c = ds.getConnection()) {
-            run(c, sql, args);
-        }
-    }
-
-    /** 역할을 바꿔 실행 (scent_server, anon, authenticated) */
-    private void as(String role, String sql, Object... args) throws SQLException {
-        try (Connection c = ds.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                s.execute("set role " + role);
-            }
-            run(c, sql, args);
-        }
-    }
-
-    private static void run(Connection c, String sql, Object... args) throws SQLException {
-        try (PreparedStatement p = c.prepareStatement(sql)) {
-            for (int i = 0; i < args.length; i++) p.setObject(i + 1, args[i]);
-            p.execute();
-        }
-    }
-
-    private long count(String sql, Object... args) throws SQLException {
-        try (Connection c = ds.getConnection(); PreparedStatement p = c.prepareStatement(sql)) {
-            for (int i = 0; i < args.length; i++) p.setObject(i + 1, args[i]);
-            try (ResultSet r = p.executeQuery()) {
-                r.next();
-                return r.getLong(1);
-            }
-        }
-    }
-
-    private long countAs(String role, String sql) throws SQLException {
-        try (Connection c = ds.getConnection(); Statement s = c.createStatement()) {
-            s.execute("set role " + role);
-            try (ResultSet r = s.executeQuery(sql)) {
-                r.next();
-                return r.getLong(1);
-            }
-        }
-    }
-
-    private static void fails(String sqlState, Executable action) {
-        SQLException e = assertThrows(SQLException.class, action::run);
-        assertEquals(sqlState, e.getSQLState(), e.getMessage());
-    }
-
-    @FunctionalInterface
-    private interface Executable {
-        void run() throws Exception;
-    }
-
-    private UUID newUser() throws SQLException {
-        UUID id = UUID.randomUUID();
-        sql("insert into auth.users (id, email) values (?, ?)", id, id + "@test.invalid");
-        return id;
-    }
-
-    private static final String ONE_NOTE = "[{\"note_key\":\"lemon\",\"layer\":\"top\",\"strength\":\"strong\"}]";
-
-    private UUID newBlend(UUID user) throws SQLException {
-        UUID id = UUID.randomUUID();
-        sql("insert into app.blends (id, user_id, name, notes) values (?, ?, '여름 조합', ?::jsonb)", id, user, ONE_NOTE);
-        return id;
-    }
-
-    private void insertFeedback(UUID user, UUID blend, int satisfaction) throws SQLException {
-        sql("insert into app.tasting_feedback (user_id, perfume_key, blend_id, satisfaction, similarity, engine_version, catalog_version)"
-                + " values (?, 'Brand:perfume', ?, ?, 3, 8, '2026.11.05')", user, blend, satisfaction);
-    }
+class DbMigrationTest extends DbTestBase {
 
     // ---------- 마이그레이션 ----------
 
@@ -274,16 +161,18 @@ class DbMigrationTest {
         sql("insert into app.favorites (user_id, perfume_key) values (?, 'Brand:perfume')", u);
         insertFeedback(u, blend, 5);
         sql("insert into app.consents (user_id, doc_type, doc_version, app_version) values (?, 'privacy', '2026-11-06', '1.0.0')", u);
+        UUID install = UUID.randomUUID();
         sql("insert into app.events (install_id, user_id, name, app_version, occurred_at) values (?, ?, 'app_open', '1.0.0', now())",
-                UUID.randomUUID(), u);
+                install, u);
         newBlend(bystander);
 
-        sql("delete from auth.users where id = ?", u);
+        // Supabase처럼 로그인 시스템 계정(auth.users 주인, app 권한 없음)이 지운다
+        as("supabase_auth_admin", "delete from auth.users where id = ?", u);
 
         for (String t : new String[]{"user_preferences", "blends", "favorites", "tasting_feedback", "consents", "events"}) {
             assertEquals(0, count("select count(*) from app." + t + " where user_id = ?", u), t);
         }
-        assertTrue(count("select count(*) from app.events where user_id is null and name = 'app_open'") >= 1, "사용 기록은 익명으로 남는다");
+        assertEquals(1, count("select count(*) from app.events where install_id = ? and user_id is null", install), "사용 기록은 그 줄 그대로 익명으로 남는다");
         assertEquals(1, count("select count(*) from app.blends where user_id = ?", bystander), "다른 사람 데이터는 그대로");
     }
 
@@ -321,8 +210,9 @@ class DbMigrationTest {
         sql(insert, install, "13 months");
         sql(insert, install, "11 months");
         sql(insert, install, "1 day");
-        // 다른 테스트가 넣은 오래된 기록은 없으므로 지운 수는 1
-        assertEquals(1, count("select app.purge_old_events()"));
+        // 다른 테스트가 오래된 기록을 넣을 수 있으므로 지운 수는 1 이상, 이 기기의 줄은 정확히 확인
+        assertTrue(count("select app.purge_old_events()") >= 1);
+        assertEquals(0, count("select count(*) from app.events where install_id = ? and received_at < now() - interval '12 months'", install));
         assertEquals(2, count("select count(*) from app.events where install_id = ?", install));
     }
 

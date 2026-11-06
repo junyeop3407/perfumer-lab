@@ -198,6 +198,7 @@ erDiagram
 ## 11. 확인 결과
 | # | 확인할 것 | 결과 |
 |---|---|---|
+| 리뷰 | QA팀·Gemini 리뷰 반영 (2026-11-06) | 키는 눈에 보이는 ASCII만, 조합 이름 제어 문자·보이지 않는 글자만 금지, `scent_server` 권한은 칸 단위(주인·만든 때·서버 시각·자동 번호 못 바꿈), 새 함수 기본 실행 권한 없음. `docs/review.md` |
 | 7 | updated_at 자동 갱신 | 1판엔 없었음 → 트리거 추가(2절 끝) |
 | 8 | `scent_server`가 Session pooler로 접속될 때 | Session pooler(Supavisor)는 사용자 이름을 **`역할.프로젝트참조값`** 형식으로 받는다. 예: `scent_server.abcdefghijklmnop`, 호스트 `aws-0-ap-northeast-2.pooler.supabase.com`, 포트 **5432**(세션 방식). 직접 만든 역할도 로그인·비밀번호가 있으면 이 형식으로 접속된다(연결 뒤 확인). 주의: ① 포트 6543(트랜잭션 방식)은 서버의 미리 준비한 쿼리와 충돌할 수 있어 쓰지 않는다 ② 무료 요금제의 직접 접속 주소는 IPv6 전용이라 이 컴퓨터·Render에서 안 될 수 있어 pooler를 쓴다 ③ 마이그레이션도 같은 pooler로 `postgres.프로젝트참조값` 이름을 쓴다 ④ 비밀번호에 `@ : / ?`가 있으면 접속 주소가 깨지므로 영문·숫자만으로 32자 이상 만든다 |
 | 9 | 일시 정지 방지 예약 작업이 서비스 키를 쓰나 | **쓰지 않는다.** GitHub Actions는 **공개 키(publishable/anon)** 와 프로젝트 주소 2개만 GitHub Secrets에 두고 `public.keepalive()`를 부른다. 공개 키는 원래 앱에 들어가는 키라 새어도 RLS로 막혀 있다. 서비스 키·DB 비밀번호는 GitHub에 두지 않는다. 단계 4에서 서버가 생기면 서버 상태 확인 주소로 바꾼다(서버 → DB까지 닿음). 공개 키로 함수를 부르는 것이 "활동"으로 세어지는지는 연결 뒤 7일 지켜보며 확인 |
@@ -219,11 +220,11 @@ erDiagram
 비밀번호·키는 **대화창에 붙여 넣지 마시고** 아래 적은 곳에만 넣어 주세요.
 1. https://supabase.com 가입(GitHub 계정으로 로그인) → **New project**: Name `perfumer-lab`, Region **Northeast Asia (Seoul)**, Free. Database Password는 **영문·숫자만으로 32자 이상**(Generate a password로 만든 뒤 특수문자가 있으면 다시 생성) → 비밀번호 관리자에 저장
 2. **Project Settings → Data API**: Exposed schemas가 `public`(과 `graphql_public`)뿐인지 확인. `app`을 추가하지 않는다
-3. **Connect → Session pooler** 연결 정보를 `apps/scent-studio/backend/.env`(직원이 만든 `.env.example`을 복사)의 `DB_URL`·`DB_MIGRATION_USER`·`DB_MIGRATION_PASSWORD`에 넣기 → 직원에게 "넣었다"고 말하기 → 직원이 마이그레이션 실행(표 6개, `scent_server` 로그인 불가 상태로 생성)
+3. **Connect → Session pooler** 연결 정보를 `apps/scent-studio/backend/.env`(직원이 만든 `.env.example`을 복사)의 `DB_URL`·`DB_MIGRATION_USER`·`DB_MIGRATION_PASSWORD`에 넣기. 칸마다 형식은 `.env.example` 주석(DB_URL은 `jdbc:postgresql://<호스트>:5432/postgres?sslmode=require`, 사용자 이름·비밀번호는 주소에 넣지 않음) → 직원에게 "넣었다"고 말하기 → 직원이 마이그레이션 실행(표 6개, `scent_server` 로그인 불가 상태로 생성)
 4. **SQL Editor**에서 직원이 드리는 줄 실행:
    - `alter role scent_server with login password '<영문·숫자 32자 이상>';` → 같은 비밀번호를 `.env`의 `DB_SERVER_PASSWORD`에
    - 사용 기록 매일 정리 등록: `select cron.schedule('purge-old-events', '0 3 * * *', 'select app.purge_old_events()');` (먼저 **Database → Extensions**에서 `pg_cron` 켜기)
-5. 직원이 확인: `app` 표 6개 / 공개 키로 `app` 표 읽기가 막힘
+5. 직원이 확인: Postgres 주 버전이 테스트 DB(17)와 같음 / `app` 표 6개 / 공개 키로 `app` 표 읽기가 막힘 / pooler 접속 / 계정 삭제 연쇄 (NOTES 2026-11-06 "실제 Supabase에서 따로 확인할 것")
 6. 일시 정지 방지: GitHub 저장소 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` 2개 등록(서비스 키 아님)
 7. 구글 로그인(단계 5 로그인 화면 전까지): Google Cloud Console에서 OAuth 동의 화면 + 웹 클라이언트 ID, 리디렉션 주소 `https://<프로젝트참조값>.supabase.co/auth/v1/callback` → Supabase **Authentication → Sign In / Providers → Google**에 Client ID·Secret. **OAuth 동의 화면은 "테스트" 상태면 테스트 사용자 100명까지만 로그인되므로, 공개 전에 "프로덕션"으로 게시해야 한다**(앱 이름·로고·개인정보처리방침 주소가 필요하고, 이메일·프로필만 쓰면 보통 별도 심사 없이 게시됨 — 게시할 때 확인). 그때 화면별 안내를 따로 드린다
 - 무료 요금제 한계(7일 쉬면 일시 정지, 백업 범위)는 연결 뒤 대시보드에서 확인해 NOTES에 적는다.

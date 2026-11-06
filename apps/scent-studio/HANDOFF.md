@@ -4,7 +4,7 @@
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 50/50 통과 (2026-11-06 확인, `bash tests/run.sh`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 83/83 통과 (2026-11-06 확인, `bash tests/run.sh`, 5단계식 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음 (2026-11-06 사장 승인: db_design.md 3판, 초대제 없이 Fragrantica 허가 전제 비상업 무료 공개)
 다음 할 일: 사장 Supabase 작업(`db_design.md` 13절 1~3번: 프로젝트 만들기·공개 영역 확인·`backend/.env` 채우기) → 직원이 실제 DB에 마이그레이션 + 연결 뒤 확인 3가지(pooler 접속, 계정 삭제 연쇄, keepalive 활동) → 13절 4~7번 → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
 

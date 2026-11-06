@@ -16,6 +16,16 @@ revoke all on schema app from public, anon, authenticated;
 grant usage on schema app to scent_server;
 
 -- 2. 검사 함수
+-- 앞으로 이 계정(postgres)이 만드는 함수는 기본으로 아무도 실행 못 하게 한다(필요한 곳만 grant).
+-- 함수의 PUBLIC 실행 권한은 스키마별로는 거둘 수 없어 전체 기본값으로 건다(리뷰 QA-6).
+alter default privileges revoke execute on functions from public;
+
+-- 카탈로그 key 모양: 눈에 보이는 ASCII 글자만, 가운데 띄어쓰기는 허용, 앞뒤 공백·제어 문자·유니코드 없음(리뷰 QA-7)
+create function app.valid_key(k text) returns boolean
+language sql immutable set search_path = '' as $$
+  select k is not null and char_length(k) between 1 and 200 and k ~ '^[!-~]([ -~]*[!-~])?$'
+$$;
+
 -- 키 목록(text[]): null 없음, 빈 문자열 없음, 100자 이하, 중복 없음, 최대 max_len개
 create function app.valid_keys(k text[], max_len integer) returns boolean
 language plpgsql immutable set search_path = '' as $$
@@ -23,7 +33,7 @@ begin
   if k is null then return false; end if;
   if cardinality(k) > max_len then return false; end if;
   if array_position(k, null) is not null then return false; end if;
-  if exists (select 1 from unnest(k) x where char_length(x) not between 1 and 100) then return false; end if;
+  if exists (select 1 from unnest(k) x where char_length(x) > 100 or not app.valid_key(x)) then return false; end if;
   return (select count(distinct x) from unnest(k) x) = cardinality(k);
 end $$;
 
@@ -41,7 +51,7 @@ begin
     if jsonb_typeof(e -> 'note_key') is distinct from 'string'
        or jsonb_typeof(e -> 'layer') is distinct from 'string'
        or jsonb_typeof(e -> 'strength') is distinct from 'string' then return false; end if;
-    if char_length(e ->> 'note_key') not between 1 and 100 then return false; end if;
+    if char_length(e ->> 'note_key') > 100 or not app.valid_key(e ->> 'note_key') then return false; end if;
     if (e ->> 'layer') not in ('top', 'middle', 'base') then return false; end if;
     if (e ->> 'strength') not in ('weak', 'medium', 'strong') then return false; end if;
   end loop;
@@ -75,7 +85,11 @@ create table app.user_preferences (
 create table app.blends (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references auth.users (id) on delete cascade,
-  name       text not null check (char_length(name) between 1 and 40 and btrim(name) <> ''),
+  -- 1~40자, 제어 문자(탭·줄바꿈 등) 없음, 공백·보이지 않는 글자만으로 된 이름 불가(리뷰 QA-4)
+  name       text not null check (
+               char_length(name) between 1 and 40
+               and name !~ '[\u0001-\u001f\u007f-\u009f]'
+               and regexp_replace(name, '[\s\u00a0\u1680\u2000-\u200f\u2028-\u202f\u205f-\u2064\u3000\ufeff]', '', 'g') <> ''),
   families   text[] not null default '{}' check (app.valid_keys(families, 10)),
   notes      jsonb not null check (app.valid_blend_notes(notes)),
   created_at timestamptz not null default now(),
@@ -87,7 +101,7 @@ create index blends_user_id_idx on app.blends (user_id);
 -- ③ 찜
 create table app.favorites (
   user_id     uuid not null references auth.users (id) on delete cascade,
-  perfume_key text not null check (char_length(perfume_key) between 1 and 200),
+  perfume_key text not null check (app.valid_key(perfume_key)),
   created_at  timestamptz not null default now(),
   primary key (user_id, perfume_key)
 );
@@ -96,7 +110,7 @@ create table app.favorites (
 create table app.tasting_feedback (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references auth.users (id) on delete cascade,
-  perfume_key     text not null check (char_length(perfume_key) between 1 and 200),
+  perfume_key     text not null check (app.valid_key(perfume_key)),
   blend_id        uuid,
   satisfaction    smallint not null check (satisfaction between 1 and 5),
   similarity      smallint not null check (similarity between 1 and 5),
@@ -157,16 +171,30 @@ end $$;
 
 -- 5. 권한: 함수는 기본으로 누구나 실행할 수 있으므로 먼저 거둔다
 revoke all on all functions in schema app from public, anon, authenticated;
-grant execute on function app.valid_keys(text[], integer), app.valid_blend_notes(jsonb) to scent_server;
+grant execute on function app.valid_key(text), app.valid_keys(text[], integer), app.valid_blend_notes(jsonb) to scent_server;
 
 revoke all on all tables in schema app from public, anon, authenticated;
 revoke all on all sequences in schema app from public, anon, authenticated;
-grant select, insert, update, delete on app.user_preferences to scent_server;
-grant select, insert, update, delete on app.blends           to scent_server;
-grant select, insert, delete         on app.favorites        to scent_server;
-grant select, insert, delete         on app.tasting_feedback to scent_server;
-grant insert                         on app.events           to scent_server;
-grant select, insert                 on app.consents         to scent_server;
+-- 칸 단위로 준다: 주인(user_id)·만든 때·서버 시각·자동 번호는 서버 계정도 못 넣고 못 바꾼다(리뷰 QA-8)
+grant select, delete on app.user_preferences to scent_server;
+grant insert (user_id, preferred_families, disliked_note_keys) on app.user_preferences to scent_server;
+grant update (preferred_families, disliked_note_keys)          on app.user_preferences to scent_server;
+
+grant select, delete on app.blends to scent_server;
+grant insert (id, user_id, name, families, notes) on app.blends to scent_server;
+grant update (name, families, notes)              on app.blends to scent_server;
+
+grant select, delete on app.favorites to scent_server;
+grant insert (user_id, perfume_key) on app.favorites to scent_server;
+
+grant select, delete on app.tasting_feedback to scent_server;
+grant insert (user_id, perfume_key, blend_id, satisfaction, similarity, memo, tested_at, rank, score,
+              engine_version, catalog_version) on app.tasting_feedback to scent_server;
+
+grant insert (install_id, user_id, name, props, app_version, occurred_at) on app.events to scent_server;
+
+grant select on app.consents to scent_server;
+grant insert (user_id, doc_type, doc_version, app_version) on app.consents to scent_server;
 
 -- 6. RLS: 모두 켜고, 규칙은 scent_server에만. 규칙이 없는 계정(anon·authenticated)은 권한이 생겨도 아무 줄도 못 본다
 alter table app.user_preferences enable row level security;

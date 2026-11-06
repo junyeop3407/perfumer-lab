@@ -60,9 +60,9 @@ related=""
 for f in $changed; do
   stem=$(basename "$f"); stem="${stem%.*}"
   [ ${#stem} -lt 3 ] && continue
-  users=$(grep -rlE "(import|require|from|include|src=|href=).*[/.\"' ]$stem([.\"' ;)]|$)" "$app" \
-            --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build --exclude-dir=docs --exclude-dir=.git 2>/dev/null \
-          | sed 's#^\./##' | grep -vxF "$f" | head -3)
+  # git에 올라간 텍스트 파일만 찾는다(빌드 결과물·테스트 보고서·캐시·바이너리가 섞여 입력이 수 MB가 되던 문제)
+  users=$(git grep -lIE "(import|require|from|include|src=|href=).*[/.\"' ]$stem([.\"' ;)]|$)" -- "$app" ":!$app/docs" 2>/dev/null \
+          | grep -vxF "$f" | head -3)
   related="$related
 $users"
 done
@@ -77,6 +77,7 @@ related=$(printf '%s\n' "$related" | sed '/^$/d' | sort -u | grep -vxF -f <(prin
     case "$f" in "$app"/*) ;; *) continue ;; esac
     case "$f" in *..*) continue ;; esac
     [ -f "$f" ] || continue
+    grep -Iq . "$f" || continue   # 바이너리(gradle-wrapper.jar 등)는 내용을 보내지 않음
     echo "===== $f ====="
     cat "$f"
     echo

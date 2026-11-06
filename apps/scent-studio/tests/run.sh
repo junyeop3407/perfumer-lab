@@ -28,4 +28,8 @@ cd .. || exit 1
 
 # 3. 서버: DB 마이그레이션·검사·권한 (JUnit + 내장 Postgres, Docker 필요 없음, Java 21)
 cd backend || exit 1
+if ! command -v java >/dev/null 2>&1 || ! java -version 2>&1 | grep -qE 'version "(2[1-9]|[3-9][0-9])'; then
+  echo "Java 21 이상이 필요합니다: winget install --id EclipseAdoptium.Temurin.21.JDK -e (Mac: brew install --cask temurin@21)" >&2
+  exit 1
+fi
 ./gradlew test --console=plain -q
