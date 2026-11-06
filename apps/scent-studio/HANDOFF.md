@@ -5,8 +5,8 @@
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: `docs/db_design.md` 승인 여부 (2026-11-06 사장 OK: 카탈로그 크기는 단계 3에서 방향만, 추천 결과가 바뀌는 데이터 수정은 앱이 돌아간 뒤)
-다음 할 일: 설계안 승인 → `backend/` 뼈대 + `V1__init.sql` + 내장 Postgres 테스트(db_design.md 8절) → 사장 Supabase 작업(9절) → 단계 4(서버) → ★디자인 → 5(화면). 승인되면 design.md 12절을 db_design.md 10절대로 고친다. 엔진은 v8 동결
+사용자에게 남은 질문: `docs/db_design.md` 2판(표 7개, 초대제·동의·보관 기간·한도·합치기 보완) 승인 여부 (2026-11-06 사장 OK: 카탈로그 크기는 단계 3에서 방향만, 추천 결과가 바뀌는 데이터 수정은 앱이 돌아간 뒤)
+다음 할 일: 설계안 승인 → `backend/` 뼈대 + `V1__init.sql` + 내장 Postgres 테스트(db_design.md 8절) → 사장 Supabase 작업(9절) → 단계 4(서버) → ★디자인 → 5(화면). 승인되면 design.md 11·12·12-1·13절을 db_design.md 15절대로 고친다. 엔진은 v8 동결
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**

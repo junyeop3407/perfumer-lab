@@ -373,6 +373,7 @@ flowchart LR
 | tasting_feedback | id, user_id, perfume_key, blend_id(선택), satisfaction 1~5, similarity 1~5, memo, tested_at, rank(선택), score(선택), engine_version, catalog_version |
 | events | id, install_id uuid, user_id(선택), name, props jsonb, app_version, occurred_at, received_at |
 
+- **정규화 예외 (user_preferences의 text[], blends의 jsonb를 별도 표로 나누지 않은 이유):** 항상 부모 줄과 통째로 읽고 쓰고, 사용자끼리 섞어 항목 단위로 찾는 일이 없으며, 크기가 작게 묶여 있고(200개·9개) DB 검사 함수로 값을 막을 수 있어서, 표를 나누면 조인과 부분 수정만 늘고 얻는 것이 없다(여러 사용자 통계가 필요해지면 그때 나눈다).
 - 피드백에 그때의 순위·점수·엔진 버전을 함께 남긴다 → 4차 "피드백으로 가중치 조정"의 재료
 - 모든 사용자 테이블에 `user_id` 인덱스. 계정 삭제는 한 트랜잭션에서 사용자 행을 모두 지운다(events의 user_id는 null로)
 
