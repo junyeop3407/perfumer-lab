@@ -1,7 +1,7 @@
 # 다른 컴퓨터에서 이어 하기 (scent-studio)
 
 > 이 문서에는 **값(비밀번호·키·토큰)을 절대 쓰지 않는다.** "어디서 가져오는지"만 적는다.
-> 마지막 갱신: 2026-11-06 (단계 4 묶음 1: Render 배포 완료, 실측 대기)
+> 마지막 갱신: 2026-11-06 (단계 4 묶음 1: Render 배포 완료, 실측 대기. Mac·Windows 메인 컴퓨터 확인 결과 추가)
 
 ## 이 컴퓨터에서 오늘 한 설정 중 다른 컴퓨터에서 다시 해야 하는 것
 
@@ -51,6 +51,7 @@
 
    - **자주 하는 실수 (2026-11-06 Mac에서 실제로 난 것)**:
      - `DB_URL` 끝부분을 두 번 붙여 넣음(`...?sslmode=require:5432/postgres?sslmode=require`) → `dbCheck`가 "잘못된 sslmode 값"으로 실패. `?sslmode=require`는 맨 끝에 한 번만.
+     - (Windows에서 난 것) 견본의 `<호스트>` 자리에 **주소 전체**를 붙여 넣음(`jdbc:postgresql://jdbc:postgresql://<호스트>...?sslmode=require:5432/postgres?sslmode=require`) → `dbCheck`가 "URL을 파싱할 수 없습니다"로 실패. `<호스트>` 자리에는 `aws-0-...pooler.supabase.com` 같은 호스트 이름만 넣는다.
      - `SUPABASE_PUBLISHABLE_KEY` 칸에 **Secret key(`sb_secret_`)** 를 넣음 → `api_check.sh`의 keepalive가 403 "permission denied for function keepalive". 이 칸은 반드시 `sb_publishable_`로 시작한다. Secret key는 이 칸에도 다른 칸에도 넣지 않는다.
 6. **값 다루는 규칙**:
    - `.env` 값은 대화창과 다른 파일에 붙여 넣지 않는다.
@@ -77,6 +78,15 @@
 - **`.env` 복사**: `cd backend && cp .env.example .env`.
 - **npm 캐시 권한 오류**가 나면 `npm install --cache <임시 폴더>`.
 - 그 밖에 `tests/run.sh`, Gradle, 내장 Postgres(arm64)는 Windows와 똑같이 돌았다(파이프라인 119 + 건너뜀 2, Vitest 37, 서버·DB 105).
+
+### Windows에서 확인한 것 (2026-11-06, Windows 11 메인 작업 컴퓨터)
+- **결과**: `tests/run.sh` 통과(파이프라인 119 + 건너뜀 2, Vitest 37, 서버·DB 105) · `dbCheck` 통과(Postgres 17.11, V1 성공, app 표 6개 RLS 켜짐, `scent_server`는 관리자 권한 없음·RLS 건너뛰기 없음, anon은 app 막힘) · `api_check.sh` 통과(keepalive 200, app 스키마 406, 이메일 가입은 아직 켜짐 = 출시 직전 확인 항목 6) · health `{"status":"ok"}`.
+  - 건너뜀 2개는 `SCENT_KEY_SECRET`과 원본이 없어서다(카탈로그를 다시 만들 때만 필요).
+- **Java**: Java 25가 먼저 깔려 있으면 기본 `java`와 `JAVA_HOME`이 25를 가리킨다. Temurin 21을 설치한 뒤 사용자 환경 변수로 21을 지정하고 터미널과 Claude Code를 새로 연다.
+  - `[Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot", "User")`(폴더 이름은 설치된 판에 맞춘다)
+  - 확인: `cd backend && ./gradlew -version`의 `Daemon JVM`이 21인지. `java -version`이 25로 나와도 Gradle은 `JAVA_HOME`을 쓰므로 괜찮다.
+- **Python 3.14**(`py`)에서도 파이프라인이 돈다. `tests/run.sh`는 3.12 이상이면 된다.
+- **비공개 데이터**: 저장소 **밖**(예: `%LOCALAPPDATA%\perfumer-lab-private`)에 받고, `pipeline-data-out/` 19개와 `eye_v8/sheet_scored.md`(→ `eye_v8_sheet.md`)를 `pipeline/data/out/`에 복사했다. 옛 `catalog.json.gz`(10/31, 1.0MB)는 v8판(2.3MB)으로 바뀐다.
 
 ### D. 비밀번호를 잃어버렸을 때
 - **postgres(관리자)**:

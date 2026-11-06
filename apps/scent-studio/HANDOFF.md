@@ -16,6 +16,7 @@
   - 첫 배포 시작 22.7초.
 - Render GitHub 앱에는 `perfumer-lab` 저장소만 허용했다.
 - 묶음 1 코드·리뷰 완료(QA팀 14 + Gemini 5, `docs/review.md` "묶음 1"), 서버·DB 테스트 105/105. **실측은 아직 시작하지 않았다.**
+- **Windows 메인 컴퓨터 준비 완료 (2026-11-06):** Java 21(`JAVA_HOME` 사용자 변수), `.env` 8칸, 비공개 데이터 복사. `tests/run.sh` 통과(119+건너뜀 2 / 37 / 105), `dbCheck`·`api_check.sh`·health 통과. 자세한 것은 `docs/new_computer_setup.md` "Windows에서 확인한 것". Mac도 같은 브랜치로 준비 중이다(같은 문서 "Mac에서 다른 점"). 두 컴퓨터에서 작업할 때는 시작 전 `git pull`, 커밋 전 `git pull --rebase`.
 - ⚠️ `DEBUG_UNTIL`(2026-11-07 03:00 UTC = 한국 11/7 낮 12시)이 지나면 측정 주소가 저절로 꺼진다(404). 그 뒤에 실측하려면 Render 환경 변수 `DEBUG_UNTIL`을 새 시각(몇 시간 뒤)으로 바꾸고 재배포(Manual Deploy)한다.
 - **다음 할 일:** 묶음 1 실측 진행.
   - 잴 것: 10분 부하 중 최대 RSS, 시작 시간 5번, 15분 넘게 쉰 뒤 첫 요청 3번, X-Forwarded-For 모양.
