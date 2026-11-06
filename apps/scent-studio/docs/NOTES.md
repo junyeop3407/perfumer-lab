@@ -251,3 +251,10 @@
 - **사람 점수로 합격했다.** 판정자는 사장이고, 기본 10개 평균 4.38(기준 3.5)이다. 집계는 `pipeline/experiments/eye_v8_score.py`로 시트에서 다시 읽어 사장 계산과 맞췄다.
 - **예전 임시 점수 3.7은 대체됐다.** `engine_blind_answers_v3.txt`의 claude-provisional 점수는 기록으로만 남긴다. 그 점수는 v3 때 Claude가 넣은 값이고 v8 목록을 본 점수가 아니라서, 이번 점수를 그 파일에 옮기지 않았다.
 - **점수 분포는 1점 1개, 2점 0개, 3점 17개, 4점 19개, 5점 38개다.** 낮은 점수가 거의 없어서 등급 기준값이 나쁜 추천을 걸러 내는지 확인하는 데는 약하다.
+
+## 2026-11-06 단계 3 테스트 DB
+- **구성:** `backend/`에 Gradle 9.8.2 래퍼(이 컴퓨터에 Gradle이 없어 공식 배포판을 체크섬 확인 후 받아 래퍼만 만들었다), Java 21. 테스트 의존성: JUnit 5.14.4, zonky embedded-postgres 2.2.2 + Postgres 17.11 바이너리, Flyway 13.11.1(13.12.x는 나온 지 2주가 안 돼 피함), PostgreSQL JDBC 42.7.14. Spring은 단계 4에서 더한다.
+- **마이그레이션 `V1__init.sql`:** `db_design.md` 3판 그대로(표 6개, 검사 함수 `app.valid_keys`·`app.valid_blend_notes`, updated_at 트리거, `app.purge_old_events()`, RLS + `scent_server` 전용 규칙, `public.keepalive()`). `scent_server`는 로그인 불가로 만든다(비밀번호는 사장이 SQL Editor에서).
+- **테스트 준비 코드 `supabase_stub.sql`:** Supabase에만 있는 `anon`·`authenticated` 역할과 `auth.users` 표를 흉내 낸다. 실제 Supabase에서는 마이그레이션이 이것들이 이미 있다고 보고 돈다.
+- **50/50 통과.** 처음부터 다 통과해서, 만족도 범위를 1~6으로 풀고 blends의 RLS를 끄는 변조를 넣어 돌려 보니 정확히 2개가 실패했다(테스트가 실제로 잡는다). 변조는 되돌렸다.
+- **실제 Supabase에서 따로 확인할 것:** ① `scent_server.<참조값>`으로 Session pooler 접속 ② Supabase에서는 `auth.users` 주인이 `supabase_auth_admin`이라, 계정 삭제 때 외래 키 연쇄 삭제가 테스트 DB와 같이 되는지 ③ 공개 키로 `keepalive()`를 부르는 것이 일시 정지 방지 활동으로 세어지는지(7일 관찰) ④ Supabase 기본 권한 설정이 `app` 스키마에 새로 권한을 주지 않는지(마이그레이션이 다시 거두지만 확인).

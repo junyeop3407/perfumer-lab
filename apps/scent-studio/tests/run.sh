@@ -23,4 +23,9 @@ if [ ! -d node_modules ]; then
   echo "app/node_modules가 없습니다: cd app && npm install" >&2
   exit 1
 fi
-exec npx vitest run "$@"
+npx vitest run "$@" || exit 1
+cd .. || exit 1
+
+# 3. 서버: DB 마이그레이션·검사·권한 (JUnit + 내장 Postgres, Docker 필요 없음, Java 21)
+cd backend || exit 1
+./gradlew test --console=plain -q

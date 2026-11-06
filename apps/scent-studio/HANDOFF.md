@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB): 설계 `docs/db_design.md` 3판 승인, 테스트 DB 작업 중)
+현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB): 테스트 DB 통과, **실제 Supabase 작업 전 멈춤**(사장 차례, `docs/db_design.md` 13절))
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 50/50 통과 (2026-11-06 확인, `bash tests/run.sh`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음 (2026-11-06 사장 승인: db_design.md 3판, 초대제 없이 Fragrantica 허가 전제 비상업 무료 공개)
-다음 할 일: `backend/` 뼈대 + `V1__init.sql` + 내장 Postgres 테스트(db_design.md 12절) → **멈춤** → 사장 Supabase 작업(13절) → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
+다음 할 일: 사장 Supabase 작업(`db_design.md` 13절 1~3번: 프로젝트 만들기·공개 영역 확인·`backend/.env` 채우기) → 직원이 실제 DB에 마이그레이션 + 연결 뒤 확인 3가지(pooler 접속, 계정 삭제 연쇄, keepalive 활동) → 13절 4~7번 → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**
@@ -56,7 +56,7 @@
    - `cd app && npm install && npx playwright install chromium`
    - 비밀 키: 환경 변수 `SCENT_KEY_SECRET` (저장소 README "데이터 정리 목록의 비밀 키"). 없으면 실제 카탈로그를 만들 수 없다. 테스트 1개는 키와 원본이 있을 때만 돈다
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 84 + Vitest 37 (키와 원본이 없으면 일부 건너뜀) 통과
+4. 확인: `bash tests/run.sh` → 파이프라인 121 + Vitest 37 + DB 50 (키와 원본이 없으면 파이프라인 일부 건너뜀) 통과. DB 테스트는 Java 21 필요, 첫 실행 때 Gradle·내장 Postgres를 내려받아 1~2분
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
