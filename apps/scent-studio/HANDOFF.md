@@ -1,12 +1,26 @@
 # scent-studio
-현재 단계: 4 (구현 — 엔진 v8 동결. plan.md 단계 3(DB) 완료 2026-11-06. 단계 4(서버) 설계안 2판 `docs/server_design.md` 사장 검토 대기, 서버 코드·V2 없음)
+현재 단계: 4 (구현 — 단계 3(DB) 완료. 단계 4(서버) 묶음 1: 코드·리뷰·Render 배포 완료, **실측 대기**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: a92de1c
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 83/83 통과 (2026-11-06 확인, `bash tests/run.sh`, 5단계식 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: `docs/server_design.md` 2판 승인 (1판 답 반영: Render, 요청 제한 표 OK, 오류 신고 로그인만)
-다음 할 일: 서버 설계 승인 → 계획 모드로 단계 4 계획 → V2 마이그레이션(카탈로그 버전 표·세션 확인 함수·사용 기록 중복 방지) → 서버. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+리뷰 기준: c240f1e (묶음 1 시작 직전)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 105/105 통과 (2026-11-06 확인, `bash tests/run.sh`, 묶음 1 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 없음 (묶음 1 실측 결과 보고 뒤 다음 묶음 OK)
+다음 할 일: 묶음 1 실측 진행: 10분 부하 중 최대 RSS, 시작 시간 5번, 15분 넘게 쉰 뒤 첫 요청 3번, X-Forwarded-For 모양. 측정 끝나면 측정 주소 끄는 방법 알려주고 결과 표로 보고하고 멈춤. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+
+## ★ 지금 멈춘 곳 (2026-11-06, 단계 4 묶음 1)
+- **다른 컴퓨터에서 시작할 때는 `docs/new_computer_setup.md` 먼저.** 묶음 계획과 상태는 `docs/plan_stage4.md`(맨 아래 "묶음별 상태").
+- **Render 배포 완료:** `https://perfumer-lab.onrender.com`.
+  - 배포 설정: 브랜치 `wip/scent-studio-stage4`, 커밋 `687b295`, Singapore, Free(0.1 CPU / 512MB), Auto-Deploy Off, Health Check `/api/v1/health/live`.
+  - 환경 변수 7개: `DB_URL`, `DB_SERVER_USER`, `DB_SERVER_PASSWORD`, `DEBUG_TOKEN`, `MEM_DEBUG`, `IP_DEBUG`, `DEBUG_UNTIL=2026-11-07T03:00:00Z`.
+  - 첫 배포 시작 22.7초.
+- Render GitHub 앱에는 `perfumer-lab` 저장소만 허용했다.
+- 묶음 1 코드·리뷰 완료(QA팀 14 + Gemini 5, `docs/review.md` "묶음 1"), 서버·DB 테스트 105/105. **실측은 아직 시작하지 않았다.**
+- ⚠️ `DEBUG_UNTIL`(2026-11-07 03:00 UTC = 한국 11/7 낮 12시)이 지나면 측정 주소가 저절로 꺼진다(404). 그 뒤에 실측하려면 Render 환경 변수 `DEBUG_UNTIL`을 새 시각(몇 시간 뒤)으로 바꾸고 재배포(Manual Deploy)한다.
+- **다음 할 일:** 묶음 1 실측 진행.
+  - 잴 것: 10분 부하 중 최대 RSS, 시작 시간 5번, 15분 넘게 쉰 뒤 첫 요청 3번, X-Forwarded-For 모양.
+  - 측정 끝나면 측정 주소 끄는 방법을 알려 주고, 결과를 표로 보고하고 멈춤.
+  - 명령(`backend`에서): `bash scripts/render_measure.sh snap | load 10 | wake | ip`. `.env`의 `RENDER_URL`·`DEBUG_TOKEN`을 쓴다.
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**
@@ -52,12 +66,12 @@
 ## 새 세션 시작 (이 순서대로)
 1. 브랜치: **`wip/scent-studio-stage4`** (main 아님. 승인 41/41 + 5단계 리뷰 뒤 main에 합침) — `git fetch && git switch wip/scent-studio-stage4 && git pull`
 2. 읽기: 이 파일 → `docs/spec.md`(앱 전체) → `docs/plan.md`(4단계 계획·진행 표) → 필요하면 `docs/NOTES.md` 맨 아래(최근 결정과 이유)
-3. 새 컴퓨터 준비(한 번):
+3. 새 컴퓨터 준비(한 번): **`docs/new_computer_setup.md`를 따른다** (아래는 요약):
    - `py -m pip install -r pipeline/requirements.txt` (numpy, pytest)
    - `cd app && npm install && npx playwright install chromium`
    - 비밀 키: 환경 변수 `SCENT_KEY_SECRET` (저장소 README "데이터 정리 목록의 비밀 키"). 없으면 실제 카탈로그를 만들 수 없다. 테스트 1개는 키와 원본이 있을 때만 돈다
    - 원본 데이터(커밋 안 함): `py pipeline/fetch.py` → `py pipeline/fetch_decant.py` → `py pipeline/build_catalog.py`
-4. 확인: `bash tests/run.sh` → 파이프라인 121 + Vitest 37 + DB 50 (키와 원본이 없으면 파이프라인 일부 건너뜀) 통과. DB 테스트는 Java 21 필요, 첫 실행 때 Gradle·내장 Postgres를 내려받아 1~2분
+4. 확인: `bash tests/run.sh` → 파이프라인 121 + Vitest 37 + 서버·DB 105 (키와 원본이 없으면 파이프라인 일부 건너뜀) 통과. DB 테스트는 Java 21 필요, 첫 실행 때 Gradle·내장 Postgres를 내려받아 1~2분
 
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
