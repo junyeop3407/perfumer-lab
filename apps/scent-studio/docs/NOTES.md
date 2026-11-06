@@ -257,7 +257,7 @@
 - **마이그레이션 `V1__init.sql`:** `db_design.md` 3판 그대로(표 6개, 검사 함수 `app.valid_keys`·`app.valid_blend_notes`, updated_at 트리거, `app.purge_old_events()`, RLS + `scent_server` 전용 규칙, `public.keepalive()`). `scent_server`는 로그인 불가로 만든다(비밀번호는 사장이 SQL Editor에서).
 - **테스트 준비 코드 `supabase_stub.sql`:** Supabase에만 있는 `anon`·`authenticated` 역할과 `auth.users` 표를 흉내 낸다. 실제 Supabase에서는 마이그레이션이 이것들이 이미 있다고 보고 돈다.
 - **50/50 통과.** 처음부터 다 통과해서, 만족도 범위를 1~6으로 풀고 blends의 RLS를 끄는 변조를 넣어 돌려 보니 정확히 2개가 실패했다(테스트가 실제로 잡는다). 변조는 되돌렸다.
-- **실제 Supabase에서 따로 확인할 것:** ① `scent_server.<참조값>`으로 Session pooler 접속 ② Supabase에서는 `auth.users` 주인이 `supabase_auth_admin`이라, 계정 삭제 때 외래 키 연쇄 삭제가 테스트 DB와 같이 되는지 ③ 공개 키로 `keepalive()`를 부르는 것이 일시 정지 방지 활동으로 세어지는지(7일 관찰) ④ Supabase 기본 권한 설정이 `app` 스키마에 새로 권한을 주지 않는지(마이그레이션이 다시 거두지만 확인) ⑤ **Postgres 버전**: 테스트 DB는 17.11이다. 새 Supabase 프로젝트에서 `select version();`으로 주 버전(17)이 같은지 확인하고, 다르면 `build.gradle.kts`의 내장 Postgres 바이너리 버전을 맞춘 뒤 테스트를 다시 돌린다(복합 외래 키의 `on delete set null (blend_id)`는 15 이상 필요) ⑥ (리뷰 QA-5) anon·authenticated·service_role·scent_server의 `has_schema_privilege`·`has_table_privilege`를 실제 DB에서 직접 조회 ⑦ (리뷰 QA-6) `alter default privileges revoke execute on functions from public`이 postgres 계정 전체 기본값이라, Supabase가 public 스키마에 거는 기본 권한(anon 등에 함수 실행 허용)이 그대로인지 확인.
+- **실제 Supabase에서 따로 확인할 것:** ① `scent_server.<참조값>`으로 Session pooler 접속 ② Supabase에서는 `auth.users` 주인이 `supabase_auth_admin`이라, 계정 삭제 때 외래 키 연쇄 삭제가 테스트 DB와 같이 되는지 ③ 공개 키로 `keepalive()`를 부르는 것이 일시 정지 방지 활동으로 세어지는지(7일 관찰) ④ Supabase 기본 권한 설정이 `app` 스키마에 새로 권한을 주지 않는지(마이그레이션이 다시 거두지만 확인) ⑤ **Postgres 버전**: 테스트 DB는 17.11이다. 새 Supabase 프로젝트에서 `select version();`으로 주 버전(17)이 같은지 확인하고, 다르면 `build.gradle.kts`의 내장 Postgres 바이너리 버전을 맞춘 뒤 테스트를 다시 돌린다(복합 외래 키의 `on delete set null (blend_id)`는 15 이상 필요) ⑥ (리뷰 QA-5) anon·authenticated·service_role·scent_server의 `has_schema_privilege`·`has_table_privilege`를 실제 DB에서 직접 조회 ⑧ **7일 뒤(2026-11-13 이후) Supabase 대시보드에서 프로젝트가 일시 정지(Paused)되지 않았는지**, `gh run list --workflow supabase-keepalive.yml`로 매일 실행됐는지 확인(공개 키 keepalive 호출이 활동으로 세어지는지의 실제 확인) ⑦ (리뷰 QA-6) `alter default privileges revoke execute on functions from public`이 postgres 계정 전체 기본값이라, Supabase가 public 스키마에 거는 기본 권한(anon 등에 함수 실행 허용)이 그대로인지 확인.
 - **리뷰 반영(2026-11-06, `docs/review.md`):** 조합 이름 제어 문자·보이지 않는 글자만 금지, 키는 눈에 보이는 ASCII만(`app.valid_key`), 서버 계정 권한을 칸 단위로, 새 함수 기본 실행 권한 회수, 테스트 구멍 보강(계정 삭제를 `supabase_auth_admin`으로). DB 테스트 83/83.
 
 ## 2026-11-06 실제 Supabase 적용 (단계 3)
@@ -274,3 +274,15 @@
 - **scent_server pooler 접속 확인:** 사용자 이름 `scent_server.<참조값>`, Session pooler 포트 5432로 접속됨(current_user = scent_server, 17.11). app 표 읽기 됨(0줄), events 읽기·auth.users 읽기·consents 지우기·app에 표 만들기·정리 함수 실행은 42501로 막힘.
 - **pg_cron 1.6.4:** `purge-old-events` 매일 UTC 03:00(한국 12:00), postgres 계정·postgres DB, active = true. 실행 기록은 `cron.job_run_details`에서 본다.
 - **공개 키 REST 확인(`scripts/api_check.sh`):** `rpc/keepalive` 200·값 1(대시보드에서 따로 켤 것 없음, 마이그레이션의 직접 실행 권한으로 충분). `app` 스키마 지정 읽기·쓰기·함수 실행은 모두 406 PGRST106 "Only the following schemas are exposed: public, graphql_public". public에서 blends 찾기는 404. → Exposed schemas에 app 없음 확인.
+
+## 2026-11-06 일시 정지 방지 예약 작업
+- **파일:** 저장소 루트 `.github/workflows/supabase-keepalive.yml`. 매일 UTC 02:17(한국 11:17) + 수동 실행(workflow_dispatch). GitHub Secrets `SUPABASE_URL`·`SUPABASE_PUBLISHABLE_KEY`만 쓰고, 공개 키 모양(`sb_publishable_`)이 아니면 멈춘다. `public.keepalive()`가 200·값 1이 아니면 실패로 끝난다. 다른 사람 액션(uses:)은 쓰지 않는다, 권한 `permissions: {}`.
+- **예약 실행은 기본 브랜치(main)에 있는 파일만 돈다.** 작업 브랜치(`wip/scent-studio-stage4`)에 두는 것만으로는 안 돌아서, 이 파일 하나만 main에도 올린다(앱 코드는 main에 합치지 않음).
+- **GitHub 토큰에 `workflow` 권한이 있어야 워크플로 파일을 올릴 수 있다.** 이 컴퓨터의 gh 토큰은 `gist, read:org, repo`뿐이라 처음 푸시가 거절됐다 → 사장이 `gh auth refresh -h github.com -s workflow`로 권한을 늘린다.
+- **공개 저장소는 60일 동안 저장소 활동(커밋 등)이 없으면 예약 실행이 자동으로 꺼진다.** 꺼지면 그때부터 7일 뒤 Supabase가 일시 정지된다(데이터는 남고 대시보드에서 다시 켤 수 있음, 무료 요금제는 오래 정지된 프로젝트를 되살리지 못할 수 있어 확인 필요). 꺼지기 며칠 전 GitHub가 저장소 주인에게 메일을 보낸다.
+- **오래 쉴 때 확인하는 방법:**
+  1. `gh run list --workflow supabase-keepalive.yml --limit 5` → 최근 실행 날짜가 매일 있는지
+  2. `gh workflow view supabase-keepalive.yml` → 상태가 `active`인지 (꺼졌으면 `disabled_inactivity`)
+  3. 꺼졌으면 `gh workflow enable supabase-keepalive.yml` 후 `gh workflow run supabase-keepalive.yml`로 한 번 돌린다
+  4. Supabase 대시보드 프로젝트 목록에서 "Paused"가 아닌지. 정지됐으면 "Restore project"
+  - 두 달 넘게 쉴 예정이면 쉬기 전에 위 2·3을 하고 달력에 50일 뒤 알림을 둔다.
