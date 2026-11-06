@@ -1,0 +1,9 @@
+# 이미지에 넣지 않는 것 (비밀값·빌드 결과물·도구)
+.env
+.env.*
+!.env.example
+build/
+.gradle/
+src/test/
+src/ops/
+scripts/

@@ -1,0 +1,41 @@
+# 서버 설정. 비밀값(DB 비밀번호·키·측정 토큰)은 환경 변수로만 받는다(Render 환경 변수, 이 컴퓨터는 backend/.env). 여기에 값을 쓰지 않는다.
+server:
+  port: ${PORT:8080}
+  tomcat:
+    threads:
+      max: 16          # 512MB·CPU 0.1 (server_design.md 6-1)
+      min-spare: 2
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-exception: false
+
+spring:
+  main:
+    banner-mode: off
+  jmx:
+    enabled: false
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://127.0.0.1:1/unset}
+    username: ${DB_SERVER_USER:scent_server}
+    password: ${DB_SERVER_PASSWORD:}
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 0              # 쉬는 동안 DB 연결을 붙잡지 않음
+      initialization-fail-timeout: -1  # DB가 잠시 안 돼도 서버는 뜬다(health가 503)
+      connection-timeout: 5000
+      validation-timeout: 2000
+  flyway:
+    enabled: false                 # 서버는 마이그레이션하지 않는다(scent_server는 표를 만들 권한이 없음)
+
+springdoc:
+  api-docs:
+    enabled: ${OPENAPI_ENABLED:false}
+    path: /api/v1/openapi
+
+# 묶음 1 실측용 측정 주소. 켜는 값 + 토큰 헤더가 맞을 때만 응답. 실측이 끝나면 Render 환경 변수에서 지운다(plan_stage4.md 승인 때 추가 1)
+scent:
+  debug:
+    mem: ${MEM_DEBUG:false}
+    ip: ${IP_DEBUG:false}
+    token: ${DEBUG_TOKEN:}
