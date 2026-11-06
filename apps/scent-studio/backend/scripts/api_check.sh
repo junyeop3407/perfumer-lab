@@ -23,3 +23,18 @@ call "app.consents 읽기"                 "406 PGRST106"                   -H "
 call "app에 쓰기 시도"                    "406 PGRST106"                   -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/favorites"
 call "public에서 blends 찾기"             "404 (public에는 그런 표 없음)"   "$base/blends?select=*"
 call "app 함수 직접 실행 시도"            "404/406 (노출 안 됨)"            -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/rpc/purge_old_events"
+
+# 이메일 가입 (묶음 9 전에 꺼야 함: 구글 로그인만). 먼저 설정을 읽기만 하고, 꺼져 있을 때만 실제 가입 시도로 막힘을 확인한다.
+# (켜져 있을 때 시도하면 진짜 계정이 생기고 메일이 나가므로 시도하지 않는다)
+auth="https://$ref.supabase.co/auth/v1"
+settings="$(curl -s -H "apikey: $key" "$auth/settings")"
+compact="$(printf '%s' "$settings" | tr -d ' \n\r')"
+if ! printf '%s' "$compact" | grep -q '"external":{'; then email_on="unknown"
+elif printf '%s' "$compact" | grep -q '"disable_signup":true' || printf '%s' "$compact" | grep -q '"email":false'; then email_on="off"
+else email_on="on"; fi
+echo "[이메일 가입 설정] $email_on — 기대: off (구글 로그인만)"
+if [ "$email_on" = "off" ]; then
+  call "공개 키로 이메일 가입 시도" "4xx (가입 막힘)" -X POST -H "Content-Type: application/json"     -d "{\"email\":\"probe-$(date +%s)@example.com\",\"password\":\"Probe$(date +%s)Xx9\"}" "$auth/signup"
+else
+  echo "    아직 켜져 있음 → 가입 시도는 건너뜀 (plan.md 출시 직전 확인 항목 6)"
+fi

@@ -72,6 +72,8 @@
 | 3 | **앱 밖 계정 삭제 링크**(승인 G3): 웹에서 계정 삭제를 요청하는 안내 페이지 주소를 Play Console과 앱 마이 화면에 | |
 | 4 | 구글 OAuth 동의 화면 **프로덕션 게시**(테스트 상태면 100명 제한, `db_design.md` 13절) | |
 | 5 | 사용자별 분당 요청 제한이 저장·찜·시향 기록·취향 합치기에 걸려 있음(`db_design.md` 14절) | |
+| 6 | **Supabase 이메일 가입·로그인 끄기(구글 로그인만)** — Authentication → Sign In / Providers → Email 끄기. 테스트 계정을 지운 **뒤에**. `bash backend/scripts/api_check.sh`의 이메일 가입 확인이 "막힘" (2026-11-06 사장 지시) | |
+| 7 | 측정 주소(`MEM_DEBUG`·`IP_DEBUG`·`DEBUG_TOKEN`)가 Render 환경 변수에 없음 | |
 
 ## 진행 상태
 | 단계 | 상태 |
@@ -80,7 +82,7 @@
 | 2 | ✅ 2026-10-31 TS 엔진 Vitest 36/36, Java 엔진·Gradle 삭제 |
 | ★엔진 | 🔄 엔진 v7(2026-11-02: 어코드·노트 강도, 일치도 × 강도 몫, 선호를 뺀 등급, 사장 승인 계획). 2026-11-04 v7 채택(블라인드 7:5). **v8 계획 승인(`plan_v8.md`), 0~5단계 끝, 재측정 `engine_v8_final.md`, ★6 결정 완료(P1 채택, M1 제외). 2026-11-05 합치기 겹침 검사 추가, 후보 12,469, 쿼리 893/474가 새 기준, P1 결론 유지. 7단계 완료(엔진 v8 적용, 파일 측정이 메모리 측정과 같음), 8단계 블라인드 완료: 채팅 AI 판정(사장 결정) 유효 26, v8 13 : v7 13, p=1.000, 유의차 없음 → v8 유지, 위험 기록(`engine_blind_v8_rules.md`, `plan_v8.md`).** 9단계 눈 평가 합격: 사장 점수 기본 10개 4.38(기준 3.5), 구르망 3.96·4.07(`engine_eye_v8_rules.md`, `plan_v8.md`). 10단계 등급 확정 0.763/0.647(검증 통과, `engine_grade_v8.md`). **엔진 v8 동결.** 다음: 사장 지시 뒤 단계 3 |
 | 3 | ✅ 2026-11-06 완료. 설계 `docs/db_design.md` 3판 승인(표 6개, 초대제 없음). **테스트 DB 완료**: `backend/` Gradle + `V1__init.sql` + JUnit 50/50(내장 Postgres 17). 리뷰 반영 83/83. **실제 Supabase(17.11)에 V1 적용, 권한·RLS 조회 확인**(NOTES). scent_server 비밀번호(로컬 SCRAM 해시)·pooler 접속, pg_cron 매일 정리, 공개 키 REST(keepalive 200, app 406) 확인 완료. 일시 정지 방지 예약 작업 `.github/workflows/supabase-keepalive.yml`(main에도 올림, 수동 실행 성공, 7일 뒤 정지 여부 확인). 구글 로그인은 단계 5 전 |
-| 4 | 2026-11-06 설계안 `docs/server_design.md` 2판 사장 검토 대기 (1판 답: Render, 요청 제한 OK, 오류 신고 로그인만) |
+| 4 | 🔄 2026-11-06 설계 `docs/server_design.md` 2판 승인, **묶음 계획 `docs/plan_stage4.md` 승인**(9묶음). 묶음 1(Render 실측) 진행 중 |
 | ★디자인 | |
 | 5 | |
 | 6 | |
