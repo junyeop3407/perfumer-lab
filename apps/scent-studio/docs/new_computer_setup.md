@@ -26,7 +26,7 @@
    | Gemini CLI (교차 리뷰) | `npm install -g @google/gemini-cli` | `gemini --version` |
    | Claude Code | `npm install -g @anthropic-ai/claude-code` | `claude --version` |
 
-   - **Mac**: 기본 `python3`는 3.9라 파이프라인이 안 돈다(3.12 문법). `brew install python@3.12` → `python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt` (`tests/run.sh`가 `-I`로 돌려 `--user` 설치는 안 보인다). npm 캐시 권한 오류가 나면 `npm install --cache <임시 폴더>`.
+   - **Mac은 아래 "Mac에서 다른 점" 절을 따른다.** 요약: 기본 `python3`는 3.9라 파이프라인이 안 돈다(3.12 문법). `brew install python@3.12` → `python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt` (`tests/run.sh`가 `-I`로 돌려 `--user` 설치는 안 보인다). npm 캐시 권한 오류가 나면 `npm install --cache <임시 폴더>`.
    - Gemini API 키: https://aistudio.google.com/apikey 에서 만들거나 기존 키를 써서 PowerShell `[Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "<키>", "User")`. 루트 README "교차 리뷰" 참고.
    - 카탈로그를 다시 만들 때만: 환경 변수 `SCENT_KEY_SECRET` (루트 README "데이터 정리 목록의 비밀 키", 값은 비밀번호 관리자).
 3. **GitHub 로그인**: `gh auth login --web` → `gh auth setup-git`.
@@ -49,6 +49,9 @@
    | `RENDER_URL` | Render 대시보드의 서비스 주소 (`https://perfumer-lab.onrender.com`) |
    | `SUPABASE_SECRET_KEY` | **묶음 6에서 생김**(지금은 빈 칸). 새로 만든 `render-server` 키, 기본 키 아님 |
 
+   - **자주 하는 실수 (2026-11-06 Mac에서 실제로 난 것)**:
+     - `DB_URL` 끝부분을 두 번 붙여 넣음(`...?sslmode=require:5432/postgres?sslmode=require`) → `dbCheck`가 "잘못된 sslmode 값"으로 실패. `?sslmode=require`는 맨 끝에 한 번만.
+     - `SUPABASE_PUBLISHABLE_KEY` 칸에 **Secret key(`sb_secret_`)** 를 넣음 → `api_check.sh`의 keepalive가 403 "permission denied for function keepalive". 이 칸은 반드시 `sb_publishable_`로 시작한다. Secret key는 이 칸에도 다른 칸에도 넣지 않는다.
 6. **값 다루는 규칙**:
    - `.env` 값은 대화창과 다른 파일에 붙여 넣지 않는다.
    - 복사하다 메모장 임시 탭에 붙였으면 **저장하지 말고 닫는다**.
@@ -64,6 +67,16 @@
 2. `cd backend && ./gradlew dbCheck` → 실제 Supabase 접속, 표·권한·RLS 확인.
 3. `bash backend/scripts/api_check.sh` → 공개 키로 keepalive는 되고 app 스키마는 막히는지.
 4. 브라우저나 `curl https://perfumer-lab.onrender.com/api/v1/health/live` → `{"status":"ok"}` 응답. 서버가 자고 있으면 첫 응답에 30~90초 걸린다.
+
+### Mac에서 다른 점 (2026-11-06, macOS 14 Apple Silicon에서 확인)
+- **설치는 winget 대신 Homebrew**: `brew install git gh node python@3.12`, Java 21은 `brew install --cask temurin@21`(Oracle JDK 21도 됨). Gemini CLI·Claude Code는 표와 같이 `npm install -g`.
+- **Java**: `JAVA_HOME`을 따로 정하지 않아도 Gradle이 설치된 21을 찾는다. 확인은 `java -version`(21) + `cd backend && ./gradlew -version`의 `Launcher JVM`·`Daemon JVM`이 21인지.
+- **Python**: Mac에는 `py`가 없다. 이 문서·HANDOFF의 `py ...`는 **`python3.12 ...`로 바꿔 읽는다.** 기본 `python3`(3.9)는 쓰지 않는다.
+  - 설치: `python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt` (`tests/run.sh`가 `-I`로 돌려 `--user` 설치는 안 보인다).
+- **환경 변수**(`GEMINI_API_KEY`, `SCENT_KEY_SECRET`): PowerShell 명령 대신 `~/.zshrc`에 `export 이름=<값>` 한 줄을 넣고 터미널을 새로 연다. 값은 대화창에 붙여 넣지 않는다.
+- **`.env` 복사**: `cd backend && cp .env.example .env`.
+- **npm 캐시 권한 오류**가 나면 `npm install --cache <임시 폴더>`.
+- 그 밖에 `tests/run.sh`, Gradle, 내장 Postgres(arm64)는 Windows와 똑같이 돌았다(파이프라인 119 + 건너뜀 2, Vitest 37, 서버·DB 105).
 
 ### D. 비밀번호를 잃어버렸을 때
 - **postgres(관리자)**:
