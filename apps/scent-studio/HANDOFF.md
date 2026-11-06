@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB): 테스트 DB 통과, **실제 Supabase 작업 전 멈춤**(사장 차례, `docs/db_design.md` 13절))
+현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB): **실제 Supabase에 V1 적용 완료**(Postgres 17.11), 사장 SQL 실행(scent_server 비밀번호·pg_cron)과 공개 키 REST 확인 대기)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 83/83 통과 (2026-11-06 확인, `bash tests/run.sh`, 5단계식 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음 (2026-11-06 사장 승인: db_design.md 3판, 초대제 없이 Fragrantica 허가 전제 비상업 무료 공개)
-다음 할 일: 사장 Supabase 작업(`db_design.md` 13절 1~3번: 프로젝트 만들기·공개 영역 확인·`backend/.env` 채우기) → 직원이 실제 DB에 마이그레이션 + 연결 뒤 확인 3가지(pooler 접속, 계정 삭제 연쇄, keepalive 활동) → 13절 4~7번 → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
+다음 할 일: 사장이 `.env`에 `SUPABASE_PUBLISHABLE_KEY` 추가 → `bash backend/scripts/api_check.sh`(keepalive·app 노출 막힘) / 사장 SQL(13절 4번) → `DB_SERVER_PASSWORD` 채움 → 직원이 scent_server pooler 접속 확인 → 13절 6번(일시 정지 방지)·7번(구글 로그인은 단계 5 전). 실제 DB 조회는 `cd backend && ./gradlew dbCheck` → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**

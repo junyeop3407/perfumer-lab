@@ -11,6 +11,26 @@ java {
     toolchain { languageVersion = JavaLanguageVersion.of(21) }
 }
 
+// 실제 DB 작업 도구 (src/ops, 앱 서버 코드 아님): ./gradlew dbVersion | dbMigrate | dbCheck
+val ops: SourceSet by sourceSets.creating
+
+dependencies {
+    "opsImplementation"("org.flywaydb:flyway-core:13.11.1")
+    "opsRuntimeOnly"("org.flywaydb:flyway-database-postgresql:13.11.1")
+    "opsRuntimeOnly"("org.postgresql:postgresql:42.7.14")
+}
+
+for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check")) {
+    tasks.register<JavaExec>(task) {
+        group = "db"
+        classpath = ops.runtimeClasspath + sourceSets["main"].output
+        mainClass = "com.perfumerlab.scentstudio.ops.DbOps"
+        args(arg)
+        workingDir = projectDir
+        jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+    }
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.14.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

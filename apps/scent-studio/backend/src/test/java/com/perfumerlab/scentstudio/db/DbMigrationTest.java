@@ -26,7 +26,7 @@ class DbMigrationTest extends DbTestBase {
     @Test
     void migrationCreatesSixTables() throws SQLException {
         assertEquals(6, count("select count(*) from information_schema.tables where table_schema = 'app'"));
-        assertEquals(1, count("select count(*) from flyway_schema_history where version = '1' and success"));
+        assertEquals(1, count("select count(*) from flyway.flyway_schema_history where version = '1' and success"));
     }
 
     @Test

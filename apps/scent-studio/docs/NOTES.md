@@ -259,3 +259,14 @@
 - **50/50 통과.** 처음부터 다 통과해서, 만족도 범위를 1~6으로 풀고 blends의 RLS를 끄는 변조를 넣어 돌려 보니 정확히 2개가 실패했다(테스트가 실제로 잡는다). 변조는 되돌렸다.
 - **실제 Supabase에서 따로 확인할 것:** ① `scent_server.<참조값>`으로 Session pooler 접속 ② Supabase에서는 `auth.users` 주인이 `supabase_auth_admin`이라, 계정 삭제 때 외래 키 연쇄 삭제가 테스트 DB와 같이 되는지 ③ 공개 키로 `keepalive()`를 부르는 것이 일시 정지 방지 활동으로 세어지는지(7일 관찰) ④ Supabase 기본 권한 설정이 `app` 스키마에 새로 권한을 주지 않는지(마이그레이션이 다시 거두지만 확인) ⑤ **Postgres 버전**: 테스트 DB는 17.11이다. 새 Supabase 프로젝트에서 `select version();`으로 주 버전(17)이 같은지 확인하고, 다르면 `build.gradle.kts`의 내장 Postgres 바이너리 버전을 맞춘 뒤 테스트를 다시 돌린다(복합 외래 키의 `on delete set null (blend_id)`는 15 이상 필요) ⑥ (리뷰 QA-5) anon·authenticated·service_role·scent_server의 `has_schema_privilege`·`has_table_privilege`를 실제 DB에서 직접 조회 ⑦ (리뷰 QA-6) `alter default privileges revoke execute on functions from public`이 postgres 계정 전체 기본값이라, Supabase가 public 스키마에 거는 기본 권한(anon 등에 함수 실행 허용)이 그대로인지 확인.
 - **리뷰 반영(2026-11-06, `docs/review.md`):** 조합 이름 제어 문자·보이지 않는 글자만 금지, 키는 눈에 보이는 ASCII만(`app.valid_key`), 서버 계정 권한을 칸 단위로, 새 함수 기본 실행 권한 회수, 테스트 구멍 보강(계정 삭제를 `supabase_auth_admin`으로). DB 테스트 83/83.
+
+## 2026-11-06 실제 Supabase 적용 (단계 3)
+- **버전:** PostgreSQL 17.11 (aarch64) — 테스트 DB(zonky 17.11)와 부 버전까지 같다.
+- **도구:** `backend/src/ops` `DbOps`(`./gradlew dbVersion | dbMigrate | dbCheck`, `.env`를 읽고 비밀번호는 출력 안 함), `backend/scripts/api_check.sh`(공개 키로 Data API 확인). 앱 서버 코드가 아니다.
+- **Flyway 기록 표는 `flyway` 스키마**에 둔다(기본값이면 `public`에 생겨 공개 API 쪽에 놓인다). 테스트(`DbTestBase`)도 같은 설정.
+- **마이그레이션 V1 적용 성공.** 표 6개 모두 RLS 켜짐·규칙 1개, `scent_server`는 로그인 불가·superuser/bypassrls/createrole 없음.
+- **계정별 실제 권한(리뷰 QA-5 확인):** anon·authenticated·authenticator·service_role은 `app`·`flyway` 스키마 usage 없음, app 표 권한 없음. `scent_server`만 app usage와 설계대로의 표 권한. service_role은 bypassrls지만 app 스키마 usage가 없어 비밀 키로도 REST로는 app에 못 닿는다.
+- **public 함수 기본 권한(리뷰 QA-6 확인):** 프로젝트를 만들 때 "Automatically expose new tables"를 꺼서 Supabase의 public 기본 권한에 anon·authenticated 함수 실행이 원래 없다(`public | f | {postgres=X}`). 우리가 건 전체 기본값(`(전체) | f | {postgres=X}`)과 충돌하지 않는다. public에 임시 함수를 만들어 보니 anon·authenticated·service_role 모두 실행 불가였다(되돌림).
+- **keepalive:** 마이그레이션이 anon·authenticated에 실행 권한을 직접 주므로 DB 안에서 anon으로 실행하면 1이 나온다. 공개 키로 REST에서 부를 수 있는지는 `api_check.sh`로 확인한다(공개 키 필요).
+- **anon으로 app 표 읽기:** DB 안에서 `permission denied for schema app`(42501)으로 막힘.
+- Data API 노출 스키마 설정은 DB(authenticator 역할 설정)에 없다. 호스팅 쪽 설정이라 REST 응답으로 확인한다.

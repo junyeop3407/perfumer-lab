@@ -36,7 +36,8 @@ abstract class DbTestBase {
         try (Connection c = ds.getConnection(); Statement s = c.createStatement()) {
             s.execute(resource("/supabase_stub.sql"));
         }
-        Flyway.configure().dataSource(ds).locations("classpath:db/migration").load().migrate();
+        // 실제 DB와 같은 설정: 기록 표는 공개 API 밖의 flyway 스키마 (DbOps.flyway)
+        Flyway.configure().dataSource(ds).schemas("flyway").createSchemas(true).locations("classpath:db/migration").load().migrate();
     }
 
     @AfterAll
