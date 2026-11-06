@@ -34,6 +34,15 @@ public final class DbOps {
             case "server-password" -> serverPassword(env);
             case "server-check" -> serverCheck(env);
             case "cron" -> cron(env);
+            case "auth-check" -> { // 읽기만: 세션 확인 함수 설계용 (auth.sessions 모양과 권한)
+                try (Connection c = connect(env)) {
+                    print(c, "select column_name, data_type, is_nullable from information_schema.columns where table_schema = 'auth' and table_name = 'sessions' order by ordinal_position");
+                    print(c, "select r as 계정, has_schema_privilege(r, 'auth', 'usage') as auth_usage, has_table_privilege(r, 'auth.sessions', 'select') as sessions_select"
+                            + " from unnest(array['postgres','scent_server','anon','authenticated']) r");
+                    print(c, "select tableowner from pg_tables where schemaname = 'auth' and tablename = 'sessions'");
+                    print(c, "select count(*) as 세션수 from auth.sessions");
+                }
+            }
             default -> throw new IllegalArgumentException("version | migrate | check | server-password | server-check | cron");
         }
     }

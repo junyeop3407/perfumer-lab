@@ -278,7 +278,7 @@
 ## 2026-11-06 일시 정지 방지 예약 작업
 - **파일:** 저장소 루트 `.github/workflows/supabase-keepalive.yml`. 매일 UTC 02:17(한국 11:17) + 수동 실행(workflow_dispatch). GitHub Secrets `SUPABASE_URL`·`SUPABASE_PUBLISHABLE_KEY`만 쓰고, 공개 키 모양(`sb_publishable_`)이 아니면 멈춘다. `public.keepalive()`가 200·값 1이 아니면 실패로 끝난다. 다른 사람 액션(uses:)은 쓰지 않는다, 권한 `permissions: {}`.
 - **예약 실행은 기본 브랜치(main)에 있는 파일만 돈다.** 작업 브랜치(`wip/scent-studio-stage4`)에 두는 것만으로는 안 돌아서, 이 파일 하나만 main에도 올린다(앱 코드는 main에 합치지 않음).
-- **GitHub 토큰에 `workflow` 권한이 있어야 워크플로 파일을 올릴 수 있다.** 이 컴퓨터의 gh 토큰은 `gist, read:org, repo`뿐이라 처음 푸시가 거절됐다 → 사장이 `gh auth refresh -h github.com -s workflow`로 권한을 늘린다.
+- **GitHub 토큰에 `workflow` 권한이 있어야 워크플로 파일을 올릴 수 있다.** 이 컴퓨터의 gh 토큰은 `gist, read:org, repo`뿐이라 처음 푸시가 거절됐다 → 사장이 `gh auth refresh -h github.com -s workflow`로 권한을 늘렸다(2026-11-06). main(`8bd38a6`, 이 파일 하나만)과 작업 브랜치에 올림. **수동 실행 성공**(run 42149042736, HTTP 200, 응답 1).
 - **공개 저장소는 60일 동안 저장소 활동(커밋 등)이 없으면 예약 실행이 자동으로 꺼진다.** 꺼지면 그때부터 7일 뒤 Supabase가 일시 정지된다(데이터는 남고 대시보드에서 다시 켤 수 있음, 무료 요금제는 오래 정지된 프로젝트를 되살리지 못할 수 있어 확인 필요). 꺼지기 며칠 전 GitHub가 저장소 주인에게 메일을 보낸다.
 - **오래 쉴 때 확인하는 방법:**
   1. `gh run list --workflow supabase-keepalive.yml --limit 5` → 최근 실행 날짜가 매일 있는지

@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 엔진 v8 동결. **plan.md 단계 3(DB) 완료** 2026-11-06. 단계 4(서버) 설계안 `docs/server_design.md` 사장 검토 대기, 서버 코드 없음)
+현재 단계: 4 (구현 — 엔진 v8 동결. plan.md 단계 3(DB) 완료 2026-11-06. 단계 4(서버) 설계안 2판 `docs/server_design.md` 사장 검토 대기, 서버 코드·V2 없음)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · DB(JUnit + 내장 Postgres) 83/83 통과 (2026-11-06 확인, `bash tests/run.sh`, 5단계식 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: `docs/server_design.md` 승인 + 7절 질문 3개(올릴 곳, 요청 제한 값, 오류 신고 로그인 여부). 사장 할 일: `gh auth refresh -h github.com -s workflow`(워크플로 파일 푸시 권한) → 직원이 keepalive 워크플로를 main·작업 브랜치에 올리고 수동 실행 확인
-다음 할 일: 워크플로 푸시·수동 실행 확인 → 서버 설계 승인 → 계획 모드로 단계 4 계획 → 구현. 2026-11-13 이후 Supabase 일시 정지 여부 확인(NOTES ⑧)
+사용자에게 남은 질문: `docs/server_design.md` 2판 승인 (1판 답 반영: Render, 요청 제한 표 OK, 오류 신고 로그인만)
+다음 할 일: 서버 설계 승인 → 계획 모드로 단계 4 계획 → V2 마이그레이션(카탈로그 버전 표·세션 확인 함수·사용 기록 중복 방지) → 서버. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**

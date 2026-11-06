@@ -21,7 +21,7 @@ dependencies {
 }
 
 for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check",
-    "dbServerPassword" to "server-password", "dbServerCheck" to "server-check", "dbCron" to "cron")) {
+    "dbServerPassword" to "server-password", "dbServerCheck" to "server-check", "dbCron" to "cron", "dbAuthCheck" to "auth-check")) {
     tasks.register<JavaExec>(task) {
         group = "db"
         classpath = ops.runtimeClasspath + sourceSets["main"].output
