@@ -71,7 +71,11 @@
 
 ### Mac에서 다른 점 (2026-11-06, macOS 14 Apple Silicon에서 확인)
 - **설치는 winget 대신 Homebrew**: `brew install git gh node python@3.12`, Java 21은 `brew install --cask temurin@21`(Oracle JDK 21도 됨). Gemini CLI·Claude Code는 표와 같이 `npm install -g`.
-- **Java**: `JAVA_HOME`을 따로 정하지 않아도 Gradle이 설치된 21을 찾는다. 확인은 `java -version`(21) + `cd backend && ./gradlew -version`의 `Launcher JVM`·`Daemon JVM`이 21인지.
+- **Java**: Java가 21 하나뿐이면 `JAVA_HOME` 없이도 Gradle이 찾는다. 다른 판(예: 25)도 깔려 있으면 `~/.zshrc`에 `export JAVA_HOME=$(/usr/libexec/java_home -v 21)` 한 줄을 넣고 터미널과 Claude Code를 새로 연다. 확인은 `java -version`(21) + `cd backend && ./gradlew -version`의 `Launcher JVM`·`Daemon JVM`이 21인지.
+- **저장소 위치는 사람·컴퓨터마다 다르다**(예: `~/junyeop/perfumer-lab`). 문서의 경로는 모두 저장소 기준 상대 경로로 읽는다.
+- **숨김 파일**: `.env`·`.env.example`은 점으로 시작해 Finder와 `ls`에 안 보인다. `ls -a`로 확인한다(Finder는 `Cmd+Shift+.`).
+- **`.env` 편집**: 터미널에서 `nano .env`가 가장 안전하다(저장 `Ctrl+O` → Enter, 나가기 `Ctrl+X`). TextEdit을 쓰려면 먼저 메뉴 포맷 → "일반 텍스트로 만들기", 편집 → 대치 → "스마트 따옴표"·"스마트 대시" 끄기. 켜 두면 따옴표·하이픈이 바뀌어 값이 깨진다.
+- **비공개 데이터**: Windows와 같이 저장소 **밖**에 `gh repo clone junyeop3407/perfumer-lab-private`로 받아 `pipeline/data/out/`에 복사한다.
 - **Python**: Mac에는 `py`가 없다. 이 문서·HANDOFF의 `py ...`는 **`python3.12 ...`로 바꿔 읽는다.** 기본 `python3`(3.9)는 쓰지 않는다.
   - 설치: `python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt` (`tests/run.sh`가 `-I`로 돌려 `--user` 설치는 안 보인다).
 - **환경 변수**(`GEMINI_API_KEY`, `SCENT_KEY_SECRET`): PowerShell 명령 대신 `~/.zshrc`에 `export 이름=<값>` 한 줄을 넣고 터미널을 새로 연다. 값은 대화창에 붙여 넣지 않는다.
