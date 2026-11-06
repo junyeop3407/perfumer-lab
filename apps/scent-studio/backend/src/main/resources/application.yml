@@ -39,3 +39,4 @@ scent:
     mem: ${MEM_DEBUG:false}
     ip: ${IP_DEBUG:false}
     token: ${DEBUG_TOKEN:}
+    until: ${DEBUG_UNTIL:}      # 끝나는 시각(ISO). 없거나 지나면 꺼짐

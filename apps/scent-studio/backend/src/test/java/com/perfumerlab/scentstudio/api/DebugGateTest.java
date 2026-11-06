@@ -23,7 +23,7 @@ class DebugGateTest {
 
     @Nested
     @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-            properties = {"scent.debug.mem=true", "scent.debug.ip=true", "scent.debug.token=" + TOKEN})
+            properties = {"scent.debug.mem=true", "scent.debug.ip=true", "scent.debug.token=" + TOKEN, "scent.debug.until=2099-01-01T00:00:00Z"})
     class Enabled extends ApiTestBase {
         @DynamicPropertySource
         static void props(DynamicPropertyRegistry r) { db(r); }
@@ -62,7 +62,7 @@ class DebugGateTest {
 
     @Nested
     @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-            properties = {"scent.debug.mem=true", "scent.debug.ip=true", "scent.debug.token=short-token"})
+            properties = {"scent.debug.mem=true", "scent.debug.ip=true", "scent.debug.token=short-token", "scent.debug.until=2099-01-01T00:00:00Z"})
     class ShortTokenNeverOpens extends ApiTestBase {
         @DynamicPropertySource
         static void props(DynamicPropertyRegistry r) { db(r); }
@@ -76,7 +76,7 @@ class DebugGateTest {
 
     @Nested
     @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-            properties = {"scent.debug.mem=false", "scent.debug.ip=false", "scent.debug.token=" + TOKEN})
+            properties = {"scent.debug.mem=false", "scent.debug.ip=false", "scent.debug.token=" + TOKEN, "scent.debug.until=2099-01-01T00:00:00Z"})
     class SwitchedOff extends ApiTestBase {
         @DynamicPropertySource
         static void props(DynamicPropertyRegistry r) { db(r); }

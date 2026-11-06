@@ -1,5 +1,6 @@
 package com.perfumerlab.scentstudio.web;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,8 @@ public class SecurityConfig {
                 .logout(l -> l.disable())
                 .requestCache(r -> r.disable())
                 .authorizeHttpRequests(a -> a
+                        // 이미 처리 중인 요청의 오류 응답(406·500 등)이 401로 바뀌지 않게. 오류 내용은 application.yml에서 숨김(리뷰 묶음 1 QA-2)
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/health", "/api/v1/health/live").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/_debug/mem", "/api/v1/_debug/ip").permitAll() // 컨트롤러가 토큰 확인
                         .anyRequest().authenticated())

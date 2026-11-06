@@ -25,6 +25,7 @@ for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "
     "dbServerPassword" to "server-password", "dbServerCheck" to "server-check", "dbCron" to "cron", "dbAuthCheck" to "auth-check")) {
     tasks.register<JavaExec>(task) {
         group = "db"
+        // DbOps는 서버 코드(main 클래스)를 쓰지 않고 마이그레이션 SQL(main 리소스)만 쓴다. Spring을 섞지 않으려고 리소스만 넣는다(리뷰 Gemini-2)
         classpath = ops.runtimeClasspath + files(sourceSets["main"].output.resourcesDir)
         mainClass = "com.perfumerlab.scentstudio.ops.DbOps"
         args(arg)

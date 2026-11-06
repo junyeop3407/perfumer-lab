@@ -10,7 +10,8 @@ import java.net.http.HttpResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /** 묶음 1: health(DB 됨), 그 밖 주소 401, 측정 주소는 꺼져 있으면 404, 응답에 비밀값 없음. */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {"scent.debug.mem=false", "scent.debug.ip=false", "scent.debug.token=", "scent.debug.until="})
 class HealthApiTest extends ApiTestBase {
 
     @DynamicPropertySource
