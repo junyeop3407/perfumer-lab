@@ -31,7 +31,10 @@ public final class DbOps {
             case "version" -> version(env);
             case "migrate" -> migrate(env);
             case "check" -> check(env);
-            default -> throw new IllegalArgumentException("version | migrate | check");
+            case "server-password" -> serverPassword(env);
+            case "server-check" -> serverCheck(env);
+            case "cron" -> cron(env);
+            default -> throw new IllegalArgumentException("version | migrate | check | server-password | server-check | cron");
         }
     }
 
@@ -160,6 +163,72 @@ public final class DbOps {
             }
             System.out.println("\n== Data API 설정이 DB에 있는지 (authenticator 역할 설정) ==");
             print(c, "select rolname, rolconfig::text from pg_roles where rolname = 'authenticator'");
+        }
+    }
+
+    /**
+     * scent_server 비밀번호를 .env의 DB_SERVER_PASSWORD로 정한다. 드라이버가 이 컴퓨터에서 SCRAM-SHA-256 해시를 만들어
+     * "alter user ... password '<해시>'"만 보낸다(원문은 DB로 가지 않음). 원문·해시는 어디에도 출력하지 않는다.
+     */
+    static void serverPassword(Map<String, String> env) throws SQLException {
+        String pw = env.getOrDefault("DB_SERVER_PASSWORD", "");
+        if (!pw.matches("[A-Za-z0-9]{32,}")) throw new IllegalStateException("DB_SERVER_PASSWORD는 영문·숫자 32자 이상이어야 합니다");
+        char[] chars = pw.toCharArray();
+        try (Connection c = connect(env)) {
+            try {
+                c.unwrap(org.postgresql.PGConnection.class).alterUserPassword("scent_server", chars, "scram-sha-256");
+            } catch (SQLException e) {
+                // 메시지에 비밀번호나 해시가 섞여 있으면 가린다
+                String msg = String.valueOf(e.getMessage()).replace(pw, "<가림>").replaceAll("SCRAM-SHA-256\\$\\S*", "<해시 가림>");
+                Throwable cause = e.getCause();
+                String why = cause == null ? "" : " / 원인: " + cause.getClass().getSimpleName() + " "
+                        + String.valueOf(cause.getMessage()).replace(pw, "<가림>").replaceAll("SCRAM-SHA-256\\$\\S*", "<해시 가림>");
+                throw new IllegalStateException("비밀번호 설정 실패: " + e.getSQLState() + " " + msg + why);
+            }
+            try (Statement s = c.createStatement()) {
+                s.execute("alter role scent_server login");
+            }
+            print(c, "select rolname, rolcanlogin as 로그인가능 from pg_roles where rolname = 'scent_server'");
+        } finally {
+            java.util.Arrays.fill(chars, '\0');
+        }
+        System.out.println("scent_server 비밀번호 설정 완료 (SCRAM-SHA-256, 원문·해시 출력 안 함)");
+    }
+
+    /** scent_server로 Session pooler에 실제로 접속해, 할 수 있는 것과 없는 것을 확인한다(쓰기 없음). */
+    static void serverCheck(Map<String, String> env) throws SQLException {
+        Properties p = new Properties();
+        p.setProperty("user", env.get("DB_SERVER_USER"));
+        p.setProperty("password", env.get("DB_SERVER_PASSWORD"));
+        p.setProperty("ApplicationName", "scent-studio-dbops");
+        try (Connection c = DriverManager.getConnection(env.get("DB_URL"), p)) {
+            System.out.println("접속 성공 (사용자 이름 형식 scent_server.<참조값>, Session pooler)");
+            print(c, "select current_user as 현재계정, session_user as 세션계정, current_setting('server_version') as 버전, inet_server_port() as 포트");
+            print(c, "select (select count(*) from app.blends) as blends줄, (select count(*) from app.consents) as consents줄, (select count(*) from app.user_preferences) as prefs줄");
+            for (String sql : new String[]{"select count(*) from app.events", "select count(*) from auth.users", "delete from app.consents",
+                    "create table app.sneaky (id int)", "select app.purge_old_events()"}) {
+                c.setAutoCommit(false);
+                try (Statement s = c.createStatement()) {
+                    s.execute(sql);
+                    System.out.println("안 막힘 (문제!): " + sql);
+                } catch (SQLException e) {
+                    System.out.println("막힘 " + e.getSQLState() + ": " + sql);
+                } finally {
+                    c.rollback();
+                    c.setAutoCommit(true);
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("scent_server 접속 실패: " + e.getSQLState() + " " + e.getMessage().lines().findFirst().orElse(""));
+        }
+    }
+
+    /** 사용 기록 매일 정리(UTC 03:00)를 pg_cron에 등록하고 확인한다. 같은 이름이면 덮어쓴다. */
+    static void cron(Map<String, String> env) throws SQLException {
+        try (Connection c = connect(env)) {
+            print(c, "select extname, extversion from pg_extension where extname = 'pg_cron'");
+            print(c, "select cron.schedule('purge-old-events', '0 3 * * *', $$select app.purge_old_events()$$) as jobid");
+            print(c, "select jobid, jobname, schedule, command, username, database, active from cron.job");
         }
     }
 

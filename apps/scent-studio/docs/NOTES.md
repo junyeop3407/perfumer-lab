@@ -270,3 +270,7 @@
 - **keepalive:** 마이그레이션이 anon·authenticated에 실행 권한을 직접 주므로 DB 안에서 anon으로 실행하면 1이 나온다. 공개 키로 REST에서 부를 수 있는지는 `api_check.sh`로 확인한다(공개 키 필요).
 - **anon으로 app 표 읽기:** DB 안에서 `permission denied for schema app`(42501)으로 막힘.
 - Data API 노출 스키마 설정은 DB(authenticator 역할 설정)에 없다. 호스팅 쪽 설정이라 REST 응답으로 확인한다.
+- **scent_server 비밀번호 (사장 결정 2026-11-06):** SQL Editor에 원문을 넣지 않는다(쿼리 기록·DB 로그에 남을 수 있음). `./gradlew dbServerPassword`가 `.env`의 `DB_SERVER_PASSWORD`를 읽어 PostgreSQL JDBC `alterUserPassword(..., "scram-sha-256")`로 이 컴퓨터에서 SCRAM-SHA-256 해시를 만들고 해시만 보낸다. 원문·해시는 출력하지 않는다(오류 메시지에서도 가림). 암호화 이름은 소문자여야 한다(대문자면 60000 "Unable to determine encryption type").
+- **scent_server pooler 접속 확인:** 사용자 이름 `scent_server.<참조값>`, Session pooler 포트 5432로 접속됨(current_user = scent_server, 17.11). app 표 읽기 됨(0줄), events 읽기·auth.users 읽기·consents 지우기·app에 표 만들기·정리 함수 실행은 42501로 막힘.
+- **pg_cron 1.6.4:** `purge-old-events` 매일 UTC 03:00(한국 12:00), postgres 계정·postgres DB, active = true. 실행 기록은 `cron.job_run_details`에서 본다.
+- **공개 키 REST 확인(`scripts/api_check.sh`):** `rpc/keepalive` 200·값 1(대시보드에서 따로 켤 것 없음, 마이그레이션의 직접 실행 권한으로 충분). `app` 스키마 지정 읽기·쓰기·함수 실행은 모두 406 PGRST106 "Only the following schemas are exposed: public, graphql_public". public에서 blends 찾기는 404. → Exposed schemas에 app 없음 확인.

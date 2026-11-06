@@ -17,10 +17,11 @@ val ops: SourceSet by sourceSets.creating
 dependencies {
     "opsImplementation"("org.flywaydb:flyway-core:13.11.1")
     "opsRuntimeOnly"("org.flywaydb:flyway-database-postgresql:13.11.1")
-    "opsRuntimeOnly"("org.postgresql:postgresql:42.7.14")
+    "opsImplementation"("org.postgresql:postgresql:42.7.14")
 }
 
-for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check")) {
+for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check",
+    "dbServerPassword" to "server-password", "dbServerCheck" to "server-check", "dbCron" to "cron")) {
     tasks.register<JavaExec>(task) {
         group = "db"
         classpath = ops.runtimeClasspath + sourceSets["main"].output
