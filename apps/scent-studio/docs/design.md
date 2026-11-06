@@ -21,7 +21,7 @@
 | D1 | 추천 계산을 어디서 하나 | **앱 안에서** (서버는 로그인·저장·통계만) | 무료 서버는 15분 쉬면 잠들어 깨는 데 최대 1분 걸린다. 앱 안에서 계산하면 핵심 기능(조합 → 추천)이 **즉시, 인터넷 없이도** 된다. 카탈로그 파일은 압축해서 약 1MB로 작다(시험 측정 0.7MB + 노트 프로필). 계산 코드는 앱·서버가 함께 쓰는 Java 모듈 하나에 둔다 |
 | D2 | 하단 탭 | **4개**(홈 · 향수 찾기 · 보관함 · 마이) + "새 조합 만들기"는 홈에서 시작하는 전체 화면 흐름 | 조합 → 요약 → 추천 → 상세는 한 줄로 이어지는 흐름이다. 지금처럼 추천 결과(S06)가 "향수 찾기" 탭에 있으면 뒤로 가기가 꼬인다 |
 | D3 | 로그인 안 한 사람의 불호·선호 설정 | **폰에 저장해 바로 적용**, 로그인하면 서버로 합친다 | 입문자는 로그인 전에 써 본다. 불호 노트 필터는 추천 품질에 직접 영향을 준다 |
-| D4 | 데이터 라이선스 | 1차는 **Play 내부 테스트(초대한 사람만)**까지. 정식 공개는 라이선스를 확인한 뒤. 2026-11-02 사장 결정: **비상업으로 운영** | Parfumo 데이터는 수집(스크래핑) 데이터이고 라이선스 표시가 없다. 엔진 v7에 쓰는 Decant(Fragrantica 강도)는 Kaggle 표기 CC BY-NC-SA 4.0: 비상업, 출처 표시, 카탈로그를 나눌 때 같은 조건. Fragrantica 자체 약관은 자동 접근이 막혀 아직 못 읽음(공개 전 확인) |
+| D4 | 데이터 라이선스 | 2026-11-06 사장 결정: **Fragrantica 허가 전제, 비상업 무료 공개**(초대제 없음). 스토어 공개는 Fragrantica 회신을 받은 뒤(`plan.md` 출시 직전 확인 항목). 이전: 1차는 Play 내부 테스트(초대한 사람만)까지. 2026-11-02 사장 결정: **비상업으로 운영** | Parfumo 데이터는 수집(스크래핑) 데이터이고 라이선스 표시가 없다. 엔진 v7에 쓰는 Decant(Fragrantica 강도)는 Kaggle 표기 CC BY-NC-SA 4.0: 비상업, 출처 표시, 카탈로그를 나눌 때 같은 조건. Fragrantica 자체 약관은 자동 접근이 막혀 아직 못 읽음(공개 전 확인) |
 
 ### 0-3. 기획서에 더한 것 (2026-10-30 requirements.md에 반영함)
 - 마이(S11)에 **계정 삭제**를 둔다. Play 정책상 계정을 만들 수 있는 앱은 필수다. 웹에서 삭제를 요청하는 방법도 안내해야 한다.
@@ -350,35 +350,40 @@ flowchart LR
 | GET /catalog/{version} | — | 카탈로그 파일(gzip) | 앱 시작 |
 | GET /me | 필수 | 내 계정 정보 | S11 |
 | DELETE /me | 필수 | **계정 삭제**: 내 데이터 전부 + Supabase 계정 삭제 | S11 |
-| GET·PUT /me/preferences | 필수 | 불호 노트 key 목록, 선호 계열 | S11, 로그인 직후 합치기 |
+| GET·PUT /me/preferences, POST /me/preferences/merge | 필수 | 불호 노트 key 목록, 선호 계열. 로그인 직후 합치기는 서버가 한다(`db_design.md` 5절) | S11 |
 | GET·POST /blends, PUT·DELETE /blends/{id} | 필수 | 내 조합 (이름 바꾸기 포함) | S01, S05, S09 |
 | GET /favorites, PUT·DELETE /favorites/{perfumeKey} | 필수 | 찜 | S07, S09 |
-| GET·POST /feedback | 필수 | 시향 피드백 | S09, S10 |
+| GET·POST /feedback, DELETE /feedback/{id} | 필수 | 시향 피드백, 본인 기록 삭제(2026-11-06) | S09, S10 |
 | POST /events | 선택 | 사용 기록 묶음(최대 100개) | 13절 |
 
 - 사용자 id는 **토큰에서만** 꺼낸다. 요청 본문이나 경로의 사용자 id는 믿지 않는다
-- 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, 같은 노트는 한 번만, 강도 ∈ {0.5, 1.0, 1.5}, 노트 key는 현재 카탈로그에 있는 것만, 이름 40자, 메모 500자
+- 조합 검증(서버에서도): 층당 최대 3개, 전체 최소 1개, 같은 노트는 한 번만, 강도 ∈ {weak, medium, strong}(숫자가 아니라 이름, `db_design.md` 6절), 노트 key는 현재 카탈로그에 있는 것만, 이름 40자, 메모 500자
 - 오류 형식: `{"error": {"code": "NOTE_NOT_FOUND", "message": "..."}}`. 코드 목록은 `docs/api-errors.md`(4단계)
 - 앱의 TypeScript 타입은 springdoc OpenAPI 문서에서 생성한다(openapi-typescript, 손으로 맞추지 않음)
-- `/events`는 기기 하나당 분당 요청 수를 제한한다
+- `/events`는 기기 하나당 분당 요청 수를 제한한다. 저장·찜·시향 기록·취향 합치기는 사용자별 분당 제한(단계 4, `db_design.md` 14절)
+- 1인당 한도: 조합 100 · 찜 300 · 시향 기록 1,000 (`db_design.md` 8절)
 
 ## 12. 데이터 모델 (Postgres, 스키마 `app`)
-카탈로그는 DB에 넣지 않는다(파일 하나가 원본). 사용자 데이터는 카탈로그가 바뀌어도 유지되게 **바뀌지 않는 key**(향수 = Parfumo 번호, 노트 = 정리된 영문 이름)로 가리킨다.
+> 2026-11-06: **표·칸·검사·삭제·접근 규칙의 기준은 `docs/db_design.md` 3판(사장 승인)**이다. 아래는 요약.
+
+카탈로그는 DB에 넣지 않는다(파일 하나가 원본). 사용자 데이터는 카탈로그가 바뀌어도 유지되게 **바뀌지 않는 key**(향수 = Parfumo 상품 주소의 `/Perfumes/` 뒷부분, 노트 = 정리된 영문 이름)로 가리킨다.
 
 | 테이블 | 컬럼 |
 |---|---|
 | user_preferences | user_id(PK, Supabase uid), preferred_families text[], disliked_note_keys text[], updated_at |
-| blends | id uuid, user_id, name, families text[], notes jsonb `[{note_key, layer, intensity}]`, created_at, updated_at |
+| blends | id uuid, user_id, name, families text[], notes jsonb `[{note_key, layer, strength}]`, created_at, updated_at |
 | favorites | user_id, perfume_key, created_at (PK user_id+perfume_key) |
-| tasting_feedback | id, user_id, perfume_key, blend_id(선택), satisfaction 1~5, similarity 1~5, memo, tested_at, rank(선택), score(선택), engine_version, catalog_version |
-| events | id, install_id uuid, user_id(선택), name, props jsonb, app_version, occurred_at, received_at |
+| tasting_feedback | id, user_id, perfume_key, blend_id(선택, 내 조합만), satisfaction 1~5, similarity 1~5, memo, tested_at, rank(선택), score(선택), engine_version, catalog_version, created_at |
+| events | id, install_id uuid, user_id(선택), name, props jsonb, app_version, occurred_at, received_at (12개월 보관) |
+| consents | id, user_id, doc_type(terms/privacy/age_14), doc_version, agreed_at, app_version |
 
 - **정규화 예외 (user_preferences의 text[], blends의 jsonb를 별도 표로 나누지 않은 이유):** 항상 부모 줄과 통째로 읽고 쓰고, 사용자끼리 섞어 항목 단위로 찾는 일이 없으며, 크기가 작게 묶여 있고(200개·9개) DB 검사 함수로 값을 막을 수 있어서, 표를 나누면 조인과 부분 수정만 늘고 얻는 것이 없다(여러 사용자 통계가 필요해지면 그때 나눈다).
 - 피드백에 그때의 순위·점수·엔진 버전을 함께 남긴다 → 4차 "피드백으로 가중치 조정"의 재료
-- 모든 사용자 테이블에 `user_id` 인덱스. 계정 삭제는 한 트랜잭션에서 사용자 행을 모두 지운다(events의 user_id는 null로)
+- 모든 사용자 테이블에 `user_id` 인덱스. updated_at은 트리거로 자동 갱신
+- 계정 삭제: 서버가 Supabase 계정을 지우면 외래 키 규칙으로 사용자 행이 한 번에 지워진다(events의 user_id는 null로, 앱은 install_id를 새로 만든다)
 
 ## 12-1. 보안·개인정보·Play 정책
-- **Supabase 직접 접근 막기:** 앱에 들어가는 Supabase 공개 키(anon key)는 누구나 꺼낼 수 있다. 테이블을 공개 API에 노출되지 않는 `app` 스키마에 두고, 모든 테이블에 RLS를 켜고 정책을 두지 않는다(= 공개 API로는 아무것도 못 읽음). Spring만 DB 계정으로 접근한다
+- **Supabase 직접 접근 막기:** 앱에 들어가는 Supabase 공개 키(anon key)는 누구나 꺼낼 수 있다. 테이블을 공개 API에 노출되지 않는 `app` 스키마에 두고, 모든 테이블에 RLS를 켜고 서버 계정 `scent_server`에만 정책을 둔다(= 공개 API로는 아무것도 못 읽음). Spring만 DB 계정으로 접근한다. 표 만들기는 `postgres` 계정으로만
 - 서비스 키(계정 삭제에 필요)는 서버 `.env`에만 둔다
 - JWT 검증: 서명(JWKS), `iss`, `aud=authenticated`, 만료를 확인한다
 - 사용 기록에는 광고 ID를 쓰지 않는다. 앱 설치 때 만든 무작위 `install_id`만 쓴다
@@ -447,7 +452,8 @@ flowchart LR
 ## 17. 위험과 대응
 | 위험 | 대응 |
 |---|---|
-| 데이터 라이선스 (수집 데이터, 표시 없음) | D4: 내부 테스트까지만. 공개 전 결정. 원본·카탈로그는 공개 저장소에 커밋하지 않음 |
+| 데이터 라이선스 (수집 데이터, 표시 없음) | D4: Fragrantica 허가 전제, 비상업 무료 공개. 스토어 공개는 Fragrantica 회신 뒤. 원본·카탈로그는 공개 저장소에 커밋하지 않음 |
+| **Fragrantica가 허가를 거절함** (2026-11-06 기록) | 카탈로그에서 Decant(Fragrantica) 강도 데이터를 빼야 하고, 그 위에 쌓은 v7·v8 개선(강도 몫, P1 추정치, 사람 유사 시험 +5.9%p 등)을 잃는다. 강도 없는 v6 방식으로 돌아가 재측정·등급 재계산이 필요하다. 그래서 스토어 공개는 회신을 받은 뒤에 한다 |
 | 어코드 순서 = 진한 순서라는 가정이 틀림 | M0에서 확인. 틀리면 모두 같은 비중(1/개수)으로 바꾸고 노트북을 다시 돌림 |
 | 노트 프로필이 흔한 어코드로 뭉개짐 | 8-2절 평균 초과분 + 끌어당기기. 노트북에서 노트 20개의 프로필을 사람이 확인 |
 | 21차원 × 5개라 비슷한 점수가 많음 | 노트 일치도·평가 수로 순서를 가르고, 등급으로 보여 줌 |

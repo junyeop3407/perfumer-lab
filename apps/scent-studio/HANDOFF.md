@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB) 설계안 `docs/db_design.md` 사장 검토 대기)
+현재 단계: 4 (구현 — 엔진 v8 동결, docs/plan.md 단계 3(DB): 설계 `docs/db_design.md` 3판 승인, 테스트 DB 작업 중)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: a92de1c
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 통과 (2026-11-05 확인). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: `docs/db_design.md` 2판(표 7개, 초대제·동의·보관 기간·한도·합치기 보완) 승인 여부 (2026-11-06 사장 OK: 카탈로그 크기는 단계 3에서 방향만, 추천 결과가 바뀌는 데이터 수정은 앱이 돌아간 뒤)
-다음 할 일: 설계안 승인 → `backend/` 뼈대 + `V1__init.sql` + 내장 Postgres 테스트(db_design.md 8절) → 사장 Supabase 작업(9절) → 단계 4(서버) → ★디자인 → 5(화면). 승인되면 design.md 11·12·12-1·13절을 db_design.md 15절대로 고친다. 엔진은 v8 동결
+사용자에게 남은 질문: 없음 (2026-11-06 사장 승인: db_design.md 3판, 초대제 없이 Fragrantica 허가 전제 비상업 무료 공개)
+다음 할 일: `backend/` 뼈대 + `V1__init.sql` + 내장 Postgres 테스트(db_design.md 12절) → **멈춤** → 사장 Supabase 작업(13절) → 단계 4(서버) → ★디자인 → 5(화면). 엔진은 v8 동결
 
 ## ★ 지금 멈춘 곳 (2026-11-05)
 - **10단계 완료: 등급 0.763 / 0.647 확정, 엔진 v8 동결.** 검증 통과(매우 비슷 4.68 > 비슷 3.93 > 참고 3.38), 두 시드 차이 0.001 / 0.009. 규칙 `docs/engine_grade_v8_rules.md`, 표 `docs/engine_grade_v8.md`, 다시 돌리기 `py pipeline/experiments/grade_v8_run.py`. 원칙과 단계 3~5 로드맵은 `docs/plan.md`. **단계 3은 시작하지 않았다.**
@@ -61,7 +61,7 @@
 ## 지금 상태 (2026-11-02)
 - **엔진 v7** (사장 승인, 계산은 `docs/engine_how_it_works.md`): 어코드·노트 강도(Decant, 후보의 51.7%), 노트 일치도 × (0.3 + 0.7·√강도 몫 합), 등급은 선호와 무관. 사람 유사 시험 Top 50 38.4% → 44.3% (`docs/engine_similar_votes.md`). 재현 20/20(100개 100·97·99) · 맹점 4/5 · 다양성 92.
 - **블라인드 문서** (아래 v6 설명보다 이것이 우선. 조합 12개, 답은 조합 단위): 주 비교 `docs/engine_blind_vs_v6.md` → 답 `docs/engine_blind_vs_v6_answers.txt` / 기준선 `docs/engine_blind.md` → 답 `docs/engine_blind_answers.txt`. 기준선의 5·6·7·9·11·12번이 주 비교와 겹치니 **주 비교 답을 받은 뒤에** 기준선을 보여 준다. 재생성은 `py pipeline/evaluate.py --compare-v6 --rebuild-blind` (답 받기 전에는 하지 않는다).
-- **비상업 운영, 내부 테스트까지** (D4). Decant는 CC BY-NC-SA 4.0. Fragrantica는 허가 요청 메일 회신 대기.
+- **비상업 운영** → 2026-11-06부터 **Fragrantica 허가 전제, 비상업 무료 공개** (D4). Decant는 CC BY-NC-SA 4.0. Fragrantica는 허가 요청 메일 회신 대기.
 - **사장에게 알려 둔 한계**: 강도 있는 향수로 쏠림(Top 10의 81%, v6 58%), 등급이 대부분 참고(82%, 기준값 임시 0.87/0.81). 눈으로 평가 때 함께 본다.
 
 ### 아래는 v6 때의 기록
@@ -109,7 +109,7 @@
 6. 승인 뒤: v8 구현 → 측정 → 새 조합 20개 이상 블라인드(A/B/비슷함, 비슷함은 집계 제외, 승률 + 이항검정 p값, 프레시·플로럴·우디 오리엔탈·구르망 고르게) → 눈으로 평가 → 등급 확정.
 7. 그 뒤: Tversky 계수, TGSC 비중, 노트 상호작용 → `docs/plan.md` 단계 3(DB 구축) → 4(서버) → ★디자인 → 5(화면) → 6. 스킬 설치 답은 디자인 단계 전까지 받는다.
 
-- **사장 몫(재촉하지 않음):** `docs/engine_accord_order_check.md` 20건 사이트 대조는 **보류**, 나중에 사장이 직접 한다. Parfumo는 자동 접속을 403으로 막으므로 우회하지 않는다. Fragrantica 회신도 대기 중이고, 그 전까지 배포는 초대제 내부 테스트까지.
+- **사장 몫(재촉하지 않음):** `docs/engine_accord_order_check.md` 20건 사이트 대조는 **보류**, 나중에 사장이 직접 한다. Parfumo는 자동 접속을 403으로 막으므로 우회하지 않는다. Fragrantica 회신도 대기 중이다. 배포 기준은 Fragrantica 허가 전제, 비상업 무료 공개이고, 스토어 공개는 회신을 받은 뒤(`plan.md` 출시 직전 확인 항목).
 - **아직 안 본 것:** Eau de Nuit의 '스위트' 태그와 노트가 어긋나는지(사장 근거 글에서 나온 건).
 - 기준선 블라인드 `engine_blind.md`는 받지 않았다. v8 뒤 새 블라인드로 대신할지 그때 정한다.
 

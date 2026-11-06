@@ -1,6 +1,6 @@
 # scent-studio DB 설계안 (plan.md 단계 3) — 사장 검토용
 
-> 2026-11-06 백엔드팀 작성. 2026-11-06 사장 1차 검토: 방향 OK, 보완 11개 요청 → 2판(이 문서). **사장 승인 전에는 마이그레이션·코드를 만들지 않는다.** 바탕: design.md 11·12·12-1·13절, 2026-10-30 사장 OK한 "저장할 데이터 목록". design.md와 바뀌는 점은 맨 아래 "design.md와 다른 점".
+> 2026-11-06 백엔드팀 작성. 2026-11-06 사장 1차 검토: 방향 OK, 보완 11개 요청 → 2판. 2026-11-06 사장 2차 검토: 초대제 제거(공개 배포 기준)·비밀번호 32자 등 → **3판(이 문서), 2026-11-06 사장 승인** → 테스트 DB 작업 시작. 바탕: design.md 11·12·12-1·13절, 2026-10-30 사장 OK한 "저장할 데이터 목록". design.md와 바뀌는 점은 맨 아래 "design.md와 다른 점".
 > "(연결 뒤 확인)"이 붙은 것은 Supabase 문서 기준 추정이고, 실제 프로젝트에 붙인 뒤 직접 확인해 NOTES에 적는다.
 
 ## 1. 큰 그림
@@ -8,7 +8,7 @@
 - **앱은 DB에 직접 붙지 않는다.** 앱 → Spring 서버(단계 4) → DB. 서버는 로그인 토큰에서 꺼낸 사용자 id로만 행을 읽고 쓴다.
 - 향수·노트 정보(카탈로그)는 DB에 넣지 않는다. 사용자 데이터는 카탈로그를 **key**로 가리킨다(6절).
 - DB 계정 두 개: `postgres`(Supabase 기본, 표 만들기 전용) / `scent_server`(서버가 평소에 쓰는 계정, 표 읽기·쓰기만, 표를 지우거나 바꾸는 권한 없음).
-- 표는 **7개**: 사용자 데이터 5개(①~⑤) + 초대 ⑥ + 동의 ⑦. (1판 5개에서 2개 추가)
+- 표는 **6개**: 사용자 데이터 5개(①~⑤) + 동의 ⑥. (2판의 초대 표는 3판에서 뺐다, 9절)
 
 ## 2. 표
 
@@ -71,19 +71,7 @@
 | received_at | timestamptz | ✓ | 기본 지금 (서버가 받은 때). 인덱스 (보관 기간 삭제에 씀) |
 - 보관 기간과 계정 삭제 뒤 처리는 4-2절.
 
-### ⑥ `app.invites` — 초대 목록 (새로)
-| 칸 | 타입 | 필수 | 규칙 |
-|---|---|---|---|
-| email | text | ✓ | **기본 키**. 소문자로만 저장(검사), 앞뒤 공백 불가, 254자 이하 |
-| memo | text | — | 누구인지 메모(예: "친구 A"), 40자 이하 |
-| user_id | uuid | — | 처음 가입하면 채움. 외래 키 → `auth.users(id)` **계정 삭제 시 이 초대 줄도 삭제** |
-| invited_at | timestamptz | ✓ | 기본 지금 |
-| used_at | timestamptz | — | 처음 가입한 때 |
-| revoked_at | timestamptz | — | 초대를 거둔 때. 값이 있으면 가입·이용 불가 |
-- 이메일은 개인정보라 **저장소(마이그레이션 파일)에 넣지 않는다.** 사장이 SQL Editor에서 한 줄로 넣는다(9절).
-- 계정 삭제 뒤 같은 사람이 다시 쓰려면 사장이 다시 초대한다. 쓰지 않은 초대는 사장이 지울 때까지 남는다.
-
-### ⑦ `app.consents` — 약관·방침 동의 기록 (새로)
+### ⑥ `app.consents` — 약관·방침 동의 기록 (새로)
 | 칸 | 타입 | 필수 | 규칙 |
 |---|---|---|---|
 | id | bigint | ✓ | **기본 키**, 자동 증가 |
@@ -105,7 +93,6 @@ erDiagram
   AUTH_USERS ||--o{ FAVORITES : "삭제 시 같이 삭제"
   AUTH_USERS ||--o{ TASTING_FEEDBACK : "삭제 시 같이 삭제"
   AUTH_USERS ||--o{ CONSENTS : "삭제 시 같이 삭제"
-  AUTH_USERS |o--o| INVITES : "삭제 시 초대 줄도 삭제"
   AUTH_USERS |o--o{ EVENTS : "삭제 시 user_id만 비움"
   BLENDS |o--o{ TASTING_FEEDBACK : "조합 삭제 시 blend_id만 비움"
 ```
@@ -122,8 +109,8 @@ erDiagram
 | favorites | **D3** | |
 | tasting_feedback | **D4** | 본인 기록 삭제는 승인 목록 밖(서버 테스트로 확인) |
 | events | **I1·I2** | |
-| 7개 전부 | **G2**(삭제 뒤 보관함이 빔) | 4절 |
-| invites, consents | 승인 목록에 없음 | 실제 가입 흐름이라 단계 3 DB 테스트·단계 4 서버 테스트·6단계 사장 직접 확인으로 본다. 승인 테스트는 가짜 서버가 "초대·동의 끝난 사용자"로 응답한다 |
+| 6개 전부 | **G2**(삭제 뒤 보관함이 빔) | 4절 |
+| consents | 승인 목록에 없음 | 실제 가입 흐름이라 단계 3 DB 테스트·단계 4 서버 테스트·6단계 사장 직접 확인으로 본다. 승인 테스트는 가짜 서버가 "동의 끝난 사용자"로 응답한다 |
 - G1(확인 창)·G3(링크)은 화면 일, D1(비로그인 → 로그인 화면)은 화면·서버 일이라 표가 맡지 않는다.
 
 ## 4. 삭제 규칙
@@ -134,8 +121,7 @@ erDiagram
 3. 계정 줄이 사라지면 **DB가 외래 키 규칙으로 한 번에 정리**한다:
    | 표 | 계정 삭제 시 |
    |---|---|
-   | ① 취향 · ② 조합 · ③ 찜 · ④ 시향 기록 · ⑦ 동의 | 그 사람 줄 전부 삭제 |
-   | ⑥ 초대 | 그 사람이 쓴 초대 줄 삭제 (이메일이 남지 않게) |
+   | ① 취향 · ② 조합 · ③ 찜 · ④ 시향 기록 · ⑥ 동의 | 그 사람 줄 전부 삭제 |
    | ⑤ 사용 기록 | user_id만 비움 (4-2절) |
 4. Supabase 요청이 실패하면 아무것도 지워지지 않고 오류를 돌려준다(다시 시도 가능). 대시보드에서 사장이 계정을 지워도 같은 규칙이 적용된다.
 5. 서버가 지운 뒤 "그 사람 줄이 0개"인지 한 번 더 확인하고 응답한다(단계 4).
@@ -187,20 +173,11 @@ erDiagram
 - 넘으면 `LIMIT_REACHED` 오류 → 앱이 "조합은 100개까지 저장할 수 있어요" 안내.
 - **동시 요청으로 한도를 넘지 않게:** 서버가 그 사용자 단위 잠금을 건 트랜잭션 안에서 개수를 세고 넣는다(보안 규칙 "한 번만 돼야 하는 처리"와 같은 방식). 단계 4 서버 테스트에 "동시에 20번 저장해도 100개를 넘지 않음"을 넣는다.
 
-## 9. 초대제 — 초대받은 사람만 가입·로그인 (추가 1)
-Fragrantica 회신 전까지 초대받은 사람만 쓰는 내부 테스트다.
-
-| 방법 | 어떻게 | 구글 로그인과 같이 쓸 때 |
-|---|---|---|
-| (a) 초대 표 + 서버 확인 | ⑥ 표에 이메일을 넣고, 서버가 요청마다 "토큰 이메일이 초대 목록에 있나" 확인 | 구글 로그인은 아무나 성공한다 → **초대 안 된 사람의 계정(이메일)이 Supabase에 먼저 생긴다**. 서버가 막아도 개인정보가 쌓이고, 지우는 일이 따로 필요 |
-| (b) Supabase 가입 막기 + 대시보드 초대 | 설정에서 "새 가입 허용"을 끄고, 대시보드에서 이메일로 초대 | 가입 막기는 구글 로그인에도 똑같이 걸린다. 초대 메일로 만든 계정에 구글로 로그인하면 같은 이메일이라 이어지는 게 보통이지만, **초대 메일을 아직 안 열었으면(이메일 미확인) 이어지지 않고 막힐 수 있다**(연결 뒤 확인). 초대 메일 링크를 먼저 눌러야 하는 순서를 사용자에게 설명해야 하고, 초대 메일 발송은 무료 요금제 메일 한도(시간당 몇 통)에 걸린다 |
-| **(c) 추천: (a)의 표 + Supabase "가입 직전 검사" 훅** | ⑥ 표를 두고, Supabase Auth의 **Before User Created 훅**(가입 직전에 DB 함수를 불러 거절할 수 있는 기능)에 `app.check_invite()`를 연결. 초대 목록에 없거나 거둔 초대면 가입 자체를 거절 → 계정이 생기지 않음. 서버도 요청마다 한 번 더 확인(두 겹) | 구글 로그인을 그대로 켜 둔 채 동작. 초대 메일이 필요 없어 메일 한도·순서 문제가 없다. 초대받은 사람은 그냥 "구글로 로그인"만 누르면 된다 |
-
-- **추천 이유:** (a)는 모르는 사람 계정이 생기고, (b)는 구글 로그인과 이어지는 순서가 까다롭다. (c)는 가입 문 앞에서 거절하고 초대받은 사람에게는 추가 단계가 없다.
-- 이메일 비교는 소문자로 한다. 구글 계정의 대표 주소 그대로 초대해야 한다(Gmail 점·별칭은 같은 주소로 보지 않는다).
-- 훅 함수는 `supabase_auth_admin`(Supabase 로그인 시스템 계정)에게만 실행 권한을 준다. `scent_server`·공개 키는 부를 수 없다.
-- 훅이 무료 요금제에서 되는지, 거절했을 때 앱에 어떤 오류가 오는지는 **연결 뒤 확인**. 안 되면 예비안: (a) + 서버가 초대 안 된 계정을 발견하면 바로 Supabase에서 지움.
-- 공개 배포 때는 훅에서 초대 확인을 끄면 된다(표는 남겨도 됨).
+## 9. 초대제 — 검토했으나 공개 배포로 결정 (2026-11-06)
+- 사장 결정(2026-11-06): **Fragrantica가 비상업 무료 앱으로 허가해 준다는 전제로, 초대제 없이 공개 배포 기준으로 진행한다.** 초대 표·가입 직전 검사 함수·관련 테스트는 만들지 않는다.
+- 2판에서 비교한 세 방법: (a) 초대 표 + 서버 확인(초대 안 된 사람 계정이 Supabase에 먼저 생김) / (b) Supabase 가입 막기 + 대시보드 초대(구글 로그인과 이어지는 순서가 까다롭고 메일 한도) / **(c) 초대 표 + Supabase Before User Created 훅으로 가입 직전 거절(추천했던 안)**.
+- **나중에 다시 초대제가 필요하면 (c)안을 쓴다.** 자세한 내용은 git 기록의 2판(커밋 8999d9a) 9절.
+- 허가가 거절될 때의 위험과 출시 직전 확인은 `plan.md` "출시 직전 확인 항목"·`design.md` 17절.
 
 ## 10. 접근 막기 (RLS)
 모든 표에 RLS(줄 단위 접근 규칙)를 켠다. 규칙이 없는 계정은 아무 줄도 못 본다.
@@ -212,7 +189,6 @@ Fragrantica 회신 전까지 초대받은 사람만 쓰는 내부 테스트다.
 | favorites | ✗ | ✗ | 읽기·추가·삭제 |
 | tasting_feedback | ✗ | ✗ | 읽기·추가·**삭제**(2판에서 추가) |
 | events | ✗ | ✗ | **추가만** |
-| invites | ✗ | ✗ | **읽기 + used_at·user_id 채우기만**. 초대 추가·거두기는 사장(SQL Editor) |
 | consents | ✗ | ✗ | **읽기·추가만** (고치거나 지울 수 없음, 지우기는 계정 삭제 규칙으로만) |
 
 - 막는 장치 세 겹: ① `app` 스키마를 공개 API에 노출 안 함 ② anon·authenticated에게 `app` 사용 권한 자체를 주지 않음 ③ RLS를 켜고 `scent_server`에만 규칙을 둠.
@@ -223,39 +199,38 @@ Fragrantica 회신 전까지 초대받은 사람만 쓰는 내부 테스트다.
 | # | 확인할 것 | 결과 |
 |---|---|---|
 | 7 | updated_at 자동 갱신 | 1판엔 없었음 → 트리거 추가(2절 끝) |
-| 8 | `scent_server`가 Session pooler로 접속될 때 | Session pooler(Supavisor)는 사용자 이름을 **`역할.프로젝트참조값`** 형식으로 받는다. 예: `scent_server.abcdefghijklmnop`, 호스트 `aws-0-ap-northeast-2.pooler.supabase.com`, 포트 **5432**(세션 방식). 직접 만든 역할도 로그인·비밀번호가 있으면 이 형식으로 접속된다(연결 뒤 확인). 주의: ① 포트 6543(트랜잭션 방식)은 서버의 미리 준비한 쿼리와 충돌할 수 있어 쓰지 않는다 ② 무료 요금제의 직접 접속 주소는 IPv6 전용이라 이 컴퓨터·Render에서 안 될 수 있어 pooler를 쓴다 ③ 마이그레이션도 같은 pooler로 `postgres.프로젝트참조값` 이름을 쓴다 ④ 비밀번호에 `@ : / ?`가 있으면 접속 주소가 깨지므로 영문·숫자로만 만든다 |
+| 8 | `scent_server`가 Session pooler로 접속될 때 | Session pooler(Supavisor)는 사용자 이름을 **`역할.프로젝트참조값`** 형식으로 받는다. 예: `scent_server.abcdefghijklmnop`, 호스트 `aws-0-ap-northeast-2.pooler.supabase.com`, 포트 **5432**(세션 방식). 직접 만든 역할도 로그인·비밀번호가 있으면 이 형식으로 접속된다(연결 뒤 확인). 주의: ① 포트 6543(트랜잭션 방식)은 서버의 미리 준비한 쿼리와 충돌할 수 있어 쓰지 않는다 ② 무료 요금제의 직접 접속 주소는 IPv6 전용이라 이 컴퓨터·Render에서 안 될 수 있어 pooler를 쓴다 ③ 마이그레이션도 같은 pooler로 `postgres.프로젝트참조값` 이름을 쓴다 ④ 비밀번호에 `@ : / ?`가 있으면 접속 주소가 깨지므로 영문·숫자만으로 32자 이상 만든다 |
 | 9 | 일시 정지 방지 예약 작업이 서비스 키를 쓰나 | **쓰지 않는다.** GitHub Actions는 **공개 키(publishable/anon)** 와 프로젝트 주소 2개만 GitHub Secrets에 두고 `public.keepalive()`를 부른다. 공개 키는 원래 앱에 들어가는 키라 새어도 RLS로 막혀 있다. 서비스 키·DB 비밀번호는 GitHub에 두지 않는다. 단계 4에서 서버가 생기면 서버 상태 확인 주소로 바꾼다(서버 → DB까지 닿음). 공개 키로 함수를 부르는 것이 "활동"으로 세어지는지는 연결 뒤 7일 지켜보며 확인 |
 | 10 | text[]·jsonb를 별도 표로 안 나눈 이유 | design.md 12절에 한 줄 추가함 |
 
 ## 12. 테스트 DB (내 컴퓨터, 사장 할 일 없음)
 - `backend/`에 Gradle 프로젝트 뼈대 + Flyway 마이그레이션 `V1__init.sql` + JUnit 테스트. 내장 Postgres(zonky, Docker 필요 없음). Java 21은 이미 있다.
-- 테스트 준비 코드가 Supabase에만 있는 것을 흉내 낸다: 빈 `auth.users` 표, `anon`·`authenticated`·`supabase_auth_admin` 역할.
+- 테스트 준비 코드가 Supabase에만 있는 것을 흉내 낸다: 빈 `auth.users` 표, `anon`·`authenticated` 역할.
 - 확인할 것:
   - 마이그레이션이 처음부터 끝까지 돈다
-  - 잘못된 값이 막힌다: 만족도 6, 이름 41자, 층에 노트 4개, 같은 노트 두 번, 모르는 강도, 모르는 기록 이름, 찜 중복, 남의 조합을 시향 기록에 연결, 대문자 초대 이메일, 모르는 동의 문서 종류, 같은 버전 동의 두 번
-  - 계정 줄을 지우면 ①②③④⑦과 그 사람의 ⑥이 사라지고 ⑤는 user_id만 빈다
+  - 잘못된 값이 막힌다: 만족도 6, 이름 41자, 층에 노트 4개, 같은 노트 두 번, 모르는 강도, 모르는 기록 이름, 찜 중복, 남의 조합을 시향 기록에 연결, 모르는 동의 문서 종류, 같은 버전 동의 두 번
+  - 계정 줄을 지우면 ①②③④⑥이 사라지고 ⑤는 user_id만 빈다
   - updated_at이 수정 때 바뀐다
-  - `app.check_invite()`가 초대된 이메일은 통과, 없는·거둔 초대는 거절
   - `app.purge_old_events()`가 12개월 지난 줄만 지운다
-  - anon·authenticated로는 7개 표를 못 읽는다 / `scent_server`는 정해진 권한만 있고(events 읽기 불가, consents 수정 불가 등) 표를 지울 수 없다
+  - anon·authenticated로는 6개 표를 못 읽는다 / `scent_server`는 정해진 권한만 있고(events 읽기 불가, consents 수정 불가 등) 표를 지울 수 없다
 - `tests/run.sh`에 `backend` 테스트를 더한다.
 
 ## 13. 실제 Supabase에서 사장님이 하실 일 (테스트 DB 통과 뒤, 순서대로)
-비밀번호·키·초대할 이메일은 **대화창에 붙여 넣지 마시고** 아래 적은 곳에만 넣어 주세요.
-1. https://supabase.com 가입(GitHub 계정으로 로그인) → **New project**: Name `perfumer-lab`, Region **Northeast Asia (Seoul)**, Free. Database Password는 영문·숫자로 만들어 비밀번호 관리자에 저장
+비밀번호·키는 **대화창에 붙여 넣지 마시고** 아래 적은 곳에만 넣어 주세요.
+1. https://supabase.com 가입(GitHub 계정으로 로그인) → **New project**: Name `perfumer-lab`, Region **Northeast Asia (Seoul)**, Free. Database Password는 **영문·숫자만으로 32자 이상**(Generate a password로 만든 뒤 특수문자가 있으면 다시 생성) → 비밀번호 관리자에 저장
 2. **Project Settings → Data API**: Exposed schemas가 `public`(과 `graphql_public`)뿐인지 확인. `app`을 추가하지 않는다
-3. **Connect → Session pooler** 연결 정보를 `apps/scent-studio/backend/.env`(직원이 만든 `.env.example`을 복사)의 `DB_URL`·`DB_MIGRATION_USER`·`DB_MIGRATION_PASSWORD`에 넣기 → 직원에게 "넣었다"고 말하기 → 직원이 마이그레이션 실행(표 7개, `scent_server` 로그인 불가 상태로 생성)
+3. **Connect → Session pooler** 연결 정보를 `apps/scent-studio/backend/.env`(직원이 만든 `.env.example`을 복사)의 `DB_URL`·`DB_MIGRATION_USER`·`DB_MIGRATION_PASSWORD`에 넣기 → 직원에게 "넣었다"고 말하기 → 직원이 마이그레이션 실행(표 6개, `scent_server` 로그인 불가 상태로 생성)
 4. **SQL Editor**에서 직원이 드리는 줄 실행:
-   - `alter role scent_server with login password '<영문·숫자 비밀번호>';` → 같은 비밀번호를 `.env`의 `DB_SERVER_PASSWORD`에
+   - `alter role scent_server with login password '<영문·숫자 32자 이상>';` → 같은 비밀번호를 `.env`의 `DB_SERVER_PASSWORD`에
    - 사용 기록 매일 정리 등록: `select cron.schedule('purge-old-events', '0 3 * * *', 'select app.purge_old_events()');` (먼저 **Database → Extensions**에서 `pg_cron` 켜기)
-5. **Authentication → Hooks → Before User Created** → Postgres 함수 `app.check_invite` 선택해 켜기
-6. 초대: SQL Editor에서 사람마다 `insert into app.invites(email, memo) values ('<구글 주소 소문자>', '<메모>');`
-7. 직원이 확인: `app` 표 7개 / 공개 키로 `app` 표 읽기가 막힘 / 초대 안 된 테스트 계정 가입이 거절됨(이건 8번 구글 로그인 설정 뒤)
-8. 일시 정지 방지: GitHub 저장소 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` 2개 등록(서비스 키 아님)
-9. 구글 로그인(단계 5 로그인 화면 전까지): Google Cloud Console에서 OAuth 동의 화면 + 웹 클라이언트 ID, 리디렉션 주소 `https://<프로젝트참조값>.supabase.co/auth/v1/callback` → Supabase **Authentication → Sign In / Providers → Google**에 Client ID·Secret. 그때 화면별 안내를 따로 드린다
+5. 직원이 확인: `app` 표 6개 / 공개 키로 `app` 표 읽기가 막힘
+6. 일시 정지 방지: GitHub 저장소 **Settings → Secrets and variables → Actions**에 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` 2개 등록(서비스 키 아님)
+7. 구글 로그인(단계 5 로그인 화면 전까지): Google Cloud Console에서 OAuth 동의 화면 + 웹 클라이언트 ID, 리디렉션 주소 `https://<프로젝트참조값>.supabase.co/auth/v1/callback` → Supabase **Authentication → Sign In / Providers → Google**에 Client ID·Secret. **OAuth 동의 화면은 "테스트" 상태면 테스트 사용자 100명까지만 로그인되므로, 공개 전에 "프로덕션"으로 게시해야 한다**(앱 이름·로고·개인정보처리방침 주소가 필요하고, 이메일·프로필만 쓰면 보통 별도 심사 없이 게시됨 — 게시할 때 확인). 그때 화면별 안내를 따로 드린다
 - 무료 요금제 한계(7일 쉬면 일시 정지, 백업 범위)는 연결 뒤 대시보드에서 확인해 NOTES에 적는다.
 
-## 14. 단계 4로 미룬 것 (기록만, 추가 11)
+## 14. 단계 4·5로 미룬 것 (기록만)
+- **요청 횟수 제한 (공개 배포 보완, 단계 4):** 저장(조합)·찜·시향 기록·취향 합치기 API에 **사용자별 분당 제한**. 지금 설계에는 사용 기록(`/events`)의 기기별 제한만 있다. 넘으면 429 + `RATE_LIMITED`. 서버 테스트에 넣는다.
+- **출시 직전 확인 항목**은 `plan.md` 같은 이름의 절에 모은다(Fragrantica 회신, Play 데이터 보안 양식, 앱 밖 계정 삭제 링크 등).
 - **오류 신고 표:** 사용자가 이름 오류·번역 안 된 노트 등을 신고. 칸 후보: 향수·노트 key, 종류, 메모, 신고자(계정 삭제 시 비움 또는 삭제), 처리 상태. 한도·요청 횟수 제한 함께.
 - **카탈로그 버전·최소 앱 버전 정보 보관 방식:** `GET /catalog/latest`가 돌려줄 버전·해시·크기와 "이 버전보다 낮은 앱은 업데이트 안내"를 어디에 둘지(서버 설정 파일 / DB 표). 단계 4에서 정한다.
 
@@ -268,7 +243,7 @@ Fragrantica 회신 전까지 초대받은 사람만 쓰는 내부 테스트다.
 | 시향 기록의 조합 연결 | blend_id(선택) | (blend_id, user_id) 묶음 외래 키 | 남의 조합 연결을 DB에서도 막음 |
 | RLS | 켜고 정책 없음 | 켜고 `scent_server`에만 정책 | 정책이 전혀 없으면 서버 계정도 못 읽는다 |
 | DB 계정 | 서버 전용 하나 | `postgres`(표 만들기) + `scent_server`(평소) | 평소 계정이 뚫려도 표를 지우거나 바꿀 수 없게 |
-| 표 수 | 5개 | **7개** (+초대, +동의) | 초대제 내부 테스트, 동의 기록 |
+| 표 수 | 5개 | **6개** (+동의) | 동의 기록. 초대 표는 3판에서 뺌(공개 배포 결정) |
 | 시향 기록 삭제 | 없음 | 본인 기록 삭제 (`DELETE /feedback/{id}`) | 사장 결정 2026-11-06 |
 | 취향 합치기 | 앱이 합쳐 PUT | 서버가 합침 (`POST /me/preferences/merge`) | 여러 기기 동시 로그인에도 한 번에 처리 |
 | 사용 기록 보관 | 정함 없음 | 12개월, pg_cron 매일 삭제, 계정 삭제 시 앱이 install_id 새로 만듦 | 정할 것 3 |
