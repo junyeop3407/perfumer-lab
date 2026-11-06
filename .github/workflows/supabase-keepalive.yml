@@ -1,0 +1,37 @@
+# Supabase 무료 프로젝트는 7일 동안 요청이 없으면 일시 정지된다. 하루 한 번 공개 키로 public.keepalive()만 부른다.
+# 공개 키(publishable)만 쓴다. 비밀 키·DB 비밀번호는 쓰지 않는다. (apps/scent-studio/docs/db_design.md 11·13절)
+# 주의: 공개 저장소는 60일 동안 활동이 없으면 예약 실행이 자동으로 꺼진다 (apps/scent-studio/docs/NOTES.md).
+name: supabase-keepalive
+
+on:
+  schedule:
+    - cron: "17 2 * * *"   # 매일 UTC 02:17 (한국 11:17). 정각은 GitHub가 붐벼 늦어질 수 있어 피함
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call public.keepalive()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -eu
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::Secrets SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY가 비어 있습니다"; exit 1
+          fi
+          case "$SUPABASE_PUBLISHABLE_KEY" in
+            sb_publishable_*) ;;
+            *) echo "::error::SUPABASE_PUBLISHABLE_KEY가 공개 키(sb_publishable_)가 아닙니다"; exit 1 ;;
+          esac
+          url="${SUPABASE_URL%/}/rest/v1/rpc/keepalive"
+          code=$(curl -sS --retry 3 --retry-delay 10 -o body.txt -w '%{http_code}' -X POST "$url" \
+            -H "apikey: $SUPABASE_PUBLISHABLE_KEY" -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
+            -H "Content-Type: application/json" -d '{}') || { echo "::error::연결 실패 (SUPABASE_URL 확인)"; exit 1; }
+          body=$(head -c 200 body.txt)
+          echo "HTTP $code, 응답: $body"
+          [ "$code" = "200" ] && [ "$body" = "1" ] || { echo "::error::keepalive 실패"; exit 1; }
