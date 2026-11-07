@@ -291,3 +291,10 @@
 - Mac 기본 `python3`는 3.9.6이라 `pipeline/catalog_rules.py`의 f-string 안 백슬래시(3.12부터 허용)에서 SyntaxError로 수집이 멈췄다.
 - 또 `run.sh`는 `-I`로 pytest를 돌려 `pip --user`로 넣은 pytest가 보이지 않았다.
 - 고친 것(테스트 준비 코드만, 검사 내용은 그대로): 후보에 `python3.13`·`python3.12`를 더하고, `-I`로 pytest가 보이며 3.12 이상인 파이썬만 고른다. Mac 설치 방법은 `docs/new_computer_setup.md` B-2.
+
+## 2026-11-07 단계 4 묶음 1 Render 실측 (Free 0.1 CPU / 512MB, Singapore, 커밋 687b295)
+- **① 10분 부하(health 2초마다, 235번, 실패 0):** 프로세스 최대 RSS **178MB**, 컨테이너(cgroup) 최대 163MB / 512MB, 힙 25→38MB / 최대 272MB, 스레드 15. **기준 420MB 이하 통과.**
+- **② 시작 → 준비 완료(JVM 시작~ready):** 첫 배포 22.7초, 깨어날 때 23.6 · 23.0 · 24.2초 → **4번**(5번째는 4번째 깨우기 측정이 이 컴퓨터 메모리 부족으로 중단돼 못 잼). 범위 22.7~24.2초로 고르다.
+- **③ 15분 넘게 쉰 뒤 첫 요청(`/health/live`, curl 전체 시간):** 33.6 · 33.6 · 33.6초(모두 HTTP 200). 깨어나는 동안 사용자는 약 34초 기다린다 → 화면 단계 "연결 중" 안내 근거(추정 30~90초 → 실측 약 34초).
+- **④ X-Forwarded-For:** 가짜 `1.2.3.4`를 넣어 보내면 항목 2개, 오른쪽에서 1번째 = 이 컴퓨터의 실제 공인 IP(별도 조회와 일치), 2번째 = 가짜 값. → **`TRUSTED_PROXY_HOPS` 기본값 1이 맞다.** 연결 주소(remoteAddr)는 프록시 주소. Render 앞단에 Cloudflare 헤더(`cf-connecting-ip`, `true-client-ip`)가 붙지만 설계대로 읽지 않는다.
+- 결론: 대안(네이티브 이미지 / 유료 / Cloud Run) 불필요. 다음은 측정 주소 끄기(`MEM_DEBUG`·`IP_DEBUG`·`DEBUG_TOKEN`·`DEBUG_UNTIL` 삭제 후 재배포) → 묶음 2.
