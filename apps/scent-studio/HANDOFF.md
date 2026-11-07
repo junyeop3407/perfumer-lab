@@ -1,14 +1,19 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1·2 완료, V2 실제 DB 적용됨. **묶음 3(로그인·제한) 시작 전, 사장 지시 대기**. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1·2·3 완료. **묶음 4(취향·동의) 시작 전, 사장 지시 대기**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 489ca60 (묶음 2 시작 직전)
-결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 160/160 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 2 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 묶음 3 시작 OK 여부
-다음 할 일: 사장 OK → 묶음 3(로그인·제한, `plan_stage4.md`). 묶음 3 테스트 계정이 생기면 `./gradlew dbServerCheck`로 살아 있는 세션 true 확인. 레드팀 표시(`.redteam-needed`)는 묶음 9 레드팀까지 둔다. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+리뷰 기준: e9c1dfe (묶음 3 시작 직전)
+결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 231/231 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 3 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 묶음 4 시작 OK 여부
+다음 할 일: 사장 OK → 묶음 4(취향·동의, `plan_stage4.md`). 묶음 4에서 403 응답 모양·한도 분류(컨트롤러 기준) 정리(NOTES 묶음 3 "나중에 할 것"). 레드팀 표시(`.redteam-needed`)는 묶음 9 레드팀까지 둔다. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
 
-## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 2 완료 — 묶음 3 시작 전)
+## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 3 완료 — 묶음 4 시작 전)
+- **묶음 3 완료:** 로그인 토큰 확인(ES256 고정, iss·aud·exp·role·is_anonymous·session_id), 세션 확인 30초 보관, 오류 응답 모양 통일, 요청 제한(사용자별 표 + 로그인 없이 IP 분당 60 + 틀린 토큰 1분 20번이면 IP 5분 막음), Render IP 규칙. 코드 `backend/src/main/java/.../{auth,limit}/`, 테스트 `api/{AuthApiTest,RateLimitApiTest,ClientIpTest,Bundle3ReviewFixesTest}`. 자세한 결정은 NOTES "묶음 3", 리뷰는 `review.md` "묶음 3".
+- 테스트 계정(사장, `.env` `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`, 두 컴퓨터) 로그인으로 실제 토큰 ES256 확인, `dbServerCheck` 살아 있는 세션 true. **묶음 9 배포 전에 계정 지우기 → 이메일 로그인 끄기, Render에 `SUPABASE_URL` 넣기.**
+- /events·카탈로그 제한은 묶음 6(설치 id와 함께).
+
+## (이전) 단계 4 묶음 2 완료 기록
 - **V2 실제 DB 적용 완료(사장 OK, 01:33 UTC).** dbCheck·dbServerCheck·api_check 모두 기대대로(NOTES "실제 DB 적용"). 중복 기준은 `(install_id, client_event_id)` 묶음.
 - **묶음 1 완료(사장 OK):** RSS 최대 178MB(기준 420MB), 준비 22.7~24.2초(4번으로 충분), 15분 쉰 뒤 첫 요청 약 33.6초, `TRUSTED_PROXY_HOPS=1` 유지. 측정 주소 꺼짐 확인(토큰 붙여도 404). `DEBUG_TOKEN`은 이제 안 쓴다 → `.env`에서 비워도 됨, 묶음 9 재측정 때 새로 만듦.
 - **묶음 2(V2):** `backend/src/main/resources/db/migration/V2__session_catalog_events.sql` + `DbV2Test`(50) + `DbV2ReviewFixesTest`(5). 내장 Postgres 통과, 변조 6/6 잡힘, QA 9(중간 2 반영) + Gemini 문제 없음(`docs/review.md` "묶음 2"). 실제 Supabase에 적용됨.

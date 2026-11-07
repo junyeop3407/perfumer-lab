@@ -40,3 +40,10 @@ scent:
     ip: ${IP_DEBUG:false}
     token: ${DEBUG_TOKEN:}
     until: ${DEBUG_UNTIL:}      # 끝나는 시각(ISO). 없거나 지나면 꺼짐
+  # 로그인 토큰 확인 (server_design.md 3절). SUPABASE_URL = https://<참조값>.supabase.co (Render 환경 변수). 비밀값 아님
+  auth:
+    supabase-url: ${SUPABASE_URL:}
+    jwks-uri: ""                # 테스트만 바꿈. 비우면 <SUPABASE_URL>/auth/v1/.well-known/jwks.json
+  # Render 뒤에서 실제 IP: X-Forwarded-For 오른쪽에서 몇 번째 (묶음 1 실측: 1 = 맨 끝)
+  ip:
+    trusted-proxy-hops: ${TRUSTED_PROXY_HOPS:1}

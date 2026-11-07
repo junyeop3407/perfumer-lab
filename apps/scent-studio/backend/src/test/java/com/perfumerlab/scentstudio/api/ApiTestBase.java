@@ -28,4 +28,13 @@ abstract class ApiTestBase {
         if (headers.length > 0) b.headers(headers);
         return http.send(b.build(), HttpResponse.BodyHandlers.ofString());
     }
+
+    /** 아무 메서드(PUT·DELETE 등). 본문이 null이면 빈 본문 */
+    HttpResponse<String> send(String method, String path, String json, String... headers) throws Exception {
+        HttpRequest.Builder b = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + path)).timeout(Duration.ofSeconds(15))
+                .header("Content-Type", "application/json")
+                .method(method, json == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(json));
+        if (headers.length > 0) b.headers(headers);
+        return http.send(b.build(), HttpResponse.BodyHandlers.ofString());
+    }
 }

@@ -311,3 +311,23 @@
   - `dbCheck`: app 표 7개 모두 RLS 켜짐·규칙 1개씩. catalog_releases는 scent_server select만(규칙 `server_read`, 읽기, scent_server만), events는 scent_server insert만. session_alive: definer, `search_path=""`, 주인 postgres, 실행은 scent_server만(anon·authenticated·service_role 안 됨). events 유일 인덱스는 pkey + 새 인덱스 2개뿐. service_role은 app 스키마 usage 없음(리뷰 QA-6 확인).
   - `dbServerCheck`: 카탈로그 읽기 됨(0줄), 없는 세션 false. auth.users·auth.sessions 읽기, events·client_event_id 읽기, 카탈로그·consents 지우기, 표 만들기, 정리 함수 실행 → 모두 42501. 살아 있는 세션 true 확인은 세션이 없어 건너뜀 → **묶음 3 테스트 계정 로그인 뒤 다시**.
   - `api_check.sh`: keepalive 200·1, app 표(catalog_releases 포함)·app 함수(session_alive 포함) 모두 406 PGRST106, public blends 404. 이메일 가입은 아직 켜져 있음(정상, 묶음 9 체크리스트에서 끔).
+
+## 2026-11-07 단계 4 묶음 3: 로그인·요청 제한
+- **테스트 계정 (사장이 대시보드 Add user, Auto Confirm, 2026-11-07):** `.env` `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`(두 컴퓨터, 비밀번호 관리자 "perfumer-lab 테스트 계정"). 이메일은 `example.com`(메일이 실제로 가지 않는 시험용 도메인). **묶음 9 배포 전에 지우고, 그 뒤 이메일 가입·로그인을 끈다.**
+- **실제 Supabase 토큰 확인(공개 키 + 테스트 계정 비밀번호 로그인 1번):** 머리글 `alg=ES256`, `typ=JWT`, kid 있음. 클레임 `iss=https://<참조값>.supabase.co/auth/v1`, `aud=authenticated`, `role=authenticated`, `session_id`, `is_anonymous=false`, 유효 1시간. → 설계(3절)와 같음, **ES256 고정 확정**.
+- **실제 DB 살아 있는 세션(묶음 2 리뷰 QA-1):** `dbServerCheck` → 진짜 짝 true, 남의 사용자 id와 짝 false. 실제 postgres 계정으로도 auth.sessions를 읽어 세션 확인이 된다.
+- **서버 설정 추가:** `SUPABASE_URL`(=`https://<참조값>.supabase.co`, 비밀 아님. 없거나 모양이 다르면 서버는 뜨지만 토큰을 모두 거절), `TRUSTED_PROXY_HOPS`(기본 1). **Render 환경 변수에 `SUPABASE_URL`을 넣어야 로그인 API가 된다** → 묶음 9 배포 때 사장 할 일에 넣음(지금 Render 서버는 묶음 1 코드라 영향 없음).
+- **정한 것(구현 판단):**
+  - 토큰 실패는 이유와 상관없이 같은 401 본문(만료·서명·세션 구분 안 함, 공격자에게 힌트를 안 줌). DB·키 목록(JWKS)을 못 읽으면 401이 아니라 **503**(앱이 로그아웃시키지 않게, 401 실패로 세지 않음).
+  - 세션 확인 결과는 살아 있음·끝남 모두 30초 보관(최대 1만 개). 로그아웃 뒤 늦어도 30초.
+  - **보낸 토큰이 확인에 실패한 401만** IP별로 센다(토큰 없이 보호 주소를 부른 401·OPTIONS는 안 셈 — 다른 사이트가 방문자 브라우저로 불러 같은 공유기 사용자들을 막게 만들 수 있어서, 리뷰 QA-1). 1분에 20번째 실패면 그 IP의 **모든 요청**(health 포함, /health/live 제외)을 5분 429.
+  - 키 목록(JWKS)은 10분 보관, 다시 받기는 1분에 한 번까지(모르는 kid 토큰 10개가 Supabase 호출 10번을 일으키던 것을 리뷰 QA-4가 찾음 → 1번 이하). 키 목록이 멀쩡할 때 모르는 kid는 401, 못 읽는 동안은 503, 받아 둔 목록은 다시 받기가 실패해도 1시간까지 씀.
+  - 바구니는 사용자용·IP용 지도를 따로(각 5만, 하나 약 0.3KB 추정 → 지도당 최대 약 15MB), 막은 IP도 따로(리뷰 QA-2).
+  - `scent.auth.jwks-uri`(키 목록 주소 바꾸기)는 127.0.0.1·localhost만 허용, 아니면 서버가 안 뜬다(테스트 전용).
+  - **나중에 할 것(리뷰 낮음):** CORS(웹 앱 출처 허용 목록)와 OPTIONS 처리 → 화면 단계에서 웹 출처가 정해질 때. 한도 분류를 경로 문자열 대신 컨트롤러 패턴으로·경로 변형 테스트 → 묶음 4~6에서 API가 생길 때. 403 응답 모양(accessDeniedHandler) → 403이 처음 생기는 묶음 4. X-Forwarded-For 대체(연결 주소) 횟수 경고 로그 + "0인지" 확인 → 묶음 9 배포 점검.
+  - 요청 제한 창은 "창이 끝나면 한꺼번에 다시 참"(Bucket4j refillIntervally). 바구니·막은 IP는 각각 최대 5만 개(가장 오래 안 쓴 것부터 버림). IPv6는 /64로 묶는다.
+  - `/health/live`(Render 상태 확인)는 제한하지 않는다. 로그인 없이 부르는 주소(health)에서는 Authorization 헤더를 무시한다(이상한 토큰이 붙어도 열림).
+  - **미룸:** 사용 기록(`/events`, install_id+IP 분당 10)·카탈로그 파일(install_id 하루 3 + IP 시간당 10) 제한은 그 API를 만드는 **묶음 6**에서(설치 id 처리와 함께).
+  - 아직 로그인 뒤 API가 없어서, 테스트는 토큰이 통과하면 없는 주소의 404(`NOT_FOUND`)를 "통과"로 본다. 요청 제한은 주소 처리 전에 걸려서 API가 없어도 확인된다.
+- **오류 응답 모양 통일:** 없는 주소·허용 안 된 메서드·처리 중 예외도 `{"error":{"code","message"}}`(`ApiErrorController`), Spring 기본 응답(timestamp·path)을 내보내지 않는다.
+- **테스트 준비 코드:** `TestAuth`(테스트 안에서 EC 키를 만들고 JWKS를 작은 HTTP 서버로 내줌), `TestClock`(앞으로 돌리는 시계: 30초·1분·5분을 기다리지 않음), `RecordingDnsResolver`(테스트 JVM의 DNS 풀이를 기록만).
