@@ -28,6 +28,10 @@ spring:
   flyway:
     enabled: false                 # 서버는 마이그레이션하지 않는다(scent_server는 표를 만들 권한이 없음)
 
+  jackson:
+    mapper:
+      allow-coercion-of-scalars: false   # [1]을 ["1"]로 바꿔 받지 않는다(모양이 틀리면 400)
+
 springdoc:
   api-docs:
     enabled: ${OPENAPI_ENABLED:false}
@@ -47,3 +51,11 @@ scent:
   # Render 뒤에서 실제 IP: X-Forwarded-For 오른쪽에서 몇 번째 (묶음 1 실측: 1 = 맨 끝)
   ip:
     trusted-proxy-hops: ${TRUSTED_PROXY_HOPS:1}
+  # 동의 문서 지금 버전 (사장 결정 2026-11-07: 설정 파일, 처음 값 draft-1). 올리면 모두 다시 동의해야 한다
+  consent:
+    terms: draft-1
+    privacy: draft-1
+    age-14: draft-1
+  # 카탈로그 key 목록 파일(노트·계열·향수 key). 묶음 6에서 비공개 Storage로 바뀐다. 비면 key 확인이 필요한 저장은 503
+  catalog:
+    keys-file: ${CATALOG_KEYS_FILE:}

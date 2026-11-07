@@ -32,12 +32,23 @@ class Bundle3ReviewFixesTest {
     // Gemini-1: X-Forwarded-For 값으로 DNS 풀이가 일어나면 안 된다(16개뿐인 스레드를 DNS 대기로 묶는 공격).
     // JDK는 첫 글자가 16진수나 ':'일 때만 IP 글자로만 읽고, 아니면 이름 풀이로 넘긴다.
     @ParameterizedTest(name = "DNS 안 부름: {0}")
-    @ValueSource(strings = {".cafe:80", ".dead.beef:1", "..:1", ".a:b", ".:"})
+    @ValueSource(strings = {".cafe:80", ".dead.beef:1", "..:1", ".a:b", ".:",
+            // 사장 지시(2026-11-07): 이름 모양 값으로도 DNS 풀이가 없어야 한다
+            "1.example.com", "1.example.com:80", "cafe.example", "a.b:1", "dead.beef", "localhost", "1.2.3.4.nip.io", "::1.example.com"})
     void forwardedValueNeverTriggersDnsLookup(String v) {
         RecordingDnsResolver.LOOKUPS.clear();
         assertEquals("10.0.0.9", ClientIp.resolve(List.of(v), "10.0.0.9", 1));
         assertEquals(v, ClientIp.limitKey(v));
         assertFalse(RecordingDnsResolver.LOOKUPS.contains(v), "DNS 풀이가 일어남: " + RecordingDnsResolver.LOOKUPS);
+    }
+
+    // 사장 지시(2026-11-07): IP 읽기는 글자로만 해석한다. InetAddress(이름 풀이를 할 수 있는 도구)를 아예 쓰지 않는다
+    @org.junit.jupiter.api.Test
+    void clientIpDoesNotUseInetAddress() throws Exception {
+        try (var in = ClientIp.class.getResourceAsStream("ClientIp.class")) {
+            String bytecode = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+            assertFalse(bytecode.contains("java/net/InetAddress"), "ClientIp가 InetAddress를 쓴다");
+        }
     }
 
     // QA-2: 로그인 없는 요청이 IP를 바꿔 가며 몰려와도 다른 사용자의 바구니·막은 IP가 밀려나지 않는다
@@ -81,14 +92,14 @@ class Bundle3ReviewFixesTest {
             String ip = ip();
             for (int i = 0; i < 25; i++) assertEquals(401, get("/api/v1/me", "X-Forwarded-For", ip).statusCode());
             for (int i = 0; i < 25; i++) assertNotEquals(429, send("OPTIONS", "/api/v1/me", null, "X-Forwarded-For", ip).statusCode());
-            assertEquals(404, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip).statusCode(),
+            assertEquals(200, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip).statusCode(),
                     "같은 IP의 로그인한 사용자는 막히지 않는다");
         }
 
         // QA-4: 모르는 kid 토큰을 몰아 보내도 키 목록을 매번 받으러 가지 않는다
         @Test
         void unknownKidDoesNotHammerJwks() throws Exception {
-            assertEquals(404, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip()).statusCode());
+            assertEquals(200, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip()).statusCode());
             int before = TestAuth.JWKS_HITS.get();
             TestAuth.User u = TestAuth.newUser();
             for (int i = 0; i < 10; i++) {
@@ -117,7 +128,7 @@ class Bundle3ReviewFixesTest {
         @Test
         void oddAuthorizationHeaders() throws Exception {
             TestAuth.User u = TestAuth.newUser();
-            assertEquals(404, get("/api/v1/me", "Authorization", "bearer " + u.token(), "X-Forwarded-For", ip()).statusCode(), "소문자 bearer도 표준");
+            assertEquals(200, get("/api/v1/me", "Authorization", "bearer " + u.token(), "X-Forwarded-For", ip()).statusCode(), "소문자 bearer도 표준");
             HttpResponse<String> two = get("/api/v1/me", "Authorization", u.bearer(), "Authorization", "Bearer x.y.z", "X-Forwarded-For", ip());
             assertTrue(two.statusCode() < 500, "헤더 두 개: " + two.statusCode());
             HttpResponse<String> big = get("/api/v1/me", "Authorization", "Bearer " + "a".repeat(20_000), "X-Forwarded-For", ip());

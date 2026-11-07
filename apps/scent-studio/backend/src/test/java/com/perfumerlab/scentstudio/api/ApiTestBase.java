@@ -32,8 +32,10 @@ abstract class ApiTestBase {
     /** 아무 메서드(PUT·DELETE 등). 본문이 null이면 빈 본문 */
     HttpResponse<String> send(String method, String path, String json, String... headers) throws Exception {
         HttpRequest.Builder b = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + path)).timeout(Duration.ofSeconds(15))
-                .header("Content-Type", "application/json")
                 .method(method, json == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(json));
+        boolean typeGiven = false;
+        for (int i = 0; i < headers.length; i += 2) typeGiven |= headers[i].equalsIgnoreCase("Content-Type");
+        if (!typeGiven) b.header("Content-Type", "application/json"); // 따로 주면 그것만
         if (headers.length > 0) b.headers(headers);
         return http.send(b.build(), HttpResponse.BodyHandlers.ofString());
     }

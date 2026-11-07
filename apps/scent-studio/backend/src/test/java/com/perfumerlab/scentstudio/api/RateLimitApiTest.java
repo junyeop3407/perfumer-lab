@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * 묶음 3: 요청 횟수 제한 (server_design.md 4절 표, 4-1 헤더 조작 6가지). 넘으면 429 RATE_LIMITED + Retry-After(초).
  * 사용 기록(/events)·카탈로그 파일 제한은 그 API를 만드는 묶음 6에서.
- * 아직 로그인 뒤 API가 없어 응답은 404 등이지만, 제한은 주소 처리 전에 걸리므로 "N번까지는 429가 아니고 N+1번째가 429"로 본다.
+ * 아직 없는 API(조합·찜 등)는 404지만 제한은 주소 처리 전에 걸리므로 "N번까지는 429가 아니고 N+1번째가 429"로 본다. GET /me는 묶음 4부터 200.
  * 테스트끼리 바구니가 섞이지 않게 IP·사용자를 테스트마다 새로 쓴다.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -193,13 +193,13 @@ class RateLimitApiTest extends ApiTestBase {
         clock.advance(Duration.ofMinutes(4));
         assertLimited(get("/api/v1/health", "X-Forwarded-For", ip), "4분 뒤 아직 막힘", 60);
         clock.advance(Duration.ofSeconds(61));
-        assertEquals(404, get("/api/v1/me", "Authorization", good, "X-Forwarded-For", ip).statusCode(), "5분 지나면 풀림");
+        assertEquals(200, get("/api/v1/me", "Authorization", good, "X-Forwarded-For", ip).statusCode(), "5분 지나면 풀림");
     }
 
     @Test
     void fewAuthFailuresDoNotBlock() throws Exception {
         String ip = newIp();
         for (int i = 0; i < 19; i++) get("/api/v1/me", "Authorization", "Bearer bad" + i, "X-Forwarded-For", ip);
-        assertEquals(404, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip).statusCode());
+        assertEquals(200, get("/api/v1/me", "Authorization", TestAuth.newUser().bearer(), "X-Forwarded-For", ip).statusCode());
     }
 }

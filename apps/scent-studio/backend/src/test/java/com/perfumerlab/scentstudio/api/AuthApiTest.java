@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 묶음 3: 로그인 토큰 확인 (server_design.md 3·3-1·8절). 401 경우 9가지 + 그 밖의 모양, 세션 확인 30초 보관.
- * 아직 로그인 뒤 쓰는 API가 없어서, 토큰이 통과하면 없는 주소의 404(NOT_FOUND)가 된다 → "401이 아님"으로 통과를 본다.
+ * 토큰이 통과하면 GET /me가 200과 내 userId를 준다(묶음 4부터. 묶음 3 때는 없는 주소의 404로 봤다).
  * 요청마다 X-Forwarded-For 맨 끝 값(= 요청한 사람 IP)을 다르게 줘서 요청 제한에 걸리지 않게 한다.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,8 +48,8 @@ class AuthApiTest extends ApiTestBase {
     }
 
     void assertPassed(HttpResponse<String> r, String why) {
-        assertEquals(404, r.statusCode(), why + " " + r.body());
-        assertTrue(r.body().contains("\"code\":\"NOT_FOUND\""), why + " " + r.body());
+        assertEquals(200, r.statusCode(), why + " " + r.body());
+        assertTrue(r.body().contains("\"userId\":\""), why + " " + r.body());
     }
 
     @Test

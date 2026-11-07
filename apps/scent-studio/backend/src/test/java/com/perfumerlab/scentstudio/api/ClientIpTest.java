@@ -46,14 +46,16 @@ class ClientIpTest {
     }
 
     @ParameterizedTest(name = "IP 모양 아님: {0}")
-    @ValueSource(strings = {"abc", "999.1.1.1", "1.2.3", "1.2.3.4.5", "01.2.3.4", "1.2.3.4:80", "[::1]:80", "fe80::1%eth0",
+    @ValueSource(strings = {":::", "1:::2", "1::2::3", "1:2:3:4:5:6:7::8:9", "12345::1", "1:2:3:4:5:6:7", ":1", "1:", "::ffff:999.1.1.1",
+            "::ffff:1.2.3", "1.2.3.4::", "abc", "999.1.1.1", "1.2.3", "1.2.3.4.5", "01.2.3.4", "1.2.3.4:80", "[::1]:80", "fe80::1%eth0",
             "localhost", "example.com", "1.2.3.-4", "unknown", "::g", "1:2:3:4:5:6:7:8:9"})
     void invalidValuesFallBackToRemoteAddress(String v) {
         assertEquals(PROXY, ClientIp.resolve(List.of("203.0.113.7, " + v), PROXY, 1), v);
     }
 
     @ParameterizedTest(name = "IP 모양: {0}")
-    @ValueSource(strings = {"0.0.0.0", "255.255.255.255", "2001:db8::1", "::1", "2001:0db8:0000:0000:0000:ff00:0042:8329", "::ffff:192.0.2.1"})
+    @ValueSource(strings = {"0.0.0.0", "255.255.255.255", "2001:db8::1", "::1", "2001:0db8:0000:0000:0000:ff00:0042:8329", "::ffff:192.0.2.1",
+            "::", "1::", "2001:DB8::A", "1:2:3:4:5:6:7:8", "1:2:3:4:5:6::8", "::2:3:4:5:6:7:8", "64:ff9b::192.0.2.1", "1:2:3:4:5:6:7::", "1:2:3:4:5:6:1.2.3.4"})
     void validValuesAreUsed(String v) {
         assertNotEquals(PROXY, ClientIp.resolve(List.of(v), PROXY, 1), v);
     }
@@ -63,5 +65,7 @@ class ClientIpTest {
         assertEquals(ClientIp.limitKey("2001:db8:1:2:aaaa::1"), ClientIp.limitKey("2001:db8:1:2:bbbb::9"), "같은 /64는 같은 바구니");
         assertNotEquals(ClientIp.limitKey("2001:db8:1:2::1"), ClientIp.limitKey("2001:db8:1:3::1"));
         assertEquals("203.0.113.7", ClientIp.limitKey("203.0.113.7"));
+        assertEquals("192.0.2.1", ClientIp.limitKey("::ffff:192.0.2.1"), "IPv4를 담은 IPv6는 IPv4 바구니");
+        assertEquals(ClientIp.limitKey("2001:DB8:0:0:1::"), ClientIp.limitKey("2001:db8::1:0:0:0"), "대소문자·줄임 모양이 달라도 같은 바구니");
     }
 }

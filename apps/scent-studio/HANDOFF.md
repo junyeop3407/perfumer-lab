@@ -1,14 +1,18 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1·2·3 완료. **묶음 4(취향·동의) 시작 전, 사장 지시 대기**. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~4 완료. **묶음 5(조합·찜·시향) 시작 전, 사장 지시 대기**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: e9c1dfe (묶음 3 시작 직전)
-결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 231/231 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 3 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 묶음 4 시작 OK 여부
-다음 할 일: 사장 OK → 묶음 4(취향·동의, `plan_stage4.md`). 묶음 4에서 403 응답 모양·한도 분류(컨트롤러 기준) 정리(NOTES 묶음 3 "나중에 할 것"). 레드팀 표시(`.redteam-needed`)는 묶음 9 레드팀까지 둔다. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+리뷰 기준: 7cba14f (묶음 4 시작 직전)
+결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 325/325 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 4 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: 묶음 5 시작 OK 여부
+다음 할 일: 사장 OK → 묶음 5(조합·찜·시향, `plan_stage4.md`). 한도 분류를 컨트롤러 기준으로·경로 변형 테스트(NOTES 묶음 3 "나중에 할 것"). 묶음 8에 계정 삭제 때 세션 보관 바로 지우기(사장 지시). 레드팀 표시(`.redteam-needed`)는 묶음 9까지. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
 
-## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 3 완료 — 묶음 4 시작 전)
+## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 4 완료 — 묶음 5 시작 전)
+- **묶음 4 완료:** `GET /me`(userId·email·동의 상태), `POST /me/consents`, `GET·PUT /me/preferences`, `POST /me/preferences/merge`. 동의 문서 지금 버전은 `application.yml` `scent.consent.*`(draft-1), 가입일 없음(사장 결정). 카탈로그 key 목록은 `CATALOG_KEYS_FILE`(묶음 6에서 Storage). 결정·이유는 NOTES "묶음 4", 리뷰는 `review.md` "묶음 4".
+- 사장 지시 반영: IP는 글자로만 해석(InetAddress 안 씀, 이름 모양 값 DNS 없음 테스트), 묶음 8 계획에 "삭제 때 세션 보관 바로 지우기" 추가.
+
+## (이전) 단계 4 묶음 3 완료 기록
 - **묶음 3 완료:** 로그인 토큰 확인(ES256 고정, iss·aud·exp·role·is_anonymous·session_id), 세션 확인 30초 보관, 오류 응답 모양 통일, 요청 제한(사용자별 표 + 로그인 없이 IP 분당 60 + 틀린 토큰 1분 20번이면 IP 5분 막음), Render IP 규칙. 코드 `backend/src/main/java/.../{auth,limit}/`, 테스트 `api/{AuthApiTest,RateLimitApiTest,ClientIpTest,Bundle3ReviewFixesTest}`. 자세한 결정은 NOTES "묶음 3", 리뷰는 `review.md` "묶음 3".
 - 테스트 계정(사장, `.env` `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`, 두 컴퓨터) 로그인으로 실제 토큰 ES256 확인, `dbServerCheck` 살아 있는 세션 true. **묶음 9 배포 전에 계정 지우기 → 이메일 로그인 끄기, Render에 `SUPABASE_URL` 넣기.**
 - /events·카탈로그 제한은 묶음 6(설치 id와 함께).

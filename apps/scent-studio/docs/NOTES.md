@@ -331,3 +331,21 @@
   - 아직 로그인 뒤 API가 없어서, 테스트는 토큰이 통과하면 없는 주소의 404(`NOT_FOUND`)를 "통과"로 본다. 요청 제한은 주소 처리 전에 걸려서 API가 없어도 확인된다.
 - **오류 응답 모양 통일:** 없는 주소·허용 안 된 메서드·처리 중 예외도 `{"error":{"code","message"}}`(`ApiErrorController`), Spring 기본 응답(timestamp·path)을 내보내지 않는다.
 - **테스트 준비 코드:** `TestAuth`(테스트 안에서 EC 키를 만들고 JWKS를 작은 HTTP 서버로 내줌), `TestClock`(앞으로 돌리는 시계: 30초·1분·5분을 기다리지 않음), `RecordingDnsResolver`(테스트 JVM의 DNS 풀이를 기록만).
+
+## 2026-11-07 IP 읽기를 글자 해석으로 (사장 지시, 묶음 3 후속)
+- `ClientIp`는 IPv4(0~255 네 칸, 앞자리 0 금지)와 IPv6(16진수 1~4자 묶음 8개, `::` 줄임 한 번, 끝에 IPv4 허용)를 **글자로만** 해석한다. `InetAddress`를 아예 쓰지 않는다(테스트가 클래스 파일에 InetAddress 참조가 없는지 확인). 형식이 아니면 버리고 연결 IP.
+- 이름 모양 값(`1.example.com`, `localhost`, `1.2.3.4.nip.io` 등)으로 DNS 풀이가 없는지 테스트 JVM 이름 풀이 기록으로 확인.
+- 묶음 8 계획에 추가(사장 지시): 계정 삭제가 끝나면 그 사용자의 세션 확인 보관 기록을 바로 지운다(30초 틈 없음) + 테스트.
+
+## 2026-11-07 단계 4 묶음 4: 취향·동의
+- **API:** `GET /me`(userId, email(토큰), consents{required, agreed, complete}) · `POST /me/consents`({appVersion, consents:[{type, version}]}) · `GET·PUT /me/preferences` · `POST /me/preferences/merge`.
+- **사장 결정 (2026-11-07):** 동의 문서 지금 버전은 `application.yml` `scent.consent.*`(처음 `draft-1`, 출시 전 실제 문구를 쓰면 날짜 버전으로 올려 모두 다시 동의). `/me`에 가입일은 주지 않는다(토큰에 없고 서버 계정은 auth.users를 못 읽음).
+- **정한 것(구현 판단):**
+  - 동의 요청의 버전이 지금 버전과 다르면 409 `STALE_CONSENT_VERSION`(앱이 옛 문서를 보여 주고 받은 동의가 지금 버전으로 기록되지 않게). 같은 동의를 다시 보내면 그대로 성공(한 번만 기록).
+  - 쓰는 API(PUT·합치기)는 지금 버전 세 동의가 다 있어야(403 `CONSENT_REQUIRED`). 읽기(GET /me·취향)와 동의 기록은 동의 없이 된다.
+  - 취향 PUT: 모양이 틀리면 400 `BAD_REQUEST`(빈 값·중복·200/10개 초과·key 글자 규칙은 DB `valid_key`와 같게), 카탈로그에 없는 key면 400 `UNKNOWN_KEY`(하나도 저장 안 함).
+  - **합치기: 기기 값의 모르는 key는 빼고 `ignoredKeys`로 알린다**(옛 카탈로그 key 때문에 로그인 합치기가 매번 실패하지 않게). 불호는 서버 것 먼저 + 기기 것, 200개까지(`truncated`), 선호는 서버에 하나라도 있으면 서버 값. 그 사용자 줄을 잠근 채(빈 줄 넣기 → `for update`) 처리해 여러 기기가 동시에 합쳐도 잃지 않는다.
+  - 서버에 이미 저장된 key는 다시 확인하지 않는다(나중 카탈로그에서 빠져도 그대로).
+  - **카탈로그 key 목록:** `CatalogKeys`가 설정 `scent.catalog.keys-file`(`CATALOG_KEYS_FILE`, .json/.json.gz)에서 읽는다. 묶음 6에서 비공개 Storage로 바꾼다. 목록이 없으면 key 확인이 필요한 저장만 503(아무 key나 받지 않음). 지금 Render 서버는 묶음 1 코드라 영향 없음.
+  - 요청 본문 256KB까지(`BodySizeFilter`, 길이가 적힌 요청은 바로 413, chunked는 읽다가 넘으면 413). 글자 칸에 숫자·참거짓을 보내면 글자로 바꿔 받지 않고 400(`JsonStrictness`).
+  - 오류 코드 추가: `UNKNOWN_KEY`(400), `CONSENT_REQUIRED`(403), `STALE_CONSENT_VERSION`(409). 컨트롤러 오류는 `ApiExceptionHandler`가 같은 모양으로(원인은 응답·로그에 안 남김, 로그에는 예외 종류만).
