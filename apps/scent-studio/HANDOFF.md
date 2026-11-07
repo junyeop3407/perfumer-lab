@@ -5,8 +5,24 @@
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 7cba14f (묶음 4 시작 직전)
 결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 325/325 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 4 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 묶음 5 시작 OK 여부
-다음 할 일: 사장 OK → 묶음 5(조합·찜·시향, `plan_stage4.md`). 한도 분류를 컨트롤러 기준으로·경로 변형 테스트(NOTES 묶음 3 "나중에 할 것"). 묶음 8에 계정 삭제 때 세션 보관 바로 지우기(사장 지시). 레드팀 표시(`.redteam-needed`)는 묶음 9까지. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+사용자에게 남은 질문: 없음
+다음 할 일: git pull → 묶음 4 남은 것(있으면) → 묶음 5(조합·찜·시향 기록) 진행. 사장 할 일 없음. 묶음 6 전에 멈춤(Supabase Secret key를 서버 전용으로 새로 만들어야 함). (묶음 4는 남은 것 없음. 남은 일 전체 목록은 `docs/plan_stage4.md` 맨 아래 "남은 것")
+
+## ★ 다음 세션 시작 (2026-11-07 세션 끝)
+1. **다음 할 일:** git pull → 묶음 4 남은 것(있으면) → 묶음 5(조합·찜·시향 기록) 진행. 사장 할 일 없음. 묶음 6 전에 멈춤(Supabase Secret key를 서버 전용으로 새로 만들어야 함).
+   - 묶음 4는 끝났다(남은 것 없음). 브랜치 `wip/scent-studio-stage4`, 마지막 작업 커밋 a61712d.
+2. **다른 컴퓨터에서도 `.env`를 다시 채울 필요 없다(Windows·Mac 둘 다 완료). `git pull`만.**
+3. 남은 일 전체(묶음 8·9 체크리스트, 단계 5 화면 할 일)는 `docs/plan_stage4.md` 맨 아래 "남은 것".
+
+## 2026-11-07 오늘 한 일·결정
+- **묶음 1 실측:** 최대 메모리 178MB(기준 420MB), 시작 22.7~24.2초, 쉰 뒤 첫 요청 약 33.6초(33,565 / 33,587 / 33,593ms) → **Render 무료 유지**. 측정 주소는 Render 환경 변수 4개(`MEM_DEBUG`·`IP_DEBUG`·`DEBUG_TOKEN`·`DEBUG_UNTIL`) 삭제 + 재배포로 꺼짐(토큰을 붙여도 404 확인).
+- **묶음 2:** V2 실제 DB 적용 완료(app 표 7개). 사용 기록 중복 기준은 (install_id, client_event_id) 묶음.
+- **묶음 3:** 로그인 증표 ES256 고정, 실제 DB에서 살아 있는 세션 true / 남의 짝 false 확인, 테스트 231개.
+- **묶음 4:** /me·동의·취향·합치기, 테스트 325개(위 "지금 멈춘 곳").
+- **테스트 계정:** Supabase 대시보드 Add user로 만듦(Auto Confirm). 비밀번호는 Google 비밀번호 관리자("perfumer-lab 테스트 계정"). `.env`의 `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`(Windows·Mac 둘 다 넣음). 묶음 9 배포 전에 지운다.
+- **사장 결정:** 동의 문서 버전은 `application.yml`, 처음 값 `draft-1`(출시 전 날짜 버전으로 올림). `/me`에서 가입일은 뺌(나중에 필요하면 처음 동의 시각으로 대신).
+- **사장 지시:** IP는 IPv4·IPv6 글자 형식으로만 해석(✅ 처리), 묶음 8에 계정 삭제 때 세션 보관 바로 지우기(대기).
+- 화면 단계 할 일: 서버가 깨어나는 약 34초 동안 "연결 중" 안내, 실패 시 다시 시도.
 
 ## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 4 완료 — 묶음 5 시작 전)
 - **묶음 4 완료:** `GET /me`(userId·email·동의 상태), `POST /me/consents`, `GET·PUT /me/preferences`, `POST /me/preferences/merge`. 동의 문서 지금 버전은 `application.yml` `scent.consent.*`(draft-1), 가입일 없음(사장 결정). 카탈로그 key 목록은 `CATALOG_KEYS_FILE`(묶음 6에서 Storage). 결정·이유는 NOTES "묶음 4", 리뷰는 `review.md` "묶음 4".
