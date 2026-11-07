@@ -1,16 +1,16 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~4 완료. **묶음 5(조합·찜·시향) 시작 전, 사장 지시 대기**. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~5 완료. **묶음 6(사용 기록·카탈로그) 시작 전, 사장 할 일·지시 대기**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 7cba14f (묶음 4 시작 직전)
-결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 325/325 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 4 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+리뷰 기준: a77e830 (묶음 5 시작 직전)
+결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 439/439 통과 (2026-11-08 확인, `bash tests/run.sh`, 묶음 5 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → 묶음 4 남은 것(있으면) → 묶음 5(조합·찜·시향 기록) 진행. 사장 할 일 없음. 묶음 6 전에 멈춤(Supabase Secret key를 서버 전용으로 새로 만들어야 함). (묶음 4는 남은 것 없음. 남은 일 전체 목록은 `docs/plan_stage4.md` 맨 아래 "남은 것")
+다음 할 일: git pull → **사장 할 일 먼저**: Supabase Project Settings → API Keys → Secret keys → New secret key(이름 `render-server`) → `backend/.env`의 `SUPABASE_SECRET_KEY`와 Render 환경 변수에 넣기(대화창에 붙여 넣지 않기) → 그 뒤 묶음 6(사용 기록·카탈로그). 남은 일 전체 목록은 `docs/plan_stage4.md` 맨 아래 "남은 것"
 
-## ★ 다음 세션 시작 (2026-11-07 세션 끝)
-1. **다음 할 일:** git pull → 묶음 4 남은 것(있으면) → 묶음 5(조합·찜·시향 기록) 진행. 사장 할 일 없음. 묶음 6 전에 멈춤(Supabase Secret key를 서버 전용으로 새로 만들어야 함).
-   - 묶음 4는 끝났다(남은 것 없음). 브랜치 `wip/scent-studio-stage4`, 마지막 작업 커밋 a61712d.
+## ★ 다음 세션 시작 (2026-11-08 묶음 5 끝)
+1. **다음 할 일:** git pull → 사장이 서버 전용 Secret key(`render-server`)를 만들어 `backend/.env`·Render에 넣었는지 확인 → 묶음 6(사용 기록·카탈로그).
+   - 묶음 5는 끝났다. 브랜치 `wip/scent-studio-stage4`.
 2. **다른 컴퓨터에서도 `.env`를 다시 채울 필요 없다(Windows·Mac 둘 다 완료). `git pull`만.**
 3. 남은 일 전체(묶음 8·9 체크리스트, 단계 5 화면 할 일)는 `docs/plan_stage4.md` 맨 아래 "남은 것".
 
@@ -24,7 +24,11 @@
 - **사장 지시:** IP는 IPv4·IPv6 글자 형식으로만 해석(✅ 처리), 묶음 8에 계정 삭제 때 세션 보관 바로 지우기(대기).
 - 화면 단계 할 일: 서버가 깨어나는 약 34초 동안 "연결 중" 안내, 실패 시 다시 시도.
 
-## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 4 완료 — 묶음 5 시작 전)
+## ★ 지금 멈춘 곳 (2026-11-08, 단계 4 묶음 5 완료 — 묶음 6 시작 전)
+- **묶음 5 완료:** 조합 `GET·POST /blends`, `GET·PUT·DELETE /blends/{id}` · 찜 `GET /favorites`, `PUT·DELETE /favorites/{perfumeKey}` · 시향 기록 `GET·POST /feedback`, `DELETE /feedback/{id}`. 남의 id 404, 한도 100·300·1,000(사용자 단위 잠금, 넘으면 409 `LIMIT_REACHED`), 카탈로그에 없는 key 400, 찜 다시 하면 그대로 성공. 결정·이유는 NOTES "묶음 5", 리뷰는 `review.md` "묶음 5".
+- 실제 DB 적용·배포 없음(새 표 없음, V1 표·권한 그대로 사용).
+
+## (이전) 단계 4 묶음 4 완료 기록 (2026-11-07)
 - **묶음 4 완료:** `GET /me`(userId·email·동의 상태), `POST /me/consents`, `GET·PUT /me/preferences`, `POST /me/preferences/merge`. 동의 문서 지금 버전은 `application.yml` `scent.consent.*`(draft-1), 가입일 없음(사장 결정). 카탈로그 key 목록은 `CATALOG_KEYS_FILE`(묶음 6에서 Storage). 결정·이유는 NOTES "묶음 4", 리뷰는 `review.md` "묶음 4".
 - 사장 지시 반영: IP는 글자로만 해석(InetAddress 안 씀, 이름 모양 값 DNS 없음 테스트), 묶음 8 계획에 "삭제 때 세션 보관 바로 지우기" 추가.
 

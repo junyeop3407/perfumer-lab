@@ -17,6 +17,7 @@ public enum ApiError {
     METHOD_NOT_ALLOWED(405, "지원하지 않는 요청이에요"),
     NOT_ACCEPTABLE(406, "지원하지 않는 응답 형식이에요"),
     STALE_CONSENT_VERSION(409, "약관·방침이 바뀌었어요. 새 내용을 확인해 주세요"),
+    LIMIT_REACHED(409, "저장할 수 있는 개수를 다 채웠어요"),
     PAYLOAD_TOO_LARGE(413, "요청이 너무 커요"),
     UNSUPPORTED_MEDIA_TYPE(415, "지원하지 않는 형식이에요"),
     RATE_LIMITED(429, "요청이 너무 많아요. 잠시 후 다시 시도해 주세요"),

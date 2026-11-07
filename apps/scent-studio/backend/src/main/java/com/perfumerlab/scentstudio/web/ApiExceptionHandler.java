@@ -3,6 +3,7 @@ package com.perfumerlab.scentstudio.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -56,6 +57,15 @@ public class ApiExceptionHandler {
     @ExceptionHandler(DataAccessResourceFailureException.class)
     ResponseEntity<String> dbDown() {
         return of(ApiError.UNAVAILABLE);
+    }
+
+    /** DB 검사(check 제약)에 걸림 = 서버 검사가 놓친 잘못된 입력 → 500이 아니라 400 (리뷰 묶음 5 QA-2). 그 밖의 무결성 오류는 아래로 */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ResponseEntity<String> integrity(DataIntegrityViolationException e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof java.sql.SQLException s && "23514".equals(s.getSQLState())) return of(ApiError.BAD_REQUEST);
+        }
+        return other(e);
     }
 
     @ExceptionHandler(Exception.class)

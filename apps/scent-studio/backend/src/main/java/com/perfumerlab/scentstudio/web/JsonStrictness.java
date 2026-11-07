@@ -18,6 +18,7 @@ public class JsonStrictness {
                 .withCoercionConfig(LogicalType.Textual, c -> c
                 .setCoercion(CoercionInputShape.Integer, CoercionAction.Fail)
                 .setCoercion(CoercionInputShape.Float, CoercionAction.Fail)
-                .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail));
+                .setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail))
+                .withCoercionConfig(LogicalType.Integer, c -> c.setCoercion(CoercionInputShape.Float, CoercionAction.Fail)); // 만족도 3.5 → 400(3으로 자르지 않음)
     }
 }

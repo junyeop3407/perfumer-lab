@@ -6,8 +6,21 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.net.http.HttpResponse;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntFunction;
 
 /**
  * 묶음 4 서버 테스트 공통: 로그인 토큰 + 테스트 카탈로그 key 목록(catalog-test.keys.json: 노트 307개, 계열 10개)
@@ -45,6 +58,49 @@ abstract class MeApiTestBase extends ApiTestBase {
 
     HttpResponse<String> putAs(TestAuth.User u, String path, String json) throws Exception {
         return send("PUT", path, json, "Authorization", u.bearer(), "X-Forwarded-For", ip());
+    }
+
+    HttpResponse<String> deleteAs(TestAuth.User u, String path) throws Exception {
+        return send("DELETE", path, null, "Authorization", u.bearer(), "X-Forwarded-For", ip());
+    }
+
+    /** 요청 n개를 한꺼번에 출발시킨다(모두 준비된 뒤 동시에). 결과는 보낸 순서대로 */
+    static List<HttpResponse<String>> together(int n, IntFunction<Callable<HttpResponse<String>>> request) throws Exception {
+        ExecutorService pool = Executors.newFixedThreadPool(n);
+        try {
+            CountDownLatch ready = new CountDownLatch(n), go = new CountDownLatch(1);
+            List<Future<HttpResponse<String>>> fs = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                Callable<HttpResponse<String>> c = request.apply(i);
+                fs.add(pool.submit(() -> {
+                    ready.countDown();
+                    go.await();
+                    return c.call();
+                }));
+            }
+            ready.await();
+            go.countDown();
+            List<HttpResponse<String>> out = new ArrayList<>();
+            for (Future<HttpResponse<String>> f : fs) out.add(f.get(60, TimeUnit.SECONDS));
+            return out;
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    static long countStatus(List<HttpResponse<String>> rs, int status) {
+        return rs.stream().filter(r -> r.statusCode() == status).count();
+    }
+
+    /** 테스트 DB에서 숫자 하나 (주인 계정으로) */
+    static long dbCount(String sql, Object... args) throws Exception {
+        try (Connection c = DriverManager.getConnection(TestDb.jdbcUrl()); PreparedStatement p = c.prepareStatement(sql)) {
+            for (int i = 0; i < args.length; i++) p.setObject(i + 1, args[i]);
+            try (ResultSet rs = p.executeQuery()) {
+                rs.next();
+                return rs.getLong(1);
+            }
+        }
     }
 
     /** 지금 버전 세 문서에 동의한 사용자 (DB에 바로 넣음) */
