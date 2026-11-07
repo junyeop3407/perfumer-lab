@@ -45,7 +45,7 @@
    | `DB_SERVER_USER` | `scent_server.<프로젝트참조값>` |
    | `DB_SERVER_PASSWORD` | Google 비밀번호 관리자 "perfumer-lab DB (scent_server)" 또는 Render → Environment |
    | `SUPABASE_PUBLISHABLE_KEY` | Supabase → Project Settings → API Keys → Publishable key (`sb_publishable_`로 시작) |
-   | `DEBUG_TOKEN` | Render → 서비스 → Environment (묶음 1 실측이 끝나면 지움) |
+   | `DEBUG_TOKEN` | **지금은 빈 칸.** 묶음 1 실측이 끝나 Render에서도 지웠다(2026-11-07). 묶음 9 재측정 때 새로 만듦 |
    | `RENDER_URL` | Render 대시보드의 서비스 주소 (`https://perfumer-lab.onrender.com`) |
    | `SUPABASE_SECRET_KEY` | **묶음 6에서 생김**(지금은 빈 칸). 새로 만든 `render-server` 키, 기본 키 아님 |
 
