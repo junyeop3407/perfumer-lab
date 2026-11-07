@@ -294,7 +294,16 @@
 
 ## 2026-11-07 단계 4 묶음 1 Render 실측 (Free 0.1 CPU / 512MB, Singapore, 커밋 687b295)
 - **① 10분 부하(health 2초마다, 235번, 실패 0):** 프로세스 최대 RSS **178MB**, 컨테이너(cgroup) 최대 163MB / 512MB, 힙 25→38MB / 최대 272MB, 스레드 15. **기준 420MB 이하 통과.**
-- **② 시작 → 준비 완료(JVM 시작~ready):** 첫 배포 22.7초, 깨어날 때 23.6 · 23.0 · 24.2초 → **4번**(5번째는 4번째 깨우기 측정이 이 컴퓨터 메모리 부족으로 중단돼 못 잼). 범위 22.7~24.2초로 고르다.
-- **③ 15분 넘게 쉰 뒤 첫 요청(`/health/live`, curl 전체 시간):** 33.6 · 33.6 · 33.6초(모두 HTTP 200). 깨어나는 동안 사용자는 약 34초 기다린다 → 화면 단계 "연결 중" 안내 근거(추정 30~90초 → 실측 약 34초).
+- **② 시작 → 준비 완료(JVM 시작~ready):** 첫 배포 22.7초, 깨어날 때 23.6 · 23.0 · 24.2초 → **4번으로 충분(사장 결정 2026-11-07)**. 5번째는 측정하던 PC(Windows)의 메모리가 부족해 Claude Code가 기다리던 백그라운드 작업을 멈춰서 못 쟀다. **서버 문제가 아니다**(멈춘 때는 쉬는 시간을 기다리는 중이었고 서버에 요청을 보내지 않았다). 범위 22.7~24.2초로 고르다.
+- **③ 15분 넘게 쉰 뒤 첫 요청(`/health/live`, curl 전체 시간):** 33,565 · 33,587 · 33,593ms(curl `time_total` 원값 33.565242 · 33.586780 · 33.593222초, 모두 HTTP 200). 소수 첫째 자리로 줄이면 모두 33.6초라 같아 보였지만 서로 다른 값이다(기록 실수 아님, 차이 28ms). 3번이 이렇게 고른 것은 Render가 잠든 서비스를 다시 띄우는 시간이 거의 일정하기 때문으로 보인다(추정). 2026-11-07 00:51 UTC에 한 번 더 깨웠을 때도 33,630ms. 깨어나는 동안 사용자는 약 34초 기다린다 → 화면 단계 "연결 중" 안내 근거(추정 30~90초 → 실측 약 34초).
 - **④ X-Forwarded-For:** 가짜 `1.2.3.4`를 넣어 보내면 항목 2개, 오른쪽에서 1번째 = 이 컴퓨터의 실제 공인 IP(별도 조회와 일치), 2번째 = 가짜 값. → **`TRUSTED_PROXY_HOPS` 기본값 1이 맞다.** 연결 주소(remoteAddr)는 프록시 주소. Render 앞단에 Cloudflare 헤더(`cf-connecting-ip`, `true-client-ip`)가 붙지만 설계대로 읽지 않는다.
 - 결론: 대안(네이티브 이미지 / 유료 / Cloud Run) 불필요. 다음은 측정 주소 끄기(`MEM_DEBUG`·`IP_DEBUG`·`DEBUG_TOKEN`·`DEBUG_UNTIL` 삭제 후 재배포) → 묶음 2.
+- (묶음 1 Gemini 지적 "Metaspace 128m·CodeCache 48m 빠듯" 실측 판단) 10분 부하 중 metaspace 최대 46MB(36%), code cache 최대 9MB(19%) → 80% 기준 아래, 그대로 둔다.
+- **측정 주소 끄기 확인 (2026-11-07 00:51 UTC):** 토큰 없이 `/_debug/mem`·`/_debug/ip` 404, 하지만 **토큰을 붙이면 `/mem` 200** → 돌고 있는 서버에 환경 변수가 남아 있었다(삭제 후 배포가 적용되지 않음). 사장이 다시 지우고 배포함 → **01:30 UTC(끝나는 시각 03:00 전) 다시 확인: 토큰을 붙여도 `/mem`·`/ip` 404, `/health/live` 200(잠에서 깨어나 33.5초)** → 꺼짐 확인.
+- `DEBUG_TOKEN`은 `render_measure.sh`만 쓴다(서버 실행·테스트는 `.env`를 읽지 않음) → 두 컴퓨터 `.env`에서 값을 비워도 된다. 묶음 9 재측정 때 새로 만든다.
+
+## 2026-11-07 단계 4 묶음 2: V2 마이그레이션 (내장 Postgres 테스트까지, 실제 DB 적용 전)
+- **V2 = `V2__session_catalog_events.sql`:** ① `app.session_alive(uuid, uuid)` security definer, search_path 비움, scent_server만 실행 ② `app.catalog_releases`(검사·경로는 버전에서 정해짐·지금 버전 한 줄·scent_server 읽기만·RLS) ③ `events.client_event_id` + (install_id, client_event_id) 유일 인덱스 + 그 칸 넣기 권한.
+- **결정: 서버는 `on conflict do nothing`을 충돌 칸 없이 쓴다.** 칸을 적으면(`on conflict (install_id, client_event_id)`) Postgres가 그 칸의 **select 권한**을 요구해(테스트에서 42501 확인) "scent_server는 사용 기록을 못 읽는다"는 원칙이 깨진다. events의 유일 검사는 id(자동 번호, 서버가 못 넣음)와 이 인덱스뿐이라 결과는 같다. 유일 검사가 늘면 `eventsHaveOnlyTheseUniqueChecks`가 실패해 다시 검토하게 한다.
+- **승인 테스트 변경 (사장 OK 2026-11-07):** `migrationCreatesSixTables`는 "app 표 6개"에서 "V1 표 6개가 이름 그대로 있음"으로. 대신 `DbTestBase.APP_TABLES`(마이그레이션 추가 때 고치는 곳 한 군데)와 실제 표 목록이 정확히 같은지 `appTablesMatchTheExpectedListExactly`가 본다(모르는 표도 잡음). 리뷰 회귀 테스트 `rlsIsOnForEveryTable`도 "RLS 꺼진 표 0개 + 목록 표 모두 켜짐"으로 바꿨다(개수 6 고정이 V2에서 깨져서).
+- **실제 DB 적용 전 할 일(사장 OK 뒤):** `./gradlew dbMigrate` → `dbCheck`(V2 표·규칙·함수 성질·service_role 포함 권한) → `dbServerCheck`(카탈로그 읽기 됨, auth.sessions·카탈로그 지우기·client_event_id 읽기 막힘, 없는 세션 false. 살아 있는 세션 true는 묶음 3 테스트 계정 뒤) → `bash scripts/api_check.sh`(catalog_releases·session_alive 406/404).

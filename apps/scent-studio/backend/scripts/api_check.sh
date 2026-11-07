@@ -22,6 +22,8 @@ call "app.blends 읽기 (app 스키마 지정)"  "406 PGRST106: app은 노출 �
 call "app.consents 읽기"                 "406 PGRST106"                   -H "Accept-Profile: app" "$base/consents?select=*"
 call "app에 쓰기 시도"                    "406 PGRST106"                   -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/favorites"
 call "public에서 blends 찾기"             "404 (public에는 그런 표 없음)"   "$base/blends?select=*"
+call "app.catalog_releases 읽기 (V2)"     "406 PGRST106"                   -H "Accept-Profile: app" "$base/catalog_releases?select=*"
+call "app.session_alive 직접 실행 (V2)"   "404/406 (노출 안 됨)"            -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{"p_session_id":null,"p_user_id":null}' "$base/rpc/session_alive"
 call "app 함수 직접 실행 시도"            "404/406 (노출 안 됨)"            -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/rpc/purge_old_events"
 
 # 이메일 가입 (묶음 9 전에 꺼야 함: 구글 로그인만). 먼저 설정을 읽기만 하고, 꺼져 있을 때만 실제 가입 시도로 막힘을 확인한다.

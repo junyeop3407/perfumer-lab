@@ -1,16 +1,18 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 3(DB) 완료. 단계 4(서버) 묶음 1: 실측 완료(2026-11-07), **사장 결과 검토 + 측정 주소 끄기 대기**. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1 완료. 묶음 2(V2): 코드·테스트·리뷰 완료, **실제 DB 적용 전 사장 OK 대기**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: c240f1e (묶음 1 시작 직전)
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 105/105 통과 (2026-11-06 확인, `bash tests/run.sh`, 묶음 1 리뷰 반영 후 `docs/review.md`). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
-사용자에게 남은 질문: 묶음 1 실측 결과 OK 여부(NOTES 2026-11-07), 시작 시간 5번째 1회 더 잴지
-다음 할 일: 사장 OK → 측정 주소 끄기(Render 환경 변수 MEM_DEBUG·IP_DEBUG·DEBUG_TOKEN·DEBUG_UNTIL 삭제 → Manual Deploy → /api/v1/_debug/mem 404 확인) → 묶음 2(V2). 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
+리뷰 기준: 489ca60 (묶음 2 시작 직전)
+결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 160/160 통과 (2026-11-07 확인, `bash tests/run.sh`, 묶음 2 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+사용자에게 남은 질문: V2 실제 DB 적용 OK 여부
+다음 할 일: 사장 OK → `./gradlew dbMigrate` → `dbCheck` → `dbServerCheck` → `bash scripts/api_check.sh`(NOTES 2026-11-07 묶음 2 "실제 DB 적용 전 할 일") → 결과 보고 → 묶음 3. 레드팀 표시(`.redteam-needed`)는 묶음 9 레드팀까지 둔다. 2026-11-13 이후 Supabase 일시 정지 여부·예약 작업 매일 실행 확인(NOTES ⑧)
 
-## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 1 실측 완료)
-- 결과(자세히는 `docs/NOTES.md` 2026-11-07): 10분 부하 RSS 최대 **178MB**(기준 420MB 통과, 실패 0/235) · 준비 완료 22.7/23.6/23.0/24.2초(4번, 5번째는 이 컴퓨터 메모리 부족으로 중단) · 15분 쉰 뒤 첫 요청 33.6초 ×3 · X-Forwarded-For 오른쪽 1번째가 실제 IP → `TRUSTED_PROXY_HOPS=1` 유지.
-- **사장 검토 대기.** OK 받으면 측정 주소 끄기(맨 위 다음 할 일) → 묶음 2. `DEBUG_UNTIL`(11/7 03:00 UTC)이 지나면 측정 주소는 이미 404지만 환경 변수는 지운다.
+## ★ 지금 멈춘 곳 (2026-11-07, 단계 4 묶음 2 — V2 실제 DB 적용 전)
+- **묶음 1 완료(사장 OK):** RSS 최대 178MB(기준 420MB), 준비 22.7~24.2초(4번으로 충분), 15분 쉰 뒤 첫 요청 약 33.6초, `TRUSTED_PROXY_HOPS=1` 유지. 측정 주소 꺼짐 확인(토큰 붙여도 404). `DEBUG_TOKEN`은 이제 안 쓴다 → `.env`에서 비워도 됨, 묶음 9 재측정 때 새로 만듦.
+- **묶음 2(V2):** `backend/src/main/resources/db/migration/V2__session_catalog_events.sql` + `DbV2Test`(50) + `DbV2ReviewFixesTest`(5). 내장 Postgres 통과, 변조 6/6 잡힘, QA 9(중간 2 반영) + Gemini 문제 없음(`docs/review.md` "묶음 2"). **실제 Supabase에는 아직 적용하지 않았다.**
+- 결정: 사용 기록 중복 무시는 칸 없는 `on conflict do nothing`(칸을 적으면 scent_server에 읽기 권한이 필요해짐). 승인 테스트 `migrationCreatesSixTables`는 사장 OK로 "V1 표 6개 이름"으로, 표 전체 목록은 `DbTestBase.APP_TABLES` 한 곳.
+- 살아 있는 세션이 실제 DB에서 true인지는 로그인 세션이 있어야 확인된다 → 묶음 3 테스트 계정 뒤 `./gradlew dbServerCheck`.
 
 ## ★ 지금 멈춘 곳 (2026-11-06, 단계 4 묶음 1)
 - **다른 컴퓨터에서 시작할 때는 `docs/new_computer_setup.md` 먼저.** 묶음 계획과 상태는 `docs/plan_stage4.md`(맨 아래 "묶음별 상태").

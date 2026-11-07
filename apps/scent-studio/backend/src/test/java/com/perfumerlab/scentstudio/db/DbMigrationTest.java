@@ -25,7 +25,9 @@ class DbMigrationTest extends DbTestBase {
 
     @Test
     void migrationCreatesSixTables() throws SQLException {
-        assertEquals(6, count("select count(*) from information_schema.tables where table_schema = 'app'"));
+        // V1이 만든 표 6개가 이름 그대로 다 있는지 (V2부터 표가 늘어 전체 개수는 DbV2Test가 기준 목록으로 확인, 사장 OK 2026-11-07)
+        assertEquals(6, count("select count(*) from information_schema.tables where table_schema = 'app' and table_name = any(?)",
+                (Object) TABLES));
         assertEquals(1, count("select count(*) from flyway.flyway_schema_history where version = '1' and success"));
     }
 

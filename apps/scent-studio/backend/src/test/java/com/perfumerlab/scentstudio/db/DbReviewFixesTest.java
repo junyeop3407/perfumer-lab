@@ -21,7 +21,9 @@ class DbReviewFixesTest extends DbTestBase {
     // QA-2: 막는 장치 ②(표 권한)와 ③(RLS)를 6개 표 모두 직접 확인 (스키마 권한 없음에 가려지지 않게)
     @Test
     void rlsIsOnForEveryTable() throws SQLException {
-        assertEquals(6, count("select count(*) from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r' and relrowsecurity"));
+        // V2부터 표가 늘어 "RLS가 꺼진 표가 하나도 없다" + "기준 목록의 표가 모두 RLS 켜짐"으로 확인한다 (개수는 DbTestBase.APP_TABLES 한 곳)
+        assertEquals(0, count("select count(*) from pg_class where relnamespace = 'app'::regnamespace and relkind in ('r', 'p') and not relrowsecurity"));
+        assertEquals(APP_TABLES.size(), count("select count(*) from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r' and relrowsecurity"));
     }
 
     @Test

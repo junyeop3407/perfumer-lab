@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -128,8 +129,14 @@ public final class DbOps {
             print(c, "select rolname, rolbypassrls from pg_roles where rolname = 'service_role'");
             System.out.println("\n== 함수 실행 권한 ==");
             print(c, "select r.rolname as 계정, f.fn as 함수, has_function_privilege(r.oid, f.fn, 'execute') as 실행"
-                    + " from pg_roles r cross join (values ('public.keepalive()'), ('app.purge_old_events()'), ('app.valid_key(text)'), ('app.touch_updated_at()')) f(fn)"
+                    + " from pg_roles r cross join (values ('public.keepalive()'), ('app.purge_old_events()'), ('app.valid_key(text)'), ('app.touch_updated_at()'), ('app.session_alive(uuid, uuid)')) f(fn)"
                     + " where r.rolname in ('anon','authenticated','service_role','scent_server') order by 2, 1");
+            System.out.println("\n== V2: session_alive 성질 (security definer, search_path 비움, 주인) ==");
+            print(c, "select p.prosecdef as definer, p.proconfig::text as 설정, pg_get_userbyid(p.proowner) as 주인, p.proacl::text as 권한"
+                    + " from pg_proc p where p.oid = to_regprocedure('app.session_alive(uuid, uuid)')");
+            System.out.println("\n== V2: catalog_releases 규칙, events 유일 인덱스 ==");
+            print(c, "select polname as 규칙, polcmd as 종류, polroles::regrole[]::text as 계정 from pg_policy where polrelid = to_regclass('app.catalog_releases')");
+            print(c, "select i.relname as 인덱스 from pg_index x join pg_class i on i.oid = x.indexrelid where x.indrelid = to_regclass('app.events') and x.indisunique order by 1");
             System.out.println("\n== postgres 계정의 기본 권한 설정 (pg_default_acl) ==");
             print(c, "select coalesce(n.nspname, '(전체)') as 스키마, d.defaclobjtype as 종류, d.defaclacl::text as 권한"
                     + " from pg_default_acl d left join pg_namespace n on n.oid = d.defaclnamespace"
@@ -214,8 +221,11 @@ public final class DbOps {
             System.out.println("접속 성공 (사용자 이름 형식 scent_server.<참조값>, Session pooler)");
             print(c, "select current_user as 현재계정, session_user as 세션계정, current_setting('server_version') as 버전, inet_server_port() as 포트");
             print(c, "select (select count(*) from app.blends) as blends줄, (select count(*) from app.consents) as consents줄, (select count(*) from app.user_preferences) as prefs줄");
+            print(c, "select (select count(*) from app.catalog_releases) as 카탈로그버전줄,"
+                    + " app.session_alive(gen_random_uuid(), gen_random_uuid()) as 없는세션_결과false");
             for (String sql : new String[]{"select count(*) from app.events", "select count(*) from auth.users", "delete from app.consents",
-                    "create table app.sneaky (id int)", "select app.purge_old_events()"}) {
+                    "create table app.sneaky (id int)", "select app.purge_old_events()",
+                    "select count(*) from auth.sessions", "delete from app.catalog_releases", "select client_event_id from app.events"}) {
                 c.setAutoCommit(false);
                 try (Statement s = c.createStatement()) {
                     s.execute(sql);
@@ -227,8 +237,37 @@ public final class DbOps {
                     c.setAutoCommit(true);
                 }
             }
+            liveSessionCheck(env, c);
         } catch (SQLException e) {
             throw new IllegalStateException("scent_server 접속 실패: " + e.getSQLState() + " " + e.getMessage().lines().findFirst().orElse(""));
+        }
+    }
+
+    /**
+     * (리뷰 묶음 2 QA-1) 실제 DB에서 살아 있는 세션이 session_alive로 true가 나오는지. 테스트 DB의 주인 계정은 슈퍼유저라
+     * 실제 postgres(슈퍼유저 아님, auth.sessions에 RLS가 있을 수 있음)와 다를 수 있어서 따로 본다.
+     * 마이그레이션 계정으로 살아 있는 세션 한 줄을 골라 scent_server로 물어본다. 세션 id·사용자 id는 출력하지 않는다.
+     */
+    static void liveSessionCheck(Map<String, String> env, Connection server) throws SQLException {
+        System.out.println("\n== 살아 있는 세션으로 session_alive (실제 로그인 세션이 있을 때만) ==");
+        java.util.UUID sid, uid;
+        try (Connection m = connect(env); Statement s = m.createStatement();
+             ResultSet r = s.executeQuery("select id, user_id from auth.sessions where not_after is null or not_after > now() limit 1")) {
+            if (!r.next()) {
+                System.out.println("살아 있는 세션 없음 → 건너뜀 (묶음 3 테스트 계정으로 로그인한 뒤 다시 확인)");
+                return;
+            }
+            sid = r.getObject(1, java.util.UUID.class);
+            uid = r.getObject(2, java.util.UUID.class);
+        }
+        try (PreparedStatement p = server.prepareStatement("select app.session_alive(?, ?), app.session_alive(?, gen_random_uuid())")) {
+            p.setObject(1, sid);
+            p.setObject(2, uid);
+            p.setObject(3, sid);
+            try (ResultSet r = p.executeQuery()) {
+                r.next();
+                System.out.println("진짜 짝: " + r.getBoolean(1) + " (기대 true) / 남의 사용자 id와 짝: " + r.getBoolean(2) + " (기대 false)");
+            }
         }
     }
 

@@ -10,3 +10,11 @@ create table auth.users (
   email text
 );
 alter table auth.users owner to supabase_auth_admin;
+-- 로그인 세션 (V2 app.session_alive가 읽음). 실제 Supabase auth.sessions의 칸 중 쓰는 것만, 같은 이름·타입.
+-- 실제처럼 사용자를 지우면 세션도 같이 지워진다.
+create table auth.sessions (
+  id        uuid primary key,
+  user_id   uuid not null references auth.users (id) on delete cascade,
+  not_after timestamptz
+);
+alter table auth.sessions owner to supabase_auth_admin;

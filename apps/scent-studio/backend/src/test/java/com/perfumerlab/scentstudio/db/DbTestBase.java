@@ -24,7 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class DbTestBase {
 
     static final String CHECK = "23514", UNIQUE = "23505", FOREIGN_KEY = "23503", NO_PRIVILEGE = "42501";
+    /** V1이 만든 표 6개 */
     static final String[] TABLES = {"user_preferences", "blends", "favorites", "tasting_feedback", "events", "consents"};
+    /**
+     * app 스키마에 있어야 하는 표 전체 = 가장 최근 마이그레이션 기준. ★ 마이그레이션에 표를 더하거나 빼면 여기 한 곳만 고친다.
+     * DbV2Test.appTablesMatchTheExpectedListExactly가 실제 DB 표 목록과 정확히 같은지(모르는 표 포함) 확인한다.
+     */
+    static final java.util.List<String> APP_TABLES = java.util.List.of(
+            "user_preferences", "blends", "favorites", "tasting_feedback", "events", "consents", // V1
+            "catalog_releases");                                                              // V2
 
     EmbeddedPostgres pg;
     DataSource ds;
