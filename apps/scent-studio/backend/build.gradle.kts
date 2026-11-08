@@ -19,6 +19,17 @@ dependencies {
     "opsImplementation"("org.flywaydb:flyway-core:13.11.1")
     "opsRuntimeOnly"("org.flywaydb:flyway-database-postgresql:13.11.1")
     "opsImplementation"("org.postgresql:postgresql:42.7.14")
+    "opsImplementation"("tools.jackson.core:jackson-databind:3.1.7") // 카탈로그 배포(서버와 같은 버전)
+}
+
+// 카탈로그 배포: 기본은 미리 보기. -Papply=true일 때만 Storage·DB를 바꾼다(CatalogPublish)
+tasks.register<JavaExec>("dbCatalogPublish") {
+    group = "db"
+    classpath = ops.runtimeClasspath
+    mainClass = "com.perfumerlab.scentstudio.ops.DbOps"
+    args("catalog-publish", (findProperty("file") ?: "").toString(), (findProperty("minApp") ?: "").toString(), (findProperty("apply") ?: "false").toString())
+    workingDir = projectDir
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
 }
 
 for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check",
@@ -57,6 +68,7 @@ dependencies {
     testImplementation("org.flywaydb:flyway-core:13.11.1")
     testRuntimeOnly("org.flywaydb:flyway-database-postgresql:13.11.1")
     testImplementation("org.postgresql:postgresql:42.7.14")
+    testImplementation(ops.output) // 카탈로그 배포 도구의 안전장치(비공개 버킷·공개 주소 막힘)도 테스트
 }
 
 tasks.bootJar {

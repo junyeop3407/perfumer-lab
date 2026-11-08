@@ -26,6 +26,10 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     ResponseEntity<String> api(ApiException e) {
+        if (e.retryAfterSeconds > 0) {
+            return ResponseEntity.status(e.error.status).header("Retry-After", Long.toString(e.retryAfterSeconds))
+                    .contentType(MediaType.APPLICATION_JSON).body(e.error.json());
+        }
         return of(e.error);
     }
 

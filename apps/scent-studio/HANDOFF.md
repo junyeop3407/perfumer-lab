@@ -1,16 +1,16 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~5 완료. **묶음 6(사용 기록·카탈로그) 시작 전, 사장 할 일·지시 대기**. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 코드 완료. **실제 카탈로그 배포(버킷·업로드·DB) 사장 OK 대기, 묶음 7 시작 전 멈춤**. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: a77e830 (묶음 5 시작 직전)
-결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 439/439 통과 (2026-11-08 확인, `bash tests/run.sh`, 묶음 5 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+리뷰 기준: 1b5cde8 (묶음 6 시작 직전)
+결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 491/491 통과 (2026-11-08 확인, `bash tests/run.sh`, 묶음 6 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → **사장 할 일 먼저**: Supabase Project Settings → API Keys → Secret keys → New secret key(이름 `render-server`) → `backend/.env`의 `SUPABASE_SECRET_KEY`와 Render 환경 변수에 넣기(대화창에 붙여 넣지 않기) → 그 뒤 묶음 6(사용 기록·카탈로그). 남은 일 전체 목록은 `docs/plan_stage4.md` 맨 아래 "남은 것"
+다음 할 일: git pull → **사장 할 일**: ① 이 Windows 컴퓨터 `backend/.env`의 `SUPABASE_SECRET_KEY`가 비어 있음(2026-11-08 확인) → 다시 넣기 ② 실제 카탈로그 배포 OK 여부 → OK면 `cd backend && ./gradlew dbCatalogPublish -Pfile=../pipeline/data/out/catalog.json.gz -PminApp=1.0.0 -Papply=true` → `bash scripts/api_check.sh` ③ 묶음 7(오류 신고, V3) 지시. 남은 일 전체 목록은 `docs/plan_stage4.md` 맨 아래 "남은 것"
 
-## ★ 다음 세션 시작 (2026-11-08 묶음 5 끝)
-1. **다음 할 일:** git pull → 사장이 서버 전용 Secret key(`render-server`)를 만들어 `backend/.env`·Render에 넣었는지 확인 → 묶음 6(사용 기록·카탈로그).
-   - 묶음 5는 끝났다. 브랜치 `wip/scent-studio-stage4`.
+## ★ 다음 세션 시작 (2026-11-08 묶음 6 끝)
+1. **다음 할 일:** git pull → 위 "다음 할 일"의 사장 할 일 ①②③ 확인 → 카탈로그 실제 배포(OK 뒤) → 묶음 7.
+   - 묶음 6 코드는 끝났다. 브랜치 `wip/scent-studio-stage4`. **이 코드를 Render에 올리기 전에 카탈로그 배포가 먼저**(안 하면 조합·찜·시향·취향 저장이 503).
 2. **다른 컴퓨터에서도 `.env`를 다시 채울 필요 없다(Windows·Mac 둘 다 완료). `git pull`만.**
 3. 남은 일 전체(묶음 8·9 체크리스트, 단계 5 화면 할 일)는 `docs/plan_stage4.md` 맨 아래 "남은 것".
 
@@ -24,7 +24,11 @@
 - **사장 지시:** IP는 IPv4·IPv6 글자 형식으로만 해석(✅ 처리), 묶음 8에 계정 삭제 때 세션 보관 바로 지우기(대기).
 - 화면 단계 할 일: 서버가 깨어나는 약 34초 동안 "연결 중" 안내, 실패 시 다시 시도.
 
-## ★ 지금 멈춘 곳 (2026-11-08, 단계 4 묶음 5 완료 — 묶음 6 시작 전)
+## ★ 지금 멈춘 곳 (2026-11-08, 단계 4 묶음 6 코드 완료 — 실제 카탈로그 배포 OK 대기, 묶음 7 시작 전)
+- **묶음 6 완료(코드):** `POST /events`(설치 id 헤더, 1~100개, 잘못된 것만 빼고 저장, 중복 무시, 설치 id+IP 분당 10·IP 분당 30), `GET /catalog/latest`, `GET /catalog/{version}`(서버 경유만, 해시·크기 확인, IP 시간당 10 + 설치 id 하루 3), key 목록을 Storage에서(10분마다 새 배포 확인), 배포 도구 `dbCatalogPublish`(기본 미리 보기). 결정·이유는 NOTES "묶음 6", 리뷰는 `review.md` "묶음 6".
+- 실제 Storage·DB는 건드리지 않음(미리 보기만 실행). 테스트용 실제 향수 key는 가짜 key로 바꿈.
+
+## (이전) 단계 4 묶음 5 완료 기록 (2026-11-08)
 - **묶음 5 완료:** 조합 `GET·POST /blends`, `GET·PUT·DELETE /blends/{id}` · 찜 `GET /favorites`, `PUT·DELETE /favorites/{perfumeKey}` · 시향 기록 `GET·POST /feedback`, `DELETE /feedback/{id}`. 남의 id 404, 한도 100·300·1,000(사용자 단위 잠금, 넘으면 409 `LIMIT_REACHED`), 카탈로그에 없는 key 400, 찜 다시 하면 그대로 성공. 결정·이유는 NOTES "묶음 5", 리뷰는 `review.md` "묶음 5".
 - 실제 DB 적용·배포 없음(새 표 없음, V1 표·권한 그대로 사용).
 

@@ -40,3 +40,11 @@ if [ "$email_on" = "off" ]; then
 else
   echo "    아직 켜져 있음 → 가입 시도는 건너뜀 (plan.md 출시 직전 확인 항목 6)"
 fi
+
+# 카탈로그 (묶음 6): 비공개 버킷이라 공개 주소·공개 키로는 받을 수 없어야 한다. 읽기만.
+# 확인할 버전은 첫 인자(기본 2026.11.05): bash scripts/api_check.sh 2026.12.01
+storage="https://$ref.supabase.co/storage/v1"
+ver="${1:-2026.11.05}"
+call "카탈로그 공개 주소로 받기"   "400/404 (공개 아님)"     "$storage/object/public/catalog/catalog-$ver.json.gz"
+call "공개 키로 카탈로그 받기"     "400/403/404 (막힘)"      -H "apikey: $key" -H "Authorization: Bearer $key" "$storage/object/catalog/catalog-$ver.json.gz"
+call "공개 키로 버킷 목록 보기"    "빈 목록 [] 또는 4xx"     -H "apikey: $key" -H "Authorization: Bearer $key" "$storage/bucket"

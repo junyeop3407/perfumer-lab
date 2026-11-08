@@ -364,3 +364,16 @@
 - **테스트 준비:** 테스트 카탈로그(`catalog-test.keys.json`)에 향수 key 30개(`Brand:perfume-001`~`030`) 추가(동시 찜 20번용). 한도까지 채우기는 DB에 바로 넣음(요청 제한 분당 30회와 섞이지 않게), 동시 20번만 API로.
 - **남은 것:** 탈퇴 직후 토큰(세션 보관 30초)으로 저장하면 user_id 외래 키 위반 → 묶음 8에서(남은 것 #4). 한도 분류를 컨트롤러 패턴 기준으로(남은 것 #3)는 묶음 5 API가 모두 기본 분류(쓰기 30·읽기 120)라 바뀐 것 없음 → 특별 한도가 생기는 묶음 6(사용 기록)·8(계정 삭제)에서.
 - **테스트 실행 주의:** 서버 테스트(gradle)를 뒤에서 돌리는 동안 응답을 끝내면 Stop 훅이 같은 폴더에서 gradle 테스트를 또 돌려 결과 파일이 부딪힌다(`NoSuchFileException …in-progress-results-generic.bin`, `EOFException`). 테스트 실패가 아니다 → 전체 테스트는 앞에서(끝날 때까지 기다리며) 한 번만 돌린다.
+
+## 2026-11-08 단계 4 묶음 6: 사용 기록·카탈로그
+- **API:** `POST /events`(로그인 없이도, 헤더 `X-Install-Id`) · `GET /catalog/latest` · `GET /catalog/{version}`(헤더 `X-Install-Id`). 코드 `events/`, `catalog/`.
+- **사용 기록 정한 것:** 본문 `{appVersion, events:[{clientEventId, name, props, occurredAt}]}` → `{accepted, rejected:[번호(0부터)]}`. 1~100개(벗어나면 400, 하나도 저장 안 함). 잘못된 기록(모르는 이름 8종 밖, clientEventId 없음·uuid 아님, props가 객체 아님·DB 기준 2KB 넘음·NUL·짝 없는 서로게이트·Infinity, 시각이 2020년 전·지금+5분 뒤·모양 틀림)은 그것만 빼고 저장. props 없으면 `{}`. 중복((install_id, client_event_id))은 무시하고 accepted로 셈(다시 보내도 성공). **로그인 + 지금 버전 동의가 다 있을 때만 user_id를 붙임**(동의 전 기록은 사용자와 잇지 않음). 틀린 토큰은 익명으로 넘기지 않고 401. props 2KB는 DB가 세는 방식(jsonb 글자)이 정답이라 한 쿼리 안에서 DB가 거르고 넣음(`jsonb_array_elements` + 데이터 바꾸는 WITH).
+- **사용 기록 제한:** 설치 id+IP 짝 분당 10묶음(설계 표 그대로) + **IP만 분당 30묶음**(리뷰 QA-4) + 기존 로그인 사용자 쓰기 30·로그인 없는 IP 60.
+- **카탈로그 정한 것:** 파일은 비공개 버킷 `catalog`에만, 서버가 서버 전용 키(sb_secret_로 시작하는 것만 씀, 옛 JWT 모양 키는 거부)로 받아 배포 기록의 크기·sha256이 맞을 때만 줌(다르면 503, 보관 안 함). 맞으면 메모리에 최근 2개("버전|해시" 열쇠). 받기 실패는 30초 기억(바로 503). Storage 전체 마감 30초(`scent.storage.timeout`). 리다이렉트 안 따라감. 파일 이름은 `catalog-<버전>(.keys).json.gz` 모양만.
+- **카탈로그 제한:** IP 시간당 10회 + 설치 id 하루 3회. 버전을 찍어 보는 것(404)도 셈. 우리 쪽 문제(503)면 설치 id 횟수는 돌려줌. 응답 `Cache-Control: private, no-store`, ETag=sha256(304 처리는 안 함: 앱이 `/catalog/latest`로 먼저 비교).
+- **key 목록:** `CATALOG_KEYS_FILE`이 비면(Render 기본) 지금 배포의 key 목록 파일을 Storage에서 받아 keys_sha256 확인 뒤 씀. 10분마다 지금 배포 버전 확인 → 바뀌면 새로 받음. 실패하면 있던 목록 유지, 30초 뒤 다시. **배포 전(catalog_releases가 비어 있는) 지금 실제 서버에 이 코드를 올리면 key 확인이 필요한 저장(조합·찜·시향·취향)은 503** → 카탈로그 배포가 묶음 9 배포보다 먼저여야 함.
+- **배포 도구:** `./gradlew dbCatalogPublish -Pfile=<catalog.json.gz> -PminApp=1.0.0` = 미리 보기(아무것도 안 바꿈). `-Papply=true`일 때만: DB에 같은 버전 없음·크기 확인 → 버킷 없으면 비공개로 만들고 공개면 멈춤 → 두 파일 올리고 다시 받아 sha256 확인 → 공개 주소로 안 받아지는지 확인 → catalog_releases 줄 넣고 지금 버전으로(한 트랜잭션). key 목록 파일은 정렬해서 매번 같은 바이트.
+  - 미리 보기 결과(2026-11-08, `pipeline/data/out/catalog.json.gz`): 버전 2026.11.05, 엔진 8, 전체 2,341,384바이트 sha256 `dac221e6…`, key 목록 118,077바이트 sha256 `266fe10b…`. **실제 실행은 사장 OK 뒤.**
+  - 참고: 앱에 들어 있는 `app/assets/catalog/catalog.json.gz`는 아직 옛 버전(2026.10.31, 엔진 6) — 단계 5 화면 작업 때 바꿔 넣을 것.
+- **키 확인(2026-11-08):** 이 컴퓨터 `backend/.env`의 `SUPABASE_SECRET_KEY`는 비어 있음(길이 0, 파일 수정 11-07) → 사장에게 다시 넣어 달라고 함. 기본 Secret key는 코드·설정·워크플로·커밋 기록 어디에도 없음(GitHub 저장소 비밀값은 SUPABASE_URL·SUPABASE_PUBLISHABLE_KEY 둘뿐).
+- **테스트:** 가짜 Storage(`FakeStorage`, 이 컴퓨터 안 HTTP 서버)와 테스트용 가짜 키. 키가 응답·헤더·로그(OutputCapture)에 안 나오는지 Storage 401·403·500·연결 끊김·해시 다름·키를 되돌려 적는 본문으로 확인. 배포 도구 안전장치(공개 버킷·공개 주소 받아짐·불확실한 답이면 멈춤)도 가짜 Storage로.

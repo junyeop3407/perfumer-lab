@@ -78,6 +78,9 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/health", "/api/v1/health/live").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/_debug/mem", "/api/v1/_debug/ip").permitAll() // 컨트롤러가 토큰 확인
+                        // 로그인 없이도 부름(설치 id로). 토큰을 보내면 확인하고, 틀린 토큰은 401(익명으로 넘기지 않음)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/catalog/latest", "/api/v1/catalog/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/events").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(rs -> rs
                         .bearerTokenResolver(resolver())

@@ -56,6 +56,10 @@ scent:
     terms: draft-1
     privacy: draft-1
     age-14: draft-1
-  # 카탈로그 key 목록 파일(노트·계열·향수 key). 묶음 6에서 비공개 Storage로 바뀐다. 비면 key 확인이 필요한 저장은 503
+  # 카탈로그 key 목록 파일(노트·계열·향수 key). 비우면(기본) 비공개 Storage에서 지금 배포의 key 목록을 받는다. 파일은 테스트·내 컴퓨터용
   catalog:
     keys-file: ${CATALOG_KEYS_FILE:}
+  # 비공개 Storage(버킷 catalog). 서버 전용 Secret key(render-server, sb_secret_…)는 환경 변수로만. 여기 쓰지 않는다
+  storage:
+    url: ${SUPABASE_URL:}
+    secret-key: ${SUPABASE_SECRET_KEY:}

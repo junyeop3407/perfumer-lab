@@ -4,6 +4,8 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import io.github.bucket4j.TimeMeter;
+import com.perfumerlab.scentstudio.web.ApiError;
+import com.perfumerlab.scentstudio.web.ApiException;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -26,7 +28,11 @@ public class RateLimiter {
         DELETE_ACCOUNT(3, Duration.ofHours(1)),    // 계정 삭제
         READ(120, Duration.ofMinutes(1)),          // 읽기
         ANON_IP(60, Duration.ofMinutes(1)),        // 로그인 없이 (IP)
-        AUTH_FAIL(20, Duration.ofMinutes(1));      // 토큰 확인 실패 (IP), 다 쓰면 5분 막음
+        AUTH_FAIL(20, Duration.ofMinutes(1)),      // 토큰 확인 실패 (IP), 다 쓰면 5분 막음
+        EVENTS(10, Duration.ofMinutes(1)),         // 사용 기록 묶음 (install_id + IP 짝)
+        EVENTS_IP(30, Duration.ofMinutes(1)),      // 사용 기록 묶음 (IP만) — 설치 id를 바꿔 가며 보내도(리뷰 묶음 6 QA-4)
+        CATALOG_INSTALL(3, Duration.ofDays(1)),    // 카탈로그 파일 (install_id)
+        CATALOG_IP(10, Duration.ofHours(1));       // 카탈로그 파일 (IP) — install_id는 앱이 지어내는 값이라 실제 방어는 이쪽
 
         final int count;
         final Duration window;
@@ -92,6 +98,17 @@ public class RateLimiter {
     public Result tryConsume(Limit limit, String id) {
         ConsumptionProbe p = bucket(limit, id).tryConsumeAndReturnRemaining(1);
         return p.isConsumed() ? new Result(0) : new Result(seconds(p.getNanosToWaitForRefill()));
+    }
+
+    /** 한도 안이면 그대로, 넘으면 429(Retry-After) 예외 */
+    public void require(Limit limit, String id) {
+        Result r = tryConsume(limit, id);
+        if (!r.allowed()) throw new ApiException(ApiError.RATE_LIMITED, r.retryAfterSeconds());
+    }
+
+    /** 우리 쪽 문제로 실패한 요청은 한 번 돌려준다(예: 카탈로그 503이면 설치 id 하루 3회에서 빼 줌, 리뷰 묶음 6 QA-5) */
+    public void refund(Limit limit, String id) {
+        bucket(limit, id).addTokens(1);
     }
 
     /** 토큰 확인 실패 1번 기록. 1분에 20번째 실패면 그 IP를 5분 막는다. */
