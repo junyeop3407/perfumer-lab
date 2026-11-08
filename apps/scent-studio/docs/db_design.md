@@ -153,7 +153,7 @@ erDiagram
 - 합치기는 앱이 계산해 `PUT /me/preferences`로 보내는 방식이 아니라 **서버가 합친다**(`POST /me/preferences/merge`, 단계 4). 여러 기기에서 동시에 로그인해도 서버가 한 번에 처리한다.
 
 ## 6. 향수를 이름이 아니라 key로 가리키나 — 예
-- **향수 key** = Parfumo 상품 주소의 `/Perfumes/` 뒤 부분 (예: `Le_Re_Noir:455-tabac-ecarlate`, `pipeline/catalog_rules.py` `perfume_key`). 이름·브랜드 표기를 고쳐도 바뀌지 않는다. 표시용 이름은 저장하지 않는다.
+- **향수 key** = Parfumo 상품 주소의 `/Perfumes/` 뒤 부분 (예: `Fake_Maison:123-sample-scent`, `pipeline/catalog_rules.py` `perfume_key`). 이름·브랜드 표기를 고쳐도 바뀌지 않는다. 표시용 이름은 저장하지 않는다.
 - **노트 key** = 정리된 영문 이름 (예: `sandalwood`).
 - **강도는 이름(weak/medium/strong)으로** 저장한다. 엔진 숫자는 1.5 → 2.0 → 3.0으로 바뀐 적이 있다.
 - 카탈로그가 DB에 없으니 서버가 저장할 때 지금 카탈로그에 있는 key인지 확인하고(단계 4), 나중 카탈로그에서 빠진 향수는 보관함에 "목록에서 빠진 향수"로 남겨 보여 준다.

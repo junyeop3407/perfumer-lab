@@ -42,11 +42,11 @@ class FeedbackApiTest extends MeApiTestBase {
         TestAuth.User u = consentedUser();
         assertEquals("{\"feedback\":[]}", getAs(u, PATH).body());
         String testedAt = Instant.now().minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS).toString();
-        HttpResponse<String> r = postAs(u, PATH, fb("Le_Re_Noir:455-tabac-ecarlate",
+        HttpResponse<String> r = postAs(u, PATH, fb("Fake_Maison:123-sample-scent",
                 ",\"memo\":\"첫 줄\\n둘째 줄\",\"testedAt\":\"" + testedAt + "\",\"rank\":2,\"score\":0.81"));
         assertEquals(201, r.statusCode(), r.body());
         String id = BlendsApiTest.idOf(r);
-        assertTrue(r.body().contains("\"perfumeKey\":\"Le_Re_Noir:455-tabac-ecarlate\",\"blendId\":null,\"satisfaction\":4,\"similarity\":3"
+        assertTrue(r.body().contains("\"perfumeKey\":\"Fake_Maison:123-sample-scent\",\"blendId\":null,\"satisfaction\":4,\"similarity\":3"
                 + ",\"memo\":\"첫 줄\\n둘째 줄\",\"testedAt\":\"" + testedAt + "\",\"rank\":2,\"score\":0.81,\"engineVersion\":8,\"catalogVersion\":\"2026.11.05\""), r.body());
         assertEquals("{\"feedback\":[" + r.body() + "]}", getAs(u, PATH).body());
         assertTrue(r.body().contains("\"id\":\"" + id + "\""));

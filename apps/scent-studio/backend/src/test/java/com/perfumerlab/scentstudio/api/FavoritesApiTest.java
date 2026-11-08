@@ -36,10 +36,10 @@ class FavoritesApiTest extends MeApiTestBase {
     void favoriteThenList() throws Exception {
         TestAuth.User u = consentedUser();
         assertEquals("{\"favorites\":[]}", getAs(u, PATH).body());
-        HttpResponse<String> r = putAs(u, PATH + "/Le_Re_Noir:455-tabac-ecarlate", null);
+        HttpResponse<String> r = putAs(u, PATH + "/Fake_Maison:123-sample-scent", null);
         assertEquals(204, r.statusCode(), r.body());
         String list = getAs(u, PATH).body();
-        assertTrue(list.startsWith("{\"favorites\":[{\"perfumeKey\":\"Le_Re_Noir:455-tabac-ecarlate\",\"createdAt\":\""), list);
+        assertTrue(list.startsWith("{\"favorites\":[{\"perfumeKey\":\"Fake_Maison:123-sample-scent\",\"createdAt\":\""), list);
     }
 
     @Test

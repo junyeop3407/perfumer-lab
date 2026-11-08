@@ -97,7 +97,7 @@ def test_어코드_순위_비중():
 
 
 def test_향수_key는_주소에서_만들고_슬래시가_없다():
-    assert R.perfume_key("https://www.parfumo.com/Perfumes/Le_Re_Noir/455-tabac-ecarlate") == "Le_Re_Noir:455-tabac-ecarlate"
+    assert R.perfume_key("https://www.parfumo.com/Perfumes/Fake_Maison/123-sample-scent") == "Fake_Maison:123-sample-scent"
     assert R.perfume_key("https://example.invalid/T001") == "T001"
 
 

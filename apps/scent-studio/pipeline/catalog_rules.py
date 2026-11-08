@@ -97,7 +97,7 @@ def note_key(name: str) -> str:
 
 def perfume_key(url: str) -> str:
     """향수 key: 상품 페이지 주소에서 "/Perfumes/" 뒤 부분 (바뀌지 않고 겹치지 않음).
-    예: https://www.parfumo.com/Perfumes/Le_Re_Noir/455-tabac-ecarlate → Le_Re_Noir:455-tabac-ecarlate
+    예: https://www.parfumo.com/Perfumes/Fake_Maison/123-sample-scent → Fake_Maison:123-sample-scent
     가짜 데이터(https://example.invalid/T001)는 마지막 부분(T001)."""
     path = url.strip().rstrip("/")
     marker = "/Perfumes/"
