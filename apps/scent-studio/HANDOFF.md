@@ -6,7 +6,7 @@
 리뷰 기준: 1b5cde8 (묶음 6 시작 직전)
 결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 491/491 통과 (2026-11-08 확인, `bash tests/run.sh`, 묶음 6 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → ① 사장 할 일 확인(아래 "★ 다음 세션 시작") → ② `docs/launch_checklist.md` 프롬프트 A(2026-11-08 사장 결정을 spec·requirements에 반영) → ③ 실제 카탈로그 배포(사장 OK 받음) → 진짜 Storage로 받아 오는지 확인 → ④ 묶음 7(오류 신고, V3는 실제 DB 적용 전에 멈춤). Render 배포는 카탈로그 배포·확인 뒤(반대로 하면 저장 API 503). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것"
+다음 할 일: git pull → ① 사장 할 일 확인(아래 "★ 다음 세션 시작") → ② `docs/launch_checklist.md` 프롬프트 A(2026-11-08 사장 결정을 spec·requirements에 반영) → ③ 실제 카탈로그 배포(사장 OK 받음) → 진짜 Storage로 받아 오는지 확인 → ④ 묶음 7(오류 신고, V3는 실제 DB 적용 전에 멈춤). Render 배포는 카탈로그 배포·확인 뒤(반대로 하면 저장 API 503). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
 
 ## ★ 다음 세션 시작 (2026-11-08 세션 끝)
 1. **다음 할 일(순서대로):** git pull → 사장 할 일 3개 확인(아래) → `docs/launch_checklist.md` 프롬프트 A → 실제 카탈로그 배포(사장 OK 받음: `cd backend && ./gradlew dbCatalogPublish -Pfile=../pipeline/data/out/catalog.json.gz -PminApp=1.0.0 -Papply=true` → `bash scripts/api_check.sh`) → 진짜 Storage로 받아 오는지 확인 → 묶음 7(V3는 실제 DB 적용 전에 멈춤).
