@@ -19,7 +19,7 @@
    - [x] Render `SUPABASE_URL` 추가, 환경 변수 목록 확인(필수 5개: DB_URL·DB_SERVER_USER·DB_SERVER_PASSWORD·SUPABASE_URL·SUPABASE_SECRET_KEY, 측정용·CATALOG_KEYS_FILE·OPENAPI_ENABLED 없음)
    - [x] Render 배포(892a79f, 2026-11-09): health·카탈로그 200, 토큰 없이 401, 테스트 계정 찜 저장 204(되돌림). 테스트 계정에 동의 draft-1 기록함(묶음 9 계정 삭제 때 같이 지워짐)
    - [x] Windows `.env`에 테스트 계정(두 줄 앞 띄어쓰기는 지워도 됨)
-   - [ ] 배포 뒤 Render 메모리가 420MB 기준 안인지 대시보드 Metrics로 확인
+   - [ ] 배포 뒤 메모리(420MB 기준)는 **묶음 9 재측정 때** 확인(Render 무료는 Metrics 메모리 그래프가 유료 전용이라 못 봄 — DEBUG_TOKEN 측정 주소 + 10분 부하, plan_stage4 남은 것 14)
 3. **2026-11-08 사장 결정** (2026-11-09 프롬프트 A로 spec·requirements·tests·design·plan에 반영, app.json 세로 고정):
    - 1차에 기능 7개 추가: 카카오 로그인, 로그아웃, 약관·개인정보·만 14세 동의 화면, 데이터 출처·라이선스 화면, "추천이 이상해요" 신고 버튼, 첫 실행 안내, 앱 정보. **카카오 로그인·동의 화면은 묶음 8 전에 계획에 넣기.**
    - Play는 바로 공개하지 않고 **비공개 테스트(12명 이상, 14일)**를 거쳐 공개. 이 기간을 주변인 테스트·수정 기간으로 씀. 예전 "초대제 없이 공개(2026-11-06)"를 대체.
