@@ -1,21 +1,24 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 완료(f51a886, 84df7b4). **묶음 7 시작 전 멈춤**, 실제 카탈로그 배포·Render 배포는 아직. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 완료(f51a886, 84df7b4). 2026-11-09 프롬프트 A 반영(03c6176), **실제 카탈로그 2026.11.05 배포·진짜 Storage 확인 완료. Render 배포 전 멈춤**(Render에 `SUPABASE_URL` 먼저), 묶음 7은 그 뒤. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 1b5cde8 (묶음 6 시작 직전)
-결과: 파이프라인 119/121(건너뜀 2) · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 491/491 통과 (2026-11-08 확인, `bash tests/run.sh`, 묶음 6 리뷰 반영 후). **승인 목록 1/41** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 491/491 통과 (2026-11-09 확인, `bash tests/run.sh` + `./gradlew test --rerun-tasks`). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → ① 사장 할 일 확인(아래 "★ 다음 세션 시작") → ② `docs/launch_checklist.md` 프롬프트 A(2026-11-08 사장 결정을 spec·requirements에 반영) → ③ 실제 카탈로그 배포(사장 OK 받음) → 진짜 Storage로 받아 오는지 확인 → ④ 묶음 7(오류 신고, V3는 실제 DB 적용 전에 멈춤). Render 배포는 카탈로그 배포·확인 뒤(반대로 하면 저장 API 503). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
+다음 할 일: git pull → ① 사장이 Render에 `SUPABASE_URL` 넣기 → ② 사장 OK 뒤 Render에 묶음 6 코드 배포(Manual Deploy) → 배포된 서버로 `/catalog/latest` 확인 → ③ 묶음 7(오류 신고, V3는 실제 DB 적용 전에 멈춤). 카카오 로그인 서버 쪽은 묶음 8 전 계획(`plan_stage4.md` 남은 것 10). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
 
-## ★ 다음 세션 시작 (2026-11-08 세션 끝)
-1. **다음 할 일(순서대로):** git pull → 사장 할 일 3개 확인(아래) → `docs/launch_checklist.md` 프롬프트 A → 실제 카탈로그 배포(사장 OK 받음: `cd backend && ./gradlew dbCatalogPublish -Pfile=../pipeline/data/out/catalog.json.gz -PminApp=1.0.0 -Papply=true` → `bash scripts/api_check.sh`) → 진짜 Storage로 받아 오는지 확인 → 묶음 7(V3는 실제 DB 적용 전에 멈춤).
-   - **배포 순서:** 카탈로그 배포 → 진짜 Storage로 받아 오는지 확인 → Render 배포. 반대로 하면 key 목록이 없어 조합·찜·시향·취향 저장이 503.
-   - 브랜치 `wip/scent-studio-stage4`, 마지막 작업 커밋 84df7b4. 테스트 파이프라인 119(건너뜀 2) / Vitest 37 / 서버·DB 491 통과.
-2. **사장 할 일 (다음 세션 전):**
-   - [ ] `render-server` 키를 `backend/.env`(Windows·Mac)와 Render 환경 변수에 넣기. **2026-11-08 확인: Windows `.env`는 비어 있음.** (키 값은 대화창에 붙여 넣지 않기)
-   - [ ] Render에 예전 default 키가 없는지 보고 Supabase에서 Roll(코드·설정·워크플로·커밋 기록에는 없음, 2026-11-08 확인)
-   - [ ] `docs/launch_checklist.md`를 저장소에 넣기(2026-11-08 기준 아직 없음)
+## ★ 다음 세션 시작 (2026-11-09 — 카탈로그 배포 끝, Render 배포 전 멈춤)
+1. **2026-11-09 한 일:** launch_checklist 커밋(bfaa388), 프롬프트 A(03c6176: 기능 7개·Play 비공개 테스트·세로 고정, 승인 목록 J1~J8·K1~K7 + G2 보강 = 56개, 사장 승인), **실제 카탈로그 2026.11.05(엔진 8) 배포**: 비공개 버킷 catalog, 두 파일 sha256 확인, catalog_releases, 공개 주소 400, `api_check.sh` 기대대로. 이 컴퓨터에서 서버를 띄워 진짜 Storage로 `/catalog/latest`·`/catalog/2026.11.05` 200(해시 같음), 로그에 키 없음. key 목록 파일은 서버 키로 직접 받아 해시 같음.
+   - 못 한 것: key 목록을 쓰는 로그인 API(찜·취향)는 **이 컴퓨터 `.env`에 `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`가 없어** 못 불러 봄 → Render 배포 뒤 또는 Mac에서 확인.
+   - **배포 순서:** 카탈로그 배포 ✅ → 진짜 Storage 확인 ✅ → Render에 `SUPABASE_URL` → Render 배포(사장 OK).
+2. **사장 할 일:**
+   - [x] `render-server` 키를 `backend/.env`와 Render에 (2026-11-09 Windows `.env` 확인: 있음, `sb_secret_`로 시작). Mac `.env`는 확인 안 함
+   - [x] Render에 예전 default 키 없음 확인 → Roll (사장, 2026-11-09)
+   - [x] `docs/launch_checklist.md` 넣기 (bfaa388)
+   - [ ] **Render 환경 변수에 `SUPABASE_URL`(`https://<참조값>.supabase.co`, 비밀값 아님) 추가** — 없으면 서버가 Storage·로그인 키를 못 불러 카탈로그·저장 503, 로그인 401
+   - [ ] Render 배포 OK
+   - [ ] (선택) Windows `.env`에 `TEST_USER_EMAIL`·`TEST_USER_PASSWORD` 넣기(Mac과 같은 값)
 3. **2026-11-08 사장 결정** (2026-11-09 프롬프트 A로 spec·requirements·tests·design·plan에 반영, app.json 세로 고정):
    - 1차에 기능 7개 추가: 카카오 로그인, 로그아웃, 약관·개인정보·만 14세 동의 화면, 데이터 출처·라이선스 화면, "추천이 이상해요" 신고 버튼, 첫 실행 안내, 앱 정보. **카카오 로그인·동의 화면은 묶음 8 전에 계획에 넣기.**
    - Play는 바로 공개하지 않고 **비공개 테스트(12명 이상, 14일)**를 거쳐 공개. 이 기간을 주변인 테스트·수정 기간으로 씀. 예전 "초대제 없이 공개(2026-11-06)"를 대체.
