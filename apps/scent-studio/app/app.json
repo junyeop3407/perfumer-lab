@@ -3,7 +3,7 @@
     "name": "Perfumer-LAB(향수 공방소)",
     "slug": "perfumer-lab",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "perfumerlab",
     "userInterfaceStyle": "automatic",
