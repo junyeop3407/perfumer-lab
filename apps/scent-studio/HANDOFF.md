@@ -1,25 +1,29 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 완료(f51a886, 84df7b4). 2026-11-09 프롬프트 A 반영(03c6176), 실제 카탈로그 2026.11.05 배포·진짜 Storage 확인, **Render에 묶음 6 코드 배포 완료(892a79f)**. **묶음 7(오류 신고) 코드·리뷰 완료, V3 실제 DB 적용 전 멈춤**(사장 OK 대기). 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~7 코드 완료. 묶음 7 오류 신고(4afa8f1, 74276bb) **V3는 실제 DB에 아직 적용 안 함** — 2026-11-09 사장 결정으로 신고에 조합 칸을 더한 뒤 적용. Render는 묶음 6 코드(892a79f)로 Live. 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 8e8c7c5 (묶음 7 시작 직전)
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 560/560 통과 (2026-11-09 확인, `bash tests/run.sh`, 묶음 7 리뷰 반영 후). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → 사장 OK 뒤 V3 실제 DB 적용(`cd backend && ./gradlew dbMigrate` → `./gradlew dbCheck` → `bash scripts/api_check.sh`) → Render에 묶음 7 코드 배포(V3 적용 뒤에만, 반대면 신고 500) → 묶음 8(오류 신고, V3는 실제 DB 적용 전에 멈춤). 카카오 로그인 서버 쪽은 묶음 8 전 계획(`plan_stage4.md` 남은 것 10). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
+다음 할 일: git pull → ① V3에 신고 당시 조합 칸 추가(테스트 먼저, 조합 저장과 같은 검사) → 테스트·리뷰 → ② V3 실제 적용(`cd backend && ./gradlew dbMigrate` → `./gradlew dbCheck` → `bash scripts/api_check.sh`, 사장 OK 받음) → ③ 사장에게 Render 배포 요청하고 멈춤(V3 적용 뒤에만, 반대면 신고 500) → 배포 뒤 신고 API 확인 → ④ 묶음 8(계정 삭제), 카카오 로그인은 `plan_stage4.md` 남은 것 10대로. 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` "남은 것", 배포 전 점검·추가 기능은 `docs/launch_checklist.md`. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 교체
 
-## ★ 다음 세션 시작 (2026-11-09 — 카탈로그 배포 끝, Render 배포 전 멈춤)
-1. **2026-11-09 한 일:** launch_checklist 커밋(bfaa388), 프롬프트 A(03c6176: 기능 7개·Play 비공개 테스트·세로 고정, 승인 목록 J1~J8·K1~K7 + G2 보강 = 56개, 사장 승인), **실제 카탈로그 2026.11.05(엔진 8) 배포**: 비공개 버킷 catalog, 두 파일 sha256 확인, catalog_releases, 공개 주소 400, `api_check.sh` 기대대로. 이 컴퓨터에서 서버를 띄워 진짜 Storage로 `/catalog/latest`·`/catalog/2026.11.05` 200(해시 같음), 로그에 키 없음. key 목록 파일은 서버 키로 직접 받아 해시 같음.
-   - 못 한 것: key 목록을 쓰는 로그인 API(찜·취향)는 **이 컴퓨터 `.env`에 `TEST_USER_EMAIL`·`TEST_USER_PASSWORD`가 없어** 못 불러 봄 → Render 배포 뒤 또는 Mac에서 확인.
-   - **배포 순서:** 카탈로그 배포 ✅ → 진짜 Storage 확인 ✅ → Render에 `SUPABASE_URL` → Render 배포(사장 OK).
-2. **사장 할 일:**
-   - [x] `render-server` 키를 `backend/.env`와 Render에 (2026-11-09 Windows `.env` 확인: 있음, `sb_secret_`로 시작). Mac `.env`는 확인 안 함
-   - [x] Render에 예전 default 키 없음 확인 → Roll (사장, 2026-11-09)
-   - [x] `docs/launch_checklist.md` 넣기 (bfaa388)
-   - [x] Render `SUPABASE_URL` 추가, 환경 변수 목록 확인(필수 5개: DB_URL·DB_SERVER_USER·DB_SERVER_PASSWORD·SUPABASE_URL·SUPABASE_SECRET_KEY, 측정용·CATALOG_KEYS_FILE·OPENAPI_ENABLED 없음)
-   - [x] Render 배포(892a79f, 2026-11-09): health·카탈로그 200, 토큰 없이 401, 테스트 계정 찜 저장 204(되돌림). 테스트 계정에 동의 draft-1 기록함(묶음 9 계정 삭제 때 같이 지워짐)
-   - [x] Windows `.env`에 테스트 계정(두 줄 앞 띄어쓰기는 지워도 됨)
-   - [ ] 배포 뒤 메모리(420MB 기준)는 **묶음 9 재측정 때** 확인(Render 무료는 Metrics 메모리 그래프가 유료 전용이라 못 봄 — DEBUG_TOKEN 측정 주소 + 10분 부하, plan_stage4 남은 것 14)
+## ★ 다음 세션 시작 (2026-11-09 세션 끝 — 묶음 7 코드 완료, V3 적용 전 멈춤)
+1. **멈춘 곳:** 묶음 7 코드·리뷰·보안 수정 완료(4afa8f1, 74276bb). V3 `app.error_reports`는 실제 DB에 **아직 적용 안 함**. 테스트 파이프라인 121 / Vitest 37 / 서버·DB 560 통과.
+   - Render는 묶음 6 코드(892a79f)로 Live. 배포 뒤 확인(health·카탈로그 200, 토큰 없이 401, 테스트 계정 찜 204) 통과. 74276bb(요청 제한 수정)는 아직 Render에 없음 → 묶음 7 배포 때 같이.
+   - 2026-11-09 한 일: launch_checklist 커밋(bfaa388), 프롬프트 A(03c6176, 승인 목록 56개), 실제 카탈로그 2026.11.05 배포·진짜 Storage 확인(0066b96), Render 배포(892a79f, Gradle 받기 시간 초과로 두 번 실패 → 래퍼 60초·재시도 3번), 묶음 7(4afa8f1), 인코딩 주소로 한도 피하기 수정(74276bb).
+2. **다음 할 일(순서대로):**
+   1. V3에 **신고 당시 조합(노트·강도)** 칸 추가 — 테스트 먼저. 없어도 되는 칸(검색으로 연 상세에서 신고할 때). 검사는 조합 저장(blends.notes)과 같은 규칙. → 테스트·리뷰(QA + Gemini)
+   2. V3 실제 적용: `cd backend && ./gradlew dbMigrate` → `./gradlew dbCheck` → `bash scripts/api_check.sh` (사장 OK 받음: 조합 칸 반영 + 테스트·리뷰 통과 뒤)
+   3. 사장에게 Render 배포 요청하고 멈춤(사장이 Manual Deploy → Deploy latest commit) → 배포 뒤 신고 API 확인(테스트 계정, `204`)
+   4. 묶음 8(계정 삭제). 카카오 로그인(이메일 없는 `/me`, 구글·카카오 계정 따로)은 `plan_stage4.md` 남은 것 10 계획대로
+3. **2026-11-09 사장 결정:**
+   - 신고(error_reports)에 신고 당시 조합(노트·강도)도 담는다. 없어도 되는 칸, 검사는 조합 저장과 같은 규칙. V3 적용 전에 반영.
+   - V3 실제 DB 적용 OK(조합 칸 반영 + 테스트·리뷰 통과 뒤).
+   - 메모리: Render 무료는 Metrics 메모리 그래프가 유료 전용 → 묶음 9 재측정(DEBUG_TOKEN 측정 주소, 10분 부하, 420MB 기준) 때 확인.
+   - Render 배포는 사장이 직접 버튼을 누른다(Manual Deploy → Deploy latest commit). 이 컴퓨터에는 Render API 키·배포 주소가 없다.
+   - 승인 목록 J1~J8·K1~K7 승인 + G2 보강(계정 삭제 뒤 기기 설정도 지움), 로그아웃은 기기 데이터 남김(J7).
+   - 사장 확인 완료: render-server 키(.env·Render), 옛 default 키 Roll, Render `SUPABASE_URL`, Render 환경 변수 목록(필수 5개), Windows `.env` 테스트 계정. 테스트 계정에 동의 draft-1 기록함(묶음 9 계정 삭제 때 같이 지워짐).
 3. **2026-11-08 사장 결정** (2026-11-09 프롬프트 A로 spec·requirements·tests·design·plan에 반영, app.json 세로 고정):
    - 1차에 기능 7개 추가: 카카오 로그인, 로그아웃, 약관·개인정보·만 14세 동의 화면, 데이터 출처·라이선스 화면, "추천이 이상해요" 신고 버튼, 첫 실행 안내, 앱 정보. **카카오 로그인·동의 화면은 묶음 8 전에 계획에 넣기.**
    - Play는 바로 공개하지 않고 **비공개 테스트(12명 이상, 14일)**를 거쳐 공개. 이 기간을 주변인 테스트·수정 기간으로 씀. 예전 "초대제 없이 공개(2026-11-06)"를 대체.
