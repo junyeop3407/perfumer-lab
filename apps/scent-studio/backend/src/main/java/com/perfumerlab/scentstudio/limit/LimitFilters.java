@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -63,6 +64,7 @@ public final class LimitFilters {
     }
 
     public static final class LimitFilter extends OncePerRequestFilter {
+        private static final UrlPathHelper PATHS = new UrlPathHelper(); // 기본: 디코딩 + ;뒤 글자 제거
         private final RateLimiter limiter;
 
         public LimitFilter(RateLimiter limiter) {
@@ -71,7 +73,8 @@ public final class LimitFilters {
 
         @Override
         protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
-            String path = req.getRequestURI();
+            // 분류는 서버가 실제로 고르는 주소 기준으로(%65 같은 인코딩·;뒤 글자를 풀어서). 날 주소로 비교하면 인코딩으로 한도를 피함(보안 검사·남은 것 3)
+            String path = PATHS.getPathWithinApplication(req);
             if (!LIVE.equals(path)) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 RateLimiter.Result r = auth instanceof JwtAuthenticationToken

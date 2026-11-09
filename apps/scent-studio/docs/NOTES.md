@@ -391,4 +391,5 @@
 - 메모 글자 수·NUL·짝 없는 서로게이트 검사는 `Library.length`를 같이 쓰려고 `Library.key/length`를 public으로(동작은 그대로).
 - 1인당 전체 개수 한도는 두지 않음: 서버가 신고를 읽을 권한이 없어 셀 수 없고, 시간당 20회로 하루 최대 480. 늘어나면 다시 본다.
 - 조합(노트) 모양은 담지 않음: "추천이 이상해요" 분석에는 조합이 있으면 좋지만 노트 검사 코드가 늘어남 → 사장 확인 질문(V3 적용 전).
-- 테스트: DbV3Test 30, ReportsApiTest 34, ReportsKeysMissingTest 1, Bundle7ReviewFixesTest 2(서버·DB 491 → 558). 변조 4/4(연쇄 삭제 빼기, 서버 읽기 권한, 동의 확인 빼기, 노트 key 확인 빼기) 잡힘.
+- **커밋 뒤 보안 검사 반영:** 요청 제한이 날 주소로 분류해 `/api/v1/r%65ports`(인코딩)로 신고 한도(시간당 20)를 피함 → `UrlPathHelper`로 푼 주소로 분류(합치기도 같은 구멍이었음). 회귀 테스트 먼저 실패 확인.
+- 테스트: DbV3Test 30, ReportsApiTest 34, ReportsKeysMissingTest 1, Bundle7ReviewFixesTest 4(서버·DB 491 → 560). 변조 4/4(연쇄 삭제 빼기, 서버 읽기 권한, 동의 확인 빼기, 노트 key 확인 빼기) 잡힘.

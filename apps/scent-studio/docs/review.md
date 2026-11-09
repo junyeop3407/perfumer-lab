@@ -143,6 +143,7 @@
 | QA-7 | QA | 낮음 | RLS 규칙이 `with check (true)`라 보안에 기여 작음 | 맞음 | **반영**: V3 주석에 "실제 방어선은 칸 단위 넣기 권한, RLS는 안전장치" |
 | QA-8a | QA | 낮음 | 21번째 신고가 저장되지 않는지 테스트 없음 | 맞음 | **반영**: `Bundle7ReviewFixesTest.reportOverTheHourlyLimitIsNotStored`(처음부터 통과, 버그 아님) |
 | QA-8d | QA | 낮음 | 순위·점수 경계값 성공 테스트 없음 | 맞음 | **반영**: `Bundle7ReviewFixesTest.rankAndScoreBoundariesAreAccepted`(처음부터 통과) |
+| SEC-1 | 커밋 뒤 자동 보안 검사 | 중간 | 요청 제한이 날 주소(`getRequestURI`)로 분류 → `/api/v1/r%65ports`로 보내면 신고 API로 가면서 한도는 분당 30회(WRITE) | 맞음(재현: 21번째 204, 합치기 6번째 200) | **반영**: 회귀 테스트 2개 먼저 실패 확인 → `LimitFilters`가 `UrlPathHelper`로 푼 주소(디코딩·;뒤 제거)로 분류 → 통과. 남은 것 3(묶음 3 QA-6) 처리 |
 
 # 리뷰 기록 — 단계 4 묶음 6 (사용 기록·카탈로그, 2026-11-08)
 - 대상: 기준 `1b5cde8` 이후 커밋 전 변경분 — `events/EventsController`, `catalog/`(CatalogStore 새로, CatalogController 새로, CatalogKeys Storage에서 읽기), `web/`(InstallId, ApiException 기다릴 시간, SecurityConfig 로그인 없이 부르는 주소), `limit/RateLimiter`(새 한도), application.yml, 배포 도구 `ops/CatalogPublish` + `./gradlew dbCatalogPublish`, `scripts/api_check.sh`. 테스트 EventsApiTest 23 · CatalogApiTest 15 · CatalogPublishTest 6 · Bundle6ReviewFixesTest 8, 가짜 Storage(`FakeStorage`).
