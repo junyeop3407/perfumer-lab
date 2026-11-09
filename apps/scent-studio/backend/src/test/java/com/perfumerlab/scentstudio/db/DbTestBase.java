@@ -32,7 +32,8 @@ abstract class DbTestBase {
      */
     static final java.util.List<String> APP_TABLES = java.util.List.of(
             "user_preferences", "blends", "favorites", "tasting_feedback", "events", "consents", // V1
-            "catalog_releases");                                                              // V2
+            "catalog_releases",                                                               // V2
+            "error_reports");                                                                 // V3
 
     EmbeddedPostgres pg;
     DataSource ds;

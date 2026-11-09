@@ -126,6 +126,24 @@
 | QA-9 | QA | 낮음 | 테스트 구멍(조합 지우면 시향 기록 blend_id만 비는지 등) | (a) 이미 있음(`linkOwnBlend`). (b)(c)(d)(e) 영향 작음 | 반영 안 함 |
 | G-1~5 | Gemini | 높음 2·중간 1·낮음 2 | `review_result.md` "Claude 판단" | 높음 2개는 틀림(Jackson 3), 나머지는 영향 작음·묶음 8 | 반영 0 |
 
+# 리뷰 기록 — 단계 4 묶음 7 (오류 신고 V3, 2026-11-09)
+- 대상: 기준 `8e8c7c5` 이후 커밋 전 변경분 — `V3__error_reports.sql`, `reports/ReportsController.java`, `Library.key/length` 공개, 테스트 `DbV3Test`·`ReportsApiTest`·`ReportsKeysMissingTest`, `DbTestBase.APP_TABLES`, `api_check.sh`, `DbOps` 점검 출력.
+- 테스트 먼저: ReportsApiTest 31개 중 29개 실패 확인(로그인 없음 401 등 2개만 원래 통과) → 구현 → 통과. 구현 중 테스트가 잡은 내 문제: 모르는 칸을 400으로 기대했는데 앱 전체 규칙은 "무시"(앱 버전 호환) → 규칙은 그대로 두고 "보내도 효과 없음"(userId·status·createdAt·id)으로 테스트를 바꿈. 메모 NUL·짝 없는 서로게이트가 DB 500이 될 수 있어 `Library.length`를 같이 씀(테스트 추가).
+- 변조 4/4 잡힘: 연쇄 삭제 빼기, 서버 읽기 권한 주기, 동의 확인 빼기, 노트 key 카탈로그 확인 빼기.
+- ① QA팀 에이전트 9개(높음 0, 중간 3, 낮음 6) ② Gemini **문제 없음**.
+
+| # | 누가 | 심각도 | 지적 | 판단 | 결과 |
+|---|---|---|---|---|---|
+| QA-1 | QA | 중간 | `review_result.md`가 비었다(묶음 6 판단이 사라짐) | 틀림 | 반영 안 함: 이 파일은 교차 리뷰 때마다 덮어쓰는 출력이다(리뷰 중 Gemini가 새로 씀). 묶음 6 판단은 이 문서 "묶음 6" 표와 git 기록(84df7b4)에 있다 |
+| QA-2 | QA | 중간 | `contains()`가 부를 때마다 Storage를 다시 부를 수 있음 | 틀림 | 반영 안 함: `CatalogKeys.refresh()`는 `nextCheck`(10분) 전이면 바로 돌아가고 `tryLock`으로 한 번만 받는다 |
+| QA-3 | QA | 중간 | 실패한 요청(400·403)도 시간당 20회에 셈 | 맞음(의도) | 반영 안 함: 요청 제한은 묶음 3부터 모든 API에서 필터가 먼저 센다(스팸 방지). 화면은 400을 미리 막는다 |
+| QA-4 | QA | 낮음 | 1인당 전체 신고 수 상한 없음 | 맞음 | **미룸**: 서버는 신고를 읽을 권한이 없어 셀 수 없음, 시간당 20회 = 하루 최대 480. NOTES "묶음 7"에 기록, 늘어나면 다시 봄 |
+| QA-5 | QA | 낮음 | 공백뿐인 메모·같은 신고 반복 | 맞음 | 반영 안 함: 시향 기록 메모와 같은 규칙. 같은 신고 두 번은 두 번(테스트로 고정) |
+| QA-6 | QA | 낮음 | 종류와 칸의 관계 검사 없음(not_similar인데 순위 없음 등) | 맞음 | 반영 안 함: 설계에 규칙 없음, 화면 단계에서 정함 |
+| QA-7 | QA | 낮음 | RLS 규칙이 `with check (true)`라 보안에 기여 작음 | 맞음 | **반영**: V3 주석에 "실제 방어선은 칸 단위 넣기 권한, RLS는 안전장치" |
+| QA-8a | QA | 낮음 | 21번째 신고가 저장되지 않는지 테스트 없음 | 맞음 | **반영**: `Bundle7ReviewFixesTest.reportOverTheHourlyLimitIsNotStored`(처음부터 통과, 버그 아님) |
+| QA-8d | QA | 낮음 | 순위·점수 경계값 성공 테스트 없음 | 맞음 | **반영**: `Bundle7ReviewFixesTest.rankAndScoreBoundariesAreAccepted`(처음부터 통과) |
+
 # 리뷰 기록 — 단계 4 묶음 6 (사용 기록·카탈로그, 2026-11-08)
 - 대상: 기준 `1b5cde8` 이후 커밋 전 변경분 — `events/EventsController`, `catalog/`(CatalogStore 새로, CatalogController 새로, CatalogKeys Storage에서 읽기), `web/`(InstallId, ApiException 기다릴 시간, SecurityConfig 로그인 없이 부르는 주소), `limit/RateLimiter`(새 한도), application.yml, 배포 도구 `ops/CatalogPublish` + `./gradlew dbCatalogPublish`, `scripts/api_check.sh`. 테스트 EventsApiTest 23 · CatalogApiTest 15 · CatalogPublishTest 6 · Bundle6ReviewFixesTest 8, 가짜 Storage(`FakeStorage`).
 - 사장 지시 작은 것: 테스트용 실제 향수 key를 가짜 key(`Fake_Maison:123-sample-scent`)로 바꿈(6곳: 테스트 2, 테스트 카탈로그, db_design 예시, 파이프라인 주석·테스트). 예전 커밋 4개에는 남아 있음(기록 고쳐 쓰기 금지).

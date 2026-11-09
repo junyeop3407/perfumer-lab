@@ -377,3 +377,18 @@
   - 참고: 앱에 들어 있는 `app/assets/catalog/catalog.json.gz`는 아직 옛 버전(2026.10.31, 엔진 6) — 단계 5 화면 작업 때 바꿔 넣을 것.
 - **키 확인(2026-11-08):** 이 컴퓨터 `backend/.env`의 `SUPABASE_SECRET_KEY`는 비어 있음(길이 0, 파일 수정 11-07) → 사장에게 다시 넣어 달라고 함. 기본 Secret key는 코드·설정·워크플로·커밋 기록 어디에도 없음(GitHub 저장소 비밀값은 SUPABASE_URL·SUPABASE_PUBLISHABLE_KEY 둘뿐).
 - **테스트:** 가짜 Storage(`FakeStorage`, 이 컴퓨터 안 HTTP 서버)와 테스트용 가짜 키. 키가 응답·헤더·로그(OutputCapture)에 안 나오는지 Storage 401·403·500·연결 끊김·해시 다름·키를 되돌려 적는 본문으로 확인. 배포 도구 안전장치(공개 버킷·공개 주소 받아짐·불확실한 답이면 멈춤)도 가짜 Storage로.
+
+## 2026-11-09 실제 카탈로그 배포·Render 묶음 6 배포
+- `dbCatalogPublish -Papply=true`로 비공개 버킷 catalog에 2026.11.05(엔진 8) 전체·key 목록을 올림(sha256 확인), catalog_releases 지금 버전, 공개 주소 400. 이 컴퓨터에서 서버를 띄워 진짜 Storage로 받기 200(해시 같음), 테스트 계정으로 찜·취향 저장이 실제 key로 됨(되돌림). 서버 로그 "key 목록 2026.11.05(Storage): 노트 3020, 계열 10, 향수 12469".
+- Render: `SUPABASE_URL`이 없으면 Storage·JWKS를 못 불러 503/401 → 사장이 넣은 뒤 배포. 첫 빌드는 Gradle 배포판 받기 Read timed out → 래퍼 `networkTimeout=60000`, `retries=3`(사장 지시). 배포 뒤 같은 확인 통과.
+- 테스트 계정에 동의(draft-1)를 한 번 기록함(찜 확인에 필요). 묶음 9 계정 삭제 때 같이 지워진다.
+- 메모리: Render 무료는 메모리 그래프가 유료 전용 → 묶음 9 재측정으로(사장 결정).
+
+## 2026-11-09 단계 4 묶음 7: 오류 신고 (V3, 실제 DB 적용 전)
+- **V3 `app.error_reports`:** 신고자 user_id(계정 삭제 시 같이 삭제), 종류 4가지(`not_similar` 추천이 비슷하지 않아요 / `wrong_info` 향수 정보가 틀려요 / `note_name` 노트 이름·번역 / `other`), 향수 key·노트 key(둘 중 하나는 꼭), 메모 500자, 그때 순위·점수(선택), 엔진·카탈로그·앱 버전(필수), 처리 상태(open/resolved/dismissed, 기본 open), 만든 때. 이유: "추천이 이상해요"(K3)와 db_design.md 9절의 이름 오류·번역 안 된 노트 신고를 한 표로.
+- **권한:** scent_server는 넣기 10칸만(읽기·바꾸기·지우기·status·created_at·id 없음), RLS + 넣기 규칙 하나. 신고를 보는 것은 사장이 대시보드(postgres)에서. 그래서 API는 돌려줄 내용이 없어 **204**.
+- **API `POST /api/v1/reports`:** 로그인만(사장 결정 2026-11-06), 동의 전 403, 시간당 20회(묶음 3 RateLimiter.REPORT 그대로), key는 지금 카탈로그에 있어야 함(없으면 400 UNKNOWN_KEY, key 목록이 없으면 503). 모르는 칸은 앱 전체 규칙대로 무시(userId·status를 보내도 효과 없음을 테스트로 확인).
+- 메모 글자 수·NUL·짝 없는 서로게이트 검사는 `Library.length`를 같이 쓰려고 `Library.key/length`를 public으로(동작은 그대로).
+- 1인당 전체 개수 한도는 두지 않음: 서버가 신고를 읽을 권한이 없어 셀 수 없고, 시간당 20회로 하루 최대 480. 늘어나면 다시 본다.
+- 조합(노트) 모양은 담지 않음: "추천이 이상해요" 분석에는 조합이 있으면 좋지만 노트 검사 코드가 늘어남 → 사장 확인 질문(V3 적용 전).
+- 테스트: DbV3Test 30, ReportsApiTest 34, ReportsKeysMissingTest 1, Bundle7ReviewFixesTest 2(서버·DB 491 → 558). 변조 4/4(연쇄 삭제 빼기, 서버 읽기 권한, 동의 확인 빼기, 노트 key 확인 빼기) 잡힘.

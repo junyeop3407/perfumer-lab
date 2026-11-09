@@ -23,6 +23,8 @@ call "app.consents 읽기"                 "406 PGRST106"                   -H "
 call "app에 쓰기 시도"                    "406 PGRST106"                   -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/favorites"
 call "public에서 blends 찾기"             "404 (public에는 그런 표 없음)"   "$base/blends?select=*"
 call "app.catalog_releases 읽기 (V2)"     "406 PGRST106"                   -H "Accept-Profile: app" "$base/catalog_releases?select=*"
+call "app.error_reports 읽기 (V3)"        "406 PGRST106"                   -H "Accept-Profile: app" "$base/error_reports?select=*"
+call "app.error_reports 쓰기 (V3)"        "406 PGRST106"                   -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/error_reports"
 call "app.session_alive 직접 실행 (V2)"   "404/406 (노출 안 됨)"            -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{"p_session_id":null,"p_user_id":null}' "$base/rpc/session_alive"
 call "app 함수 직접 실행 시도"            "404/406 (노출 안 됨)"            -X POST -H "Content-Profile: app" -H "Content-Type: application/json" -d '{}' "$base/rpc/purge_old_events"
 

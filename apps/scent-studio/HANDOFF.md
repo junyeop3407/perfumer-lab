@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 완료(f51a886, 84df7b4). 2026-11-09 프롬프트 A 반영(03c6176), 실제 카탈로그 2026.11.05 배포·진짜 Storage 확인, **Render에 묶음 6 코드 배포 완료(892a79f)**. 다음: 묶음 7. 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~6 완료(f51a886, 84df7b4). 2026-11-09 프롬프트 A 반영(03c6176), 실제 카탈로그 2026.11.05 배포·진짜 Storage 확인, **Render에 묶음 6 코드 배포 완료(892a79f)**. **묶음 7(오류 신고) 코드·리뷰 완료, V3 실제 DB 적용 전 멈춤**(사장 OK 대기). 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 1b5cde8 (묶음 6 시작 직전)
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 491/491 통과 (2026-11-09 확인, `bash tests/run.sh` + `./gradlew test --rerun-tasks`). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+리뷰 기준: 8e8c7c5 (묶음 7 시작 직전)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 558/558 통과 (2026-11-09 확인, `bash tests/run.sh`, 묶음 7 리뷰 반영 후). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: git pull → 묶음 7(오류 신고, V3는 실제 DB 적용 전에 멈춤). 카카오 로그인 서버 쪽은 묶음 8 전 계획(`plan_stage4.md` 남은 것 10). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
+다음 할 일: git pull → 사장 OK 뒤 V3 실제 DB 적용(`cd backend && ./gradlew dbMigrate` → `./gradlew dbCheck` → `bash scripts/api_check.sh`) → Render에 묶음 7 코드 배포(V3 적용 뒤에만, 반대면 신고 500) → 묶음 8(오류 신고, V3는 실제 DB 적용 전에 멈춤). 카카오 로그인 서버 쪽은 묶음 8 전 계획(`plan_stage4.md` 남은 것 10). 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` 맨 아래 "남은 것". 배포 전 점검·추가 기능은 `docs/launch_checklist.md` 참고. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 바꿔 넣는다
 
 ## ★ 다음 세션 시작 (2026-11-09 — 카탈로그 배포 끝, Render 배포 전 멈춤)
 1. **2026-11-09 한 일:** launch_checklist 커밋(bfaa388), 프롬프트 A(03c6176: 기능 7개·Play 비공개 테스트·세로 고정, 승인 목록 J1~J8·K1~K7 + G2 보강 = 56개, 사장 승인), **실제 카탈로그 2026.11.05(엔진 8) 배포**: 비공개 버킷 catalog, 두 파일 sha256 확인, catalog_releases, 공개 주소 400, `api_check.sh` 기대대로. 이 컴퓨터에서 서버를 띄워 진짜 Storage로 `/catalog/latest`·`/catalog/2026.11.05` 200(해시 같음), 로그에 키 없음. key 목록 파일은 서버 키로 직접 받아 해시 같음.

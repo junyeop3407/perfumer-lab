@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * 한도는 "사용자 단위 잠금을 건 트랜잭션 안에서 세고 넣기"로 지킨다(db_design.md 8절, 보안 규칙 "한 번만 돼야 하는 처리").
  * 먼저 세고 나중에 넣는 사이에 다른 요청이 끼어들 수 없게, 같은 사용자·같은 종류의 저장은 줄을 서서 하나씩 처리된다.
  */
-final class Library {
+public final class Library {
 
     /** 잠금 종류(pg_advisory_xact_lock 첫 번호). 종류마다 다른 줄 → 찜하는 동안 조합 저장은 기다리지 않음 */
     enum Kind {
@@ -76,7 +76,7 @@ final class Library {
         }
     }
 
-    static boolean key(String k, int max) {
+    public static boolean key(String k, int max) {
         return k != null && k.length() <= max && KEY.matcher(k).matches();
     }
 
@@ -89,7 +89,7 @@ final class Library {
     }
 
     /** 글자 수(코드 포인트, DB char_length와 같게). 짝 없는 서로게이트·NUL이 있으면 -1 */
-    static int length(String s) {
+    public static int length(String s) {
         int n = 0;
         for (int i = 0; i < s.length(); ) {
             int c = s.codePointAt(i);

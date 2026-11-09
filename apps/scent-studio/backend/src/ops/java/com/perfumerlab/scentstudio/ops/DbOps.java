@@ -138,6 +138,10 @@ public final class DbOps {
             System.out.println("\n== V2: catalog_releases 규칙, events 유일 인덱스 ==");
             print(c, "select polname as 규칙, polcmd as 종류, polroles::regrole[]::text as 계정 from pg_policy where polrelid = to_regclass('app.catalog_releases')");
             print(c, "select i.relname as 인덱스 from pg_index x join pg_class i on i.oid = x.indexrelid where x.indrelid = to_regclass('app.events') and x.indisunique order by 1");
+            System.out.println("\n== V3: error_reports 규칙·칸 권한 (scent_server는 넣기 10칸만) ==");
+            print(c, "select polname as 규칙, polcmd as 종류, polroles::regrole[]::text as 계정 from pg_policy where polrelid = to_regclass('app.error_reports')");
+            print(c, "select grantee as 계정, privilege_type as 권한, count(*) as 칸수 from information_schema.column_privileges"
+                    + " where table_schema = 'app' and table_name = 'error_reports' and grantee in ('scent_server', 'anon', 'authenticated') group by 1, 2 order by 1, 2");
             System.out.println("\n== postgres 계정의 기본 권한 설정 (pg_default_acl) ==");
             print(c, "select coalesce(n.nspname, '(전체)') as 스키마, d.defaclobjtype as 종류, d.defaclacl::text as 권한"
                     + " from pg_default_acl d left join pg_namespace n on n.oid = d.defaclnamespace"
