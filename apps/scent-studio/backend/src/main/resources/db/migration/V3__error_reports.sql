@@ -17,6 +17,8 @@ create table app.error_reports (
   engine_version  integer not null check (engine_version > 0),
   catalog_version text not null check (char_length(catalog_version) between 1 and 32),
   app_version     text not null check (char_length(app_version) between 1 and 32),
+  -- 신고 당시 조합(노트·강도, 사장 결정 2026-11-09). 검색으로 연 상세에서 신고하면 없음. 있으면 조합 저장(blends.notes)과 같은 검사
+  notes           jsonb check (notes is null or app.valid_blend_notes(notes)),
   -- 처리 상태는 사장만 바꾼다(서버는 이 칸에 넣을 권한이 없어 늘 기본값 open)
   status          text not null default 'open' check (status in ('open', 'resolved', 'dismissed')),
   created_at      timestamptz not null default now(),
@@ -27,7 +29,7 @@ create table app.error_reports (
 create index error_reports_user_id_idx on app.error_reports (user_id);
 
 revoke all on app.error_reports from public, anon, authenticated;
-grant insert (user_id, kind, perfume_key, note_key, memo, rank, score, engine_version, catalog_version, app_version)
+grant insert (user_id, kind, perfume_key, note_key, memo, rank, score, engine_version, catalog_version, app_version, notes)
   on app.error_reports to scent_server;
 
 alter table app.error_reports enable row level security;

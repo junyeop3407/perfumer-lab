@@ -385,8 +385,8 @@
 - 메모리: Render 무료는 메모리 그래프가 유료 전용 → 묶음 9 재측정으로(사장 결정).
 
 ## 2026-11-09 단계 4 묶음 7: 오류 신고 (V3, 실제 DB 적용 전)
-- **V3 `app.error_reports`:** 신고자 user_id(계정 삭제 시 같이 삭제), 종류 4가지(`not_similar` 추천이 비슷하지 않아요 / `wrong_info` 향수 정보가 틀려요 / `note_name` 노트 이름·번역 / `other`), 향수 key·노트 key(둘 중 하나는 꼭), 메모 500자, 그때 순위·점수(선택), 엔진·카탈로그·앱 버전(필수), 처리 상태(open/resolved/dismissed, 기본 open), 만든 때. 이유: "추천이 이상해요"(K3)와 db_design.md 9절의 이름 오류·번역 안 된 노트 신고를 한 표로.
-- **권한:** scent_server는 넣기 10칸만(읽기·바꾸기·지우기·status·created_at·id 없음), RLS + 넣기 규칙 하나. 신고를 보는 것은 사장이 대시보드(postgres)에서. 그래서 API는 돌려줄 내용이 없어 **204**.
+- **V3 `app.error_reports`:** 신고자 user_id(계정 삭제 시 같이 삭제), 종류 4가지(`not_similar` 추천이 비슷하지 않아요 / `wrong_info` 향수 정보가 틀려요 / `note_name` 노트 이름·번역 / `other`), 향수 key·노트 key(둘 중 하나는 꼭), 메모 500자, 그때 순위·점수(선택), 엔진·카탈로그·앱 버전(필수), 처리 상태(open/resolved/dismissed, 기본 open), 만든 때, 신고 당시 조합 `notes`(선택, 노트·층·강도 — 조합 저장과 같은 검사, Java `BlendsController.checkNotesShape·checkNotesKnown` 공유 + DB `app.valid_blend_notes`, 사장 결정 2026-11-09). 이유: "추천이 이상해요"(K3)와 db_design.md 9절의 이름 오류·번역 안 된 노트 신고를 한 표로.
+- **권한:** scent_server는 넣기 11칸만(notes 포함)(읽기·바꾸기·지우기·status·created_at·id 없음), RLS + 넣기 규칙 하나. 신고를 보는 것은 사장이 대시보드(postgres)에서. 그래서 API는 돌려줄 내용이 없어 **204**.
 - **API `POST /api/v1/reports`:** 로그인만(사장 결정 2026-11-06), 동의 전 403, 시간당 20회(묶음 3 RateLimiter.REPORT 그대로), key는 지금 카탈로그에 있어야 함(없으면 400 UNKNOWN_KEY, key 목록이 없으면 503). 모르는 칸은 앱 전체 규칙대로 무시(userId·status를 보내도 효과 없음을 테스트로 확인).
 - 메모 글자 수·NUL·짝 없는 서로게이트 검사는 `Library.length`를 같이 쓰려고 `Library.key/length`를 public으로(동작은 그대로).
 - 1인당 전체 개수 한도는 두지 않음: 서버가 신고를 읽을 권한이 없어 셀 수 없고, 시간당 20회로 하루 최대 480. 늘어나면 다시 본다.

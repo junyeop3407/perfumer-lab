@@ -171,7 +171,7 @@ V1은 실제 DB에 적용됐으므로 고치지 않고 **V2를 더한다.** 같�
 ### 7-2. 같은 V2에 넣는 것
 - `app.session_alive(uuid, uuid)` (3-1절) + 테스트
 - `app.events.client_event_id uuid` 칸 + (install_id, client_event_id) 유일 인덱스 + `scent_server` 그 칸 넣기 권한 (4-2절). 기존 줄은 비어 있어도 되게(null 허용, 새 앱 버전부터 필수는 서버가 확인).
-- **V3(서버 구현 중):** `app.error_reports`(오류 신고: 신고자 user_id — 계정 삭제 시 같이 삭제, 향수·노트 key, 종류, 메모 500자, 처리 상태, 만든 때), 같은 방식.
+- **V3(서버 구현 중):** `app.error_reports`(오류 신고: 신고자 user_id — 계정 삭제 시 같이 삭제, 향수·노트 key, 종류, 메모 500자, 신고 당시 조합 notes(선택, blends.notes와 같은 검사 — 사장 결정 2026-11-09), 처리 상태, 만든 때), 같은 방식.
 
 ## 8. 서버 테스트 (단계 4, JUnit + Spring Boot Test + 내장 Postgres + 가짜 JWKS)
 - 토큰: 없음·서명 다름·none·HS256·만료·aud 다름·anon 토큰·익명 사용자·세션 없음 → 401

@@ -4,7 +4,7 @@
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 8e8c7c5 (묶음 7 시작 직전)
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 560/560 통과 (2026-11-09 확인, `bash tests/run.sh`, 묶음 7 리뷰 반영 후). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 593/593 통과 (2026-11-10 확인, `bash tests/run.sh`, 신고 당시 조합 칸 추가 후). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
 다음 할 일: git pull → ① V3에 신고 당시 조합 칸 추가(테스트 먼저, 조합 저장과 같은 검사) → 테스트·리뷰 → ② V3 실제 적용(`cd backend && ./gradlew dbMigrate` → `./gradlew dbCheck` → `bash scripts/api_check.sh`, 사장 OK 받음) → ③ 사장에게 Render 배포 요청하고 멈춤(V3 적용 뒤에만, 반대면 신고 500) → 배포 뒤 신고 API 확인 → ④ 묶음 8(계정 삭제), 카카오 로그인은 `plan_stage4.md` 남은 것 10대로. 레드팀 다시 돌리기 표시(`.redteam-needed`)는 묶음 9에서. 남은 일 전체는 `docs/plan_stage4.md` "남은 것", 배포 전 점검·추가 기능은 `docs/launch_checklist.md`. 앱 안 카탈로그 파일은 옛 버전(2026.10.31, 엔진 6)이라 단계 5에서 교체
 

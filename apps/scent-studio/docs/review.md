@@ -171,3 +171,9 @@
 | QA-13 | QA | 낮음 | ETag는 주지만 304 처리 없음 | 의도: 앱은 `/catalog/latest`의 sha256으로 먼저 비교하고 바뀔 때만 받음 | 반영 안 함, NOTES에 기록 |
 | Gemini-2·4 | Gemini | 중간·낮음 | `review_result.md` "Claude 판단" | 영향 작음 | 반영 안 함 |
 | Gemini-3 | Gemini | 낮음 | api_check 버전 고정 | 맞음 | **반영** |
+
+## 신고 당시 조합 칸 (2026-11-10, V3 실제 적용 전, 사장 결정 2026-11-09)
+- 변경: V3 `app.error_reports.notes jsonb`(선택, `app.valid_blend_notes` 검사, scent_server 넣기 11칸), `POST /reports` `notes` 칸(조합 저장과 같은 검사 — `BlendsController.checkNotesShape·checkNotesKnown·notesJson`으로 나눠 함께 씀).
+- 테스트: `ReportsBlendNotesTest`(API 21) + `DbV3Test` 조합 칸 12. 변조 5/5 잡힘(모양 검사 빼기·카탈로그 검사 빼기·저장 안 함·DB 검사 빼기·권한 빼기).
+- QA팀: 높음·중간 없음. 낮음 3 — 노트 key 101자 테스트 없음(추가), 문서에 notes 칸 없음(server_design·spec·NOTES·plan 반영), review_result.md 비워짐(교차 리뷰 실행 중이라 그렇게 보임, 새 결과로 채움).
+- Gemini: 4건 모두 해당 없음(이유는 `review_result.md` "Claude 판단").

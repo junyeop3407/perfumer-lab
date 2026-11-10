@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DbV3Test extends DbTestBase {
 
-    static final String COLS = "user_id, kind, perfume_key, note_key, memo, rank, score, engine_version, catalog_version, app_version";
+    static final String COLS = "user_id, kind, perfume_key, note_key, memo, rank, score, engine_version, catalog_version, app_version, notes";
 
     /** 서버가 쓰는 모양 그대로(scent_server로 넣기) */
     void report(String role, UUID user, String kind, String perfume, String note, String memo) throws SQLException {
-        as(role, "insert into app.error_reports (" + COLS + ") values (?, ?, ?, ?, ?, null, null, 8, '2026.11.05', '1.0.0')",
+        as(role, "insert into app.error_reports (" + COLS + ") values (?, ?, ?, ?, ?, null, null, 8, '2026.11.05', '1.0.0', null)",
                 user, kind, perfume, note, memo);
     }
 
@@ -105,6 +105,51 @@ class DbV3Test extends DbTestBase {
         }
     }
 
+    // ---------- 신고 당시 조합(사장 결정 2026-11-09): 없어도 되고, 있으면 blends.notes와 같은 검사 ----------
+
+    void reportWithNotes(UUID user, String notes) throws SQLException {
+        as("scent_server", "insert into app.error_reports (" + COLS + ") values (?, 'not_similar', 'Brand:perfume', null, null, null, null, 8,"
+                + " '2026.11.05', '1.0.0', ?::jsonb)", user, notes);
+    }
+
+    @Test
+    void blendNotesAcceptedOrNull() throws SQLException {
+        UUID u = newUser();
+        reportWithNotes(u, "[{\"note_key\":\"rose\",\"layer\":\"top\",\"strength\":\"weak\"}]");
+        reportWithNotes(u, null);
+        assertEquals(1, count("select count(*) from app.error_reports where user_id = ? and notes is null", u));
+        assertEquals(2, reports(u));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "[]",
+            "{}",
+            "\"rose\"",
+            "[{\"note_key\":\"rose\",\"layer\":\"heart\",\"strength\":\"weak\"}]",
+            "[{\"note_key\":\"rose\",\"layer\":\"top\",\"strength\":\"huge\"}]",
+            "[{\"note_key\":\"rose\",\"layer\":\"top\"}]",
+            "[{\"note_key\":\"rose\",\"layer\":\"top\",\"strength\":\"weak\",\"x\":1}]",
+            "[{\"note_key\":\" rose\",\"layer\":\"top\",\"strength\":\"weak\"}]",
+            "[{\"note_key\":\"rose\",\"layer\":\"top\",\"strength\":\"weak\"},{\"note_key\":\"rose\",\"layer\":\"base\",\"strength\":\"weak\"}]",
+            "[{\"note_key\":\"a\",\"layer\":\"top\",\"strength\":\"weak\"},{\"note_key\":\"b\",\"layer\":\"top\",\"strength\":\"weak\"},"
+                    + "{\"note_key\":\"c\",\"layer\":\"top\",\"strength\":\"weak\"},{\"note_key\":\"d\",\"layer\":\"top\",\"strength\":\"weak\"}]",
+    })
+    void badBlendNotesRejected(String notes) throws SQLException {
+        UUID u = newUser();
+        fails(CHECK, () -> reportWithNotes(u, notes));
+        assertEquals(0, reports(u));
+    }
+
+    @Test
+    void tenBlendNotesRejected() throws SQLException {
+        UUID u = newUser();
+        StringBuilder s = new StringBuilder("[");
+        for (int i = 1; i <= 10; i++) s.append(i > 1 ? "," : "").append("{\"note_key\":\"n").append(i)
+                .append("\",\"layer\":\"").append(new String[]{"top", "middle", "base"}[i % 3]).append("\",\"strength\":\"weak\"}");
+        fails(CHECK, () -> reportWithNotes(u, s.append("]").toString()));
+    }
+
     @Test
     void unknownUserRejected() {
         fails(FOREIGN_KEY, () -> report("scent_server", UUID.randomUUID(), "other", "Brand:perfume", null, null));
@@ -135,11 +180,11 @@ class DbV3Test extends DbTestBase {
         fails(NO_PRIVILEGE, () -> as("scent_server", "delete from app.error_reports"));
         fails(NO_PRIVILEGE, () -> as("scent_server", "truncate app.error_reports"));
         fails(NO_PRIVILEGE, () -> as("scent_server", "insert into app.error_reports (" + COLS + ", status)"
-                + " values (?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0', 'resolved')", u));
+                + " values (?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0', null, 'resolved')", u));
         fails(NO_PRIVILEGE, () -> as("scent_server", "insert into app.error_reports (id, " + COLS + ")"
-                + " values (gen_random_uuid(), ?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0')", u));
+                + " values (gen_random_uuid(), ?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0', null)", u));
         fails(NO_PRIVILEGE, () -> as("scent_server", "insert into app.error_reports (" + COLS + ", created_at)"
-                + " values (?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0', now() - interval '1 day')", u));
+                + " values (?, 'other', 'Brand:perfume', null, null, null, null, 8, '2026.11.05', '1.0.0', null, now() - interval '1 day')", u));
         assertEquals(1, reports(u));
     }
 
@@ -158,11 +203,11 @@ class DbV3Test extends DbTestBase {
 
     @Test
     void serverHasInsertOnExactlyTheseColumns() throws SQLException {
-        assertEquals(10, count("select count(*) from information_schema.column_privileges where table_schema = 'app'"
+        assertEquals(11, count("select count(*) from information_schema.column_privileges where table_schema = 'app'"
                 + " and table_name = 'error_reports' and grantee = 'scent_server' and privilege_type = 'INSERT'"
                 + " and column_name = any(string_to_array(?, ', '))", COLS));
-        assertEquals(10, count("select count(*) from information_schema.column_privileges where table_schema = 'app'"
-                + " and table_name = 'error_reports' and grantee = 'scent_server'"), "넣기 10칸 말고 다른 권한 없음");
+        assertEquals(11, count("select count(*) from information_schema.column_privileges where table_schema = 'app'"
+                + " and table_name = 'error_reports' and grantee = 'scent_server'"), "넣기 11칸 말고 다른 권한 없음");
     }
 
     @Test

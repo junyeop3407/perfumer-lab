@@ -60,7 +60,7 @@ public class BlendsController {
     private final TransactionTemplate tx;
     private final Consents consents;
     private final CatalogKeys catalog;
-    private final JsonMapper json = JsonMapper.builder().build();
+    private static final JsonMapper JSON = JsonMapper.builder().build();
     private final RowMapper<Blend> rows;
 
     public BlendsController(JdbcClient jdbc, TransactionTemplate tx, Consents consents, CatalogKeys catalog) {
@@ -70,7 +70,7 @@ public class BlendsController {
         this.catalog = catalog;
         this.rows = (rs, n) -> {
             List<NoteItem> notes = new ArrayList<>();
-            for (Map<String, String> m : json.readValue(rs.getString("notes"), NOTES_JSON)) {
+            for (Map<String, String> m : JSON.readValue(rs.getString("notes"), NOTES_JSON)) {
                 notes.add(new NoteItem(m.get("note_key"), m.get("layer"), m.get("strength")));
             }
             return new Blend(rs.getString("id"), rs.getString("name"), List.of((String[]) rs.getArray("families").getArray()), notes,
@@ -131,7 +131,14 @@ public class BlendsController {
     /** 모양 검사 → 카탈로그 확인. 통과하면 DB에 넣을 노트 JSON(note_key 이름으로) */
     private String check(BlendRequest req) {
         if (req == null || !Library.name(req.name()) || !Library.keys(req.families(), MAX_FAMILIES)) throw new ApiException(ApiError.BAD_REQUEST);
-        List<NoteItem> notes = req.notes();
+        checkNotesShape(req.notes());
+        for (String f : req.families()) if (!catalog.contains(CatalogKeys.Kind.FAMILY, f)) throw new ApiException(ApiError.UNKNOWN_KEY);
+        checkNotesKnown(req.notes(), catalog);
+        return notesJson(req.notes());
+    }
+
+    /** 조합 노트 모양 검사(조합 저장·신고 당시 조합 공통, DB app.valid_blend_notes와 같은 규칙). 틀리면 400 BAD_REQUEST */
+    public static void checkNotesShape(List<NoteItem> notes) {
         if (notes == null || notes.isEmpty() || notes.size() > MAX_NOTES) throw new ApiException(ApiError.BAD_REQUEST);
         Set<String> seen = new HashSet<>();
         Map<String, Integer> perLayer = new HashMap<>();
@@ -142,8 +149,15 @@ public class BlendsController {
                 throw new ApiException(ApiError.BAD_REQUEST);
             }
         }
-        for (String f : req.families()) if (!catalog.contains(CatalogKeys.Kind.FAMILY, f)) throw new ApiException(ApiError.UNKNOWN_KEY);
+    }
+
+    /** 노트가 모두 지금 카탈로그에 있는지. 없으면 400 UNKNOWN_KEY */
+    public static void checkNotesKnown(List<NoteItem> notes, CatalogKeys catalog) {
         for (NoteItem n : notes) if (!catalog.contains(CatalogKeys.Kind.NOTE, n.noteKey())) throw new ApiException(ApiError.UNKNOWN_KEY);
+    }
+
+    /** DB에 넣을 노트 JSON [{note_key, layer, strength}] (검사를 통과한 노트만) */
+    public static String notesJson(List<NoteItem> notes) {
         List<Map<String, String>> out = new ArrayList<>();
         for (NoteItem n : notes) {
             Map<String, String> m = new LinkedHashMap<>();
@@ -152,6 +166,6 @@ public class BlendsController {
             m.put("strength", n.strength());
             out.add(m);
         }
-        return json.writeValueAsString(out);
+        return JSON.writeValueAsString(out);
     }
 }
