@@ -68,6 +68,9 @@ public class ApiExceptionHandler {
     ResponseEntity<String> integrity(DataIntegrityViolationException e) {
         for (Throwable t = e; t != null; t = t.getCause()) {
             if (t instanceof java.sql.SQLException s && "23514".equals(s.getSQLState())) return of(ApiError.BAD_REQUEST);
+            // 사용자 줄이 없음(다른 곳에서 계정이 지워졌는데 세션 확인 보관 30초 안) → 500이 아니라 401 (남은 것 4)
+            if (t instanceof java.sql.SQLException s && "23503".equals(s.getSQLState()) && s.getMessage() != null
+                    && s.getMessage().matches("(?s).*\"[a-z_]+_user_id_fkey\".*")) return of(ApiError.UNAUTHORIZED);
         }
         return other(e);
     }

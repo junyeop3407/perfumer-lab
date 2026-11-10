@@ -1,23 +1,22 @@
-### [심각도: 높음] Jackson 체크 예외 처리 누락
-- **파일명 및 줄 번호:** `BlendsController.java` (74행, 169행)
-- **문제 이유:** `tools.jackson.databind.json.JsonMapper`의 `readValue`와 `writeValueAsString` 메서드는 체크 예외(Checked Exception)인 `IOException` 또는 `JsonProcessingException`을 던집니다. 하지만 현재 코드에는 `try-catch` 블록이나 메서드 `throws` 선언이 없습니다. 이로 인해 컴파일 에러가 발생하거나, 런타임에 예외 발생 시 전파 경로에서 적절히 처리되지 못해 서버 장애로 이어질 수 있습니다. 특히 `RowMapper` 람다 내부(74행)에서는 `SQLException` 외의 체크 예외를 직접 던질 수 없습니다.
-- **수정 제안:** 해당 호출부를 `try-catch`로 감싸고, 예외 발생 시 `UncheckedIOException`이나 런타임 예외로 전환하여 던지도록 수정해야 합니다.
+리뷰 결과, 전반적으로 설계 의도(Supabase 관리 API 연동 및 데이터 무결성 확인)를 잘 따르고 있으나, 비즈니스 요구사항 이행과 운영 환경의 확장성을 고려할 때 몇 가지 수정이 필요합니다.
 
-### [심각도: 중간] RowMapper 내 ResultSet Null 처리 미흡
-- **파일명 및 줄 번호:** `BlendsController.java` (74행)
-- **문제 이유:** `rs.getString("notes")`의 결과가 `null`인 경우 `JSON.readValue`에 `null`이 전달되어 `NullPointerException`이 발생할 수 있습니다. `V3` 마이그레이션에서 `error_reports.notes` 컬럼이 `null` 허용으로 설계된 점을 고려할 때, `app.blends.notes` 또한 데이터 상태에 따라 `null`이 반환될 가능성이 있다면 방어 코드가 필요합니다.
-- **수정 제안:** `rs.getString("notes")` 결과가 `null`인지 먼저 확인하거나, `Optional` 등을 사용하여 `null`일 경우 빈 리스트(`new ArrayList<>()`)를 반환하도록 처리하십시오.
+### [심각도: 중간] `AccountController.java` (45-47줄)
+- **문제 이유**: 계정 삭제 후 남은 데이터를 확인하는 `left` 계산 쿼리에서 `app.error_reports` 테이블이 누락되었습니다. 테스트 코드(`AccountDeleteApiTest.java` 45-47줄)에서는 해당 테이블의 데이터도 삭제되어 0이 되는지 확인하고 있으나, 운영 코드의 무결성 체크에서는 빠져 있어 검증이 불완전합니다.
+- **수정 제안**: `left` 변수를 계산하는 SQL 쿼리에 `(select count(*) from app.error_reports where user_id = :u)` 항목을 추가하여 일관성을 맞추십시오.
 
-### [심각도: 낮음] Key 길이 제한 불일치
-- **파일명 및 줄 번호:** `ReportsController.java` (44행) vs `BlendsController.java` (147행)
-- **문제 이유:** `ReportsController`에서는 `MAX_KEY`를 200으로 설정하여 `perfumeKey`나 `noteKey`를 검사하지만, 공유 검사 로직인 `BlendsController.checkNotesShape` 내부에서는 `Library.key(n.noteKey(), 100)`을 호출하여 길이를 100으로 제한하고 있습니다. 이로 인해 단일 필드 신고 시에는 200자까지 허용되지만, `notes` 리스트 내의 key는 100자까지만 허용되는 불일치가 발생합니다.
-- **수정 제안:** 전체 시스템의 Key 길이 정책에 맞춰 제한 값을 통일하거나, `checkNotesShape` 호출 시 최대 길이를 인자로 전달할 수 있도록 리팩토링하십시오.
+### [심각도: 중간] `SessionChecker.java` (53-56줄)
+- **문제 이유**: `forget(userId)` 메서드가 로컬 메모리의 `ConcurrentHashMap`만 비우고 있습니다. 서버가 여러 인스턴스로 실행되는 분산 환경(예: Render의 다중 인스턴스)에서는 삭제 요청을 처리하지 않은 다른 인스턴스에 30초간 캐시가 남아있게 됩니다. 이는 "30초 틈 없이 즉시 지우라"는 사장 지시(2026-11-07) 사항을 완전히 충족하지 못할 수 있습니다.
+- **수정 제안**: 다중 서버 환경이 고려된다면 Redis와 같은 분산 캐시를 사용하거나, 다른 인스턴스에 캐시 무효화 신호를 보낼 수 있는 Pub/Sub 구조를 고려하십시오. 단일 인스턴스 환경이라면 현재 코드로 충분합니다.
 
-### [심각도: 낮음] JSON 직렬화 시 순서 의존성 (추정)
-- **파일명 및 줄 번호:** `BlendsController.java` (162-167행)
-- **문제 이유:** `LinkedHashMap`을 사용하여 JSON 키 순서(`note_key`, `layer`, `strength`)를 고정하고 있습니다. 이는 DB의 `check` 제약 조건(`app.valid_blend_notes`)이 특정 키 순서에 의존하고 있을 가능성을 시사합니다. 만약 DB 함수가 키 순서에 민감하게 작성되어 있다면, 향후 필드 추가나 변경 시 취약점이 될 수 있습니다.
-- **수정 제안:** DB의 `valid_blend_notes` 제약 조건이 키의 존재 여부와 값의 유효성만 검사하도록 설계되어 있는지 확인하고, 코드와 DB 간의 결합도를 낮추는 것을 권장합니다.
+### [심각도: 낮음] `ApiExceptionHandler.java` (71줄)
+- **문제 이유**: 외래 키 위반 시 401을 반환하기 위한 정규표현식 `(?s).*\"[a-z_]+_user_id_fkey\".*`은 DB의 제약 조건 명명 규칙에 강하게 의존합니다. 만약 DB 마이그레이션 중 FK 이름이 이 규칙을 벗어나게 되면(예: `fk_user_id`), 계정 삭제 후 발생한 race condition 상황에서 401 대신 500 에러가 발생하게 되어 설계 의도와 다르게 동작할 수 있습니다.
+- **수정 제안**: 해당 정규표현식이 프로젝트의 DB 명명 규칙을 엄격하게 반영하도록 유지 관리하거나, 가능하다면 SQLState 뿐만 아니라 구체적인 제약 조건 이름을 상수로 관리하여 비교하는 방식이 더 안전합니다.
+
+### [심각도: 낮음] `SupabaseAdmin.java` (52줄)
+- **추정**: `http.sendAsync`를 호출한 후 즉시 `call.get(timeout...)`으로 블로킹하고 있습니다. 이는 동기 방식인 `http.send`와 실질적으로 동일하게 동작하며 Tomcat 스레드를 점유합니다.
+- **이유**: 계정 삭제는 빈도가 낮은 작업이고 `timeout`이 설정되어 있어 시스템 전체의 스레드 고갈로 이어질 가능성은 낮지만, `sendAsync`의 본래 목적(비동기 처리)과는 맞지 않는 사용 패턴입니다.
+- **수정 제안**: 현재처럼 `finally`에서 `cancel`을 통해 강제 타임아웃을 처리하는 것이 목적이라면 유지해도 무방하나, 코드가 복잡해 보이므로 단순히 `http.send`를 사용하고 `timeout` 설정에 의존하는 것이 더 간결할 수 있습니다.
 
 
 ## Claude 판단
-- 신고 당시 조합 칸(기준 HEAD=10b0a82, 커밋 전 변경분) Gemini 4건 모두 해당 없음: ① Jackson 3(`tools.jackson`)은 unchecked 예외라 컴파일·테스트 통과 ② `app.blends.notes`는 V1에서 NOT NULL ③ 노트 key 100자는 DB `app.valid_blend_notes`와 같은 규칙(조합과 같은 검사가 사장 결정) ④ jsonb는 키 순서와 상관없음. QA팀은 `review.md` "신고 당시 조합 칸".
+- 묶음 8(기준 HEAD=348b2f3, 커밋 전 변경분) Gemini 4건: ① error_reports를 남은 줄 확인에 넣기 → 해당 없음(scent_server는 신고 표를 읽을 권한이 없게 설계, V3. 지우기는 외래 키 규칙이 하고 테스트가 확인) ② 여러 대 서버면 다른 서버 보관이 남음 → 지금은 해당 없음(Render 무료 1대, server_design.md 4절 "2대 이상이면 DB로"). NOTES에 기록 ③ 외래 키 이름 의존 → 반영(이름을 고정하는 테스트 `foreignKeysToUsersAreNamedUserIdFkey`) ④ sendAsync → 유지(본문까지 전체 마감 시간, 카탈로그와 같은 방식). QA팀은 `review.md` "묶음 8".

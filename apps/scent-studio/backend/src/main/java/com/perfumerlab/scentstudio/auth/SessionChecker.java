@@ -24,6 +24,7 @@ public class SessionChecker {
     private final JdbcClient jdbc;
     private final Clock clock;
     private final ConcurrentHashMap<String, Entry> cache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Long> deletedUntil = new ConcurrentHashMap<>(); // 지운 사용자 → 이 시각까지 막음
 
     public SessionChecker(JdbcClient jdbc, Clock clock) {
         this.jdbc = jdbc;
@@ -33,6 +34,7 @@ public class SessionChecker {
     public boolean alive(UUID sessionId, UUID userId) {
         String key = sessionId + ":" + userId;
         long now = clock.millis();
+        if (isDeleted(userId, now)) return false;
         Entry e = cache.get(key);
         if (e != null && e.until() > now) return e.alive();
         boolean alive;
@@ -44,7 +46,26 @@ public class SessionChecker {
         if (cache.size() >= MAX_ENTRIES) cache.values().removeIf(x -> x.until() <= now);
         if (cache.size() >= MAX_ENTRIES) cache.clear();
         cache.put(key, new Entry(alive, now + KEEP_MS));
-        return alive;
+        return alive && !isDeleted(userId, now); // 묻는 동안 계정이 지워졌으면(리뷰 묶음 8 QA-1)
+    }
+
+    /** 그 사용자의 보관 결과만 지운다 → 다음 요청은 DB에 다시 묻는다(삭제 요청이 실패했을 때, 리뷰 묶음 8 QA-2) */
+    public void forget(UUID userId) {
+        String suffix = ":" + userId;
+        cache.keySet().removeIf(k -> k.endsWith(suffix));
+    }
+
+    /** 계정을 지웠음: 보관을 지우고 60초 동안 그 사용자를 막는다(30초 틈 없이, 사장 지시 2026-11-07). 삭제 중에 먼저 출발한 요청이 "살아 있음"을 다시 넣어도 이긴다(리뷰 묶음 8 QA-1) */
+    public void deleted(UUID userId) {
+        long now = clock.millis();
+        if (deletedUntil.size() >= MAX_ENTRIES) deletedUntil.values().removeIf(t -> t <= now);
+        deletedUntil.put(userId, now + 2 * KEEP_MS); // 늦게 다시 넣은 30초 보관보다 길게
+        forget(userId);
+    }
+
+    private boolean isDeleted(UUID userId, long now) {
+        Long until = deletedUntil.get(userId);
+        return until != null && until > now;
     }
 
     /** 세션을 확인할 수 없음(DB 안 됨) → 503 */

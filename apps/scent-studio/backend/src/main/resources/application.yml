@@ -63,3 +63,8 @@ scent:
   storage:
     url: ${SUPABASE_URL:}
     secret-key: ${SUPABASE_SECRET_KEY:}
+  # 계정 삭제용 Supabase 관리 API(같은 주소·같은 서버 전용 키). 묶음 8
+  admin:
+    url: ${SUPABASE_URL:}
+    secret-key: ${SUPABASE_SECRET_KEY:}
+    timeout: 10s

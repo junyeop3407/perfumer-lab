@@ -177,3 +177,9 @@
 - 테스트: `ReportsBlendNotesTest`(API 21) + `DbV3Test` 조합 칸 12. 변조 5/5 잡힘(모양 검사 빼기·카탈로그 검사 빼기·저장 안 함·DB 검사 빼기·권한 빼기).
 - QA팀: 높음·중간 없음. 낮음 3 — 노트 key 101자 테스트 없음(추가), 문서에 notes 칸 없음(server_design·spec·NOTES·plan 반영), review_result.md 비워짐(교차 리뷰 실행 중이라 그렇게 보임, 새 결과로 채움).
 - Gemini: 4건 모두 해당 없음(이유는 `review_result.md` "Claude 판단").
+
+## 묶음 8 계정 삭제 (2026-11-10)
+- 변경: `DELETE /me`(`me/AccountController`·`me/SupabaseAdmin`), `SessionChecker.forget·deleted`, 외래 키(`*_user_id_fkey`) 위반 → 401(`ApiExceptionHandler`), `application.yml` `scent.admin.*`.
+- 테스트: `AccountDeleteApiTest` 16 + `AccountDeleteNoKeyTest` 1 + `Bundle8ReviewFixesTest` 4(가짜 관리 API `FakeAuthAdmin`). 서버·DB 614. 변조 8/8 + 리뷰 수정 4/4 잡힘.
+- QA팀: 높음 없음. 중간 2 반영 — ① 삭제 중 먼저 출발한 요청이 "살아 있음"을 보관에 다시 넣는 틈 → 지운 사용자는 60초 "지워짐" 표시(늦게 넣은 30초 보관보다 길게) ② Supabase는 지웠는데 답을 못 받은 503 → 실패 경로에서도 보관을 지움(표시는 안 함: 진짜 실패면 계속 쓸 수 있게). 낮음 4 — 실패도 시간당 3회에 셈(명세대로, 유지), 외래 키 이름 의존(이름 고정 테스트 추가), 남은 줄 확인에 신고·사용 기록 없음(서버 권한 밖, 설계대로), `Authorization: Bearer sb_secret_…`가 실제 관리 API에서 되는지(→ 실제 삭제 확인에서 봄).
+- Gemini: 4건 중 1 반영(위 외래 키 이름), 3 해당 없음(`review_result.md` "Claude 판단").
