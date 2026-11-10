@@ -36,6 +36,8 @@
    - 있으면 `git pull`
    - 그다음 `git fetch && git switch wip/scent-studio-stage4 && git pull`
 5. **`.env` 만들기**: `apps/scent-studio/backend/.env.example`을 같은 폴더에 `.env`로 복사하고 칸을 채운다(`.env`는 git이 무시함, 커밋 안 됨).
+   - **줄 맨 앞에 공백을 두지 않는다.** `api_check.sh`·`render_measure.sh`는 `^칸이름=`으로 찾아서 앞에 공백이 있으면 그 칸을 못 읽는다(2026-11-10 Windows `.env`의 TEST_USER 두 줄이 그랬음).
+   - 값 없이 칸만 확인하기(값은 출력 안 함): `cd backend && grep -v "^#" .env | grep "=" | awk -F= '{print $1, (length($2)>0 ? "✓" : "✗ 빈 값")}'`
 
    | 칸 | 어디서 가져오나 |
    |---|---|
@@ -91,6 +93,8 @@
   - 확인: `cd backend && ./gradlew -version`의 `Daemon JVM`이 21인지. `java -version`이 25로 나와도 Gradle은 `JAVA_HOME`을 쓰므로 괜찮다.
 - **Python 3.14**(`py`)에서도 파이프라인이 돈다. `tests/run.sh`는 3.12 이상이면 된다.
 - **비공개 데이터**: 저장소 **밖**(예: `%LOCALAPPDATA%\perfumer-lab-private`)에 받고, `pipeline-data-out/` 19개와 `eye_v8/sheet_scored.md`(→ `eye_v8_sheet.md`)를 `pipeline/data/out/`에 복사했다. 옛 `catalog.json.gz`(10/31, 1.0MB)는 v8판(2.3MB)으로 바뀐다.
+
+- **2026-11-10 다시 확인**: `.env` 11칸 모두 값 있음 ✓(DB_URL·DB_MIGRATION_USER·DB_MIGRATION_PASSWORD·DB_SERVER_USER·DB_SERVER_PASSWORD·SUPABASE_PUBLISHABLE_KEY·DEBUG_TOKEN·RENDER_URL·SUPABASE_SECRET_KEY·TEST_USER_EMAIL·TEST_USER_PASSWORD). 단 TEST_USER 두 줄 앞에 공백 3칸 → 위 5번 주의. 이 컴퓨터에서 V3 dbMigrate·dbCheck·api_check, Render 배포 뒤 확인(health·신고 401/204·찜 204) 통과.
 
 ### D. 비밀번호를 잃어버렸을 때
 - **postgres(관리자)**:
