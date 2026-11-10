@@ -408,3 +408,4 @@
 ## 카카오 로그인 서버 쪽 (2026-11-10)
 - 사장 준비 완료(`docs/kakao_setup.md`, 콘솔 개편 뒤 Client Secret·Redirect URI는 "앱 → 플랫폼 키 → REST API 키" 편집 화면). 키는 Supabase 대시보드에만.
 - 서버: `/me` email 없음·빈 값·공백·문자열 아님 → `null`. 구글·카카오는 다른 user id(합치지 않음). 같은 사람이 두 방법으로 가입하면 데이터가 따로 — 화면 단계에서 로그인 화면에 "처음 쓴 방법으로 로그인" 안내 검토.
+- **실제 카카오 로그인 (2026-11-10):** 1번째 `OAuth state has expired`(창을 열고 오래 둠), 2번째 `invalid_scope: account_email` — Supabase가 "Allow users without an email"을 켜도 이메일 범위를 요청함 → 일반 앱으로는 로그인 불가. **사장 할 일: 비즈 앱 전환 → 카카오계정(이메일) "선택 동의"**(사용자가 거절하면 email null — 서버 처리 완료). 토큰 형식 확인은 그 뒤 다시.

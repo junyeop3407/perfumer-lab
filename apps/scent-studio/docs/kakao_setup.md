@@ -25,6 +25,7 @@
 - `/me` email 없음·빈 값 → `email: null`, 구글·카카오 계정은 다른 user id(합치지 않음, 남의 데이터 안 보임) 테스트.
 
 ## 막히면
+- **2026-11-10 실제 로그인 결과:** 첫 시도 `OAuth state has expired`(로그인 창을 열고 오래 둠 → 새 창으로 바로 하면 됨), 둘째 시도 **`invalid_scope: account_email`** → Supabase가 이메일 범위를 늘 요청한다(Allow users without an email을 켜도). **비즈 앱 전환 + 이메일 "선택 동의"가 필요**(아래 KOE205와 같은 원인).
 - **KOE205(설정하지 않은 동의 항목: account_email)**: Supabase가 이메일을 요청하는 경우. 비즈 앱 전환(개인 개발자도 본인 인증으로 가능) → 이메일을 "선택 동의"로 켠다. 이메일을 받게 되면 개인정보처리방침에 적는다.
 - **KOE006(Redirect URI 불일치)**: 5번 주소를 Supabase 화면의 Callback URL과 글자 그대로 맞춘다.
 - **개인정보 참고:** Supabase는 카카오가 준 닉네임·프로필 사진 주소를 계정 정보(auth.users의 사용자 메타데이터)에 저장한다 → 개인정보처리방침에 "카카오 로그인 시 닉네임·프로필 사진(선택)"을 적을지 출시 전 확인(launch_checklist).
