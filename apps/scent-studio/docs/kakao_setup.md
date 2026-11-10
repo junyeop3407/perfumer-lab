@@ -6,9 +6,9 @@
 1. **카카오 개발자 가입·앱 만들기** — [developers.kakao.com](https://developers.kakao.com) → 로그인 → 내 애플리케이션 → 애플리케이션 추가하기
    - 앱 이름: `Perfumer-LAB`(카카오 동의 화면에 보임), 회사명: 개인이면 본인 이름, 카테고리: 라이프스타일 등, 앱 아이콘(있으면)
 2. **REST API 키 확인** — 앱 → 앱 키(플랫폼 키)의 **REST API 키**. → 7번 Supabase **Client ID** 칸에 넣는다.
-3. **Client Secret 만들기** — 카카오 로그인 → 보안: 코드 생성 → 활성화 상태 **사용함**. → 7번 Supabase **Client Secret** 칸에 넣는다.
+3. **Client Secret 만들기** — 앱 → 플랫폼 키 → **REST API 키**(눌러서 편집 화면) → Client Secret: 코드 생성 → 활성화 상태 **사용함**. (2026-11 콘솔 개편 뒤 위치, 사장 확인) → 7번 Supabase **Client Secret** 칸에 넣는다.
 4. **카카오 로그인 켜기** — 카카오 로그인 → 활성화 설정 **ON**.
-5. **Redirect URI 등록** — 카카오 로그인(또는 REST API 키 편집 화면)의 Redirect URI에 정확히 한 줄:
+5. **Redirect URI 등록** — 앱 → 플랫폼 키 → **REST API 키** 편집 화면의 **카카오 로그인 Redirect URI**에 정확히 한 줄 (2026-11 콘솔 개편 뒤 위치, 사장 확인):
    `https://<프로젝트 참조값>.supabase.co/auth/v1/callback`
    (참조값은 Supabase 주소의 앞부분. Supabase Kakao 설정 화면에 "Callback URL"로 그대로 보이니 복사해 붙인다. 끝의 `/` 하나라도 다르면 KOE006 오류)
 6. **동의 항목** — 카카오 로그인 → 동의항목

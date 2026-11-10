@@ -183,3 +183,8 @@
 - 테스트: `AccountDeleteApiTest` 16 + `AccountDeleteNoKeyTest` 1 + `Bundle8ReviewFixesTest` 4(가짜 관리 API `FakeAuthAdmin`). 서버·DB 614. 변조 8/8 + 리뷰 수정 4/4 잡힘.
 - QA팀: 높음 없음. 중간 2 반영 — ① 삭제 중 먼저 출발한 요청이 "살아 있음"을 보관에 다시 넣는 틈 → 지운 사용자는 60초 "지워짐" 표시(늦게 넣은 30초 보관보다 길게) ② Supabase는 지웠는데 답을 못 받은 503 → 실패 경로에서도 보관을 지움(표시는 안 함: 진짜 실패면 계속 쓸 수 있게). 낮음 4 — 실패도 시간당 3회에 셈(명세대로, 유지), 외래 키 이름 의존(이름 고정 테스트 추가), 남은 줄 확인에 신고·사용 기록 없음(서버 권한 밖, 설계대로), `Authorization: Bearer sb_secret_…`가 실제 관리 API에서 되는지(→ 실제 삭제 확인에서 봄).
 - Gemini: 4건 중 1 반영(위 외래 키 이름), 3 해당 없음(`review_result.md` "Claude 판단").
+
+## 카카오 로그인 서버 쪽 (2026-11-10, plan 남은 것 10, 사장 OK)
+- 변경: `GET /me` email은 문자열이고 공백이 아닐 때만, 아니면 null(`MeController.email`). 카카오 토큰도 서버가 읽는 칸(sub·session_id·aud·role·is_anonymous·exp·iss)은 구글과 같아 다른 경로 없음.
+- 테스트: `KakaoLoginApiTest` 10(이메일 없음·빈 값·공백·숫자 → null, 동의·저장 됨, 구글·카카오 계정 분리, user id는 sub에서, 서명·세션 확인 그대로). 서버·DB 624. 변조 3/3.
+- QA팀: 지적 없음(email을 읽는 곳은 `/me` 한 곳). Gemini: 문제 없음.

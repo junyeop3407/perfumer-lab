@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * GET /me: 내 계정(사용자 id, 이메일)과 지금 동의해야 할 문서 버전·내 동의 상태. 가입일은 주지 않는다(사장 결정 2026-11-07).
  * POST /me/consents: 동의 기록. 앱이 보여 준 문서 버전이 지금 버전과 다르면 409(옛 문서에 동의한 것으로 남지 않게).
- * 사용자 id·이메일은 토큰에서만 꺼낸다.
+ * 사용자 id·이메일은 토큰에서만 꺼낸다. 이메일은 없을 수 있다(카카오 로그인) → null. 구글·카카오 계정은 서로 다른 user id라 합치지 않는다.
  */
 @RestController
 @RequestMapping("/api/v1/me")
@@ -51,9 +51,14 @@ public class MeController {
         UUID user = userId(auth);
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("userId", user.toString());
-        out.put("email", auth.getToken().getClaimAsString("email"));
+        out.put("email", email(auth.getToken().getClaims().get("email")));
         out.put("consents", status(user));
         return out;
+    }
+
+    /** 카카오 로그인은 이메일이 없을 수 있다(이메일 동의를 받지 않음, 사장 결정 2026-11-08). 없음·빈 값·공백·문자열이 아님 → null */
+    static String email(Object claim) {
+        return claim instanceof String s && !s.isBlank() ? s : null;
     }
 
     private Map<String, Object> status(UUID user) {
