@@ -1,22 +1,25 @@
 import { createHash } from 'node:crypto';
-import { mkdtempSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { prepareCatalog, releaseNotePath } from '../../scripts/prepare-catalog.mjs';
-import { parseCatalogBytes } from '../../src/catalog/loadCatalog';
+import { catalogPaths, prepareCatalog, releaseNotePath } from '../../scripts/prepare-catalog.mjs';
+import { parseCatalogBytes, validateCatalog } from '../../src/catalog/loadCatalog';
 import { RecommendationEngine } from '../../src/engine/RecommendationEngine';
 
 /**
  * 5-1 빌드할 때 카탈로그 고르기 (QA팀 추가 테스트, plan_stage5.md 1-4).
- * CATALOG_SOURCE=real: 받은 실제 파일이 있고 · 샘플이 아니고 · 받을 때 적은 catalog_releases 해시와 같아야 한다.
- * CATALOG_SOURCE=sample: 가상 데이터를 만들어 같은 자리에 둔다. 공개 데모 빌드는 sample만, 실제 이름 검사를 건너뛰면 실패.
+ * 실제(catalog.real.json.gz)·샘플(catalog.sample.json.gz)은 따로 두고, 고른 쪽을 빌드 자리(catalog.json.gz, 웹 public)에 복사한다.
+ * CATALOG_SOURCE=real: 받을 때 적은 catalog_releases 해시와 같아야 한다. sample: 가상 데이터 + 실제 이름 검사.
+ * 공개 데모 빌드는 sample만, 실제 이름 검사를 건너뛰면 실패.
  */
 const T = 120_000;
+let root: string;
 let dir: string;
-let file: string;
+let publicDir: string;
+let p: ReturnType<typeof catalogPaths>;
 
 const sha = (b: Buffer) => createHash('sha256').update(b).digest('hex');
 const noSecret = () => {
@@ -24,87 +27,110 @@ const noSecret = () => {
   delete env.SCENT_KEY_SECRET;
   return env;
 };
+const opts = (o: Record<string, unknown>) => ({ dir, publicDir, ...o });
 
 function writeReal(source = 'Parfumo', version = '2099.01.02') {
   const body = gzipSync(JSON.stringify({ version, engineVersion: 8, source: { name: source, note: 'x' }, perfumes: [] }));
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(file, body);
+  writeFileSync(p.real, body);
   return body;
 }
 
 function writeNote(body: Buffer, version = '2099.01.02', hash = sha(body)) {
-  writeFileSync(releaseNotePath(file), JSON.stringify({ version, sha256: hash, size: body.length }));
+  writeFileSync(p.realNote, JSON.stringify({ version, sha256: hash, size: body.length }));
 }
 
 beforeEach(() => {
-  dir = join(mkdtempSync(join(tmpdir(), 'catalog-')), 'assets', 'catalog');
-  file = join(dir, 'catalog.json.gz');
+  root = mkdtempSync(join(tmpdir(), 'catalog-'));
+  dir = join(root, 'assets', 'catalog');
+  publicDir = join(root, 'public');
+  mkdirSync(dir, { recursive: true });
+  p = catalogPaths(dir, publicDir);
+});
+
+describe('자리 이름', () => {
+  it('실제·샘플·빌드 자리가 다르고, 받기 기록은 실제 파일 옆', () => {
+    expect(new Set([p.real, p.sample, p.active]).size).toBe(3);
+    expect(p.real.endsWith('catalog.real.json.gz')).toBe(true);
+    expect(p.sample.endsWith('catalog.sample.json.gz')).toBe(true);
+    expect(p.active.endsWith('catalog.json.gz')).toBe(true);
+    expect(releaseNotePath(p.real)).toBe(p.realNote);
+    expect(p.realNote.endsWith('catalog.real.release.json')).toBe(true);
+  });
 });
 
 describe('CATALOG_SOURCE 고르기', () => {
   it('값이 없거나 모르는 값이면 멈춘다', () => {
-    expect(() => prepareCatalog({ source: undefined, file })).toThrow(/CATALOG_SOURCE/);
-    expect(() => prepareCatalog({ source: 'fake', file })).toThrow(/CATALOG_SOURCE/);
+    expect(() => prepareCatalog(opts({ source: undefined }))).toThrow(/CATALOG_SOURCE/);
+    expect(() => prepareCatalog(opts({ source: 'fake' }))).toThrow(/CATALOG_SOURCE/);
   });
 
   it('real: 파일이 없으면 dbCatalogFetch 안내를 내고 멈춘다', () => {
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/dbCatalogFetch/);
+    expect(() => prepareCatalog(opts({ source: 'real' }))).toThrow(/dbCatalogFetch/);
   });
 
   it('real: 받을 때 적은 해시 기록이 없으면 멈춘다', () => {
     writeReal();
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/dbCatalogFetch/);
+    expect(() => prepareCatalog(opts({ source: 'real' }))).toThrow(/dbCatalogFetch/);
   });
 
-  it('real: 해시가 다르면 멈춘다', () => {
+  it('real: 해시가 다르면 멈추고 빌드 자리는 건드리지 않는다', () => {
     const body = writeReal();
     writeNote(body, '2099.01.02', '0'.repeat(64));
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/해시/);
+    expect(() => prepareCatalog(opts({ source: 'real' }))).toThrow(/해시/);
+    expect(existsSync(p.active)).toBe(false);
+    expect(existsSync(p.web)).toBe(false);
   });
 
   it('real: 파일 안 버전이 기록과 다르면 멈춘다', () => {
     const body = writeReal('Parfumo', '2099.01.01');
     writeNote(body, '2099.01.02');
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/버전/);
+    expect(() => prepareCatalog(opts({ source: 'real' }))).toThrow(/버전/);
   });
 
   it('real: 샘플 파일이면 멈춘다', () => {
     const body = writeReal('sample');
     writeNote(body);
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/샘플/);
+    expect(() => prepareCatalog(opts({ source: 'real' }))).toThrow(/샘플/);
   });
 
-  it('real: 해시·버전이 맞으면 통과', () => {
+  it('real: 해시·버전이 맞으면 빌드 자리(폰·웹)에 복사', () => {
     const body = writeReal();
     writeNote(body);
-    expect(prepareCatalog({ source: 'real', file }).source).toBe('real');
+    expect(prepareCatalog(opts({ source: 'real' })).source).toBe('real');
+    expect(readFileSync(p.active).equals(body)).toBe(true);
+    expect(readFileSync(p.web).equals(body)).toBe(true);
   });
 
   it('공개 데모 빌드는 real을 허용하지 않는다', () => {
     const body = writeReal();
     writeNote(body);
-    expect(() => prepareCatalog({ source: 'real', file, publicBuild: true })).toThrow(/sample/);
+    expect(() => prepareCatalog(opts({ source: 'real', publicBuild: true }))).toThrow(/sample/);
   });
 });
 
 describe('CATALOG_SOURCE=sample', () => {
-  it('가상 카탈로그를 같은 자리에 만들고, 실제 카탈로그 기록은 지운다', () => {
-    const body = writeReal();
-    writeNote(body);
-    const r = prepareCatalog({ source: 'sample', file, env: noSecret() });
+  it('샘플을 따로 만들고 빌드 자리에 복사. 실제 파일·기록은 그대로라 real로 바로 돌아갈 수 있다', () => {
+    const real = writeReal();
+    writeNote(real);
+    const r = prepareCatalog(opts({ source: 'sample', env: noSecret() }));
     expect(r.source).toBe('sample');
     expect(r.nameCheck).toBe('skipped');
-    expect(existsSync(releaseNotePath(file))).toBe(false);
-    const again = readFileSync(file);
-    prepareCatalog({ source: 'sample', file, env: noSecret() });
-    expect(readFileSync(file).equals(again), '다시 만들어도 바이트까지 같다').toBe(true);
-    // 실제 파일이 아니므로 real로는 통과하지 않는다
-    expect(() => prepareCatalog({ source: 'real', file })).toThrow(/dbCatalogFetch/);
+    const sample = readFileSync(p.sample);
+    expect(readFileSync(p.active).equals(sample)).toBe(true);
+    expect(readFileSync(p.web).equals(sample)).toBe(true);
+    expect(readFileSync(p.real).equals(real), '실제 파일은 그대로').toBe(true);
+    expect(existsSync(p.realNote), '받기 기록도 그대로').toBe(true);
+    // 다시 받지 않고 real로
+    prepareCatalog(opts({ source: 'real' }));
+    expect(readFileSync(p.active).equals(real)).toBe(true);
+    // 다시 sample로: 같은 바이트
+    prepareCatalog(opts({ source: 'sample', env: noSecret() }));
+    expect(readFileSync(p.active).equals(sample)).toBe(true);
   }, T);
 
-  it('TS 엔진으로 추천이 돈다', async () => {
-    prepareCatalog({ source: 'sample', file, env: noSecret() });
-    const catalog = await parseCatalogBytes(new Uint8Array(readFileSync(file)));
+  it('샘플은 앱 모양 검사를 통과하고 TS 엔진으로 추천이 돈다', async () => {
+    prepareCatalog(opts({ source: 'sample', env: noSecret() }));
+    const catalog = validateCatalog(await parseCatalogBytes(new Uint8Array(readFileSync(p.active))));
     expect(catalog.source.name).toBe('sample');
     const engine = new RecommendationEngine(catalog);
     const browse = catalog.notes.filter((n) => n.tier === 'browse');
@@ -125,6 +151,6 @@ describe('CATALOG_SOURCE=sample', () => {
   }, T);
 
   it('공개 데모 빌드에서 실제 이름 검사를 건너뛰면(키 없음) 실패한다', () => {
-    expect(() => prepareCatalog({ source: 'sample', file, publicBuild: true, env: noSecret() })).toThrow(/실제 이름 검사/);
+    expect(() => prepareCatalog(opts({ source: 'sample', publicBuild: true, env: noSecret() }))).toThrow(/실제 이름 검사/);
   }, T);
 });

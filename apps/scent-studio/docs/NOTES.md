@@ -442,3 +442,6 @@
 - 실제 이름 검사(`pipeline/real_names.py`): 목록 `pipeline/data/out/real_name_hashes.txt`(커밋 안 함), 줄 b(브랜드)·n(향수 이름)·f(2자 이하, 칸 전체만). 키 없거나 목록·비공개 카탈로그 없으면 건너뜀(종료 0), `--require`면 3, 이름 있음 1, 도구 오류 2. 한 단어 이름은 brand/name 칸 전체가 같을 때만(실제 이름에 "Notes"·"Search" 같은 흔한 낱말이 있어서). 웹 번들(글자 파일) 검사는 5-9에서 다시 본다(한 단어 브랜드가 코드 낱말과 겹칠 수 있음).
 - `tests/run.sh`: pytest에 쓴 Python을 `SCENT_PY`로 넘긴다(Vitest의 준비 스크립트 테스트가 샘플을 만들 때 같은 Python 사용). 테스트 준비 코드 변경.
 - 실제 DB 읽기만 확인: `dbCatalogFetch` 미리 보기 → 지금 버전 2026.11.05, 2,341,384바이트(이 컴퓨터 앱 파일과 같은 크기). 실제로 받기(`-Papply=true`)는 사장 OK 뒤.
+- (5-1 나머지, 2026-11-11) 자리 나누기: 실제 `catalog.real.json.gz`(+`catalog.real.release.json`), 샘플 `catalog.sample.json.gz`, 빌드 자리 `catalog.json.gz`(폰)·`app/public/catalog.json.gz`(웹, Expo가 public/을 결과물에 복사). `CATALOG_SOURCE`를 바꾸면 고른 쪽을 복사만 한다. 실제 카탈로그는 2026-11-11 `-Papply=true`로 받음(2026.11.05).
+- 앱 로더: 폰은 Hermes라 `DecompressionStream`·`TextDecoder`·WebCrypto에 기대지 않는다(fflate·@noble/hashes). 새 버전은 와이파이에서만 받아 두고 다음 실행부터, 받은 뒤 실패한 파일은 하루 동안 다시 받지 않는다(설치 id 하루 3회). 웹은 받아 두지 않는다(서비스 워커 몫). 폰 전용 코드(`platform.native.ts`)는 단위 테스트가 없어 기기 테스트 D11로 확인.
+- 공개 빌드는 `npm run export:web:public`만(끝에 결과물 카탈로그가 샘플인지 대조).

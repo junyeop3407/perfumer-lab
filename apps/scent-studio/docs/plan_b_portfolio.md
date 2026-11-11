@@ -166,6 +166,7 @@
 - **샘플 카탈로그 생성기**(가짜 향수 100~300개, 노트 프로필 새로 만들기, 엔진 v8 형식 그대로) + 샘플 골든
 - **데모 모드**: 서버 없이 기기 저장만, 로그인 화면은 "데모에서는 로그인 없이 저장돼요" 안내
 - GitHub Pages 배포(Expo 웹, `baseUrl`), Actions 워크플로
+  - **공개 빌드는 `SCENT_KEY_SECRET`이 있어야 한다**(`npm run export:web:public`이 실제 이름 검사를 건너뛰면 실패, 5-1). → Pages 자동 빌드면 GitHub Actions Secrets에 `SCENT_KEY_SECRET`을 넣거나(+ 해시 목록 `real_name_hashes.txt`도 Secrets/비공개 저장소에서 받아야 함), **로컬(키 있는 컴퓨터)에서 빌드한 뒤 결과물만 업로드**한다(사장 메모 2026-11-11). 배포 스크립트·워크플로는 반드시 `npm run export:web:public`(준비 → `expo export` → 결과물 `dist/catalog.json.gz`가 샘플인지 대조)을 쓴다. `npx expo export`를 바로 돌리면 남아 있던 실제 파일이 들어갈 수 있다(리뷰 5-1 QA 중간-5)
 - README(4절), 구조도, 데모 GIF·스크린샷
 - (선택) docker compose 로컬 실행
 - 엔진 평가 문서의 공개용 요약(집계만)

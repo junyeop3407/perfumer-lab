@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 5 (화면) — **5-1 카탈로그 도구 끝, 사장 보고·OK 대기(2026-11-11)**. 5-0 디자인 최종 OK. 계획 `docs/plan_stage5.md`(사장 OK). 단계 4(서버)는 끝: Render **8fb9e0a** 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
+현재 단계: 5 (화면) — **5-1 카탈로그 끝(2026-11-11, 사장 OK·실제 카탈로그 받음)**, 다음 **5-2 조합 흐름**. 5-0 디자인 최종 OK. 계획 `docs/plan_stage5.md`(사장 OK, 8절 기기 테스트 추가). 단계 4(서버)는 끝: Render **8fb9e0a** 배포. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`). 디자인 시안: `docs/design/mock.html`(주소 끝 `#notes`·`#summary`·`#recs`·`#detail`), 캡처 `node docs/design/capture.mjs`
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 0877c8c (단계 5 첫 코드 묶음 5-1 시작 직전)
-결과: 파이프라인 156/156 · Vitest 51/51 · 서버·DB(JUnit + 내장 Postgres) 656/656 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 5-1 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
-사용자에게 남은 질문: ① 5-1 OK 여부 ② 실제 카탈로그 받기(`./gradlew dbCatalogFetch -Papply=true`) 실행 OK 여부(미리 보기: 2026.11.05, 2,341,384바이트) ③ 샘플을 만들면 실제 파일 자리를 덮어써도 되는지(계획 1-4 "같은 자리", QA 지적)
-다음 할 일: 사장 OK 뒤 **5-1 나머지**(`plan_stage5.md` 2절 표): 앱 로더(해시·모양 확인, 폰에서는 앱 안 파일 읽기)·서버에서 새 버전 받기 → 그다음 5-2 조합. 5-1에서 한 것: `dbCatalogFetch`, `pipeline/sample_catalog.py`, `pipeline/real_names.py`, `app/scripts/prepare-catalog.mjs`(`CATALOG_SOURCE=real|sample`, `--public`). 자세히는 `docs/NOTES.md`·`docs/review.md` "5-1". 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+리뷰 기준: 5f71fc1 (5-1 나머지 시작 직전) — 5-2 시작 때 새로 적는다
+결과: 파이프라인 156/156 · Vitest 123/123 · 서버·DB(JUnit + 내장 Postgres) 657/657 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 5-1 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
+사용자에게 남은 질문: ① 기기 승인 항목 L1~L8(`plan_stage5.md` 8-9) 추가 여부 ② 개발용 빌드·아이폰 서명 방식(8-7·8-8, 11-25 안드로이드 빌드 방식과 같이)
+다음 할 일: **5-2 조합 흐름**(`plan_stage5.md` 2절 표): 홈·하단 탭/왼쪽 메뉴, 노트 선택, 요약. 시작 때 `startCatalog`(`app/src/catalog/startCatalog.ts`)로 카탈로그를 연다. 묶음 끝에 기기 최소 확인(8-3). 빌드 전 `CATALOG_SOURCE=real|sample`(`app/scripts/prepare-catalog.mjs`, 실제는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받음). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
 ## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인 최종 OK, 다음 5-1 카탈로그)
 1. **오늘(2026-11-11) 한 것:**

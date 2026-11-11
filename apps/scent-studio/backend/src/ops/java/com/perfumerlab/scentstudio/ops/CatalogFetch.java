@@ -34,7 +34,7 @@ import java.util.zip.GZIPInputStream;
  * 기본은 "미리 보기"(catalog_releases의 지금 버전·해시·크기만 보여 주고 아무것도 받지 않음). -Papply=true일 때만:
  *   ① 서버 전용 키로 비공개 버킷 catalog에서 지금 버전 파일을 받는다(공개 주소·서버 공개 API는 쓰지 않음)
  *   ② catalog_releases의 sha256·크기, 파일 안 version과 비교한다. 다르거나 샘플이면 아무것도 쓰지 않고 멈춘다
- *   ③ app/assets/catalog/catalog.json.gz에 쓰고(임시 파일 → 바꿔치기), 옆에 catalog.release.json(버전·sha256·크기)을 남긴다.
+ *   ③ app/assets/catalog/catalog.real.json.gz에 쓰고(임시 파일 → 바꿔치기), 옆에 catalog.real.release.json(버전·sha256·크기)을 남긴다.
  *      빌드 준비 스크립트(app/scripts/prepare-catalog.mjs, CATALOG_SOURCE=real)가 이 기록과 파일 해시를 비교한다.
  * 키는 .env에서만 읽고 출력하지 않는다. 받은 파일은 커밋하지 않는다(.gitignore).
  */
@@ -42,7 +42,8 @@ public final class CatalogFetch {
 
     public record Release(String version, String sha256, long size, String storagePath) {}
 
-    static final String DEFAULT_OUT = "../app/assets/catalog/catalog.json.gz";
+    /** 실제 카탈로그 자리. 샘플(catalog.sample.json.gz)·빌드 자리(catalog.json.gz)와 따로 둔다(사장 결정 2026-11-11) */
+    static final String DEFAULT_OUT = "../app/assets/catalog/catalog.real.json.gz";
     static final long MAX_BYTES = 50_000_000;
 
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).followRedirects(HttpClient.Redirect.NEVER).build();
@@ -102,8 +103,9 @@ public final class CatalogFetch {
         return r.orElseThrow(() -> new IllegalStateException("catalog_releases에 지금 버전(is_current)이 없습니다. 먼저 dbCatalogPublish로 배포해 주세요"));
     }
 
+    /** 받기 기록: catalog.real.json.gz → catalog.real.release.json (app/scripts/prepare-catalog.mjs releaseNotePath와 같은 규칙) */
     static Path releaseNote(Path out) {
-        return out.resolveSibling("catalog.release.json");
+        return out.resolveSibling(out.getFileName().toString().replaceFirst("\\.json\\.gz$", "") + ".release.json");
     }
 
     static void preview(Release r, Path out) {

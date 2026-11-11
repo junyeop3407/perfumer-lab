@@ -155,6 +155,13 @@ class CatalogFetchTest {
     }
 
     @Test
+    void realFileHasItsOwnPlaceSeparateFromSample() {
+        assertTrue(CatalogFetch.DEFAULT_OUT.endsWith("/app/assets/catalog/catalog.real.json.gz"), CatalogFetch.DEFAULT_OUT);
+        assertEquals("catalog.real.release.json", CatalogFetch.releaseNote(Path.of("x", "catalog.real.json.gz")).getFileName().toString());
+        assertEquals("catalog.release.json", CatalogFetch.releaseNote(Path.of("x", "catalog.json.gz")).getFileName().toString());
+    }
+
+    @Test
     void previewDoesNotDownload() throws Exception {
         byte[] body = catalog(VERSION, "Parfumo");
         FakeStorage.putPath(OBJECT, 200, body);
