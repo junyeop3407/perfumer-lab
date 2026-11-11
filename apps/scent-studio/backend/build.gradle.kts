@@ -79,4 +79,7 @@ tasks.jar { enabled = false }
 tasks.test {
     useJUnitPlatform()
     testLogging { events("failed"); exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.SHORT }
+    // docs/openapi.json 다시 만들기: ./gradlew test --tests "*OpenApiDocTest*" -Dopenapi.write=true
+    systemProperty("openapi.write", System.getProperty("openapi.write") ?: "false")
+    inputs.file("../docs/openapi.json").optional()   // 파일만 손으로 고쳐도 테스트가 다시 돈다
 }

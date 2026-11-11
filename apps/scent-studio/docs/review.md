@@ -188,3 +188,9 @@
 - 변경: `GET /me` email은 문자열이고 공백이 아닐 때만, 아니면 null(`MeController.email`). 카카오 토큰도 서버가 읽는 칸(sub·session_id·aud·role·is_anonymous·exp·iss)은 구글과 같아 다른 경로 없음.
 - 테스트: `KakaoLoginApiTest` 10(이메일 없음·빈 값·공백·숫자 → null, 동의·저장 됨, 구글·카카오 계정 분리, user id는 sub에서, 서명·세션 확인 그대로). 서버·DB 624. 변조 3/3.
 - QA팀: 지적 없음(email을 읽는 곳은 `/me` 한 곳). Gemini: 문제 없음.
+
+## 묶음 9 OpenAPI 정리 (2026-11-11)
+- 변경: `web/OpenApiConfig`(문서 정보·bearer·`ApiError` 스키마, 주소마다 로그인·성공 코드 201/204·오류 응답 400/401/403/404/409/413/415/429/503·`X-Install-Id` 헤더·카탈로그 gzip 바이너리·events 객체 배열), `SecurityConfig`(문서를 켰을 때만 `GET /api/v1/openapi` 로그인 없이 — 운영은 꺼져 있어 401 그대로), `application.yml`(`_debug`·`/error` 제외, 키 순서 고정), `build.gradle.kts`(`-Dopenapi.write=true` 전달, `docs/openapi.json`을 테스트 입력으로). 새 파일 `docs/openapi.json`(앱 TypeScript 타입용, 단계 5에서 openapi-typescript).
+- 테스트: `OpenApiDocTest` 8(주소·메서드 목록 정확히, bearer, 성공 코드, 오류 모양, X-Install-Id, gzip·events 배열, 주소·비밀값 없음, 저장소 파일 = 서버 문서). 서버·DB 632.
+- QA팀: 높음 없음. 운영 노출 막힘 확인(같은 설정 키, 주소 정확히 비교, UI 없음). 중간 5 반영 — 성공 코드 201·204, JsonNode 내부 모양, 오류 응답 부족, X-Install-Id·gzip. 낮음 반영 — 공개 주소 열쇠를 "메서드 주소"로, 공개 주소(카탈로그·events)에도 틀린 토큰 401, `docs/openapi.json`을 Gradle 입력으로. 낮음 반영 안 함 — record 칸 required 표시(단계 5 타입 만들 때 같이, plan 남은 것), operationId 겹침(지금 겹침 없음, 겹치면 파일 비교 테스트가 잡음).
+- Gemini: 4건 중 1 반영(쓰기 전 폴더 만들기), 3 해당 없음(`review_result.md` "Claude 판단").

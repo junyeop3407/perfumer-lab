@@ -49,7 +49,8 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain api(HttpSecurity http, RateLimiter limiter, SessionChecker sessions,
-                            @Value("${scent.ip.trusted-proxy-hops:1}") int hops) throws Exception {
+                            @Value("${scent.ip.trusted-proxy-hops:1}") int hops,
+                            @Value("${springdoc.api-docs.enabled:false}") boolean openapi) throws Exception {
         if (hops < 1 || hops > 5) throw new IllegalStateException("TRUSTED_PROXY_HOPS는 1~5");
         AuthenticationEntryPoint entryPoint = (req, res, ex) -> {
             if (serverSide(ex)) {
@@ -81,6 +82,8 @@ public class SecurityConfig {
                         // 로그인 없이도 부름(설치 id로). 토큰을 보내면 확인하고, 틀린 토큰은 401(익명으로 넘기지 않음)
                         .requestMatchers(HttpMethod.GET, "/api/v1/catalog/latest", "/api/v1/catalog/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/events").permitAll()
+                        // OpenAPI 문서: 켰을 때(테스트·내 컴퓨터)만 로그인 없이. 운영은 꺼져 있어 401 그대로(묶음 9)
+                        .requestMatchers(req -> openapi && "GET".equals(req.getMethod()) && "/api/v1/openapi".equals(req.getRequestURI())).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(rs -> rs
                         .bearerTokenResolver(resolver())
