@@ -36,6 +36,7 @@ public final class DbOps {
             case "server-check" -> serverCheck(env);
             case "cron" -> cron(env);
             case "catalog-publish" -> CatalogPublish.run(env, args[1], args[2], "true".equals(args[3]));
+            case "catalog-fetch" -> CatalogFetch.run(env, args[1], CatalogFetch.applyFlag(args[2]));
             case "auth-check" -> { // 읽기만: 세션 확인 함수 설계용 (auth.sessions 모양과 권한)
                 try (Connection c = connect(env)) {
                     print(c, "select column_name, data_type, is_nullable from information_schema.columns where table_schema = 'auth' and table_name = 'sessions' order by ordinal_position");
@@ -45,7 +46,7 @@ public final class DbOps {
                     print(c, "select count(*) as 세션수 from auth.sessions");
                 }
             }
-            default -> throw new IllegalArgumentException("version | migrate | check | server-password | server-check | cron | catalog-publish");
+            default -> throw new IllegalArgumentException("version | migrate | check | server-password | server-check | cron | catalog-publish | catalog-fetch");
         }
     }
 

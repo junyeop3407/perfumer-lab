@@ -435,3 +435,10 @@
 - **시안 검토 반영(2026-11-11 사장, 방향 OK):** ① "이 향수" 막대 골드 → 중립 회갈색 `compare`(`#8C8275`/`#8A8378`, design.md 3-2 ★★), 골드는 "매우 비슷" 배지에만 ② 막대마다 "내 조합 44%"·"이 향수 38%" 글자 ③ 누르는 영역 48dp(칩은 보이는 36 + 영역 48, 글자 버튼 높이 48·좌우 12) ④ 노트 고르기 "2 / 3단계" 빼고 "계열: …" 표시 ⑤ 고른 칩 진한 테두리 뺌 ⑥ 다크 textSub 대비 측정(최저 4.98:1, accentSoft 위) → 그대로 ⑦ PC 조합 요약 오른쪽에 추천 미리보기 3개.
 - **글꼴 용량 실측:** Noto Serif KR 가변 ttf 23.8MB → 굵기 하나 woff2 3.1MB → 2,350자 서브셋 woff2 355KB(ttf 1.43MB). Pretendard 굵기 하나 woff2 766KB → 공식 서브셋 267KB(otf 서브셋 351KB). **정함:** 세리프는 500 하나만, 웹은 Pretendard 공식 동적 서브셋 + 세리프 서브셋 woff2를 직접 올림(외부 CDN 안 씀), 앱은 서브셋 ttf/otf 약 2.5MB. `design_rules.md` 2-1.
 - **이름 변경:** `docs/design/DESIGN.md` → `docs/design/design_rules.md`(사장 지시).
+
+## 단계 5 묶음 5-1 카탈로그 (2026-11-11)
+- 실제 카탈로그는 `./gradlew dbCatalogFetch`(미리 보기) → `-Papply=true`로 받는다. 받을 때 `app/assets/catalog/catalog.release.json`(버전·sha256·크기)을 남기고, 빌드 준비(`CATALOG_SOURCE=real`)가 이 기록과 파일 해시를 비교한다(Node에는 DB 연결이 없어서).
+- 샘플(`CATALOG_SOURCE=sample`)은 같은 자리에 만들고 위 기록을 지운다 → 그 뒤 real 빌드는 다시 받아야 통과(실수로 샘플이 real로 나가지 않게).
+- 실제 이름 검사(`pipeline/real_names.py`): 목록 `pipeline/data/out/real_name_hashes.txt`(커밋 안 함), 줄 b(브랜드)·n(향수 이름)·f(2자 이하, 칸 전체만). 키 없거나 목록·비공개 카탈로그 없으면 건너뜀(종료 0), `--require`면 3, 이름 있음 1, 도구 오류 2. 한 단어 이름은 brand/name 칸 전체가 같을 때만(실제 이름에 "Notes"·"Search" 같은 흔한 낱말이 있어서). 웹 번들(글자 파일) 검사는 5-9에서 다시 본다(한 단어 브랜드가 코드 낱말과 겹칠 수 있음).
+- `tests/run.sh`: pytest에 쓴 Python을 `SCENT_PY`로 넘긴다(Vitest의 준비 스크립트 테스트가 샘플을 만들 때 같은 Python 사용). 테스트 준비 코드 변경.
+- 실제 DB 읽기만 확인: `dbCatalogFetch` 미리 보기 → 지금 버전 2026.11.05, 2,341,384바이트(이 컴퓨터 앱 파일과 같은 크기). 실제로 받기(`-Papply=true`)는 사장 OK 뒤.

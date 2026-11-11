@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 5 (화면) — **5-0 디자인 최종 OK(2026-11-11)**, 다음 **5-1 카탈로그**. 계획 `docs/plan_stage5.md`(사장 OK). 단계 4(서버)는 끝: Render **8fb9e0a**(묶음 8·카카오 `/me`·OpenAPI·레드팀 1번 고침) 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
+현재 단계: 5 (화면) — **5-1 카탈로그 도구 끝, 사장 보고·OK 대기(2026-11-11)**. 5-0 디자인 최종 OK. 계획 `docs/plan_stage5.md`(사장 OK). 단계 4(서버)는 끝: Render **8fb9e0a** 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`). 디자인 시안: `docs/design/mock.html`(주소 끝 `#notes`·`#summary`·`#recs`·`#detail`), 캡처 `node docs/design/capture.mjs`
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 8bb26d4 (묶음 9 시작 직전) — 단계 5 첫 코드 묶음(5-1) 시작 때 새로 적는다
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 세션 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
-사용자에게 남은 질문: 없음
-다음 할 일: **5-1 카탈로그**(`plan_stage5.md` 1절·2절): `dbCatalogFetch`(비공개 버킷 → 해시 확인 → 앱), 샘플 생성기(가상 브랜드 20·향수 300, 누가 봐도 가짜 이름), `CATALOG_SOURCE=real|sample` 준비 스크립트, 실제 이름 검사는 키 섞은 해시·비공개 있을 때만. 테스트 먼저. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+리뷰 기준: 0877c8c (단계 5 첫 코드 묶음 5-1 시작 직전)
+결과: 파이프라인 156/156 · Vitest 51/51 · 서버·DB(JUnit + 내장 Postgres) 656/656 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 5-1 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
+사용자에게 남은 질문: ① 5-1 OK 여부 ② 실제 카탈로그 받기(`./gradlew dbCatalogFetch -Papply=true`) 실행 OK 여부(미리 보기: 2026.11.05, 2,341,384바이트) ③ 샘플을 만들면 실제 파일 자리를 덮어써도 되는지(계획 1-4 "같은 자리", QA 지적)
+다음 할 일: 사장 OK 뒤 **5-1 나머지**(`plan_stage5.md` 2절 표): 앱 로더(해시·모양 확인, 폰에서는 앱 안 파일 읽기)·서버에서 새 버전 받기 → 그다음 5-2 조합. 5-1에서 한 것: `dbCatalogFetch`, `pipeline/sample_catalog.py`, `pipeline/real_names.py`, `app/scripts/prepare-catalog.mjs`(`CATALOG_SOURCE=real|sample`, `--public`). 자세히는 `docs/NOTES.md`·`docs/review.md` "5-1". 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
 ## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인 최종 OK, 다음 5-1 카탈로그)
 1. **오늘(2026-11-11) 한 것:**

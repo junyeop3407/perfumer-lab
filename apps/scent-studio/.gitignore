@@ -8,6 +8,9 @@ local.properties
 *.keystore
 pipeline/data/out/
 app/assets/catalog/catalog.json.gz
+# 실제 카탈로그 받기 기록(dbCatalogFetch)·쓰다 남은 임시 파일
+app/assets/catalog/catalog.release.json
+app/assets/catalog/*.tmp
 # Expo 앱
 node_modules/
 .expo/

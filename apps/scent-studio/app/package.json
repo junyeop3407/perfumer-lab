@@ -36,7 +36,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "export:web": "expo export -p web",
+    "catalog:prepare": "node scripts/prepare-catalog.mjs",
+    "export:web": "node scripts/prepare-catalog.mjs && expo export -p web",
+    "export:web:public": "node scripts/prepare-catalog.mjs --public && expo export -p web",
+    "prebuild:app": "node scripts/prepare-catalog.mjs && expo prebuild",
     "test:unit": "vitest run",
     "test:acceptance": "playwright test",
     "typecheck": "tsc --noEmit"

@@ -32,6 +32,16 @@ tasks.register<JavaExec>("dbCatalogPublish") {
     jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
 }
 
+// 실제 카탈로그 받기(비공개 버킷 → 앱): 기본은 미리 보기. -Papply=true일 때만 받아서 해시 확인 뒤 씀(CatalogFetch)
+tasks.register<JavaExec>("dbCatalogFetch") {
+    group = "db"
+    classpath = ops.runtimeClasspath
+    mainClass = "com.perfumerlab.scentstudio.ops.DbOps"
+    args("catalog-fetch", (findProperty("out") ?: "").toString(), (findProperty("apply") ?: "false").toString())
+    workingDir = projectDir
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+}
+
 for ((task, arg) in listOf("dbVersion" to "version", "dbMigrate" to "migrate", "dbCheck" to "check",
     "dbServerPassword" to "server-password", "dbServerCheck" to "server-check", "dbCron" to "cron", "dbAuthCheck" to "auth-check")) {
     tasks.register<JavaExec>(task) {

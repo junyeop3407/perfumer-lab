@@ -17,6 +17,7 @@ if [ -z "$PY" ]; then
   exit 1
 fi
 "$PY" -I -m pytest -q pipeline/tests || exit 1
+export SCENT_PY="$PY" # Vitest의 카탈로그 준비 테스트(prepare-catalog.mjs)가 같은 Python으로 샘플을 만든다
 
 # 2. 앱: 추천 엔진(골든·성질) 등 부품 단위 테스트 (Vitest)
 cd app || exit 1

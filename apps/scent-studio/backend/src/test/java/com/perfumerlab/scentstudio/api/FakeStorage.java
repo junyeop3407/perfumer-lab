@@ -94,6 +94,21 @@ public final class FakeStorage {
         replies.put(path, new Reply(status, body.getBytes(StandardCharsets.UTF_8)));
     }
 
+    /** 아무 주소의 응답(바이트 그대로, 예: gzip 카탈로그) */
+    public static void putPath(String path, int status, byte[] body) {
+        replies.put(path, new Reply(status, body));
+    }
+
+    /** 이 주소는 헤더와 본문 일부만 보내고 멈춘다(받는 쪽 시간 제한 확인용) */
+    public static void stallPath(String path) {
+        stalls.add(path);
+    }
+
+    /** 받은 요청 중 apikey 헤더 값들(주소, 키). 테스트에서 키를 공개 주소에 보내지 않았는지 확인용 */
+    public static List<String[]> seenRequests() {
+        return seen.stream().map(s -> new String[]{s.path(), s.apikey()}).toList();
+    }
+
     public static byte[] gzip(String text) {
         try (ByteArrayOutputStream b = new ByteArrayOutputStream(); GZIPOutputStream g = new GZIPOutputStream(b)) {
             g.write(text.getBytes(StandardCharsets.UTF_8));
