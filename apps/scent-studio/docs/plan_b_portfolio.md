@@ -1,6 +1,6 @@
 # Plan B — 스토어 출시 없이 GitHub 포트폴리오로 공개
 
-작성 2026-11-11 · 상태: **사장 판단 반영(2026-11-11)**, Parfumo 정리 목록 확인 대기 · 결정일 2026-11-21
+작성 2026-11-11 · 상태: **사장 판단 반영(2026-11-11)**, 1-3 ①·1-4 정리 끝 · 결정일 2026-11-21
 
 - **Plan A**: 지금 계획대로 Play 비공개 테스트(12명·14일) 뒤 스토어 공개. 전제는 **Fragrantica와 Parfumo 둘 다 데이터 사용 허가**(기본 카탈로그가 Parfumo라서, 사장 결정 2026-11-11).
 - **Plan B**: 앱은 끝까지 완성한다. 스토어에는 내지 않고, GitHub 포트폴리오로 공개해 면접에서 보여 준다.
@@ -43,49 +43,66 @@
 
 (처음 추천: ①을 지금 + Plan B 확정 시 ③.) ✗ 2곳은 Plan A·B와 상관없이 지금 지우는 게 맞다. 허가가 오기 전이기 때문이다. 기록 문제는 Plan B로 공개 저장소를 새로 만들 때 함께 사라진다. Plan A로 가면 허가를 받은 상태라 기록에 남아도 문제가 작다.
 
-### 1-4. Parfumo 향수별 데이터 정리 목록 (①과 같은 기준, **사장 확인 대기 — 아직 안 지움**)
-기준 제안:
-- **대량 목록 파일(향수 수십 개 이상)**: 이름까지 포함해 표 전체를 집계 요약으로 바꾼다. 이름 목록만 남겨도 카탈로그 일부를 공개하는 셈이기 때문이다. 판단 근거(합격·불합격, 비율 등)만 남긴다.
+### 1-4. Parfumo 향수별 데이터 정리 목록 (①과 같은 기준, **2026-11-11 사장 OK → 정리함**)
+기준(사장 OK):
+- **대량 목록 파일(향수 수십 개 이상)**: 향수 이름이 든 표 줄은 모두 비공개로 옮긴다. **검증 방법·표본 수·정확도·판정 분포 같은 결과 숫자는 남긴다**(포트폴리오의 엔진 검증 근거). 빠진 표 자리에는 "(향수 N개 표는 비공개 — 원본 …)" 한 줄을 둔다.
 - **설명 속 예시(향수 1~5개)**: 이름은 남긴다(①과 같음). 향수별 값은 지운다: 평점, 평가 수, 어코드·노트 목록, 조향사, Parfumo 주소, 향수별 점수.
+- **원본은 모두 보관**: 비공개 저장소 `perfumer-lab-private/pipeline-data-out/private_docs/`(+ 로컬 `pipeline/data/out/private_docs/`, 커밋 안 함). 이 문서들을 만드는 스크립트도 이제 이 비공개 폴더에 쓴다(`catalog_rules.private_doc`). 다시 돌려도 공개 docs/에 향수 이름이 되살아나지 않는다.
 
-| # | 파일 | 들어 있는 것 | 정리 방법 |
+| # | 파일 | 들어 있던 것 | 한 일 (2026-11-11) |
 |---|---|---|---|
-| P1 | `pipeline/copy_suspects.csv` | 복사 의심 묶음 333개 행: 브랜드·연도·판정·이유(이름·평가 수는 이미 없음) | 브랜드·연도를 지우고 묶음 번호·판정·이유만 남김. 또는 비공개로 옮기고 집계(묶음 수·판정별 개수)만 남김 — **추천: 비공개로 옮김**(빌드가 이 파일을 쓰는지 확인 뒤) |
-| P2 | `docs/engine_grades_clones.md` | 향수 약 40개: 이름·연도·평가 수·어코드·조향사·Parfumo 주소 | 표 → 집계 요약 |
-| P3 | `docs/engine_accord_order_check.md` | 향수 20개: Parfumo 주소·어코드 순서(사이트 대조용 체크표) | 표 → "20건 대조 예정" 설명만. 체크표 원본은 비공개 |
-| P4 | `docs/engine_strong.md`, `docs/engine_strong_candidate.md` | 각 약 110개: 이름·어코드 3개 | 표 → 집계 요약 |
-| P5 | `docs/engine_blind.md`, `engine_blind_v3.md`, `engine_blind_v6.md`, `engine_blind_vs_v3.md`, `engine_blind_vs_v6.md` | 각 50~60개: 이름(브랜드·연도·농도)·어코드 3개 | 블라인드 기록(답은 따로 남음). 표 → "조합 N개, A/B 판정 결과"만 |
-| P6 | `docs/engine_blind_v3_pairs.json`, `_v6_pairs.json`, `_v7_pairs.json`, `_vs_v3_pairs.json`, `_vs_v6_pairs.json`, `pipeline/experiments/v4_blind_top5.json` | 실제 향수 key(브랜드:이름) 각 50~120개 | 비공개로 옮김(블라인드 재채점 도구가 읽는지 확인 뒤, 읽으면 경로를 비공개 폴더로) |
-| P7 | `docs/engine_variants.md` | 향수 약 20개: 이름·어코드·점수 | 표 → 집계 요약 |
-| P8 | `docs/engine_report.md` | 향수 약 20개: 이름·횟수 | 이름 → "향수 A~" 또는 집계 |
-| P9 | `docs/engine_how_it_works.md` 178~ | 예시 Top 순위 향수 몇 개: 이름·점수 4종 | 예시: 이름 남기고 점수 지움 — 또는 가상 향수로 바꿈(설명서라 가상이 자연스러움, **추천**) |
-| P10 | `docs/engine_weights.md` 20~23 | 가중치별 상위 향수 이름 나열 | 예시: 이름 남김(값 없음) — 그대로 둬도 됨 |
-| P11 | `docs/engine_v8_trial.md` 126~130, `docs/engine_v8_remeasure.md` 57 | 향수 5개 이름·순위·코사인·노트 일치 / Kaleidoscope 점수 기여 | 예시: 이름 남기고 향수별 점수(코사인·노트 일치·기여) 지움 |
-| P12 | `docs/NOTES.md` 76·100·115 근처 | 예시 향수 이름 + 평가 수(예: `(1,130)`) | 예시: 이름 남기고 평가 수 지움 |
-| P13 | `HANDOFF.md`(앱) 203·209, `pipeline/experiments/engine_v8_trial.py`·`engine_v8_remeasure.py` | 향수 이름만(값 없음) | 그대로 둠 |
+| P1 | `pipeline/copy_suspects.csv` | 복사 의심 333행: 브랜드·연도·판정·이유 | **공개 저장소에서 지움**, 비공개로 옮김. `build_catalog.py`가 이제 `pipeline/data/out/private_docs/copy_suspects.csv`에 씀(테스트는 이 파일을 읽지 않음) |
+| P2 | `docs/engine_grades_clones.md` | 향수 약 40개: 이름·연도·평가 수·어코드·조향사·주소 | 향수 표 42줄 비공개, 등급 분포·표본 설명 남김. 생성 `grades_clones_check.py` → 비공개 폴더 |
+| P3 | `docs/engine_accord_order_check.md` | 향수 20개: 주소·어코드 순서 | 체크표 20줄 비공개, 설명 남김 |
+| P4 | `docs/engine_strong.md`, `docs/engine_strong_candidate.md` | 각 약 110개: 이름·어코드 | 조합별 Top 5 표 비공개(109·111줄), **요약 표(강 값별 1위·계열 비율) 남김**. 생성 `strong_value_test.py` → 비공개 폴더 |
+| P5 | `docs/engine_blind.md`, `engine_blind_v3.md`, `engine_blind_v6.md`, `engine_blind_vs_v3.md`, `engine_blind_vs_v6.md` | 각 50~60개: 이름·어코드 | A/B 향수 표 비공개, 조합(노트)·안내 남김. 판정 결과는 `engine_report.md` 3절에 그대로. 생성 `evaluate.py` → 비공개 폴더 |
+| P6 | `docs/engine_blind_v3_pairs.json`, `_v6_pairs.json`, `_v7_pairs.json`, `_vs_v3_pairs.json`, `_vs_v6_pairs.json`, `pipeline/experiments/v4_blind_top5.json` | 향수 key 각 50~120개 | **공개 저장소에서 지움**, 비공개로 옮김. `evaluate.py`(고정본 채점)·`strong_both.py`가 비공개 폴더에서 읽음. 없으면 채점을 건너뛰거나(evaluate) 받는 법을 알리고 멈춤(strong_both) |
+| P7 | `docs/engine_variants.md` | 향수 약 20개: 이름·어코드·점수 | 향수 표 22줄 비공개, 방식별 결과·등급 기준값 남김. 생성 `strong_lemon_variants.py` → 비공개 폴더 |
+| P8 | `docs/engine_report.md` | 향수 약 20개: 이름·순위 | 향수별 순위 표 비공개, **재현 20/20·맹점 4/5·블라인드 7/12 등 결과 남김**. 생성 `evaluate.py` → 비공개 폴더 |
+| P9 | `docs/engine_how_it_works.md` 178~ | 예시 Top 5 이름·점수 | 이름을 가상 향수 A~E로 바꿈(점수는 계산 예시 그대로) |
+| P10 | `docs/engine_weights.md` 20~23 | 이름만 | 그대로 둠 |
+| P11 | `docs/engine_v8_trial.md` 126~130, `docs/engine_v8_remeasure.md` 57 | 향수별 코사인·노트 일치 / 점수 기여 | 값을 "(비공개)"·설명으로 바꿈, 이름·순위 남김. 생성 `engine_v8_trial.py`·`engine_v8_remeasure.py` → 비공개 폴더(공개본은 손질한 사본) |
+| P12 | `docs/NOTES.md` 100·115 근처 | 예시 이름 + 평가 수 | 평가 수 지움 |
+| P13 | `HANDOFF.md`(앱), `pipeline/experiments/engine_v8_trial.py`·`engine_v8_remeasure.py` | 이름만 | 그대로 둠 |
 
-남기는 것: `docs/design.md` 204 브랜드별 개수(집계), 노트 이름·대응표, 합성 픽스처, 집계 통계 문서.
+남기는 것(사장 결정): 집계 통계 문서, 이름 대응표(`fragrantica_*.csv`·`decant_brand_aliases.csv`), `docs/design.md` 204 브랜드별 개수, 노트 이름, 합성 픽스처.
 
 ### 1-5. Plan B 확정 시 ③: 걸러낸 사본으로 새 공개 저장소 (**실행은 아직 안 함**)
 목적: 커밋 기록은 살리고, 문제 파일만 기록에서 뺀다. 기존 `perfumer-lab`에는 강제 푸시하지 않는다(그대로 두고 비공개로 전환).
 
-**걸러낼 것 (기록 전체에서)**
-- 파일째 빼기(`--invert-paths`): P1~P8의 파일 전부, 그리고 기록에만 남은 `docs/engine_blind_answers.txt`
-- 줄만 바꾸기(`--replace-text`): `docs/engine_v8_trial.md`·`docs/plan_v8.md`의 Fragrantica 수치(1-2 ✗ 2곳), P9·P11·P12의 향수별 값, 예전 커밋 4개의 실제 향수 key 1개(plan_stage4 남은 것 8)
-- 커밋 메시지에 향수 이름·수치가 있으면 `--message-callback`으로 바꿈(실행 전 `git log --all --format=%B`로 확인)
+**걸러낼 것 (기록 전체에서) — 1-3 ①·1-4에서 정리한 파일 전부**
+
+(가) 파일째 기록에서 빼고(`--invert-paths`), 마지막에 **지금의 정리된 판만 다시 넣는** 파일 — 향수별 내용이 문서 대부분이라 옛 판을 줄 단위로 고치기 어려움:
+- `docs/engine_v8_trial.md`, `docs/plan_v8.md` (1-3 ① Fragrantica)
+- `docs/engine_grades_clones.md`, `docs/engine_accord_order_check.md`, `docs/engine_strong.md`, `docs/engine_strong_candidate.md` (P2·P3·P4)
+- `docs/engine_blind.md`, `docs/engine_blind_v3.md`, `docs/engine_blind_v6.md`, `docs/engine_blind_vs_v3.md`, `docs/engine_blind_vs_v6.md` (P5)
+- `docs/engine_variants.md`, `docs/engine_report.md`, `docs/engine_how_it_works.md`, `docs/engine_v8_remeasure.md` (P7·P8·P9·P11)
+
+(나) 파일째 기록에서 빼고 **다시 넣지 않는** 파일(지금도 공개 저장소에 없음):
+- `pipeline/copy_suspects.csv` (P1)
+- `docs/engine_blind_v3_pairs.json`, `docs/engine_blind_v6_pairs.json`, `docs/engine_blind_v7_pairs.json`, `docs/engine_blind_vs_v3_pairs.json`, `docs/engine_blind_vs_v6_pairs.json`, `pipeline/experiments/v4_blind_top5.json` (P6)
+- `docs/engine_blind_answers.txt`(기록에만 있음, 답안)
+
+(다) 줄만 바꾸는 파일(`--replace-text`, 기록이 길어 파일째 빼면 손해가 큼):
+- `docs/NOTES.md` (P12: 평가 수 `(1,130)`·`(1,117)`·`694`·`695`·`1,537`·`1,535` 문자열 → 지움)
+- 예전 커밋 4개의 실제 향수 key 1개(plan_stage4 남은 것 8) → 가짜 key로
+- (나)·(가)에서 걸러지지 않은 옛 판의 향수별 값은 6번 검사에서 찾아 여기에 더한다
+
+(라) 커밋 메시지: 향수 이름·수치가 있으면 `--message-callback`으로 바꿈(실행 전 `git log --all --format=%B`로 확인)
 
 **순서**
-1. 1-4 정리를 `perfumer-lab`에서 먼저 끝낸다(현재 파일이 깨끗해야 사본의 마지막 상태도 깨끗함)
+1. 1-3 ①·1-4 정리를 `perfumer-lab`에서 먼저 끝낸다 — ✅ 2026-11-11
 2. 임시 폴더(scratchpad)에 `git clone --mirror`로 새 사본 → 원본 저장소는 건드리지 않음
-3. `git filter-repo --invert-paths --paths-from-file drop.txt` (파일째 빼기)
-4. `git filter-repo --replace-text replace.txt` (줄 바꾸기, 정규식 목록)
-5. (필요하면) `--message-callback`
-6. 검사: 전체 기록에서 브랜드 목록·`parfumo.com`·향수 key 모양·Decant 수치 모양·비밀값(`sb_secret_`·`.env`·`SCENT_KEY_SECRET`)을 `git log -p --all`로 검색 → 0건이어야 함. 테스트(`bash tests/run.sh`)가 사본에서도 통과하는지
-7. 사장 확인 → GitHub에 **빈 새 공개 저장소**(예: `perfumer-lab-portfolio`) 만들고 사본 푸시(새 저장소라 강제 푸시 아님)
-8. `perfumer-lab`을 비공개로 전환(사장). Render·GitHub Actions(keepalive)는 `perfumer-lab`에 그대로 연결
-9. 이후 공개본 갱신: 같은 걸러내기를 다시 돌리는 내보내기 스크립트(`drop.txt`·`replace.txt`를 저장소에 둠)
+3. `git filter-repo --invert-paths --paths-from-file drop.txt` ((가)+(나))
+4. `git filter-repo --replace-text replace.txt` ((다))
+5. (필요하면) `--message-callback` ((라))
+6. 사본에 (가) 파일의 지금 정리된 판을 한 커밋으로 다시 넣음("공개용 정리본")
+7. 검사: 전체 기록에서 브랜드 목록·`parfumo.com`·향수 key 모양·Decant 수치 모양·비밀값(`sb_secret_`·`.env`·`SCENT_KEY_SECRET`)을 `git log -p --all`로 검색 → 0건이어야 함. 사본에서 `bash tests/run.sh` 통과
+8. 사장 확인 → GitHub에 **빈 새 공개 저장소**(예: `perfumer-lab-portfolio`) 만들고 사본 푸시(새 저장소라 강제 푸시 아님)
+9. `perfumer-lab`을 비공개로 전환(사장). Render·GitHub Actions(keepalive)는 `perfumer-lab`에 그대로 연결
+10. 이후 공개본 갱신: 같은 걸러내기를 다시 돌리는 내보내기 스크립트
 
-주의: `drop.txt`·`replace.txt`에는 실제 향수 이름이 들어가므로 **비공개 저장소에 둔다**. 커밋 번호는 사본에서만 바뀌고 원본은 그대로다.
+주의: `drop.txt`·`replace.txt`에는 실제 향수 이름·key가 들어가므로 **비공개 저장소에 둔다**. 커밋 번호는 사본에서만 바뀌고 원본은 그대로다. 앞으로 1-4 같은 정리를 더 하면 이 목록에도 같이 더한다.
 
 ### 1-6. 원칙
 - **코드는 공개, Fragrantica 기반 데이터는 비공개.** 실제 카탈로그·강도·투표·향수별 수치는 `perfumer-lab-private`와 Supabase 비공개 버킷(`catalog`)에만 둔다. 공개 문서에는 집계(비율·개수)만 싣는다.
@@ -157,7 +174,7 @@
 | 할 일 | Plan A | Plan B | 추천과 이유 |
 |---|---|---|---|
 | 테스트 계정 삭제 | **출시 직전** 삭제, 다시 만들지 않음 | **단계 5 끝** 삭제 | **둘 다 삭제, 시점은 사장 결정(2026-11-11)대로 미룸** — 단계 5에서 로그인을 확인할 때 테스트 계정이 필요하다. 면접관용 데모 계정은 필요 없다. Pages 데모는 서버를 쓰지 않는다. 서버까지 보여 주려면 (b) 로컬 실행의 가짜 로그인이 안전하다. 공개 데모에 진짜 계정과 비밀번호를 적으면 누구나 실제 DB에 쓸 수 있다 |
-| 이메일 로그인 끄기 | 출시 직전, 계정 삭제 뒤 | 단계 5 끝, 계정 삭제 뒤 | **둘 다 끈다(계정 삭제 바로 뒤).** 참고: Supabase에는 "이메일 새 가입만 막고 기존 계정 로그인 허용" 설정이 따로 없다. 전체 "Allow new users to sign up"을 끄면 구글 새 가입도 막히고, Email 공급자를 끄면 기존 이메일 로그인도 막힌다. `before_user_created` 훅으로 provider가 email인 새 가입만 거절하면 된다(기존 계정은 훅을 안 거침, 2026-11-11 조사). 켜 두면 공개 키로 누구나 실제 Supabase에 계정을 만들 수 있다(`api_check.sh`: 지금 on). 끄는 데 비용이 없다 |
+| 이메일 로그인 끄기 | 출시 직전, 계정 삭제 뒤 | 단계 5 끝, 계정 삭제 뒤 | **둘 다 끈다(계정 삭제 바로 뒤).** 참고: Supabase에는 "이메일 새 가입만 막고 기존 계정 로그인 허용" 설정이 따로 없다. 전체 "Allow new users to sign up"을 끄면 구글 새 가입도 막히고, Email 공급자를 끄면 기존 이메일 로그인도 막힌다. `before_user_created` 훅으로 provider가 email인 새 가입만 거절하면 된다(기존 계정은 훅을 안 거침, 2026-11-11 조사). 켜 두면 공개 키로 누구나 실제 Supabase에 계정을 만들 수 있다(`api_check.sh`: 지금 on). 끄는 데 비용이 없다 **훅은 만들지 않는다 — 조사 결과만 남김(사장 결정 2026-11-11)**. 실제로 막을 때 다시 정한다. |
 | keepalive main 반영 | 반영(Render health 단계 포함) | Render 단계는 반영 안 함. 지금 main의 Supabase keepalive만 유지(데이터 보존, 무료) | **11-21 결정까지 지금 그대로**(main은 Supabase만 깨우는 중). A면 반영하고, B면 반영하지 않는다. B에서 Render를 쓰지 않으면 깨울 이유가 없다 |
 
 ---

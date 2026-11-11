@@ -19,7 +19,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from catalog_rules import load_old_catalog  # noqa: E402
+from catalog_rules import load_old_catalog, private_doc as R_private  # noqa: E402
 import engine_ref as E  # noqa: E402
 import estimate as EST  # noqa: E402
 from estimate import is_dev  # noqa: E402,F401
@@ -27,7 +27,7 @@ import evaluate as V  # noqa: E402
 import similar_votes as SV  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
-OUT = APP / "docs" / "engine_v8_trial.md"
+OUT = R_private("engine_v8_trial.md")  # 전체판(향수 이름·Decant 값)은 비공개. 공개 docs/engine_v8_trial.md는 손질한 사본(plan_b_portfolio.md 1-3 ①)
 SEED = 20261104
 SHIFT_TOP = 50  # P2: 두 묶음을 맞출 때 보는 묶음별 상위 향수 수
 

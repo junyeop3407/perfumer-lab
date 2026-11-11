@@ -97,7 +97,7 @@
 ## 2026-10-31 엔진 v5: 복사 오류 제외 + 노트 프로필 "함께 든 노트의 몫 빼기" (사장 결정)
 - **복사 오류**: 원본은 직접 수집이 아니라 외부 데이터셋(TidyTuesday 2024-12-10 Parfumo 정리본, `pipeline/data/raw/SOURCE.txt`)이라 우리 수집기 버그가 아니다. 원본 59,325줄 중 브랜드가 다른데 노트·평가 수·평점·어코드·조향사가 모두 같은 묶음 221개(465줄). 이름·브랜드·주소는 각자 것이고 연도도 대부분 다르다(같은 것 18묶음) → 상세 정보 덩어리만 다른 향수 것이 들어간 형태. 파일 전체에 고르게 흩어져 있어(10등분마다 36~55줄) 특정 구간·순서 문제로는 보이지 않는다. Number 칸은 98%가 비어 있어 단서가 안 된다.
 - 처리(`build_catalog.mark_copy_suspects`): 후보 기준 203묶음 → 원본을 가린 87묶음(조향사가 그 브랜드에서 다른 향수도 만듦 83, 연도가 브랜드 역사와 안 맞는 쪽 제외 4)은 원본만 남기고, 나머지는 묶음째 제외. 뺀 향수 325개, 지우지 않고 `pipeline/copy_suspects.csv`. 평가 수·어코드가 다른 묶음(Grossmith/XerJoff 등)은 그대로.
-- 재현 정답: Boadicea Passionate·ann fragrance The Royal이 제외돼 다음 순서 Davidoff Cool Water Intense(1,130)·Bvlgari Aqva Amara(1,117)가 들어왔다. 평가 수만 1~2 다른 '거의 복사'(Outremer Lavande 694 / XerJoff 695, Nikos 1,537 / 복사본 1,535)는 엄격 기준에 안 걸려서, 재현 정답을 고를 때 "다른 브랜드에 노트·어코드가 똑같은 향수가 있으면 뺀다"를 넣었다(`evaluate.reproduction_picks`, 100개 세트에서 Outremer Lavande 교체). Nikos는 복사본이 제외돼 짝이 없어 그대로 남는다.
+- 재현 정답: Boadicea Passionate·ann fragrance The Royal이 제외돼 다음 순서 Davidoff Cool Water Intense·Bvlgari Aqva Amara가 들어왔다. 평가 수만 1~2 다른 '거의 복사'(Outremer Lavande / XerJoff, Nikos / 복사본 — 평가 수는 2026-11-11 비공개로 옮김)는 엄격 기준에 안 걸려서, 재현 정답을 고를 때 "다른 브랜드에 노트·어코드가 똑같은 향수가 있으면 뺀다"를 넣었다(`evaluate.reproduction_picks`, 100개 세트에서 Outremer Lavande 교체). Nikos는 복사본이 제외돼 짝이 없어 그대로 남는다.
 - **프로필**: `build_catalog.deconvolve` — 향수 어코드 ≈ 노트 프로필 평균, 음수 없는 최소제곱(특징 강조에서 출발, 400번). 회귀 테스트(머스크가 장미 몫의 플로럴을 가져가지 않음)를 먼저 넣고 지금 방식에서 실패를 확인한 뒤 바꿨다. numpy 의존성 추가(`pipeline/requirements.txt`).
 - 결과(v5, 강 2.0, 0.87/0.79 그대로): 재현 20/20(고유 노트 기준 20/20) · 맹점 5/5(시트러스 1위 0) · 다양성 86. 블라인드 문서를 지금 엔진으로 만들면 50줄 중 42줄이 바뀐다 → '강' 값이 정해질 때까지 v3 문서 그대로.
 

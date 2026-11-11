@@ -28,7 +28,7 @@ import similar_votes as SV  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
 OUT_DIR = APP / "pipeline" / "data" / "out"
-DOC = APP / "docs" / "engine_v8_remeasure.md"
+DOC = R.private_doc("engine_v8_remeasure.md")  # 전체판은 비공개. 공개 docs/는 손질한 사본(plan_b_portfolio.md 1-4 P11)
 MANUAL = APP / "pipeline" / "manual"
 RAW = B.read_csv(APP / "pipeline" / "data" / "raw" / "parfumo_data_clean.csv")
 DECANT = D.load_rows(APP / "pipeline" / "data" / "raw" / "decant" / "perfumes.db")

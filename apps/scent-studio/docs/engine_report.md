@@ -1,5 +1,8 @@
 # 추천 엔진 합격 기준표
 
+> **2026-11-11 공개용 정리:** 향수 이름과 향수별 값(평점·평가 수·어코드·조향사·주소·점수)은 비공개로 옮겼다. 검증 방법·표본 수·결과 숫자는 그대로다. 원본은 비공개 저장소 `pipeline-data-out/private_docs/engine_report.md`.
+
+
 > 카탈로그 `2026.11.05` · 엔진 v8 · 후보 향수 12,469개 · `py pipeline/evaluate.py`로 만든 문서
 > 기준은 docs/design.md 14절. 블라인드 비교는 `engine_blind.md`.
 
@@ -22,28 +25,7 @@
 
 <details><summary>향수별 순위</summary>
 
-| 향수 | 순위 |
-|---|---|
-| Joop! — Joop! Homme Joop! 1989 Eau de Toilette | 1 |
-| Paco Rabanne — 1 Million Paco Rabanne 2008 Eau de Toilette | 1 |
-| Calvin Klein — CK One Calvin Klein 1994 Eau de Toilette | 1 |
-| Montblanc — Individuel Montblanc 2003 Eau de Toilette | 1 |
-| Lancôme — La Vie est Belle L'Eau de Parfum | 1 |
-| Nikos — Sculpture Homme Nikos 1995 Eau de Toilette | 1 |
-| Issey Miyake — L'Eau d'Issey pour Homme Issey Miyake 1994 Eau de Toilette | 1 |
-| Giorgio Armani — Emporio Armani - Stronger With You | 1 |
-| Gisada — Ambassador for Men | 1 |
-| Mugler — Angel Mugler 1992 Eau de Parfum | 1 |
-| Versace — Blue Jeans | 1 |
-| Nautica — Voyage Nautica 2006 Eau de Toilette | 1 |
-| Fragrance One — Office for Men | 1 |
-| Jil Sander — Sun Jil Sander 1989 Eau de Toilette | 1 |
-| Dolce & Gabbana — The One for Men Dolce & Gabbana 2008 Eau de Toilette | 1 |
-| Parfums de Marly — Kalan | 1 |
-| Dior — Dior Homme Dior 2020 Eau de Toilette | 1 |
-| Amouage — Sunshine Man | 1 |
-| Davidoff — Cool Water Intense | 1 |
-| Bvlgari — Aqva Amara Bvlgari 2014 Eau de Toilette | 1 |
+> (향수 20개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_report.md`, plan_b_portfolio.md 1-4)
 
 </details>
 

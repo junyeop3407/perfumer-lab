@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from catalog_rules import load_old_catalog  # noqa: E402
+from catalog_rules import load_old_catalog, private_doc  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
@@ -30,7 +30,10 @@ used = [{k for k, _, _ in spec} for _, spec in V.BLENDS + V.v3_combos() + V.V6_C
 if {k for k, _, _ in BASE} in used:
     raise SystemExit("예시 조합이 블라인드 조합과 겹칩니다")
 
-blind_text = "".join((APP / "docs" / f).read_text(encoding="utf-8") for f in ("engine_blind.md", "engine_blind_vs_v6.md"))
+blind_files = [private_doc(f) for f in ("engine_blind.md", "engine_blind_vs_v6.md")]  # 비공개(plan_b_portfolio.md 1-4)
+if not all(f.exists() for f in blind_files):
+    raise SystemExit("블라인드 문서가 없습니다: 비공개 저장소 pipeline-data-out/private_docs/를 pipeline/data/out/private_docs/에 복사하세요")
+blind_text = "".join(f.read_text(encoding="utf-8") for f in blind_files)
 catalog = load_old_catalog(APP / "pipeline" / "data" / "out" / "catalog.json.gz")
 eng = E.Engine(catalog)
 by_key = {p["key"]: p for p in catalog["perfumes"]}

@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from catalog_rules import load_old_catalog  # noqa: E402
+from catalog_rules import load_old_catalog, private_doc  # noqa: E402
 import engine_ref as E  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
@@ -87,7 +87,7 @@ def main() -> None:
                           for i, r in enumerate(recs)], ""]
         summary.append(f"| {name} | {kind} | {note_ko[sk]} → {ko[sa]} | " + " | ".join(cells) + " |")
         print(name, "|", " / ".join(cells))
-    (APP / "docs" / out_file).write_text("\n".join(out + summary + [""] + details), encoding="utf-8")
+    private_doc(out_file).write_text("\n".join(out + summary + [""] + details), encoding="utf-8")
 
 
 if __name__ == "__main__":

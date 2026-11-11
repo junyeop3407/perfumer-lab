@@ -1,5 +1,8 @@
 # 레몬 '강' 문제: 방식 비교
 
+> **2026-11-11 공개용 정리:** 향수 이름과 향수별 값(평점·평가 수·어코드·조향사·주소·점수)은 비공개로 옮겼다. 검증 방법·표본 수·결과 숫자는 그대로다. 원본은 비공개 저장소 `pipeline-data-out/private_docs/engine_variants.md`.
+
+
 > `py pipeline/experiments/strong_lemon_variants.py`로 만든 문서 (2026-10-31). 맹점 조합 = 레몬(강) · 오스만투스(중) · 샌달우드(약). 블라인드 비교에서는 이 조합을 뺐다.
 
 ## 지금 (평균 빼기 · 강 1.5)
@@ -11,11 +14,9 @@
 
 | 순위 | 향수 | 상위 어코드 | 점수 |
 |---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 0.922 |
 | 2 | Kuschel J / クシェルヨット — Freude Feder フロイデフェーダァ | 플로럴 · 프레시 · 프루티 | 0.890 |
-| 3 | Balenciaga — Talisman Balenciaga 1996 Eau Transparente | 플로럴 · 프루티 · 그린 | 0.881 |
-| 4 | Elizabeth Arden — Sunflowers Elizabeth Arden 1993 Eau de Toilette | 플로럴 · 프레시 · 프루티 | 0.879 |
-| 5 | Ormonde Jayne — Gatsby 22 | 프레시 · 시트러스 · 플로럴 | 0.868 |
+
+> (향수 4개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_variants.md`, plan_b_portfolio.md 1-4)
 
 ## 특징 강조(PPMI)만 · 강 1.5
 
@@ -26,11 +27,9 @@
 
 | 순위 | 향수 | 상위 어코드 | 점수 |
 |---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 0.905 |
-| 2 | Balenciaga — Talisman Balenciaga 1996 Eau Transparente | 플로럴 · 프루티 · 그린 | 0.875 |
 | 3 | Kuschel J / クシェルヨット — Freude Feder フロイデフェーダァ | 플로럴 · 프레시 · 프루티 | 0.872 |
-| 4 | Annette Neuffer — Elixir Solaire | 시트러스 · 플로럴 · 프루티 | 0.871 |
-| 5 | Elizabeth Arden — Sunflowers Elizabeth Arden 1993 Eau de Toilette | 플로럴 · 프레시 · 프루티 | 0.860 |
+
+> (향수 4개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_variants.md`, plan_b_portfolio.md 1-4)
 
 ## 강 2.0만 (평균 빼기)
 
@@ -41,11 +40,9 @@
 
 | 순위 | 향수 | 상위 어코드 | 점수 |
 |---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 0.910 |
-| 2 | Ormonde Jayne — Gatsby 22 | 프레시 · 시트러스 · 플로럴 | 0.878 |
-| 3 | Annette Neuffer — Elixir Solaire | 시트러스 · 플로럴 · 프루티 | 0.863 |
-| 4 | Maître Parfumeur et Gantier — Jardin du Néroli | 시트러스 · 플로럴 · 그린 | 0.863 |
 | 5 | Kuschel J / クシェルヨット — Freude Feder フロイデフェーダァ | 플로럴 · 프레시 · 프루티 | 0.862 |
+
+> (향수 4개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_variants.md`, plan_b_portfolio.md 1-4)
 
 ## 둘 다: 특징 강조 + 강 2.0 ★추천
 
@@ -54,13 +51,7 @@
 - 재현(기준 15): **15/20** · 다양성(기준 40): 브랜드 88개
 - 계열 평균 프로필을 쓰는 노트(향수 20개 미만에 나옴, 목록·검색에 보이는 것): 701개
 
-| 순위 | 향수 | 상위 어코드 | 점수 |
-|---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 0.890 |
-| 2 | Annette Neuffer — Elixir Solaire | 시트러스 · 플로럴 · 프루티 | 0.866 |
-| 3 | Ormonde Jayne — Gatsby 22 | 프레시 · 시트러스 · 플로럴 | 0.864 |
-| 4 | Maître Parfumeur et Gantier — Jardin du Néroli | 시트러스 · 플로럴 · 그린 | 0.863 |
-| 5 | Balenciaga — Talisman Balenciaga 1996 Eau Transparente | 플로럴 · 프루티 · 그린 | 0.846 |
+> (향수 5개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_variants.md`, plan_b_portfolio.md 1-4)
 
 ## (참고) 둘 다인데 최소 등장 수 기준 없음
 
@@ -69,13 +60,7 @@
 - 재현(기준 15): **15/20** · 다양성(기준 40): 브랜드 88개
 - 최소 등장 수 기준 없음 (적게 나오는 노트도 K=20 끌어당기기만)
 
-| 순위 | 향수 | 상위 어코드 | 점수 |
-|---|---|---|---|
-| 1 | Clive Christian — for Women | 플로럴 · 프레시 · 그린 | 0.890 |
-| 2 | Annette Neuffer — Elixir Solaire | 시트러스 · 플로럴 · 프루티 | 0.865 |
-| 3 | Ormonde Jayne — Gatsby 22 | 프레시 · 시트러스 · 플로럴 | 0.864 |
-| 4 | Maître Parfumeur et Gantier — Jardin du Néroli | 시트러스 · 플로럴 · 그린 | 0.863 |
-| 5 | Balenciaga — Talisman Balenciaga 1996 Eau Transparente | 플로럴 · 프루티 · 그린 | 0.845 |
+> (향수 5개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_variants.md`, plan_b_portfolio.md 1-4)
 
 ## 등급 기준값
 

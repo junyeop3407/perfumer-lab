@@ -6,11 +6,11 @@
 리뷰 기준: 8bb26d4 (묶음 9 시작 직전)
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구 1 건너뜀 (2026-11-11 확인, `bash tests/run.sh`, 묶음 9 레드팀 1번 고침 포함). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: `docs/plan_b_portfolio.md` 1-4 Parfumo 정리 목록 사장 확인 → 정리. 11-14 Fragrantica 추가 메일 → 11-21 Plan A(Fragrantica·Parfumo 둘 다 허가)/B 결정. 그다음 단계 5
+다음 할 일: 11-14 Fragrantica 추가 메일 → 11-21 Plan A(Fragrantica·Parfumo 둘 다 허가)/B 결정(`docs/plan_b_portfolio.md`). 그사이 단계 5 공통 작업. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사(블라인드 채점·실험 스크립트가 읽음)
 
-## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 체크리스트까지 끝, Plan B 문서·데이터 정리 진행 중)
+## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 11-21 Plan A/B 결정 대기)
 1. **오늘 한 것:** OpenAPI 정리(3bd0961, `docs/openapi.json`) → Render 3bd0961 배포·확인 → 전체 API 10분 재측정 **RSS 최대 208MB / 기준 420MB** → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, 두 줄 보내도 실제 IP 맨 오른쪽) → 레드팀(26/26 주소, 뚫림 1: 틀린 토큰 IP 막기가 같은 IP 정상 사용자도 막음) → 사장 결정 "틀린 토큰만 막기"로 고침(8fb9e0a) → Render 배포·재공격 막힘 → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움 → 배포 전 체크리스트 12개. 자세히는 NOTES "묶음 9", `docs/redteam.md`, `docs/review.md`.
-2. **멈춘 곳:** `docs/plan_b_portfolio.md` 1-4 Parfumo 향수별 데이터 정리 목록 사장 확인 대기(아직 안 지움). Fragrantica 수치 2곳은 ①로 지움(2026-11-11). **순서(사장 결정 2026-11-11):** 테스트 계정은 단계 5 로그인 확인에 쓰고 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)**에 삭제(다시 만들지 않음) → 바로 뒤 이메일 새 가입 막기(Supabase에 이메일만 막는 설정은 없음 → `before_user_created` 훅 또는 Email 끄기) → `api_check.sh` 확인. keepalive main 반영은 Plan A일 때만
+2. **멈춘 곳:** 공개 저장소 데이터 정리 끝(2026-11-11): Fragrantica 수치 2곳(①), Parfumo 향수별 데이터 P1~P12(`plan_b_portfolio.md` 1-4). 원본은 비공개 저장소 `pipeline-data-out/private_docs/`, 생성 스크립트도 그 폴더(로컬 `pipeline/data/out/private_docs/`)에 씀. Plan B 확정 시 1-5 걸러낸 사본(실행 전 사장 확인). **순서(사장 결정 2026-11-11):** 테스트 계정은 단계 5 로그인 확인에 쓰고 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)**에 삭제(다시 만들지 않음) → 바로 뒤 이메일 새 가입 막기(Supabase에 이메일만 막는 설정은 없음 → `before_user_created` 훅 또는 Email 끄기) → `api_check.sh` 확인. keepalive main 반영은 Plan A일 때만
 3. **묶음 9 남은 것(plan "묶음 9 배포 전 체크리스트"):** 실제 약관·방침 문구 → 동의 버전 올리기, 베이스 이미지 digest 고정, CORS(웹 출처 목록)·403 모양, Redirect URLs 등록, Render 로그에 토큰·이메일 없는지(사장 확인), 바구니 지도 나누기(남은 것 6), keepalive main 반영(이 브랜치에만 고침 — 예약 실행은 main에서만 돈다), Tomcat HTML 400을 JSON으로(레드팀 4번, 낮음).
 4. 레드팀을 다시 돌릴 때: `RedTeamRig`(`./gradlew test --tests "*RedTeamRig*" -Dredteam.rig=true -Dredteam.minutes=60`, 이 컴퓨터에서만 서버를 띄움).
 
@@ -165,7 +165,7 @@
 - **엔진 v6** (사장 결정 순서대로, 이유·수치는 `docs/NOTES.md`):
   - 노트 프로필 = **함께 든 노트의 몫 빼기**(향수 어코드 ≈ 노트 프로필 평균, 음수 없는 최소제곱, numpy). 향수 20개 미만 노트는 계열 평균.
   - 점수 = **어코드 0.35 : 노트 0.55** : 선호 계열 0.1. **강 3.0**(어코드 쪽에만), 약 0.5, 중 1.0.
-  - 원본 데이터셋 **복사 오류 제외**: 브랜드가 다른데 노트·평가 수·어코드·조향사가 같은 묶음(+평가 수만 1~5 다른 거의 복사)은 원본만 남기거나 묶음째 뺌 → 333개 제외, `pipeline/copy_suspects.csv`.
+  - 원본 데이터셋 **복사 오류 제외**: 브랜드가 다른데 노트·평가 수·어코드·조향사가 같은 묶음(+평가 수만 1~5 다른 거의 복사)은 원본만 남기거나 묶음째 뺌 → 333개 제외, `pipeline/data/out/private_docs/copy_suspects.csv`(비공개, 2026-11-11부터).
   - 같은 향수 묶음(group): 이름이 같아도 노트가 절반 넘게 다르면 다른 향수.
   - 등급 기준값은 **아직 0.87 / 0.79 그대로**(사장 결정 대기, 같은 규칙으로 재면 0.92 / 0.87).
 - 기준표 `docs/engine_report.md`: 재현 20/20(어려운 버전 20개 20·20, 100개 99·98·97) · 맹점 4/5(시트러스 1위 2) · 다양성 97.
@@ -225,8 +225,8 @@
 
 ## 주요 파일
 - 앱: `app/` (Expo Router 화면 `app/app/`, 엔진 `app/src/engine/`, 이름표 `app/src/ui/testIds.ts`, 승인 테스트 `app/tests/acceptance/`, 부품 테스트 `app/tests/unit/`)
-- 데이터·검증: `pipeline/` (build_catalog, engine_ref, evaluate, make_golden, experiments/, tests/), 보고서 `pipeline/report.md`, 복사 오류 목록 `pipeline/copy_suspects.csv`
+- 데이터·검증: `pipeline/` (build_catalog, engine_ref, evaluate, make_golden, experiments/, tests/), 보고서 `pipeline/report.md`, 복사 오류 목록 `pipeline/data/out/private_docs/copy_suspects.csv`(비공개, 2026-11-11부터)
 - 문서: `docs/requirements.md`(기획) · `docs/design.md`(설계, 엔진 8절) · `docs/spec.md`(명세) · `docs/tests.md`(승인 목록 41) · `docs/plan.md`(4단계 계획) · `docs/NOTES.md`(고친 이유·결정) · `docs/engine_how_it_works.md`(엔진 계산 설명) · `docs/engine_*.md`(엔진 실험·기준표·블라인드)
 - 가짜 데이터·골든: `tests/fixtures/`, `tests/golden/recommend_cases.json`
 - 포트폴리오용 문제 해결 기록: 저장소 루트 `portfolio/problem-solving.md`
-- 복사 오류 목록: 공개 `pipeline/copy_suspects.csv`(향수 이름·평가 수 없음) / 전체는 `pipeline/data/out/copy_suspects_full.csv`(커밋 안 함, `build_catalog.py`가 만듦)
+- 복사 오류 목록: 공개 `pipeline/data/out/private_docs/copy_suspects.csv`(비공개, 2026-11-11부터)(향수 이름·평가 수 없음) / 전체는 `pipeline/data/out/copy_suspects_full.csv`(커밋 안 함, `build_catalog.py`가 만듦)

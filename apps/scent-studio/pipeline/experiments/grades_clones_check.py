@@ -20,6 +20,8 @@ import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(APP / "pipeline"))
+from catalog_rules import private_doc  # noqa: E402
 SEED = 20261031
 
 
@@ -89,7 +91,7 @@ def main() -> None:
                 *[f"| {esc(p['brand'] + ' — ' + p['name'])} | {p['year'] or '?'} | {p['ratingCount']} | {' · '.join(p['accords'][:3])} "
                   f"| {esc(raw[p['key']].get('Perfumers') or '?')} | {raw[p['key']]['URL']} |"
                   for p in ps], ""]
-    (APP / "docs" / "engine_grades_clones.md").write_text("\n".join(out), encoding="utf-8")
+    private_doc("engine_grades_clones.md").write_text("\n".join(out), encoding="utf-8")
     print("\n".join(out[:12]))
 
 

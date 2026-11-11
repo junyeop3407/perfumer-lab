@@ -128,7 +128,7 @@ def main() -> None:
     vs, s_ = round(statistics.median(rec), 2), round(statistics.quantiles(rec, n=4)[0], 2)
     out += ["", f"→ 추천 방식의 새 기준값(소수 둘째 자리로 반올림): **매우 비슷 ≥ {vs} · 비슷 ≥ {s_}** (지금 0.85 · 0.75)", ""]
     print(out[-2])
-    (APP / "docs" / "engine_variants.md").write_text("\n".join(out), encoding="utf-8")
+    R.private_doc("engine_variants.md").write_text("\n".join(out), encoding="utf-8")
 
 
 if __name__ == "__main__":

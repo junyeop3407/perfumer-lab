@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from catalog_rules import load_old_catalog  # noqa: E402
+from catalog_rules import load_old_catalog, private_doc  # noqa: E402
 import engine_ref as E  # noqa: E402
 import evaluate as V  # noqa: E402
 from strong_value_test import COMBOS  # noqa: E402
@@ -31,7 +31,10 @@ def main() -> None:
     by = {p["key"]: p for p in cat["perfumes"]}
     ko = {a["key"]: a["nameKo"] for a in cat["accords"]}
     fam = {a["key"]: a["family"] for a in cat["accords"]}
-    v4 = json.loads((Path(__file__).resolve().parent / "v4_blind_top5.json").read_text(encoding="utf-8"))["top5"]
+    v4_file = private_doc("v4_blind_top5.json")  # 비공개(plan_b_portfolio.md 1-4 P6)
+    if not v4_file.exists():
+        raise SystemExit("v4_blind_top5.json이 없습니다: 비공개 저장소 pipeline-data-out/private_docs/에서 받으세요")
+    v4 = json.loads(v4_file.read_text(encoding="utf-8"))["top5"]
     p20, p100 = V.reproduction_picks(cat, eng, 20), V.reproduction_picks(cat, eng, 100)
 
     def main_accord(note):

@@ -31,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import engine_ref  # noqa: E402
 from engine_ref import BlendNote, Engine  # noqa: E402
+from catalog_rules import private_doc  # noqa: E402
 
 APP = Path(__file__).resolve().parent.parent
 CATALOG = APP / "pipeline" / "data" / "out" / "catalog.json.gz"
@@ -344,7 +345,7 @@ def read_answers(path: Path | None = None, n_combos: int | None = None) -> dict 
         return m.group(1).strip() if m else ""
 
     blind, score_text = field("블라인드"), field("점수")
-    ans = {"source": field("출처") or "사장", "pairs": DOCS / field("고정본") if field("고정본") else None,
+    ans = {"source": field("출처") or "사장", "pairs": private_doc(field("고정본")) if field("고정본") else None,
            "scores": parse_scores(score_text), "lines": {}, "combos": {}}
     if re.search(r"\d+-\d+", blind):
         ans["lines"] = {(int(i), int(j)): ab.upper() for i, j, ab in re.findall(r"(\d+)-(\d+)\s*([ABab=])", blind)}
@@ -423,9 +424,10 @@ def main() -> None:
         header, "한쪽은 지금 엔진(어코드 + 노트), 다른 쪽은 노트만 보는 방식입니다. 어느 쪽인지는 숨겨 두었습니다.",
         pairs_by_combo, BLIND_SEED, label, accords_ko)
     # 블라인드 문서는 사장이 답하는 동안 바뀌면 안 되므로, 이미 있으면 --rebuild-blind 일 때만 다시 쓴다 (2026-10-31)
-    if "--rebuild-blind" in sys.argv or not (DOCS / "engine_blind.md").exists():
-        (DOCS / "engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
-        write_pairs(DOCS / "engine_blind_v7_pairs.json", BLENDS, current_pairs)
+    # 향수 이름이 든 블라인드 문서·고정본·기준표는 비공개 폴더에 쓴다(plan_b_portfolio.md 1-4, 2026-11-11). 공개 docs/에는 요약만
+    if "--rebuild-blind" in sys.argv or not private_doc("engine_blind.md").exists():
+        private_doc("engine_blind.md").write_text("\n".join(blind), encoding="utf-8")
+        write_pairs(private_doc("engine_blind_v7_pairs.json"), BLENDS, current_pairs)
 
     # 주 비교(2026-11-02): 지금 엔진 v7 vs 엔진 v6. 문서는 --compare-v6 으로 만든다
     v6_side = {}
@@ -436,9 +438,9 @@ def main() -> None:
         doc_v6, v6_side, lines_v6 = blind_doc(
             header, "한쪽은 지금 엔진, 다른 쪽은 예전 엔진(v6)입니다. 어느 쪽인지는 숨겨 두었습니다.",
             pairs_v6, V6_COMPARE_SEED, label, accords_ko, title="블라인드 비교: 지금 엔진 vs 예전 엔진(v6)")
-        if "--compare-v6" in sys.argv and ("--rebuild-blind" in sys.argv or not (DOCS / "engine_blind_vs_v6.md").exists()):
-            (DOCS / "engine_blind_vs_v6.md").write_text("\n".join(doc_v6), encoding="utf-8")
-            write_pairs(DOCS / "engine_blind_vs_v6_pairs.json", V6_COMPARE_COMBOS, lines_v6)
+        if "--compare-v6" in sys.argv and ("--rebuild-blind" in sys.argv or not private_doc("engine_blind_vs_v6.md").exists()):
+            private_doc("engine_blind_vs_v6.md").write_text("\n".join(doc_v6), encoding="utf-8")
+            write_pairs(private_doc("engine_blind_vs_v6_pairs.json"), V6_COMPARE_COMBOS, lines_v6)
 
     # ---------- 기준표 ----------
     lines = ["# 추천 엔진 합격 기준표", "", header,
@@ -528,8 +530,12 @@ def main() -> None:
         if source != "사장":
             lines += [f"> ⚠️ **임시 답안 (source: {source})**: 사람이 아니라 Claude가 향을 맡지 않고 노트 피라미드 지식과 "
                       "어코드 라벨로 고른 답이다. 어코드 엔진 쪽에 유리하게 치우쳤을 수 있다. **사장 답안이 오면 그걸 기준으로 한다.**", ""]
-        if answers["lines"]:
-            pairs_file = answers["pairs"]
+        pairs_file = answers["pairs"]
+        if answers["lines"] and pairs_file and not pairs_file.exists():
+            # 고정본이 없으면 지금 문서로 대신 채점하지 않는다(줄 구성이 달라 결과가 틀어짐)
+            lines += [f"`{pairs_file.name}`(비공개)이 없어 채점을 건너뜀 — 비공개 저장소 pipeline-data-out/private_docs/를 "
+                      "pipeline/data/out/private_docs/에 복사하면 채점", ""]
+        elif answers["lines"]:
             if pairs_file and pairs_file.exists():
                 pairs = [c["lines"] for c in json.loads(pairs_file.read_text(encoding="utf-8"))["combos"]]
             else:
@@ -616,13 +622,13 @@ def main() -> None:
     ms = (time.perf_counter() - t) * 1000 / len(BLENDS)
     lines += ["## 7. 계산 시간", "", f"- Python 참조 엔진 1회 평균 {ms:.0f}ms (참고값. 기준 300ms는 앱의 TypeScript 엔진으로 잰다)", ""]
 
-    (DOCS / "engine_report.md").write_text("\n".join(lines), encoding="utf-8")
+    private_doc("engine_report.md").write_text("\n".join(lines), encoding="utf-8")  # 향수 이름이 들어가 비공개. 공개 docs/는 요약본
     old_key = DOCS / "engine_blind_key.md"
     if old_key.exists():
         old_key.unlink()  # 예전 방식의 정답 파일 (이제 남기지 않음)
     summary = (f"재현 {results['reproduce']}/20 (2개 {results['reproduce_hard'][(20, 'two_per_layer')]} · 하나 뺌 {results['reproduce_hard'][(20, 'drop_one')]}) · 맹점 {results['blindspot']}/5 (시트러스 1위 {citrus_first}) · "
                f"브랜드 {results['brands']}개 · Python {ms:.0f}ms/회")
-    if answers:
+    if answers and "blind" in results:
         summary += f" · 블라인드 {results['blind']:g} ({answers['source']})"
         if "eye" in results:
             summary += f" · 눈으로 {results['eye']:.1f}점"

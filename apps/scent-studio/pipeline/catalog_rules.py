@@ -10,6 +10,7 @@ import json
 import re
 import unicodedata
 from dataclasses import dataclass
+from pathlib import Path
 
 # 6절: 계열 10개 (휠 순서, 원형)
 FAMILIES = [
@@ -145,6 +146,17 @@ _GROUP_WORDS = re.compile(
 
 # 같은 이름 묶음 안에서 노트가 이만큼 이상 겹쳐야 같은 향수(농도만 다른 버전)로 본다 (자카드, 2026-10-31)
 GROUP_MIN_NOTE_OVERLAP = 0.5
+
+
+# 향수 이름·향수별 값이 든 실험 문서·고정본은 공개 저장소에 두지 않는다(plan_b_portfolio.md 1-4, 2026-11-11).
+# 커밋하지 않는 이 폴더에 쓰고 읽는다. 다른 컴퓨터에서는 비공개 저장소 pipeline-data-out/private_docs/에서 받는다.
+PRIVATE_DOCS = Path(__file__).resolve().parent / "data" / "out" / "private_docs"
+
+
+def private_doc(name: str) -> Path:
+    """비공개 문서 경로(쓸 때 폴더를 만든다)"""
+    PRIVATE_DOCS.mkdir(parents=True, exist_ok=True)
+    return PRIVATE_DOCS / name
 
 
 def load_old_catalog(path) -> dict:

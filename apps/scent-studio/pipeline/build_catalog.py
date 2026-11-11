@@ -565,7 +565,7 @@ def write_report(result: BuildResult, out: Path, title: str) -> None:
         f"- 이름이 같아도 노트가 달라 합치지 않은 행: {r.get('merge_split_rows', 0):,} ({r.get('merge_split_groups', 0):,}묶음, 2026-11-05)",
         f"- 농도만 다른 버전이 있는 향수 묶음: {r['groups_with_versions']:,} (추천에서는 묶음마다 하나만)",
         f"- 복사 오류 의심(브랜드가 다른데 노트·평가 수·어코드·조향사가 모두 같음): {r.get('copy_sets', 0):,}묶음 · "
-        f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/copy_suspects.csv`, 2026-10-31)",
+        f"원본만 남김 {r.get('copy_kept_original', 0):,}묶음 · 후보에서 뺀 향수 {r.get('copy_excluded', 0):,}개 · 거의 복사(평가 수만 1~5 다름) {r.get('near_copy', 0):,}개 중 {r.get('near_copy_excluded', 0):,}개 후보에서 뺌 (`pipeline/data/out/private_docs/copy_suspects.csv`(비공개, 2026-11-11부터), 2026-10-31)",
         f"- 데이터 정리로 뺀 향수: {r.get('excluded_rows', 0):,} · 검토 대상으로 표시만 한 향수: {r.get('flagged_rows', 0):,} (`pipeline/manual/{{filtered,review}}_keys.csv`, 2026-11-04)",
         f"- 노트 데이터가 완전히 같은 향수 묶음: {r.get('identical_note_sets', 0):,} · 그중 다른 향수끼리(클론·중복 등록): "
         f"{r.get('clone_sets', 0):,}묶음 · 향수 {r.get('clone_perfumes', 0):,}개 · 브랜드가 다른 것 {r.get('clone_sets_cross_brand', 0):,}묶음 (2026-10-31)",
@@ -651,12 +651,12 @@ def main() -> None:
     assets = APP_DIR / "app" / "assets" / "catalog" / "catalog.json.gz"
     write_catalog(result.catalog, assets)
     write_report(result, APP_DIR / "pipeline" / "report.md", "카탈로그 보고서")
-    # 전체 기록은 커밋하지 않는다(.gitignore). 공개 저장소에는 이름·평가 수를 뺀 기록만 둔다
+    # 전체 기록은 커밋하지 않는다(.gitignore). 브랜드·연도가 든 요약본도 이제 공개 저장소에 두지 않는다(plan_b_portfolio.md 1-4 P1)
     with (out.parent / "copy_suspects_full.csv").open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COPY_FIELDS)
         w.writeheader()
         w.writerows(result.report["copy_suspects"])
-    with (APP_DIR / "pipeline" / "copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
+    with R.private_doc("copy_suspects.csv").open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=COPY_PUBLIC_FIELDS)
         w.writeheader()
         w.writerows(public_copy_record(e) for e in result.report["copy_suspects"])

@@ -1,5 +1,8 @@
 # 등급 기준값 비교 · 클론 표본
 
+> **2026-11-11 공개용 정리:** 향수 이름과 향수별 값(평점·평가 수·어코드·조향사·주소·점수)은 비공개로 옮겼다. 검증 방법·표본 수·결과 숫자는 그대로다. 원본은 비공개 저장소 `pipeline-data-out/private_docs/engine_grades_clones.md`.
+
+
 > `py pipeline/experiments/grades_clones_check.py` (2026-10-31). 엔진 v4 (어코드 0.35 : 노트 0.55, 강 2.0).
 
 ## 등급 분포 (블라인드 비교 조합 10개)
@@ -17,142 +20,80 @@
 
 ### 1. 노트 8개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Ayala Moriel — Magnolia Petal | 2002 | 37 | fresh · aquatic · citrus | NA | https://www.parfumo.com/Perfumes/Ayala_Moriel/Magnolia_Petal |
-| La Rive — Aqua Bella | 2014 | 37 | fresh · aquatic · citrus | NA | https://www.parfumo.com/Perfumes/La_Rive/Aqua_Bella |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 2. 노트 9개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Auphorie — Impromptu N°4 | 2010 | 156 | woody · spicy · floral | Daniela Andrier | https://www.parfumo.com/Perfumes/Auphorie/impromptu-n-4 |
-| Etat Libre d'Orange — Une Amourette - Roland Mouret | 2017 | 156 | woody · spicy · floral | Daniela Andrier | https://www.parfumo.com/Perfumes/Etat_Libre_d_Orange/Une_Amourette__Roland_Mouret |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 3. 노트 8개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| James Bond 007 — for Women III | 2017 | 37 | fruity · sweet · synthetic | NA | https://www.parfumo.com/Perfumes/James_Bond_007/007_for_Women_III |
-| s.Oliver — Black Label Eau Légère Women s.Oliver 2003 Eau de Toilette | 2003 | 37 | fruity · sweet · synthetic | NA | https://www.parfumo.com/Perfumes/s_Oliver/black-label-eau-legere-women-eau-de-toilette |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 4. 노트 12개 · 원본 순서 다름 · 확인 필요
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Grossmith — Hasu-no-Hana Grossmith 1888 Eau de Parfum | 1888 | 234 | chypre · floral · spicy | NA | https://www.parfumo.com/Perfumes/Grossmith/Hasu_no_Hana_Eau_de_Parfum |
-| XerJoff — White On White - One | ? | 14 | oriental · floral · woody | NA | https://www.parfumo.com/Perfumes/Xerjoff/white-on-white-one |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 5. 노트 6개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Benetton — Energizing Pitanga | 2010 | 37 | green · fresh · citrus | Nathalie Gracia-Cetto | https://www.parfumo.com/Perfumes/Benetton/Energizing_Pitanga |
-| Carolina Herrera — Virgin Mint | 2017 | 37 | green · fresh · citrus | Nathalie Gracia-Cetto | https://www.parfumo.com/Perfumes/Carolina_Herrera/virgin-mint |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 6. 노트 6개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Acqua di Parma — Sakura | 2019 | 127 | floral · fresh · citrus | Nicolas Bonneville, François Demachy | https://www.parfumo.com/Perfumes/Acqua_di_Parma/Sakura |
-| Amir Oud — Arab Oud | 2006 | 127 | floral · fresh · citrus | Nicolas Bonneville, François Demachy | https://www.parfumo.com/Perfumes/amir-oud/arab-oud |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 7. 노트 9개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Carbaline — Cotone Cotton | 2007 | 10 | woody · spicy · fresh | NA | https://www.parfumo.com/Perfumes/Carbaline/Cotone_Cotton |
-| Eisenberg — Happiness - Young | 2022 | 10 | woody · spicy · fresh | NA | https://www.parfumo.com/Perfumes/Eisenberg/happiness-young |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 8. 노트 9개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| 4711 — Shahi 4711 2006 Eau de Toilette | 2006 | 64 | leathery · powdery · floral | Delphine Thierry | https://www.parfumo.com/Perfumes/4711/Shahi_Eau_de_Toilette |
-| Lubin — Condottiere | 2019 | 64 | leathery · powdery · floral | Delphine Thierry | https://www.parfumo.com/Perfumes/Lubin/Condottiere |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 9. 노트 10개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| ArteOlfatto - Luxury Perfumes — Calar del Sole | 2002 | 66 | woody · fruity · spicy | Harry Frémont | https://www.parfumo.com/Perfumes/ArteOlfatto_Luxury_Perfumes/calar-del-sole |
-| Ralph Lauren — Purple Label | 2003 | 66 | woody · fruity · spicy | Harry Frémont | https://www.parfumo.com/Perfumes/Ralph_Lauren/Purple_Label |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 10. 노트 16개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Ava Luxe — Black Coconut Ava Luxe 2019 Eau de Parfum | 2019 | 34 | fruity · sweet · floral | Silvia Martinelli | https://www.parfumo.com/Perfumes/Ava_Luxe/black-coconut-eau-de-parfum |
-| Giardini di Toscana — Scintilla | 2023 | 34 | fruity · sweet · floral | Silvia Martinelli | https://www.parfumo.com/Perfumes/Giardini_di_Toscana/scintilla |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 11. 노트 7개 · 원본 순서 같음 · 일부 수집 오류 의심 (평가 수·어코드가 같은 향수가 섞임)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Narciso Rodriguez — Narciso Narciso Rodriguez 2014 Eau de Parfum | 2014 | 499 | floral · powdery · woody | Aurélien Guichard | https://www.parfumo.com/Perfumes/Narciso_Rodriguez/Narciso |
-| C. B. Woodworth & Sons Co. — German Cologne | 2002 | 13 | powdery · floral · woody | Aurélien Guichard | https://www.parfumo.com/Perfumes/C_B_Woodworth__Sons_Co_/German_Cologne |
-| Narciso Rodriguez — Narciso Musc Narciso Rodriguez 2014 Oil Parfum | 2014 | 13 | powdery · floral · woody | Aurélien Guichard | https://www.parfumo.com/Perfumes/Narciso_Rodriguez/Narciso_Musc_Oil_Parfum_Huile_Parfum |
+> (향수 3개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 12. 노트 10개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Atelier Cologne — Sous Le Toit de Paris | 2002 | 68 | spicy · sweet · gourmand | Fabrizio Tagliacarne Brand owner, Perfume maker | https://www.parfumo.com/Perfumes/Atelier_Cologne/Sous_le_toit_de_Paris |
-| Avon — Elite Gentleman In Black | 2002 | 68 | spicy · sweet · gourmand | Fabrizio Tagliacarne Brand owner, Perfume maker | https://www.parfumo.com/Perfumes/Avon/Elite_Gentleman_In_Black |
-| Omnia Profumi — Bronzo | 2014 | 68 | spicy · sweet · gourmand | Fabrizio Tagliacarne Brand owner, Perfume maker | https://www.parfumo.com/Perfumes/Omnia_Profumi/Bronzo |
+> (향수 3개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 13. 노트 14개 · 원본 순서 다름 · 확인 필요
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Floris — No. 89 Floris 1951 Eau de Toilette | 1951 | 191 | floral · fresh · woody | NA | https://www.parfumo.com/Perfumes/Floris/No_89_Eau_de_Toilette |
-| Duftanker MGO Duftmanufaktur — Chypre Classico | ? | 14 | spicy · chypre · citrus | Hans Georg Staudt | https://www.parfumo.com/Perfumes/Duftanker_MGO_Duftmanufaktur/chypre-classico |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 14. 노트 10개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Angel Schlesser — Femme Angel Schlesser 2014 Eau de Parfum | 2014 | 40 | fresh · floral · creamy | Alberto Morillas | https://www.parfumo.com/Perfumes/Angel_Schlesser/Angel_Schlesser_Femme_Eau_de_Parfum |
-| Colornoise — Birthday Cake. | 2002 | 40 | fresh · floral · creamy | Alberto Morillas | https://www.parfumo.com/Perfumes/Colornoise/Birthday_Cake_ |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 15. 노트 19개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Aimée de Mars — Eau 21 | 2008 | 10 | fresh · floral · green | NA | https://www.parfumo.com/Perfumes/Aimee_de_Mars/Les_Elements__Eau_21 |
-| Ormonde Jayne — Montabaco Flor | 2021 | 10 | fresh · floral · green | NA | https://www.parfumo.com/Perfumes/Ormonde_Jayne/montabaco-flor |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 16. 노트 12개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Kenneth Cole — Kenneth Cole Signature Kenneth Cole 2005 Eau de Toilette | 2005 | 35 | spicy · aquatic · fresh | Frank Voelkl, Symrise | https://www.parfumo.com/Perfumes/Kenneth_Cole/Kenneth_Cole_Signature_Eau_de_Toilette |
-| Calyx — Bound | 1996 | 35 | spicy · aquatic · fresh | Frank Voelkl, Symrise | https://www.parfumo.com/Perfumes/calyx/bound |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 17. 노트 9개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| CnR Create — Fire Aries | 2001 | 10 | floral · fresh · green | NA | https://www.parfumo.com/Perfumes/CnR_Create/Fire_Aries |
-| Spezierie Palazzo Vecchio / I Profumi di Firenze — Jeunesse - Il Giorno e La Notte Spezierie Palazzo Vecchio / I Profumi di Firenze 2010 Eau de Parfum | 2010 | 10 | floral · fresh · green | NA | https://www.parfumo.com/Perfumes/Spezierie-Palazzo-Vecchio/Jeunesse__Il_Giorno_e_La_Notte_Eau_de_Parfum |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 18. 노트 8개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| The Body Shop — Nigritella - Oriental Orchid | 2016 | 34 | floral · sweet · oriental | NA | https://www.parfumo.com/Perfumes/The_Body_Shop/Nigritella__Oriental_Orchid |
-| Fine'ry — Magnetic Candy | 2015 | 34 | floral · sweet · oriental | NA | https://www.parfumo.com/Perfumes/fine-ry/magnetic-candy |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 19. 노트 8개 · 원본 순서 다름 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Jaguar — Classic Chromite | 2017 | 72 | synthetic · woody · fresh | Michel Almairac | https://www.parfumo.com/Perfumes/Jaguar/Classic_Chromite |
-| Mancera — Black Line | 2003 | 72 | synthetic · woody · fresh | Michel Almairac | https://www.parfumo.com/Perfumes/Mancera/Black_Line |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
 
 ### 20. 노트 8개 · 원본 순서 같음 · 수집 오류 의심 (평가 수·어코드까지 같음)
 
-| 브랜드 — 이름 | 연도 | 평가 수 | 상위 어코드 | 조향사 | 원본 주소 |
-|---|---|---|---|---|---|
-| Corday — Jet for Jentlemen Corday 1998 After Shave Lotion | 1998 | 146 | green · fresh · spicy | Céline Ellena | https://www.parfumo.com/Perfumes/Corday/Jet_for_Jentlemen_After_Shave_Lotion |
-| The Different Company — Charmes & Feuilles Un Parfum de Charmes & Feuilles | 2006 | 146 | green · fresh · spicy | Céline Ellena | https://www.parfumo.com/Perfumes/The_Different_Company/Charmes__Feuilles_Un_Parfum_de_Charmes__Feuilles |
+> (향수 2개 표는 비공개 — 원본 `pipeline/data/out/private_docs/engine_grades_clones.md`, plan_b_portfolio.md 1-4)
