@@ -1,4 +1,4 @@
-// 색·글꼴·간격 토큰. 기준: docs/design.md 3절(사장 결정 색) + docs/design/DESIGN.md(글꼴·크기·컴포넌트).
+// 색·글꼴·간격 토큰. 기준: docs/design.md 3절(사장 결정 색) + docs/design/design_rules.md(글꼴·크기·컴포넌트).
 // 화면 코드는 이 토큰 이름만 쓴다(색 값·임의 간격 금지). 다크는 시스템 설정을 따른다.
 /** @type {import('tailwindcss').Config} */
 const pair = (light, dark) => ({ DEFAULT: light, dark });
@@ -23,6 +23,7 @@ module.exports = {
         onPrimary: pair('#F5F1E8', '#141614'),
         onAccent: pair('#1C1C1A', '#141614'),
         line: pair('#D9D2C3', '#333833'), // border
+        compare: pair('#8C8275', '#8A8378'), // 어코드 비교의 "이 향수" 막대 (2026-11-11 사장: 골드 대신 중립색)
         noteTop: pair('#A8B5A0', '#A8B5A0'),
         noteMiddle: pair('#C9A9A0', '#C9A9A0'),
         noteBase: pair('#7A5C48', '#7A5C48'),

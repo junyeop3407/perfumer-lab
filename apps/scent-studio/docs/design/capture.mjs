@@ -1,4 +1,4 @@
-// 시안 캡처(5-0): node docs/design/capture.mjs  (scent-studio 폴더에서, app/node_modules의 Playwright 사용)
+// 시안 캡처(5-0): node docs/design/capture.mjs [화면-폭-모드 …]  (scent-studio 폴더에서, app/node_modules의 Playwright 사용)
 // 결과: docs/design/shots/<화면>-<폭>-<light|dark>[-200].png
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -15,8 +15,11 @@ const shots = [
   // 글자 200% 확인은 실제 화면으로(5-8). 정적 시안의 확대 흉내는 레이아웃이 실제와 달라 뺐다
 ];
 
+// 이름을 주면 그것만: node docs/design/capture.mjs detail-360-light summary-1280-light
+const only = process.argv.slice(2);
 const browser = await chromium.launch();
 for (const [screen, width, scheme, zoom = 1] of shots) {
+  if (only.length && !only.includes(`${screen}-${width}-${scheme}`)) continue;
   const ctx = await browser.newContext({ viewport: { width, height: width < 1024 ? 800 : 900 }, colorScheme: scheme, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
   await page.goto(`${page_url}#${screen}`);

@@ -6,7 +6,7 @@
 리뷰 기준: 8bb26d4 (묶음 9 시작 직전)
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구 1 건너뜀 (2026-11-11 확인, `bash tests/run.sh`, 묶음 9 레드팀 1번 고침 포함). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: **5-0 디자인 시안 사장 검토 대기**(`docs/design/DESIGN.md`, `docs/design/shots/`). OK 뒤 5-1 카탈로그. 일정: 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일 → **11-25 Plan A/B 결정**. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+다음 할 일: **5-0 디자인 시안 사장 검토 대기**(`docs/design/design_rules.md`, `docs/design/shots/`). OK 뒤 5-1 카탈로그. 일정: 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일 → **11-25 Plan A/B 결정**. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
 ## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 단계 5 계획 사장 검토 대기, 11-25 Plan A/B 결정)
 1. **오늘 한 것:** OpenAPI 정리(3bd0961, `docs/openapi.json`) → Render 3bd0961 배포·확인 → 전체 API 10분 재측정 **RSS 최대 208MB / 기준 420MB** → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, 두 줄 보내도 실제 IP 맨 오른쪽) → 레드팀(26/26 주소, 뚫림 1: 틀린 토큰 IP 막기가 같은 IP 정상 사용자도 막음) → 사장 결정 "틀린 토큰만 막기"로 고침(8fb9e0a) → Render 배포·재공격 막힘 → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움 → 배포 전 체크리스트 12개. 자세히는 NOTES "묶음 9", `docs/redteam.md`, `docs/review.md`.

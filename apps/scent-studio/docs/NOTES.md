@@ -432,3 +432,6 @@
 - **DESIGN.md 위치:** 규칙 이름은 `docs/DESIGN.md`지만 Windows는 대소문자를 구분하지 않아 `docs/design.md`(설계 문서)와 같은 파일이 된다 — 처음 쓸 때 설계 문서를 덮어썼다가 git에서 바로 되살림(내용 손실 없음, 커밋 전). 그래서 `docs/design/DESIGN.md`에 둔다. 다른 앱도 같은 이름 충돌을 조심.
 - 시안은 정적 HTML(`docs/design/mock.html`, 토큰은 `app/tailwind.config.js`와 같은 값) + Playwright 캡처(`docs/design/capture.mjs` → `docs/design/shots/`). 데이터는 누가 봐도 가짜인 이름만. 글자 200%는 정적 시안의 확대 흉내가 실제와 달라 5-8 실제 화면에서 확인.
 - 토큰: `tailwind.config.js`에 design.md 3-2 색 전부(라이트·다크), 글자 크기 7단계, 모서리 4/2, 최대 폭. 기존 이름(`bg`·`primary`·`ink`)은 유지, text → `ink`, textSub → `inkSub`, border → `line`(Tailwind 기본 이름과 겹치지 않게).
+- **시안 검토 반영(2026-11-11 사장, 방향 OK):** ① "이 향수" 막대 골드 → 중립 회갈색 `compare`(`#8C8275`/`#8A8378`, design.md 3-2 ★★), 골드는 "매우 비슷" 배지에만 ② 막대마다 "내 조합 44%"·"이 향수 38%" 글자 ③ 누르는 영역 48dp(칩은 보이는 36 + 영역 48, 글자 버튼 높이 48·좌우 12) ④ 노트 고르기 "2 / 3단계" 빼고 "계열: …" 표시 ⑤ 고른 칩 진한 테두리 뺌 ⑥ 다크 textSub 대비 측정(최저 4.98:1, accentSoft 위) → 그대로 ⑦ PC 조합 요약 오른쪽에 추천 미리보기 3개.
+- **글꼴 용량 실측:** Noto Serif KR 가변 ttf 23.8MB → 굵기 하나 woff2 3.1MB → 2,350자 서브셋 woff2 355KB(ttf 1.43MB). Pretendard 굵기 하나 woff2 766KB → 공식 서브셋 267KB(otf 서브셋 351KB). **정함:** 세리프는 500 하나만, 웹은 Pretendard 공식 동적 서브셋 + 세리프 서브셋 woff2를 직접 올림(외부 CDN 안 씀), 앱은 서브셋 ttf/otf 약 2.5MB. `design_rules.md` 2-1.
+- **이름 변경:** `docs/design/DESIGN.md` → `docs/design/design_rules.md`(사장 지시).
