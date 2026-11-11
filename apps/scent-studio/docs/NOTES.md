@@ -445,3 +445,5 @@
 - (5-1 나머지, 2026-11-11) 자리 나누기: 실제 `catalog.real.json.gz`(+`catalog.real.release.json`), 샘플 `catalog.sample.json.gz`, 빌드 자리 `catalog.json.gz`(폰)·`app/public/catalog.json.gz`(웹, Expo가 public/을 결과물에 복사). `CATALOG_SOURCE`를 바꾸면 고른 쪽을 복사만 한다. 실제 카탈로그는 2026-11-11 `-Papply=true`로 받음(2026.11.05).
 - 앱 로더: 폰은 Hermes라 `DecompressionStream`·`TextDecoder`·WebCrypto에 기대지 않는다(fflate·@noble/hashes). 새 버전은 와이파이에서만 받아 두고 다음 실행부터, 받은 뒤 실패한 파일은 하루 동안 다시 받지 않는다(설치 id 하루 3회). 웹은 받아 두지 않는다(서비스 워커 몫). 폰 전용 코드(`platform.native.ts`)는 단위 테스트가 없어 기기 테스트 D11로 확인.
 - 공개 빌드는 `npm run export:web:public`만(끝에 결과물 카탈로그가 샘플인지 대조).
+- (사장 결정 2026-11-11) 기기 승인 L1~L8 OK + **L9**(작은 안드로이드 첫 실행 카탈로그 로딩 2초 이내, 넘으면 대책 제안 후 멈춤, 측정 방법은 다음 세션) → `tests.md` "기기 승인 목록", 승인 목록 65개.
+- (사장 결정 2026-11-11) **새 카탈로그는 와이파이에서만 받기 — 지금은 그대로, 출시 전에 다시 본다**(폰 데이터에서도 받을지, 크기·사용자 부담 기준으로).

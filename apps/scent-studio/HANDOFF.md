@@ -1,14 +1,43 @@
 # scent-studio
-현재 단계: 5 (화면) — **5-1 카탈로그 끝(2026-11-11, 사장 OK·실제 카탈로그 받음)**, 다음 **5-2 조합 흐름**. 5-0 디자인 최종 OK. 계획 `docs/plan_stage5.md`(사장 OK, 8절 기기 테스트 추가). 단계 4(서버)는 끝: Render **8fb9e0a** 배포. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
+현재 단계: 5 (화면) — **5-0 디자인·5-1 카탈로그 끝(2026-11-11)**, 다음 세션 **기기 준비 안내 문서 → 5-2 조합 화면**. 계획 `docs/plan_stage5.md`(사장 OK, 8절 기기 테스트). 단계 4(서버)는 끝: **Render는 아직 8fb9e0a**. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`). 디자인 시안: `docs/design/mock.html`(주소 끝 `#notes`·`#summary`·`#recs`·`#detail`), 캡처 `node docs/design/capture.mjs`
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 5f71fc1 (5-1 나머지 시작 직전) — 5-2 시작 때 새로 적는다
-결과: 파이프라인 156/156 · Vitest 123/123 · 서버·DB(JUnit + 내장 Postgres) 657/657 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 5-1 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
-사용자에게 남은 질문: ① 기기 승인 항목 L1~L8(`plan_stage5.md` 8-9) 추가 여부 ② 개발용 빌드·아이폰 서명 방식(8-7·8-8, 11-25 안드로이드 빌드 방식과 같이)
-다음 할 일: **5-2 조합 흐름**(`plan_stage5.md` 2절 표): 홈·하단 탭/왼쪽 메뉴, 노트 선택, 요약. 시작 때 `startCatalog`(`app/src/catalog/startCatalog.ts`)로 카탈로그를 연다. 묶음 끝에 기기 최소 확인(8-3). 빌드 전 `CATALOG_SOURCE=real|sample`(`app/scripts/prepare-catalog.mjs`, 실제는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받음). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+결과: 파이프라인 156/156 · Vitest 123/123 · 서버·DB(JUnit + 내장 Postgres) 657/657 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 세션 끝 확인, `bash tests/run.sh`). **승인 목록 1/65**(화면 전, A~I 41 + J·K 15 + **L 기기 9(2026-11-11 승인)**. 목표: 웹 54/56 + 카카오 보류 2, 기기 L1~L9는 기기 4종 표로. 웹 승인은 `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
+사용자에게 남은 질문: 없음 (5-9 전까지: 개발용 빌드 방식·아이폰 서명 — 11-25 안드로이드 빌드 방식과 같이)
+다음 할 일: **① 기기 준비 안내 문서**(사장용: Expo Go 설치·같은 와이파이·Windows 에뮬레이터 2대 만들기·Mac Xcode/시뮬레이터, L9 측정 방법 정하기) → **② 5-2 조합 화면**(`plan_stage5.md` 2절 표: 홈·하단 탭/왼쪽 메뉴, 노트 선택, 요약. 시작 때 `app/src/catalog/startCatalog.ts`. 끝에 기기 최소 확인 8-3). 빌드 전 `CATALOG_SOURCE=real|sample`. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
 
-## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인 최종 OK, 다음 5-1 카탈로그)
+## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인·5-1 카탈로그 끝, 다음 기기 준비 안내 → 5-2)
+1. **오늘(2026-11-11) 한 것:**
+   - **5-0 디자인 최종 OK**: `docs/design/design_rules.md`(글꼴·크기·간격·컴포넌트), 토큰 `app/tailwind.config.js`, 시안 13장 `docs/design/shots/`. 다크 모드·PC 반영(PC 요약 오른쪽 추천 미리보기 3개, 다크 보조 글씨 대비 최저 4.98:1, "이 향수" 막대 회갈색 `compare`, 누르는 영역 48dp).
+   - **글꼴 방식**(`design_rules.md` 2-1): 세리프 Noto Serif KR 500 하나, 본문 Pretendard 400·500·600. 웹은 Pretendard 동적 서브셋 + 세리프 2,350자 서브셋(355KB)을 직접 올림(외부 CDN 안 씀), 앱은 서브셋 약 2.5MB.
+   - **이름 변경**: `docs/DESIGN.md` → `docs/design/design_rules.md`(Windows에서 `design.md`와 충돌).
+   - **5-1 카탈로그**(커밋 5f71fc1·13b802c):
+     - 실제 받기 도구 `./gradlew dbCatalogFetch`(기본 미리 보기, `-Papply=true`만 받음, sha256·크기·버전·샘플 아님 확인) → **실제 카탈로그 받음(2026.11.05)**.
+     - 샘플 생성기 `pipeline/sample_catalog.py`(가상 브랜드 20·향수 300, 누가 봐도 가짜 이름, 실제 데이터 안 읽음, 같은 seed면 같은 바이트).
+     - **실제/샘플 자리 분리**: `app/assets/catalog/catalog.real.json.gz`(+`catalog.real.release.json`) / `catalog.sample.json.gz` → `CATALOG_SOURCE=real|sample`(`app/scripts/prepare-catalog.mjs`)이 고른 쪽을 `catalog.json.gz`·`app/public/catalog.json.gz`에 복사. 모두 `.gitignore`(`catalogIgnore.test.ts`가 `git check-ignore`로 확인).
+     - **실제 이름 검사** `pipeline/real_names.py`: `SCENT_KEY_SECRET` HMAC 해시 목록(`pipeline/data/out/real_name_hashes.txt`, 커밋 안 함)만, 브랜드·향수 이름 둘 다, 키·목록 없으면 건너뜀, 공개 빌드(`npm run export:web:public`)는 건너뛰면 실패 + 결과물 카탈로그 = 샘플 대조.
+     - **앱 카탈로그 읽기** `app/src/catalog/`: 모양·해시 확인(fflate·@noble/hashes, 폰 Hermes 대비), 받아 둔 파일이 깨졌으면 지우고 앱 안 파일. **새 버전 받기**: 서버 `/catalog/latest` → 와이파이에서만 받아 다음 실행부터, 받은 뒤 실패한 파일은 하루 동안 다시 안 받음(설치 id 하루 3회), 시작당 한 번만. 폰 전용 코드(`platform.native.ts`)는 기기 테스트로 확인(5-2에서 화면에 연결된 뒤).
+     - QA 리뷰(두 번, 중간 8·낮음 여럿 반영), Gemini(문제 없음 / 큰 파일 한 번에 풀기 → L9 측정 뒤 판단). `docs/review.md` "5-1".
+   - **기기 테스트 계획** `plan_stage5.md` 8절: 기기 4종(작은·큰 안드로이드, SE급·노치 아이폰), D1~D11, 묶음 끝 최소 확인(8-3), 5-8 전체·5-9 개발용 빌드, Expo Go 한계(세로 고정·로그인 돌아오기·아이콘 등), Maestro 추천. **승인 L1~L9 추가**(`tests.md` "기기 승인 목록", L9 = 작은 안드로이드 첫 로딩 2초 이내).
+   - Plan B 문서: 공개 빌드는 `SCENT_KEY_SECRET`(+해시 목록) 필요 → Actions Secrets 또는 로컬 빌드 후 업로드.
+   - 사장 결정: 새 카탈로그 와이파이에서만 받기는 지금 그대로, **출시 전에 다시 본다**(NOTES).
+2. **다음 세션 시작점 = 기기 준비 안내 문서 → 5-2 조합 화면.** 안내 문서에서 L9 측정 방법도 정한다.
+3. **멈추는 곳(사장 확인):**
+   - **5-2 끝**: 기기 최소 확인(8-3) 뒤 캡처·결과 보고 → OK 받고 5-3
+   - 단계 5 **각 묶음 끝**(5-3~5-9), 5-5 실제 로그인 확인, 5-7 출처·약관 문구, 5-9 앱 써 보기
+   - **L9 기준(첫 로딩 2초) 초과 시**: 대책을 제안하고 멈춤
+   - **테스트 계정 삭제 → 이메일 새 가입 막기**는 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)** — 그 전에 멈추고 묻는다(다시 만들지 않음)
+4. **사장 할 일:**
+   - 안드로이드폰·아이폰에 **Expo Go** 설치(폰과 컴퓨터 같은 와이파이)
+   - **Mac에 Xcode 설치** → 처음 실행해 iOS 시뮬레이터 받기
+   - **11-14** Fragrantica 추가 메일 · **11-18** Parfumo 추가 메일(답이 없으면) · **11-25** Plan A/B 결정(둘 다 허가면 A)
+   - (5-9 전) 개발용 빌드 방식·아이폰 서명(Apple Developer 연 99달러 또는 Mac 무료 서명 7일)
+5. **배포 상태:** Render는 아직 **8fb9e0a**(단계 5 코드는 앱 쪽이라 서버 재배포 없음. CORS를 고칠 때 다시 배포).
+6. 남은 서버 일(단계 5 안에서): CORS(실제 웹 주소만, `*` 거부 → `.redteam-needed` → 5-9 레드팀), 응답 record required 표시(OpenAPI), 베이스 이미지 digest 고정, Render 로그에 토큰·이메일 없는지(사장 확인), Tomcat HTML 400 → JSON(낮음), 바구니 지도 나누기(남은 것 6). 레드팀 로컬 서버: `RedTeamRig`.
+
+## (이전) 2026-11-11 세션 중간 — 5-0 디자인 최종 OK, 5-1 시작 전
 1. **오늘(2026-11-11) 한 것:**
    - **묶음 9 서버 마무리:** OpenAPI 정리(`docs/openapi.json`, 운영은 문서 주소 401) → Render 3bd0961 배포·확인 → **전체 API 10분 재측정: RSS 최대 208MB · 컨테이너 216MB / 기준 420MB**, 응답 시간(깨어 있을 때 단건) 중앙값 214~299ms · p95 307~465ms → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, X-Forwarded-For 두 줄도 Render가 합쳐 실제 IP 맨 오른쪽).
    - **레드팀**(26/26 주소, `docs/redteam.md`): 뚫림 1 = 틀린 토큰 20번이면 그 IP를 통째로 막아 같은 IP 정상 사용자도 429 → 사장 결정 "틀린 토큰만 막기"로 고침(맞는 토큰·토큰 없는 요청 통과, 만료·로그아웃 토큰은 세지 않고 IP 분당 60, 승인 테스트 4줄 사장 허락) → **8fb9e0a Render 배포·재공격 막힘** → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움. **배포 전 체크리스트 12개** ✓(해당 없음 3, 카카오 보류).
