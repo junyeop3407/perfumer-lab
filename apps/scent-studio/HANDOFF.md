@@ -1,14 +1,29 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~8 완료, **단계 4 서버 끝 → 단계 5(화면) 5-0 디자인 시안 검토 대기**(`docs/plan_stage5.md`) · 묶음 9 서버 작업 끝(2026-11-11, 테스트 계정 삭제·이메일 끄기는 단계 5 끝(Plan B) 또는 출시 직전(Plan A)으로 미룸). Render는 **8fb9e0a**(묶음 8·카카오 `/me`·OpenAPI·레드팀 1번 고침)까지 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 5 (화면) — **5-0 디자인 최종 OK(2026-11-11)**, 다음 **5-1 카탈로그**. 계획 `docs/plan_stage5.md`(사장 OK). 단계 4(서버)는 끝: Render **8fb9e0a**(묶음 8·카카오 `/me`·OpenAPI·레드팀 1번 고침) 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
-실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
+실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`). 디자인 시안: `docs/design/mock.html`(주소 끝 `#notes`·`#summary`·`#recs`·`#detail`), 캡처 `node docs/design/capture.mjs`
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 8bb26d4 (묶음 9 시작 직전)
-결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구 1 건너뜀 (2026-11-11 확인, `bash tests/run.sh`, 묶음 9 레드팀 1번 고침 포함). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
+리뷰 기준: 8bb26d4 (묶음 9 시작 직전) — 단계 5 첫 코드 묶음(5-1) 시작 때 새로 적는다
+결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 세션 끝 확인, `bash tests/run.sh`). **승인 목록 1/56**(화면 전, A~I 41 + J·K 15. 단계 5 목표 54/56 + 카카오 보류 2. `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: **5-0 디자인 시안 사장 검토 대기**(`docs/design/design_rules.md`, `docs/design/shots/`). OK 뒤 5-1 카탈로그. 일정: 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일 → **11-25 Plan A/B 결정**. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+다음 할 일: **5-1 카탈로그**(`plan_stage5.md` 1절·2절): `dbCatalogFetch`(비공개 버킷 → 해시 확인 → 앱), 샘플 생성기(가상 브랜드 20·향수 300, 누가 봐도 가짜 이름), `CATALOG_SOURCE=real|sample` 준비 스크립트, 실제 이름 검사는 키 섞은 해시·비공개 있을 때만. 테스트 먼저. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
-## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 단계 5 계획 사장 검토 대기, 11-25 Plan A/B 결정)
+## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인 최종 OK, 다음 5-1 카탈로그)
+1. **오늘(2026-11-11) 한 것:**
+   - **묶음 9 서버 마무리:** OpenAPI 정리(`docs/openapi.json`, 운영은 문서 주소 401) → Render 3bd0961 배포·확인 → **전체 API 10분 재측정: RSS 최대 208MB · 컨테이너 216MB / 기준 420MB**, 응답 시간(깨어 있을 때 단건) 중앙값 214~299ms · p95 307~465ms → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, X-Forwarded-For 두 줄도 Render가 합쳐 실제 IP 맨 오른쪽).
+   - **레드팀**(26/26 주소, `docs/redteam.md`): 뚫림 1 = 틀린 토큰 20번이면 그 IP를 통째로 막아 같은 IP 정상 사용자도 429 → 사장 결정 "틀린 토큰만 막기"로 고침(맞는 토큰·토큰 없는 요청 통과, 만료·로그아웃 토큰은 세지 않고 IP 분당 60, 승인 테스트 4줄 사장 허락) → **8fb9e0a Render 배포·재공격 막힘** → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움. **배포 전 체크리스트 12개** ✓(해당 없음 3, 카카오 보류).
+   - **Plan B 문서**(`docs/plan_b_portfolio.md`): 공개 저장소 데이터 확인 → Fragrantica 향수별 수치 2곳 지움(①), **Parfumo 향수별 데이터 P1~P12 정리**(대량 표는 비공개, 검증 결과 숫자는 남김, `copy_suspects.csv`·고정본 json은 공개에서 뺌). 원본은 비공개 저장소 `pipeline-data-out/private_docs/`(24개), 생성 스크립트도 로컬 `pipeline/data/out/private_docs/`(커밋 안 함)에 씀. Plan B 확정 시 1-5 `git filter-repo` 걸러낸 사본(실행 전 사장 확인, 기존 저장소 강제 푸시 없음).
+   - **일정 변경**: Plan A = Fragrantica **와** Parfumo 둘 다 허가. **11-25 결정**. keepalive main 반영은 11-25에 Plan A일 때.
+   - **단계 5 계획** `docs/plan_stage5.md` 사장 OK: J1·J2(카카오) 보류 → 목표 54/56 + 보류 2(승인 테스트 수정 허락, 5-5에서), 안드로이드 빌드 방식 11-25 뒤(그 전엔 웹으로 확인), 샘플 300개·20브랜드 가짜 이름, 실제 이름 검사는 해시·비공개일 때만, CORS 실제 주소만.
+   - **5-0 디자인 최종 OK**: `docs/design/design_rules.md`(글꼴·크기·간격·컴포넌트), 토큰 `app/tailwind.config.js`, 시안 13장 `docs/design/shots/`. 강조는 "조합 처방전" 하나. 사장 수정 반영: "이 향수" 막대 골드 → 회갈색 `compare`(라이트 3.1:1·다크 3.9:1, 골드는 "매우 비슷" 배지만), 막대마다 "내 조합/이 향수" 글자+숫자, 누르는 영역 48dp(칩 보이는 36), "2 / 3단계" → "계열: …", 고른 칩 테두리 뺌, 다크 보조 글씨 대비 확인(최저 4.98:1, 그대로), PC 요약 오른쪽 추천 미리보기 3개.
+   - **글꼴 방식**(`design_rules.md` 2-1): 세리프 Noto Serif KR **500 하나**, 본문 Pretendard 400·500·600. 웹은 Pretendard 공식 동적 서브셋 + 세리프 2,350자 서브셋 woff2(355KB)를 직접 올림(외부 CDN 안 씀), 앱은 서브셋 ttf/otf 약 2.5MB.
+   - **이름 변경**: `docs/DESIGN.md`(Windows에서 `design.md`와 충돌) → `docs/design/design_rules.md`.
+2. **다음 세션 시작점 = 5-1 카탈로그.** `plan_stage5.md` 2절 묶음 표 순서(5-1 → 5-2 조합 … → 5-9 마무리). 각 묶음은 테스트 먼저 → 구현 → `bash tests/run.sh` → 리뷰 → 사장 보고.
+3. **멈추는 곳(사장 확인):** 단계 5 **각 묶음 끝**(캡처·결과 보고 후 OK 받고 다음), 5-1 실제 카탈로그 받기(미리 보기 → OK), 5-5 실제 로그인 확인, 5-7 출처·약관 문구, 5-9 앱 써 보기. **테스트 계정 삭제 → 이메일 새 가입 막기**는 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)** — 그 전에 멈추고 묻는다(다시 만들지 않음).
+4. **사장 일정:** **11-14** Fragrantica 추가 메일 · **11-18** Parfumo 추가 메일(답이 없으면) · **11-25** Plan A/B 결정(둘 다 허가면 A). 11-11 Parfumo 첫 메일 보냄.
+5. 남은 서버 일(단계 5 안에서): CORS(실제 웹 주소만, `*` 거부 → `.redteam-needed` → 5-9 레드팀), 응답 record required 표시(OpenAPI), 베이스 이미지 digest 고정, Render 로그에 토큰·이메일 없는지(사장 확인), Tomcat HTML 400 → JSON(낮음), 바구니 지도 나누기(남은 것 6). 레드팀 로컬 서버: `RedTeamRig`.
+
+## (이전) 2026-11-11 세션 중간 기록 — 묶음 9 서버 끝, 데이터 정리
 1. **오늘 한 것:** OpenAPI 정리(3bd0961, `docs/openapi.json`) → Render 3bd0961 배포·확인 → 전체 API 10분 재측정 **RSS 최대 208MB / 기준 420MB** → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, 두 줄 보내도 실제 IP 맨 오른쪽) → 레드팀(26/26 주소, 뚫림 1: 틀린 토큰 IP 막기가 같은 IP 정상 사용자도 막음) → 사장 결정 "틀린 토큰만 막기"로 고침(8fb9e0a) → Render 배포·재공격 막힘 → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움 → 배포 전 체크리스트 12개. 자세히는 NOTES "묶음 9", `docs/redteam.md`, `docs/review.md`.
 2. **멈춘 곳:** 공개 저장소 데이터 정리 끝(2026-11-11): Fragrantica 수치 2곳(①), Parfumo 향수별 데이터 P1~P12(`plan_b_portfolio.md` 1-4). 원본은 비공개 저장소 `pipeline-data-out/private_docs/`, 생성 스크립트도 그 폴더(로컬 `pipeline/data/out/private_docs/`)에 씀. Plan B 확정 시 1-5 걸러낸 사본(실행 전 사장 확인). **순서(사장 결정 2026-11-11):** 테스트 계정은 단계 5 로그인 확인에 쓰고 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)**에 삭제(다시 만들지 않음) → 바로 뒤 이메일 새 가입 막기(Supabase에 이메일만 막는 설정은 없음 → `before_user_created` 훅 또는 Email 끄기) → `api_check.sh` 확인. keepalive main 반영은 11-25에 Plan A로 정해질 때만
 3. **묶음 9 남은 것(plan "묶음 9 배포 전 체크리스트"):** 실제 약관·방침 문구 → 동의 버전 올리기, 베이스 이미지 digest 고정, CORS(웹 출처 목록)·403 모양, Redirect URLs 등록, Render 로그에 토큰·이메일 없는지(사장 확인), 바구니 지도 나누기(남은 것 6), keepalive main 반영(이 브랜치에만 고침 — 예약 실행은 main에서만 돈다), Tomcat HTML 400을 JSON으로(레드팀 4번, 낮음).
