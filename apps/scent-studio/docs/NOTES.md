@@ -426,3 +426,9 @@
 - **Render 8fb9e0a 배포 뒤(2026-11-11, 사장이 측정용 환경 변수 4개 삭제 + 배포):** 배포 뒤 확인 모두 기대대로(health·신고 401/204/400·카탈로그·찜·`DELETE /me` 401·openapi 401). 측정 주소는 토큰을 붙여도 404(꺼짐), 이 컴퓨터 `.env`의 `DEBUG_TOKEN`도 비움. **레드팀 1번을 Render에서 다시 공격:** 내 IP로 위조 토큰 20번(401) → 21번째 위조 429(Retry-After 300), 같은 IP의 맞는 토큰 `/me` 200, 토큰 없는 health·catalog 200 → 막힘 확인, `.redteam-needed` 지움.
 - **응답 시간 표본(8fb9e0a, 깨어 있는 상태, 한국 → 싱가포르, 주소별 20번):** health 중앙 214ms·p95 361ms / me 288·409 / favorites 299·465 / blends 289·307 / catalog/latest 283·313 (최대 546ms). 10분 부하 때는 응답 시간을 기록하지 않았다(메모리만) → 이 표본으로 대신. 이 배포의 메모리는 측정 주소를 꺼서 다시 재지 않았다(바뀐 코드는 토큰 실패 처리뿐).
 - **배포 전 체크리스트 12개(2026-11-11):** HANDOFF·review.md 참고. 이메일 가입은 아직 켜짐(`api_check.sh`) → 테스트 계정 삭제 뒤 끔.
+
+## 단계 5 시작: 5-0 디자인 (2026-11-11)
+- 사장 OK: 단계 5 계획(`plan_stage5.md` 맨 위 결정 5가지).
+- **DESIGN.md 위치:** 규칙 이름은 `docs/DESIGN.md`지만 Windows는 대소문자를 구분하지 않아 `docs/design.md`(설계 문서)와 같은 파일이 된다 — 처음 쓸 때 설계 문서를 덮어썼다가 git에서 바로 되살림(내용 손실 없음, 커밋 전). 그래서 `docs/design/DESIGN.md`에 둔다. 다른 앱도 같은 이름 충돌을 조심.
+- 시안은 정적 HTML(`docs/design/mock.html`, 토큰은 `app/tailwind.config.js`와 같은 값) + Playwright 캡처(`docs/design/capture.mjs` → `docs/design/shots/`). 데이터는 누가 봐도 가짜인 이름만. 글자 200%는 정적 시안의 확대 흉내가 실제와 달라 5-8 실제 화면에서 확인.
+- 토큰: `tailwind.config.js`에 design.md 3-2 색 전부(라이트·다크), 글자 크기 7단계, 모서리 4/2, 최대 폭. 기존 이름(`bg`·`primary`·`ink`)은 유지, text → `ink`, textSub → `inkSub`, border → `line`(Tailwind 기본 이름과 겹치지 않게).

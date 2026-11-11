@@ -20,7 +20,7 @@
 | ★ | 백엔드 | **엔진 마무리 사장 결정**: 레몬 "강" 문제(프로필 방식 × 강 값 비교표, `evaluate.py` 방식으로 재측정) → 블라인드 비교 → 눈으로 평가 (HANDOFF "다음 세션에서 할 일" 1·2) | 사장 OK, 기준(재현 15, 블라인드 6/10, 눈 3.5) 통과 |
 | 3 | 백엔드 | **DB 구축** (design.md 12·12-1절, 저장할 데이터 목록은 2026-10-30 사장 OK). ① 표 만들기: Flyway 마이그레이션 `backend/src/main/resources/db/migration/V1__init.sql` — `app` 스키마에 `user_preferences`·`blends`·`favorites`·`tasting_feedback`·`events` 5개 표, 필수값·범위 검사(만족도 1~5, 메모 500자, 이름 40자, 층·강도 값), `user_id` 인덱스, 찜은 (user_id, perfume_key) 중복 불가 ② 막기: 모든 표 RLS 켜고 정책 없음(앱의 공개 키로는 아무것도 못 읽음), `app` 스키마는 공개 API에 노출 안 함, 서버 전용 DB 계정 ③ 테스트 DB: 내장 Postgres(zonky, Docker 불필요)로 마이그레이션이 처음부터 끝까지 돌고, 검사 규칙이 잘못된 값을 막는지 확인 ④ 실제 DB: 사장이 Supabase 프로젝트를 만들고(무료, 서울 지역) 접속 정보를 `.env`에만 넣음(`.env.example`에 이름만) → 서버를 처음 켜면 Flyway가 표를 만듦 → 구글 로그인 켜기 ⑤ 운영: 7일 쉬면 일시 정지되므로 하루 한 번 깨우는 GitHub Actions 예약 작업, 무료 요금제 백업 한계를 NOTES에 기록 | 내장 Postgres로 마이그레이션·검사 테스트 통과. 실제 Supabase에 표 5개가 생기고 공개 키로 읽기가 막힌 것을 확인 |
 | 4 | 백엔드 | Spring 서버 `backend/`(Spring Boot 4.1, Java 21): 보안(JWT/JWKS, 사용자 id는 토큰에서만), 사용자 API(11절: 설정·조합·찜·피드백), 계정 삭제(한 번에 내 데이터 전부 + Supabase 계정, 사용 기록은 익명으로), 사용 기록 받기, 카탈로그 배포 + 서버 테스트(토큰 없으면 401, 남의 데이터 못 읽음, 잘못된 입력 400, 삭제 후 데이터 없음) | `./gradlew test` 통과, `run.sh`에 추가 |
-| ★ | 디자인 | `docs/DESIGN.md`(design.md 3절 토큰 → `tailwind.config.js`) + Playwright 시안 캡처(라이트·다크, 폰·PC) | 사장 OK |
+| ★ | 디자인 | `docs/design/DESIGN.md`(design.md 3절 토큰 → `tailwind.config.js`) + Playwright 시안 캡처(라이트·다크, 폰·PC) | 사장 OK |
 | 5 | 프론트 | 화면: 카탈로그 불러오기 → 새 조합 흐름 S02~S06 → S07·S08 → 로그인(Supabase, 구글, 방법 목록 구조)·보관함·마이 → PC 넓은 배치(왼쪽 메뉴, 목록·상세 나란히, 옆 패널) | 승인 목록 41/41 |
 | 6 | 프론트 | 사용 기록, 오류·빈 상태, 웹 오프라인(서비스 워커)·홈 화면 추가(매니페스트, 이름 Perfumer-LAB), EAS 안드로이드 빌드 설정, 개인정보·계정 삭제 안내 페이지 | 승인 목록 그대로 통과 + 폰 앱 확인(6단계 전) |
 
@@ -29,7 +29,7 @@
 - 외부 계정(Supabase 프로젝트, Expo 계정, Play 개발자 계정)이 필요한 순간에는 멈추고 사장에게 `!` 한 줄 또는 만드는 방법을 부탁한다. 키는 대화창에 붙이지 않게 안내한다.
 
 ## 고칠·만들 주요 파일
-- 새로: `app/`(Expo: `app/`(라우트), `src/engine/`, `src/ui/testIds.ts`, `src/strings.ko.ts`, `tailwind.config.js`, `app.json`(이름·ID), `eas.json`, `playwright.config.ts`, `vitest.config.ts`, `tests/acceptance/*.spec.ts`, `tests/unit/*.test.ts`), `backend/`, `docs/DESIGN.md`
+- 새로: `app/`(Expo: `app/`(라우트), `src/engine/`, `src/ui/testIds.ts`, `src/strings.ko.ts`, `tailwind.config.js`, `app.json`(이름·ID), `eas.json`, `playwright.config.ts`, `vitest.config.ts`, `tests/acceptance/*.spec.ts`, `tests/unit/*.test.ts`), `backend/`, `docs/design/DESIGN.md`
 - 고침: `tests/run.sh`, `docs/plan.md`(이 계획으로 교체), `docs/spec.md`(앱 이름·ID), `HANDOFF.md`, `docs/NOTES.md`
 - 지움(단계 2 뒤): `engine/`, `settings.gradle.kts`, 루트 `build.gradle.kts`·`gradle/`·`gradlew*`·`gradle.properties`(서버는 `backend/` 안에 자체 Gradle)
 - 재사용: 이름표 `git show 0a2788a:apps/scent-studio/app/src/main/java/com/perfumerlab/scentstudio/ui/Tags.kt`, 가짜 서버 동작 `.../acceptance/harness/FakeUserServer.kt`, Java 엔진·테스트(옮길 원본), `pipeline/build_catalog.py --fixture`, `pipeline/make_golden.py`

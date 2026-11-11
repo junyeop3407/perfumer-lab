@@ -1,12 +1,12 @@
 # scent-studio
-현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~8 완료, **묶음 9 서버 작업 끝**(2026-11-11, 테스트 계정 삭제·이메일 끄기는 단계 5 끝(Plan B) 또는 출시 직전(Plan A)으로 미룸). Render는 **8fb9e0a**(묶음 8·카카오 `/me`·OpenAPI·레드팀 1번 고침)까지 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). 계획·상태 `docs/plan_stage4.md`)
+현재 단계: 4 (구현 — 단계 4(서버) 묶음 1~8 완료, **단계 4 서버 끝 → 단계 5(화면) 5-0 디자인 시안 검토 대기**(`docs/plan_stage5.md`) · 묶음 9 서버 작업 끝(2026-11-11, 테스트 계정 삭제·이메일 끄기는 단계 5 끝(Plan B) 또는 출시 직전(Plan A)으로 미룸). Render는 **8fb9e0a**(묶음 8·카카오 `/me`·OpenAPI·레드팀 1번 고침)까지 배포, 측정 주소 꺼짐. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). 계획·상태 `docs/plan_stage4.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
 실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`)
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 8bb26d4 (묶음 9 시작 직전)
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구 1 건너뜀 (2026-11-11 확인, `bash tests/run.sh`, 묶음 9 레드팀 1번 고침 포함). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: `docs/plan_stage5.md` 사장 검토(OK 뒤 단계 5 시작). 일정: 11-11 Parfumo 첫 메일(✓) → 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일(답 없으면) → **11-25 Plan A/B 결정**(둘 다 허가면 A, 아니면 B, `docs/plan_b_portfolio.md` 5절). keepalive main 반영은 11-25 A일 때. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
+다음 할 일: **5-0 디자인 시안 사장 검토 대기**(`docs/design/DESIGN.md`, `docs/design/shots/`). OK 뒤 5-1 카탈로그. 일정: 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일 → **11-25 Plan A/B 결정**. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
 ## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 단계 5 계획 사장 검토 대기, 11-25 Plan A/B 결정)
 1. **오늘 한 것:** OpenAPI 정리(3bd0961, `docs/openapi.json`) → Render 3bd0961 배포·확인 → 전체 API 10분 재측정 **RSS 최대 208MB / 기준 420MB** → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, 두 줄 보내도 실제 IP 맨 오른쪽) → 레드팀(26/26 주소, 뚫림 1: 틀린 토큰 IP 막기가 같은 IP 정상 사용자도 막음) → 사장 결정 "틀린 토큰만 막기"로 고침(8fb9e0a) → Render 배포·재공격 막힘 → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움 → 배포 전 체크리스트 12개. 자세히는 NOTES "묶음 9", `docs/redteam.md`, `docs/review.md`.

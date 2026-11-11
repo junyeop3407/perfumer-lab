@@ -59,7 +59,7 @@ flowchart LR
 | 넓은 화면(PC) | 프론트엔드팀 | 화면 너비 1024px 이상이면 하단 탭 → 왼쪽 메뉴, 목록·상세 나란히, 노트 카드는 옆 패널(같은 컴포넌트, 배치만 다름) |
 | 오프라인 | 프론트엔드팀 | 폰 앱: 카탈로그를 앱에 넣음. 웹: 내보낸 정적 파일과 카탈로그를 서비스 워커로 캐시(Workbox) → 한 번 연 뒤 인터넷 없이 됨. "홈 화면에 추가"용 웹 앱 매니페스트 |
 | 로그인 | 프론트엔드팀 + 백엔드팀 | 앱: Supabase JS 클라이언트(Auth만) + 구글 OAuth(PKCE, 웹·폰 같은 코드). 로그인 방법을 목록으로 두어 앱스토어 때 애플 로그인(Supabase 지원)을 한 줄 더하면 되게 한다. 서버: Spring Security가 Supabase JWT를 공개키(JWKS)로 검증 |
-| 디자인 | 디자인팀 | `docs/DESIGN.md` + **NativeWind**(React Native용 Tailwind). 색·간격은 `tailwind.config.js` 토큰 한 곳. 시안 캡처는 Playwright로 웹 화면을 폰·PC 크기로 찍음 |
+| 디자인 | 디자인팀 | `docs/design/DESIGN.md` + **NativeWind**(React Native용 Tailwind). 색·간격은 `tailwind.config.js` 토큰 한 곳. 시안 캡처는 Playwright로 웹 화면을 폰·PC 크기로 찍음 |
 | 추천 엔진 | 백엔드팀 | **`app/src/engine/` 순수 TypeScript, 의존성 없음.** 8절 명세 그대로, Python 참조 엔진이 만든 같은 골든 파일로 결과가 같은지 확인. 1차에는 기기만 추천을 계산한다 |
 | 서버 | 백엔드팀 | Java 21 + Spring Boot 4, Spring Web, Spring Data JPA, Flyway, Spring Security(OAuth2 Resource Server), springdoc-openapi |
 | DB · 로그인 | 백엔드팀 | Supabase를 **Postgres 호스팅과 구글 로그인으로만** 사용. 앱은 DB에 직접 붙지 않는다(12절) |
@@ -95,7 +95,7 @@ flowchart LR
 
 ## 3. 디자인 방향과 앱 화면 원칙
 > 2026-10-30 사장 결정: 사장이 준 컬러 시스템을 쓴다. Claude가 대비를 계산해 고친 4곳과 "계열 색 없음"은 사장이 OK했다.
-> 디자인팀은 4단계 시작에 이 절을 바탕으로 `docs/DESIGN.md`(글꼴 크기·간격·컴포넌트 규칙)를 쓰고 시안 캡처로 검토받는다. **이 절과 DESIGN.md가 다르면 이 절이 기준이다.**
+> 디자인팀은 4단계 시작에 이 절을 바탕으로 `docs/design/DESIGN.md`(글꼴 크기·간격·컴포넌트 규칙)를 쓰고 시안 캡처로 검토받는다. **이 절과 DESIGN.md가 다르면 이 절이 기준이다.**
 
 ### 3-1. 컨셉
 **니치 향수 브랜드 감성(딥티크·조 말론 계열).** 크림 바탕 + 딥 그린 기준색 + 골드 포인트 하나. 색은 적게, 채도는 낮게.
