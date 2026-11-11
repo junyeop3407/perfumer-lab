@@ -410,3 +410,12 @@
 - 서버: `/me` email 없음·빈 값·공백·문자열 아님 → `null`. 구글·카카오는 다른 user id(합치지 않음). 같은 사람이 두 방법으로 가입하면 데이터가 따로 — 화면 단계에서 로그인 화면에 "처음 쓴 방법으로 로그인" 안내 검토.
 - **실제 카카오 로그인 (2026-11-10):** 1번째 `OAuth state has expired`(창을 열고 오래 둠), 2번째 `invalid_scope: account_email` — Supabase가 "Allow users without an email"을 켜도 이메일 범위를 요청함 → 일반 앱으로는 로그인 불가. **사장 할 일: 비즈 앱 전환 → 카카오계정(이메일) "선택 동의"**(사용자가 거절하면 email null — 서버 처리 완료). 토큰 형식 확인은 그 뒤 다시.
 - **⏸ 카카오 로그인 보류 (2026-11-10 사장 결정):** 원인·다시 시작할 때 할 일·다른 방법 조사는 `docs/kakao_setup.md` "카카오 로그인 보류". 요약: Supabase가 `account_email`을 늘 요청 → 일반 앱이라 invalid_scope/KOE205. 다시 시작: 비즈 앱 전환 → 이메일 선택 동의 → 로그인 재시도 → 토큰 확인(서버 코드·테스트는 이미 있음). 대안 1순위 카카오 OIDC + signInWithIdToken. 기한: Play 비공개 테스트 전. 이메일 null 처리 코드는 그대로 둠.
+
+## 묶음 9 마무리·배포 (2026-11-11)
+- **OpenAPI:** 운영은 문서 주소 꺼짐(401). 테스트(`OpenApiDocTest`)가 문서를 만들어 `docs/openapi.json`과 비교 → 단계 5 앱 타입은 이 파일로. 다시 만들기: `./gradlew test --tests "*OpenApiDocTest*" -Dopenapi.write=true`. springdoc은 처음 OpenAPI Bean에 넣은 스키마를 "안 쓰는 것"으로 보고 지우므로 `ApiError`는 customizer에서 넣는다. 키 순서 고정(`writer-with-order-by-keys`)이 없으면 실행마다 경로 순서가 달라진다.
+- **Render 배포 3bd0961 (사장, 2026-11-11):** 묶음 8 계정 삭제·카카오 `/me`·OpenAPI. 배포 뒤 확인: health 200(db ok), 신고 토큰 없이 401·테스트 계정 204(틀린 본문 400), 카탈로그 latest·파일 200(2,341,384바이트), 찜 저장 204·목록에 있음·지우기 204, `DELETE /me` 토큰 없이 401, `/api/v1/openapi` 401, 측정 주소 토큰 없이 404. 시작 26.5초(측정 주소 jvmStartToReady).
+- **재측정(전체 API, 10분, 09:41~09:51 KST):** 한 바퀴 = health + 로그인 읽기 5개(me·favorites·blends·feedback·preferences), 4바퀴마다 카탈로그 latest + 찜(없는 key 400) + 조합 저장·삭제, 카탈로그 파일 3번. 221바퀴, 모든 응답 기대대로(429·5xx 없음). **프로세스 최대 RSS 208MB, 컨테이너 최대 216MB (기준 420MB) → 통과.** 힙 29~62MB / 최대 272MB, 스레드 17. 묶음 1(health만) 178MB보다 30MB 늘었다(카탈로그 메모리 보관·key 목록). 사용 기록(`/events`)은 실제 분석 표에 남고 계정 삭제로 안 지워져서 부하에서 뺐다. 스크립트는 임시(커밋 안 함).
+- **IP 확인 절차(4-1):** Render가 붙이는 X-Forwarded-For는 한 줄, 값 2개 — 오른쪽 첫 값이 실제 IP, 앞에 넣은 가짜 값은 두 번째. `TRUSTED_PROXY_HOPS=1` 그대로 맞음(묶음 1과 같음). Render는 `cf-connecting-ip`·`true-client-ip`도 붙이지만 서버는 읽지 않는다.
+- **남은 것 6(바구니 지도 나누기):** 이번 부하는 사용자 1명이라 바구니가 몇 개뿐 → 판단 재료 없음. 레드팀 결과를 보고 정한다.
+- **keepalive:** 예약 작업에 Render `/api/v1/health`(db ok 확인) 단계를 앞에 더했다. 예전 `public.keepalive()` 호출도 남겼다(health가 일시 정지 방지 활동으로 세어지는지 확인 전이라). 예약 실행은 main에서만 돌므로 main에도 같은 파일.
+- **레드팀용 로컬 서버 `RedTeamRig`:** 평소 테스트에서는 건너뛴다(`-Dredteam.rig=true`일 때만). 내장 Postgres·가짜 로그인·가짜 Storage·관리 API로 실제 서버 코드를 띄우고 사용자 A·B(동의)·C(동의 안 함) 토큰을 `build/redteam/rig.env`에 적는다. 시계는 진짜 시계(요청 제한이 실제처럼 돈다).

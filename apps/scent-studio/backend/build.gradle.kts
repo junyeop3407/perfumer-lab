@@ -82,4 +82,7 @@ tasks.test {
     // docs/openapi.json 다시 만들기: ./gradlew test --tests "*OpenApiDocTest*" -Dopenapi.write=true
     systemProperty("openapi.write", System.getProperty("openapi.write") ?: "false")
     inputs.file("../docs/openapi.json").optional()   // 파일만 손으로 고쳐도 테스트가 다시 돈다
+    // 레드팀용 로컬 서버(RedTeamRig): ./gradlew test --tests "*RedTeamRig*" -Dredteam.rig=true -Dredteam.minutes=40
+    systemProperty("redteam.rig", System.getProperty("redteam.rig") ?: "false")
+    systemProperty("redteam.minutes", System.getProperty("redteam.minutes") ?: "40")
 }
