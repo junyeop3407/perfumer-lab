@@ -6,11 +6,11 @@
 리뷰 기준: 8bb26d4 (묶음 9 시작 직전)
 결과: 파이프라인 121/121 · TS 엔진(Vitest) 37/37 · 서버·DB(JUnit + 내장 Postgres) 639/639 통과 + 레드팀 도구 1 건너뜀 (2026-11-11 확인, `bash tests/run.sh`, 묶음 9 레드팀 1번 고침 포함). **승인 목록 1/41 (2026-11-09 승인으로 56개가 됨: J1~J8·K1~K7 추가, 화면 단계에서 테스트 코드 작성)** (`cd app && npx playwright test`, 2026-11-05 직접 확인. 화면 전이라 40개 실패는 정상 — run.sh에는 41/41이 되면 넣는다)
 사용자에게 남은 질문: 없음
-다음 할 일: 11-14 Fragrantica 추가 메일 → 11-21 Plan A(Fragrantica·Parfumo 둘 다 허가)/B 결정(`docs/plan_b_portfolio.md`). 그사이 단계 5 공통 작업. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사(블라인드 채점·실험 스크립트가 읽음)
+다음 할 일: `docs/plan_stage5.md` 사장 검토(OK 뒤 단계 5 시작). 일정: 11-11 Parfumo 첫 메일(✓) → 11-14 Fragrantica 추가 메일 → 11-18 Parfumo 추가 메일(답 없으면) → **11-25 Plan A/B 결정**(둘 다 허가면 A, 아니면 B, `docs/plan_b_portfolio.md` 5절). keepalive main 반영은 11-25 A일 때. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사
 
-## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 11-21 Plan A/B 결정 대기)
+## ★ 다음 세션 시작 (2026-11-11 — 묶음 9 서버 끝, 공개 저장소 데이터 정리 끝, 단계 5 계획 사장 검토 대기, 11-25 Plan A/B 결정)
 1. **오늘 한 것:** OpenAPI 정리(3bd0961, `docs/openapi.json`) → Render 3bd0961 배포·확인 → 전체 API 10분 재측정 **RSS 최대 208MB / 기준 420MB** → IP 확인(`TRUSTED_PROXY_HOPS=1` 맞음, 두 줄 보내도 실제 IP 맨 오른쪽) → 레드팀(26/26 주소, 뚫림 1: 틀린 토큰 IP 막기가 같은 IP 정상 사용자도 막음) → 사장 결정 "틀린 토큰만 막기"로 고침(8fb9e0a) → Render 배포·재공격 막힘 → 측정용 환경 변수 4개 삭제(사장)·`.env` DEBUG_TOKEN 비움 → `.redteam-needed` 지움 → 배포 전 체크리스트 12개. 자세히는 NOTES "묶음 9", `docs/redteam.md`, `docs/review.md`.
-2. **멈춘 곳:** 공개 저장소 데이터 정리 끝(2026-11-11): Fragrantica 수치 2곳(①), Parfumo 향수별 데이터 P1~P12(`plan_b_portfolio.md` 1-4). 원본은 비공개 저장소 `pipeline-data-out/private_docs/`, 생성 스크립트도 그 폴더(로컬 `pipeline/data/out/private_docs/`)에 씀. Plan B 확정 시 1-5 걸러낸 사본(실행 전 사장 확인). **순서(사장 결정 2026-11-11):** 테스트 계정은 단계 5 로그인 확인에 쓰고 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)**에 삭제(다시 만들지 않음) → 바로 뒤 이메일 새 가입 막기(Supabase에 이메일만 막는 설정은 없음 → `before_user_created` 훅 또는 Email 끄기) → `api_check.sh` 확인. keepalive main 반영은 Plan A일 때만
+2. **멈춘 곳:** 공개 저장소 데이터 정리 끝(2026-11-11): Fragrantica 수치 2곳(①), Parfumo 향수별 데이터 P1~P12(`plan_b_portfolio.md` 1-4). 원본은 비공개 저장소 `pipeline-data-out/private_docs/`, 생성 스크립트도 그 폴더(로컬 `pipeline/data/out/private_docs/`)에 씀. Plan B 확정 시 1-5 걸러낸 사본(실행 전 사장 확인). **순서(사장 결정 2026-11-11):** 테스트 계정은 단계 5 로그인 확인에 쓰고 **단계 5 끝(Plan B) 또는 출시 직전(Plan A)**에 삭제(다시 만들지 않음) → 바로 뒤 이메일 새 가입 막기(Supabase에 이메일만 막는 설정은 없음 → `before_user_created` 훅 또는 Email 끄기) → `api_check.sh` 확인. keepalive main 반영은 11-25에 Plan A로 정해질 때만
 3. **묶음 9 남은 것(plan "묶음 9 배포 전 체크리스트"):** 실제 약관·방침 문구 → 동의 버전 올리기, 베이스 이미지 digest 고정, CORS(웹 출처 목록)·403 모양, Redirect URLs 등록, Render 로그에 토큰·이메일 없는지(사장 확인), 바구니 지도 나누기(남은 것 6), keepalive main 반영(이 브랜치에만 고침 — 예약 실행은 main에서만 돈다), Tomcat HTML 400을 JSON으로(레드팀 4번, 낮음).
 4. 레드팀을 다시 돌릴 때: `RedTeamRig`(`./gradlew test --tests "*RedTeamRig*" -Dredteam.rig=true -Dredteam.minutes=60`, 이 컴퓨터에서만 서버를 띄움).
 
