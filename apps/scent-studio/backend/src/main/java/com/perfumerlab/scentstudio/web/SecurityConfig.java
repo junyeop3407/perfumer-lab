@@ -19,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
@@ -34,7 +35,7 @@ import java.util.UUID;
 
 /**
  * 로그인·요청 제한 (server_design.md 3·4절). 세션·쿠키·CSRF 없음(앱이 토큰을 보내는 API 서버).
- * 순서: IP 정하기·막힌 IP 429 → 토큰 확인(서명·클레임) → 세션 확인(30초 보관) → 요청 제한(사용자/IP) → 주소 권한.
+ * 순서: IP 정하기 → 토큰 확인(서명·클레임, 막힌 IP의 위조 토큰은 429) → 세션 확인(30초 보관) → 요청 제한(사용자/IP) → 주소 권한.
  * 토큰 실패는 이유와 상관없이 같은 401 응답. 보낸 토큰이 틀린 것만 IP별로 세어 1분 20번이면 5분 막는다. DB·키 목록을 못 읽으면 503(실패로 안 셈).
  */
 @Configuration
@@ -62,8 +63,25 @@ public class SecurityConfig {
         };
         // 보낸 토큰이 확인에 실패했을 때만 IP 실패로 센다. 토큰 없이 보호 주소를 부른 401은 세지 않는다
         // (다른 사이트가 방문자 브라우저로 불러 같은 공유기 사용자들을 막게 만들 수 있음, 리뷰 묶음 3 QA-1)
+        // 막힌 IP에서도 맞는 토큰·토큰 없는 요청은 받는다. 막는 것은 위조·깨진 토큰뿐(통신사 공유 IP·공용 와이파이의 정상 사용자를
+        // 같이 막지 않게, 레드팀 묶음 9 1번·사장 결정 2026-11-11). 서명이 맞는 토큰의 만료·로그아웃은 세지 않고 401 그대로(앱이 새로 로그인)
         AuthenticationFailureHandler tokenFailed = (req, res, ex) -> {
-            if (!serverSide(ex)) limiter.recordAuthFailure(LimitFilters.ipKey(req));
+            String ip = LimitFilters.ipKey(req);
+            if (forged(ex)) {
+                long blocked = limiter.blockedSeconds(ip);
+                if (blocked > 0) {
+                    LimitFilters.tooMany(res, blocked);
+                    return;
+                }
+                limiter.recordAuthFailure(ip);
+            } else if (!serverSide(ex)) {
+                // 세지 않는 실패(만료·로그아웃)도 로그인 없는 요청처럼 IP 분당 60을 쓴다(로그아웃 토큰으로 DB 세션 조회를 쏟지 못하게, QA 묶음 9)
+                RateLimiter.Result r = limiter.tryConsume(RateLimiter.Limit.ANON_IP, ip);
+                if (!r.allowed()) {
+                    LimitFilters.tooMany(res, r.retryAfterSeconds());
+                    return;
+                }
+            }
             entryPoint.commence(req, res, ex);
         };
 
@@ -98,9 +116,25 @@ public class SecurityConfig {
                             }
                         }))
                 .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint))
-                .addFilterBefore(new LimitFilters.BlockFilter(limiter, hops), BearerTokenAuthenticationFilter.class)
+                .addFilterBefore(new LimitFilters.IpFilter(hops), BearerTokenAuthenticationFilter.class)
                 .addFilterAfter(new LimitFilters.LimitFilter(limiter), BearerTokenAuthenticationFilter.class);
         return http.build();
+    }
+
+    /** 위조·깨진 토큰인가: 서버 쪽 문제(503)도, 서명은 맞는데 클레임(만료 등)이 틀린 것도, 로그아웃(세션 끝남)도 아닌 것 */
+    static boolean forged(Exception ex) {
+        if (serverSide(ex) || ex instanceof SessionEnded) return false;
+        for (Throwable t = ex; t != null; t = t.getCause()) {
+            if (t instanceof JwtValidationException) return false; // 서명 확인을 통과한 뒤 클레임 검사에서 떨어짐 = Supabase가 만든 토큰
+        }
+        return true;
+    }
+
+    /** 서명·클레임은 맞지만 세션이 끝난 토큰(로그아웃·계정 삭제) */
+    static final class SessionEnded extends BadCredentialsException {
+        SessionEnded() {
+            super("session ended");
+        }
     }
 
     static boolean serverSide(Exception ex) {
@@ -118,7 +152,7 @@ public class SecurityConfig {
         return jwt -> {
             UUID user = UUID.fromString(jwt.getSubject());
             UUID session = UUID.fromString(jwt.getClaimAsString("session_id"));
-            if (!sessions.alive(session, user)) throw new BadCredentialsException("session ended");
+            if (!sessions.alive(session, user)) throw new SessionEnded();
             return new JwtAuthenticationToken(jwt, List.of(), user.toString());
         };
     }

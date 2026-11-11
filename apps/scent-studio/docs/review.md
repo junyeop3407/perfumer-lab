@@ -194,3 +194,8 @@
 - 테스트: `OpenApiDocTest` 8(주소·메서드 목록 정확히, bearer, 성공 코드, 오류 모양, X-Install-Id, gzip·events 배열, 주소·비밀값 없음, 저장소 파일 = 서버 문서). 서버·DB 632.
 - QA팀: 높음 없음. 운영 노출 막힘 확인(같은 설정 키, 주소 정확히 비교, UI 없음). 중간 5 반영 — 성공 코드 201·204, JsonNode 내부 모양, 오류 응답 부족, X-Install-Id·gzip. 낮음 반영 — 공개 주소 열쇠를 "메서드 주소"로, 공개 주소(카탈로그·events)에도 틀린 토큰 401, `docs/openapi.json`을 Gradle 입력으로. 낮음 반영 안 함 — record 칸 required 표시(단계 5 타입 만들 때 같이, plan 남은 것), operationId 겹침(지금 겹침 없음, 겹치면 파일 비교 테스트가 잡음).
 - Gemini: 4건 중 1 반영(쓰기 전 폴더 만들기), 3 해당 없음(`review_result.md` "Claude 판단").
+
+## 묶음 9 레드팀 1번 고침 (2026-11-11, 사장 결정 "틀린 토큰만 막기")
+- 변경: `SecurityConfig.tokenFailed`(위조 토큰만 세고 막힌 IP면 429, 만료·로그아웃은 세지 않고 IP 분당 60), `forged()`·`SessionEnded`, `LimitFilters.BlockFilter` → `IpFilter`(막지 않음). 승인 테스트 2개 4줄 기대값 변경(사장 허락).
+- 테스트: `Bundle9ReviewFixesTest` 6. 변조 6/6 잡힘(로그아웃·만료를 위조로 셈, 옛 방식, 막힌 IP 위조 통과, 실패 안 셈, 옛 BlockFilter).
+- QA팀: 질문 1~3·5 문제 없음(서명 확인 뒤에만 `JwtValidationException`, 공격자가 503으로 빠질 길 없음, `SessionEnded` 안 감싸짐, 회귀 없음). 중간 1 반영 — 세지 않는 실패가 IP 제한도 안 받아 로그아웃 토큰으로 DB 세션 조회를 쏟을 수 있음 → IP 분당 60. 낮음 반영 — 다른 키로 서명한 위조 토큰 테스트, `IpFilter` 이름, NOTES·redteam.md 옛 문장, 서명 확인 CPU 한계를 server_design에 적음.

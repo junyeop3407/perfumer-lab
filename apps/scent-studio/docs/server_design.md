@@ -76,7 +76,7 @@ grant execute on function app.session_alive(uuid, uuid) to scent_server;
   | 사용 기록 `POST /events` | install_id + IP | **요청(묶음) 분당 10회** |
   | 카탈로그 파일 `GET /catalog/{version}` | install_id 하루 3회 + IP 시간당 10회 | (5절) |
   | 로그인 없이 부르는 것 | IP | 분당 60회 |
-  | 토큰 확인 실패(401) | IP | 분당 20회 실패 뒤 5분 막음 |
+  | 토큰 확인 실패(401) | IP | 위조·깨진 토큰 분당 20회 뒤 5분 동안 **그 IP의 위조 토큰만** 429. 맞는 토큰·토큰 없는 요청은 막지 않고, 서명이 맞는 만료·로그아웃 토큰은 세지 않고 IP 분당 60만 씀(레드팀 묶음 9 1번, 사장 결정 2026-11-11). 막힌 IP의 위조 토큰도 서명 확인(CPU)은 한 뒤 429 |
 - 넘으면 429 `RATE_LIMITED` + `Retry-After`(초).
 
 ### 4-1. Render 뒤에서 실제 IP 읽기 (사장 지시 5)

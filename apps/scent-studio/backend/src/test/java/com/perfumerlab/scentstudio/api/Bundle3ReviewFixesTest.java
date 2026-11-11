@@ -139,7 +139,8 @@ class Bundle3ReviewFixesTest {
         void blockedIpStillPassesRenderHealthCheck() throws Exception {
             String ip = "192.0.2.255"; // ip()가 쓰지 않는 값
             for (int i = 0; i < 20; i++) get("/api/v1/me", "Authorization", "Bearer bad" + i, "X-Forwarded-For", ip);
-            assertEquals(429, get("/api/v1/health", "X-Forwarded-For", ip).statusCode());
+            // 2026-11-11 사장 결정(레드팀 묶음 9 1번): 막힌 IP는 틀린 토큰만 429, 토큰 없는 요청은 통과
+            assertEquals(429, get("/api/v1/me", "Authorization", "Bearer bad20", "X-Forwarded-For", ip).statusCode());
             assertEquals(200, get("/api/v1/health/live", "X-Forwarded-For", ip).statusCode());
         }
     }

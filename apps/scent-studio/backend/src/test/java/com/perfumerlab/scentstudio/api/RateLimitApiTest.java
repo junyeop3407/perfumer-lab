@@ -187,11 +187,13 @@ class RateLimitApiTest extends ApiTestBase {
             assertEquals(401, get("/api/v1/me", "Authorization", "Bearer bad" + i, "X-Forwarded-For", ip).statusCode(), "실패 " + i);
         }
         String good = TestAuth.newUser().bearer();
-        assertLimited(get("/api/v1/me", "Authorization", good, "X-Forwarded-For", ip), "21번째는 맞는 토큰이어도 막힘", 300);
-        assertLimited(get("/api/v1/health", "X-Forwarded-For", ip), "로그인 없이 부르는 주소도 막힘", 300);
+        // 2026-11-11 사장 결정(레드팀 묶음 9 1번): 막힌 IP라도 맞는 토큰·토큰 없는 요청은 통과, 틀린 토큰만 429
+        assertEquals(200, get("/api/v1/me", "Authorization", good, "X-Forwarded-For", ip).statusCode(), "21번째 맞는 토큰은 통과(같은 IP 정상 사용자)");
+        assertEquals(200, get("/api/v1/health", "X-Forwarded-For", ip).statusCode(), "로그인 없이 부르는 주소도 통과");
+        assertLimited(get("/api/v1/me", "Authorization", "Bearer bad21", "X-Forwarded-For", ip), "21번째 틀린 토큰은 막힘", 300);
         assertNotEquals(429, get("/api/v1/me", "Authorization", good, "X-Forwarded-For", newIp()).statusCode(), "다른 IP는 됨");
         clock.advance(Duration.ofMinutes(4));
-        assertLimited(get("/api/v1/health", "X-Forwarded-For", ip), "4분 뒤 아직 막힘", 60);
+        assertLimited(get("/api/v1/me", "Authorization", "Bearer bad22", "X-Forwarded-For", ip), "4분 뒤 아직 막힘", 60);
         clock.advance(Duration.ofSeconds(61));
         assertEquals(200, get("/api/v1/me", "Authorization", good, "X-Forwarded-For", ip).statusCode(), "5분 지나면 풀림");
     }

@@ -16,7 +16,7 @@ import java.util.Collections;
 
 /**
  * 요청 제한 필터 두 개 (보안 필터 사슬 안에 SecurityConfig가 넣는다. 일반 서블릿 필터로 따로 등록하지 않음).
- * ① BlockFilter: 토큰 확인 전에. 요청한 사람 IP를 정해 요청 속성에 두고, 401이 잦아 막힌 IP면 바로 429.
+ * ① IpFilter: 토큰 확인 전에. 요청한 사람 IP를 정해 요청 속성에 둔다(막힌 IP의 위조 토큰 429는 SecurityConfig.tokenFailed).
  * ② LimitFilter: 토큰 확인 뒤에. 로그인했으면 사용자 id 바구니(주소·메서드별), 아니면 IP 바구니(분당 60회).
  * /health/live(Render 상태 확인)는 제한하지 않는다.
  */
@@ -27,23 +27,22 @@ public final class LimitFilters {
 
     private LimitFilters() {}
 
-    /** 요청한 사람의 IP 바구니 열쇠 (BlockFilter가 정한 값) */
+    /** 요청한 사람의 IP 바구니 열쇠 (IpFilter가 정한 값) */
     public static String ipKey(HttpServletRequest req) {
         Object v = req.getAttribute(IP_ATTR);
         return v instanceof String s ? s : ClientIp.limitKey(req.getRemoteAddr());
     }
 
-    static void tooMany(HttpServletResponse res, long seconds) throws IOException {
+    public static void tooMany(HttpServletResponse res, long seconds) throws IOException {
         res.setHeader("Retry-After", Long.toString(seconds));
         ApiError.RATE_LIMITED.write(res);
     }
 
-    public static final class BlockFilter extends OncePerRequestFilter {
-        private final RateLimiter limiter;
+    /** 요청한 사람 IP를 정해 요청 속성에 둔다. 막지 않는다(막힌 IP의 위조 토큰 429는 SecurityConfig.tokenFailed) */
+    public static final class IpFilter extends OncePerRequestFilter {
         private final int hops;
 
-        public BlockFilter(RateLimiter limiter, int hops) {
-            this.limiter = limiter;
+        public IpFilter(int hops) {
             this.hops = hops;
         }
 
@@ -52,13 +51,7 @@ public final class LimitFilters {
             String ip = ClientIp.resolve(Collections.list(req.getHeaders("X-Forwarded-For")), req.getRemoteAddr(), hops);
             String key = ClientIp.limitKey(ip);
             req.setAttribute(IP_ATTR, key);
-            if (!LIVE.equals(req.getRequestURI())) {
-                long blocked = limiter.blockedSeconds(key);
-                if (blocked > 0) {
-                    tooMany(res, blocked);
-                    return;
-                }
-            }
+            // 막힌 IP라도 여기서 통째로 막지 않는다. 위조 토큰만 SecurityConfig.tokenFailed가 429(레드팀 묶음 9 1번)
             chain.doFilter(req, res);
         }
     }
