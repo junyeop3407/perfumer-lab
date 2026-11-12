@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { makeTapLock } from '../../src/ui/tapLock';
 
@@ -103,13 +103,18 @@ describe('Gemini 5-2 중간: 새 조합으로 들어와 노트를 고른 뒤 계
 });
 
 describe('Gemini 5-2 중간: 궁합 계산이 노트 카드를 열 때마다 전체 노트를 정렬하지 않는다', () => {
-  it('실제 카탈로그 규모(노트 3,000개)에서 카드 300번 여는 계산이 30ms 안(고치기 전 약 90ms)', () => {
+  // 시간으로 재면 다른 테스트와 같이 돌 때 흔들려서(2026-11-12 33ms > 30ms), 정렬 횟수를 센다
+  it('같은 카탈로그에서 두 번째부터는 전체 노트를 다시 정렬하지 않는다', () => {
     const base = fixtureCatalog();
     const many = Array.from({ length: 3000 }, (_, i) => ({ ...base.notes[0], key: `n${i}`, df: i % 50, pairings: [] }));
     const cat = { ...base, notes: [...base.notes, ...many] };
-    pairingsFor(cat, cat.notes[0]); // 첫 번은 준비 비용
-    const t0 = performance.now();
-    for (let i = 0; i < 300; i++) pairingsFor(cat, cat.notes[i % cat.notes.length]);
-    expect(performance.now() - t0).toBeLessThan(30);
+    pairingsFor(cat, cat.notes[0]); // 첫 번에만 준비(정렬)
+    const sort = vi.spyOn(Array.prototype, 'sort');
+    try {
+      for (let i = 0; i < 300; i++) pairingsFor(cat, cat.notes[i % cat.notes.length]);
+      expect(sort).not.toHaveBeenCalled();
+    } finally {
+      sort.mockRestore();
+    }
   });
 });

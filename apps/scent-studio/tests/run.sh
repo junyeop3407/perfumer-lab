@@ -2,8 +2,9 @@
 # 테스트 실행: 앱 폴더에서  bash tests/run.sh
 # 훅(.claude/hooks/check-tests.sh)이 커밋 전과 응답을 끝내기 전에 돌린다. 5분 안에 끝나야 한다.
 # 폰 앱 확인(EAS 설치 파일)은 느려서 여기 넣지 않는다 (6단계에 따로).
-# 승인 목록(Playwright, app/tests/acceptance)은 41/41이 될 때까지 여기 넣지 않고 따로 돌린다:
-#   cd app && npx playwright test   → 결과 N/41을 HANDOFF.md·docs/NOTES.md에 적는다 (docs/plan.md)
+# 화면 테스트(Playwright, 웹 빌드 한 번): 승인 목록(app/tests/acceptance) + 회귀(app/tests/regression).
+#   승인 목록은 아직 화면이 없는 것만 app/tests/acceptance/pending.txt에 적어 실패를 허용한다(2026-11-12 사장 지시).
+#   목록 밖 승인 테스트 실패, 회귀 테스트 실패, 목록에 있는데 통과 → 모두 run.sh 실패.
 cd "$(dirname "$0")/.." || exit 1
 
 # 1. 파이프라인 (Python 3.12 이상, f-string 문법 때문). 컴퓨터마다 명령이 달라서(Windows: py, Mac: python3.12) pytest가 있는 것을 찾는다
@@ -26,6 +27,11 @@ if [ ! -d node_modules ]; then
   exit 1
 fi
 npx vitest run "$@" || exit 1
+
+# 2-2. 앱 화면: 승인 + 회귀 (Playwright, 크롬). CI=1: 남아 있는 옛 웹 서버를 다시 쓰지 않고 새로 빌드한다
+rm -f test-results/check.json # 빌드가 깨져 결과를 못 쓰면 옛 결과로 통과하지 않게
+CI=1 npx playwright test -c playwright.check.config.ts >/dev/null 2>&1
+node tests/check-playwright.mjs test-results/check.json || exit 1
 cd .. || exit 1
 
 # 3. 서버: DB 마이그레이션·검사·권한 (JUnit + 내장 Postgres, Docker 필요 없음, Java 21)
