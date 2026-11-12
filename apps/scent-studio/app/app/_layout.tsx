@@ -1,6 +1,7 @@
 import '../global.css';
 
 import { useFonts } from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -12,6 +13,7 @@ import { CatalogProvider, useCatalog } from '@/src/catalog/CatalogContext';
 import { S } from '@/src/strings.ko';
 import { FONT_SOURCES } from '@/src/ui/fontSources';
 import { ICON_FONT } from '@/src/ui/Icon';
+import { useTokenColor } from '@/src/ui/tokens';
 import { Txt } from '@/src/ui/Txt';
 
 export { ErrorBoundary } from 'expo-router';
@@ -34,6 +36,13 @@ function SampleBanner() {
 
 export default function RootLayout() {
   const scheme = useColorScheme();
+  const c = useTokenColor();
+  // 화면 이동 중 비치는 바탕·선도 토큰 색으로
+  const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
+  const theme = {
+    ...base,
+    colors: { ...base.colors, background: c('bg'), card: c('surface'), border: c('line'), text: c('ink'), primary: c('primary') },
+  };
   // 글꼴을 못 읽어도(error) 시스템 글꼴로 계속 연다 (D6)
   const [fontsLoaded, fontError] = useFonts({ ...FONT_SOURCES, ...ICON_FONT });
   const fontsDone = fontsLoaded || !!fontError;
@@ -45,7 +54,8 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={theme}>
+        <StatusBar style="auto" />
         <CatalogProvider>
           <DraftProvider>
             {fontsDone ? (

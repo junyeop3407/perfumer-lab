@@ -4,12 +4,14 @@
  */
 import { Text, type TextProps } from 'react-native';
 
-export type TxtVariant = 'display' | 'title' | 'headline' | 'body' | 'label' | 'caption' | 'layer';
+/** noteName: 처방전·노트 카드의 노트 이름(세리프 18, headline 크기) */
+export type TxtVariant = 'display' | 'title' | 'headline' | 'noteName' | 'body' | 'label' | 'caption' | 'layer';
 
 const VARIANT: Record<TxtVariant, string> = {
   display: 'font-serif text-display',
   title: 'font-serif text-title',
   headline: 'font-sans-semibold text-headline',
+  noteName: 'font-serif text-headline',
   body: 'font-sans text-body',
   label: 'font-sans-medium text-label',
   caption: 'font-sans text-caption',
@@ -22,6 +24,8 @@ export function Txt({
   className = '',
   ...rest
 }: TextProps & { variant?: TxtVariant; sub?: boolean; className?: string }) {
-  const color = sub ? 'text-inkSub dark:text-inkSub-dark' : 'text-ink dark:text-ink-dark';
+  // 색 클래스를 따로 주면 기본 색을 넣지 않는다(두 색 클래스가 같이 있으면 어느 쪽이 이길지 순서로 정해지지 않음)
+  const ownColor = /(^|\s)text-(?!(display|title|headline|body|label|caption|layer)(\s|$))/.test(className);
+  const color = ownColor ? '' : sub ? 'text-inkSub dark:text-inkSub-dark' : 'text-ink dark:text-ink-dark';
   return <Text {...rest} className={`${VARIANT[variant]} ${color} ${className}`} />;
 }

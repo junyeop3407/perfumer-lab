@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 
-import { emptyDraft } from '@/src/blend/blendDraft';
 import { useDraft } from '@/src/blend/DraftContext';
 import { useCatalog } from '@/src/catalog/CatalogContext';
 import { S } from '@/src/strings.ko';
@@ -12,7 +11,7 @@ import { Txt } from '@/src/ui/Txt';
 
 export default function HomeScreen() {
   const catalog = useCatalog();
-  const { draft, setDraft } = useDraft();
+  const { draft } = useDraft();
   const ready = catalog.status === 'ready';
 
   return (
@@ -29,10 +28,7 @@ export default function HomeScreen() {
           testID={TestIds.NEW_BLEND}
           label={S.newBlend}
           disabled={!ready}
-          onPress={() => {
-            setDraft(emptyDraft([]));
-            go('/families');
-          }}
+          onPress={() => go('/families?fresh=1')}
         />
         {ready && draft.notes.length > 0 && (
           <Button kind="secondary" testID={TestIds.RESUME_BLEND} label={S.resumeBlend} onPress={() => go('/notes')} />

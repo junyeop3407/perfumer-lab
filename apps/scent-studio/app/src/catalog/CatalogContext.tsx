@@ -47,8 +47,8 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
     const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
     (async () => {
       try {
-        const id = await installId();
-        const booted = await bootCatalog(() => startCatalog({ installId: id }), now);
+        // L9: 설치 id 읽기(첫 실행이면 만들기)부터 엔진 준비까지 잰다
+        const booted = await bootCatalog(async () => startCatalog({ installId: await installId() }), now);
         console.log(l9Line(booted.timing, booted.origin));
         if (alive) setState({ status: 'ready', ...booted });
       } catch (e) {

@@ -1,6 +1,8 @@
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
+import { applyFamilies } from '@/src/blend/blendDraft';
 import { useDraft } from '@/src/blend/DraftContext';
 import { useCatalog } from '@/src/catalog/CatalogContext';
 import { S } from '@/src/strings.ko';
@@ -15,8 +17,16 @@ import { Txt } from '@/src/ui/Txt';
 export default function FamiliesScreen() {
   const catalog = useCatalog();
   const { draft, setDraft } = useDraft();
-  const [picked, setPicked] = useState<string[]>(draft.families);
-  if (catalog.status !== 'ready') return null;
+  // fresh=1: 홈의 "새 조합 만들기"로 옴. 만들던 조합은 "다음"을 누를 때 비운다(뒤로 가면 그대로)
+  const fresh = useLocalSearchParams<{ fresh?: string }>().fresh === '1';
+  const [picked, setPicked] = useState<string[]>(fresh ? [] : draft.families);
+  if (catalog.status !== 'ready') {
+    return (
+      <Screen needsCatalog>
+        <Header title={S.familiesTitle} onBack={goBack} />
+      </Screen>
+    );
+  }
   const families = [...catalog.catalog.families].sort((a, b) => a.wheelOrder - b.wheelOrder);
 
   const toggle = (code: string) =>
@@ -56,8 +66,7 @@ export default function FamiliesScreen() {
         testID={TestIds.NEXT}
         label={S.next}
         onPress={() => {
-          // 계열만 바꾸고 이미 고른 노트는 둔다(이어 하기에서 돌아왔을 때)
-          setDraft({ ...draft, families: picked });
+          setDraft(applyFamilies(draft, picked, fresh));
           go('/notes');
         }}
       />

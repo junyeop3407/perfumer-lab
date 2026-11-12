@@ -1,14 +1,23 @@
 # scent-studio
-현재 단계: 5 (화면) — **5-0 디자인·5-1 카탈로그 끝(2026-11-11)**, 다음 세션 **기기 준비 안내 문서 → 5-2 조합 화면**. 계획 `docs/plan_stage5.md`(사장 OK, 8절 기기 테스트). 단계 4(서버)는 끝: **Render는 아직 8fb9e0a**. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
+현재 단계: 5 (화면) — 5-0 디자인·5-1 카탈로그 끝, **5-2 조합 흐름 코드·리뷰 끝(2026-11-12) → 기기 최소 확인(8-3) 사장 대기**. 계획 `docs/plan_stage5.md`(8절 기기 테스트), 기기 준비 `docs/device_setup.md`. 단계 4(서버)는 끝: **Render는 아직 8fb9e0a**. 카카오 로그인 ⏸ 보류(`docs/kakao_setup.md`). **11-25 Plan A/B 결정**(`docs/plan_b_portfolio.md`)
 한 줄 설명: 탑·미들·베이스 노트를 골라 조합하면, 어코드 비중이 가장 비슷한 실제 향수를 추천하는 앱(Perfumer-LAB). 웹·안드로이드·아이폰 공통 (Expo/React Native 앱, Spring 서버, 데이터 작업은 Python)
-실행 방법: 아직 화면 없음 (뼈대만: `cd app && npx expo start --web`). 디자인 시안: `docs/design/mock.html`(주소 끝 `#notes`·`#summary`·`#recs`·`#detail`), 캡처 `node docs/design/capture.mjs`
+실행 방법: `cd app && npx expo start`(폰 Expo Go QR / `a` 안드로이드 에뮬레이터 / `w` 웹), 처음엔 `CATALOG_SOURCE=real npm run catalog:prepare`. 자세히 `docs/device_setup.md`. 디자인 시안: `docs/design/mock.html`
 테스트 실행: `bash tests/run.sh`
-리뷰 기준: 5f71fc1 (5-1 나머지 시작 직전) — 5-2 시작 때 새로 적는다
-결과: 파이프라인 156/156 · Vitest 123/123 · 서버·DB(JUnit + 내장 Postgres) 657/657 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-11 세션 끝 확인, `bash tests/run.sh`). **승인 목록 1/65**(화면 전, A~I 41 + J·K 15 + **L 기기 9(2026-11-11 승인)**. 목표: 웹 54/56 + 카카오 보류 2, 기기 L1~L9는 기기 4종 표로. 웹 승인은 `cd app && npx playwright test`로 따로, 다 통과하면 run.sh에 넣는다)
-사용자에게 남은 질문: 없음 (5-9 전까지: 개발용 빌드 방식·아이폰 서명 — 11-25 안드로이드 빌드 방식과 같이)
-다음 할 일: **① 기기 준비 안내 문서**(사장용: Expo Go 설치·같은 와이파이·Windows 에뮬레이터 2대 만들기·Mac Xcode/시뮬레이터, L9 측정 방법 정하기) → **② 5-2 조합 화면**(`plan_stage5.md` 2절 표: 홈·하단 탭/왼쪽 메뉴, 노트 선택, 요약. 시작 때 `app/src/catalog/startCatalog.ts`. 끝에 기기 최소 확인 8-3). 빌드 전 `CATALOG_SOURCE=real|sample`. 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
+리뷰 기준: b30fcb0 (5-2 시작 직전) — 5-3 시작 때 새로 적는다
+결과: 파이프라인 156/156 · Vitest 159/159 · 서버·DB(JUnit + 내장 Postgres) 657/657 통과 + 레드팀 도구(`RedTeamRig`) 1 건너뜀 (2026-11-12, `bash tests/run.sh`). **웹 승인 11/41**(A1~A10 + 1, `cd app && npx playwright test`). 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9), 목표 웹 54/56 + 카카오 보류 2, 기기 L1~L9는 기기 4종 표로
+사용자에게 남은 질문: ① 궁합 노트 3개 미만(목록 노트 325개 중 108개, 0개 67개) — A7 "3개"를 어떻게 채울지 ② 같은 한글 이름(우드 Oud·Woods, 배, 수련, 감초, White oud→화이트 우드) 표기 (둘 다 `docs/review.md` "5-2"). (5-9 전까지: 개발용 빌드 방식·아이폰 서명)
+다음 할 일: **사장 기기 최소 확인(8-3, `docs/device_setup.md`)** 결과 받기 → 깨지면 5-2 안에서 고침 → OK면 **5-3 추천·상세·찾기**(B1~B6, F1·F2, H5, 등급 문구 질문). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
 
-## ★ 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인·5-1 카탈로그 끝, 다음 기기 준비 안내 → 5-2)
+## ★ 다음 세션 시작 (2026-11-12 — 5-2 코드·리뷰 끝, 기기 최소 확인 사장 대기)
+1. **오늘(2026-11-12) 한 것:**
+   - 0번 환경 확인 ✓(backend/.env 11칸·DEBUG_TOKEN 빈칸 정상, TEST_USER 앞 공백 없음, SCENT_KEY_SECRET, 실제 카탈로그·받기 기록).
+   - **기기 준비 안내** `docs/device_setup.md`(폰 QR·`--tunnel`, Windows 에뮬레이터 2대·가상화, 아이폰 무료 Apple ID 빌드·99달러 필요한 때, **L9 측정 방법**).
+   - **5-2 조합 흐름**: 홈 → 계열 → 노트 고르기(층 탭·검색·강도·노트 카드 시트/PC 옆 패널·아래 고정 막대) → 조합 요약(처방전·어코드 막대·균형 안내). 글꼴 서브셋, 카탈로그 시작 + `[L9]` 로그, 연속 클릭 잠금. 승인 **A1~A10 10/10**. QA 리뷰 20개 중 코드 문제 반영(자세히 `docs/review.md` "5-2", `docs/NOTES.md`).
+2. **멈춘 곳 = 기기 최소 확인(8-3).** 이 컴퓨터에 Android Studio가 없어 에뮬레이터 확인은 못 함 → 사장이 `device_setup.md` 1절(폰)·2절(에뮬레이터 ①)대로 확인: D1 열림·D2 safe area·D3 키보드·D4 한글 검색("베르가못"·"샌달우드")·D5 뒤로·D7 다크 + `[L9]` 숫자(참고). 캡처 2장(안드로이드·아이폰).
+3. **사장 할 일:** 위 기기 확인 · 질문 2개(궁합 3개 미만, 같은 한글 이름) · 11-14 Fragrantica · 11-18 Parfumo 메일 · 11-25 Plan A/B.
+4. **5-3에서 같이:** [추천 보기]·PC 요약 오른쪽 추천 미리보기(5-2에는 아직 없음), 등급 문구 질문.
+
+## (이전) 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인·5-1 카탈로그 끝, 다음 기기 준비 안내 → 5-2)
 1. **오늘(2026-11-11) 한 것:**
    - **5-0 디자인 최종 OK**: `docs/design/design_rules.md`(글꼴·크기·간격·컴포넌트), 토큰 `app/tailwind.config.js`, 시안 13장 `docs/design/shots/`. 다크 모드·PC 반영(PC 요약 오른쪽 추천 미리보기 3개, 다크 보조 글씨 대비 최저 4.98:1, "이 향수" 막대 회갈색 `compare`, 누르는 영역 48dp).
    - **글꼴 방식**(`design_rules.md` 2-1): 세리프 Noto Serif KR 500 하나, 본문 Pretendard 400·500·600. 웹은 Pretendard 동적 서브셋 + 세리프 2,350자 서브셋(355KB)을 직접 올림(외부 CDN 안 씀), 앱은 서브셋 약 2.5MB.

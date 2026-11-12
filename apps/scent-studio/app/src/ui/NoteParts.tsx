@@ -2,6 +2,7 @@
  * 노트 고르기 부품: 목록 칩(+ 정보 버튼), 고른 노트 칩(층 색), 노트 카드 내용.
  * 칩은 보이는 높이 36, 눌리는 높이 48 (design_rules.md 6절 누르는 영역 규칙).
  */
+import { memo } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { LAYER_KO, LEVEL_KO } from '../blend/blendDraft';
@@ -32,7 +33,7 @@ const LAYER_TICK: Record<Layer, string> = {
 export const familyName = (catalog: Catalog, code: string) => catalog.families.find((f) => f.code === code)?.nameKo ?? code;
 
 /** 목록의 노트 하나: [이름 칩][ⓘ]. 고른 노트는 ✓, 다른 층에 고른 노트는 층 이름을 같이 */
-export function NoteListItem({
+export const NoteListItem = memo(function NoteListItem({
   note,
   familyKo,
   pickedLayer,
@@ -42,8 +43,8 @@ export function NoteListItem({
   note: Note;
   familyKo: string;
   pickedLayer: Layer | null;
-  onPick: () => void;
-  onInfo: () => void;
+  onPick: (key: string) => void;
+  onInfo: (key: string) => void;
 }) {
   const label = `${note.nameKo}, ${familyKo}${pickedLayer ? `, ${LAYER_KO[pickedLayer]}에 고름` : ''}`;
   return (
@@ -52,8 +53,8 @@ export function NoteListItem({
         testID={TestIds.noteItem(note.key)}
         accessibilityRole="button"
         accessibilityLabel={label}
-        onPress={onPick}
-        className="min-h-touch justify-center">
+        onPress={() => onPick(note.key)}
+        className="min-h-touch min-w-12 justify-center">
         <View
           className={`h-9 flex-row items-center gap-1 rounded-chip px-2.5 ${
             pickedLayer ? LAYER_BG[pickedLayer] : 'border border-line dark:border-line-dark'
@@ -68,13 +69,13 @@ export function NoteListItem({
         testID={TestIds.noteInfo(note.key)}
         accessibilityRole="button"
         accessibilityLabel={`${note.nameKo}${S.noteInfo}`}
-        onPress={onInfo}
-        className="h-12 w-10 items-center justify-center">
+        onPress={() => onInfo(note.key)}
+        className="h-12 w-12 items-center justify-center">
         <Icon name="info" size={18} color="inkSub" />
       </Pressable>
     </View>
   );
-}
+});
 
 /** 고른 노트 칩: 층 색 바탕, ✓ + 이름 + 눈금 + 약·중·강 (테두리 없음) */
 export function SelectedChip({

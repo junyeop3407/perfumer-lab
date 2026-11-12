@@ -26,6 +26,14 @@ export function emptyDraft(families: string[]): Draft {
   return { families: [...families], notes: [] };
 }
 
+/**
+ * 계열 화면에서 "다음": 새 조합이면 이때 노트를 비운다(그 전에 뒤로 가면 만들던 조합이 남는다).
+ * 이어 하기에서 계열만 바꾼 거면 노트는 그대로.
+ */
+export function applyFamilies(draft: Draft, families: string[], fresh: boolean): Draft {
+  return fresh ? emptyDraft(families) : { ...draft, families: [...families] };
+}
+
 const usable = (n: Note | undefined): n is Note => !!n && n.tier !== 'hidden';
 
 export function addNote(draft: Draft, layer: Layer, noteKey: string, catalog?: Catalog): AddResult {

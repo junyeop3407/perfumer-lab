@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { View } from 'react-native';
 
 import { hintTexts, LAYER_LABEL, LEVEL_KO, toEngineBlend } from '@/src/blend/blendDraft';
@@ -8,7 +7,7 @@ import { LAYERS } from '@/src/engine/types';
 import { S } from '@/src/strings.ko';
 import { Button } from '@/src/ui/Button';
 import { Ticks } from '@/src/ui/Intensity';
-import { goBack } from '@/src/ui/nav';
+import { go, goBack } from '@/src/ui/nav';
 import { LAYER_BG } from '@/src/ui/NoteParts';
 import { Header, Screen } from '@/src/ui/Screen';
 import { TestIds } from '@/src/ui/testIds';
@@ -18,7 +17,13 @@ import { Txt } from '@/src/ui/Txt';
 export default function SummaryScreen() {
   const catalog = useCatalog();
   const { draft } = useDraft();
-  if (catalog.status !== 'ready') return null;
+  if (catalog.status !== 'ready') {
+    return (
+      <Screen needsCatalog>
+        <View />
+      </Screen>
+    );
+  }
   const { catalog: cat, engine } = catalog;
 
   if (draft.notes.length === 0) {
@@ -27,7 +32,7 @@ export default function SummaryScreen() {
         <Header title={S.summaryTitle} onBack={goBack} />
         <View testID={TestIds.EMPTY_STATE} className="mt-8 items-center gap-4">
           <Txt sub>{S.summaryEmpty}</Txt>
-          <Button label={S.newBlend} onPress={() => router.replace('/families')} />
+          <Button label={S.newBlend} onPress={() => go('/families?fresh=1')} />
         </View>
       </Screen>
     );
@@ -74,7 +79,7 @@ export default function SummaryScreen() {
                         accessible
                         accessibilityLabel={`${noteKo(n.noteKey)}, ${LEVEL_KO[n.level]}`}
                         className="min-h-8 flex-row items-center justify-between gap-2">
-                        <Txt variant="headline" className="flex-1 font-serif">
+                        <Txt variant="noteName" className="flex-1">
                           {noteKo(n.noteKey)}
                         </Txt>
                         <View className="flex-row items-center gap-2">

@@ -31,7 +31,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: c('primary'),
         tabBarInactiveTintColor: c('inkSub'),
         tabBarActiveBackgroundColor: wide ? c('surface') : undefined,
-        tabBarStyle: { backgroundColor: wide ? c('bg') : c('surface'), borderColor: c('line'), ...(wide ? { width: 240, paddingTop: 24 } : {}) },
+        tabBarStyle: { backgroundColor: wide ? c('bg') : c('surface'), borderColor: c('line'), borderTopColor: c('line'), ...(wide ? { width: 240, paddingTop: 24 } : {}) },
         tabBarItemStyle: wide ? { borderRadius: 4, marginHorizontal: 16, minHeight: 48 } : { minHeight: 56 },
         // 줄 높이를 정해 주지 않으면 글꼴에 따라 글자 아래가 잘린다
         tabBarLabelStyle: { fontFamily: FONT.sansMedium, fontSize: wide ? 14 : 12, lineHeight: wide ? 20 : 16 },

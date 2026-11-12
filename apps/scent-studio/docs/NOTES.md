@@ -447,3 +447,12 @@
 - 공개 빌드는 `npm run export:web:public`만(끝에 결과물 카탈로그가 샘플인지 대조).
 - (사장 결정 2026-11-11) 기기 승인 L1~L8 OK + **L9**(작은 안드로이드 첫 실행 카탈로그 로딩 2초 이내, 넘으면 대책 제안 후 멈춤, 측정 방법은 다음 세션) → `tests.md` "기기 승인 목록", 승인 목록 65개.
 - (사장 결정 2026-11-11) **새 카탈로그는 와이파이에서만 받기 — 지금은 그대로, 출시 전에 다시 본다**(폰 데이터에서도 받을지, 크기·사용자 부담 기준으로).
+
+## 단계 5 묶음 5-2 조합 흐름 (2026-11-12)
+- **기기 준비 안내** `docs/device_setup.md`: 폰 Expo Go(QR·`--tunnel`), Windows 에뮬레이터 2대(360×800 2코어·2GB / Medium Phone 411dp, 가상화·WHPX), 아이폰 무료 Apple ID 빌드(7일·99달러 필요한 때), **L9 측정 방법**(판정 = 작은 안드로이드 릴리스 빌드 5회 중앙값, 참고 = Expo Go, 로그 `[L9] catalog ready …ms (open … · engine …) origin=bundled`).
+- **L9 참고값(웹, 이 PC)**: 실제 카탈로그 첫 로딩 204~230ms(open 184~208 · engine 18~23). Node 참고 150~210ms. 폰(Hermes)은 기기 확인 때 잰다.
+- 이 컴퓨터 상태: Android Studio·adb 없음 → 에뮬레이터 확인은 사장 설치 뒤.
+- 화면 구조: 홈 탭 안 Stack(`(home)`): 홈 → 계열(`/families?fresh=1`) → 노트(`/notes`) → 요약(`/summary`). 초안은 메모리(앱 끄면 사라짐, 이어 하기 저장은 5-6). 추천 보기·저장 버튼은 5-3·5-6에서.
+- 글꼴: 굵기마다 다른 글꼴 이름(Pretendard / -Medium / -SemiBold, NotoSerifKR) — 폰에서 fontWeight는 시스템 글꼴로 바뀔 수 있어 안 씀. 웹은 동적 서브셋(92조각) 대신 **정적 2,350자 woff2**(Pretendard 3개 각 약 175KB + 세리프 356KB). 동적 서브셋으로 바꿀지는 5-8에서 첫 화면 용량을 보고 정한다. 원본 글꼴은 커밋하지 않음(다시 만들기: `py -I app/scripts/build-fonts.py <원본 폴더>`, 원본 받는 곳은 스크립트 머리말).
+- 아이콘: Material Symbols 대신 `@expo/vector-icons` MaterialCommunityIcons 선 아이콘(같은 모양 계열, 앱·웹 같은 코드).
+- 테스트 준비 코드 변경: 없음(승인 테스트 그대로).
