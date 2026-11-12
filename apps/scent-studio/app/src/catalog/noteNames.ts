@@ -12,6 +12,11 @@ export const NOTE_NAME_FIXES: Record<string, string> = {
   'white oud': '화이트 우드(침향)',
 };
 
+/** 이름을 바꾼 노트를 예전 이름으로도 찾게 (Woods는 전에 "우드"였다). 지울 때 NOTE_NAME_FIXES와 같이 지운다 */
+export const NOTE_SEARCH_ALIASES: Record<string, string[]> = {
+  woods: ['우드'],
+};
+
 export function fixNoteNames(catalog: Catalog): Catalog {
   if (!catalog.notes.some((n) => NOTE_NAME_FIXES[n.key] && NOTE_NAME_FIXES[n.key] !== n.nameKo)) return catalog;
   return { ...catalog, notes: catalog.notes.map((n) => (NOTE_NAME_FIXES[n.key] ? { ...n, nameKo: NOTE_NAME_FIXES[n.key] } : n)) };

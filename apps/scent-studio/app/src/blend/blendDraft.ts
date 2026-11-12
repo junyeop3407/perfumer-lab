@@ -4,6 +4,7 @@
  * - 노트 목록은 많이 쓰는 노트(tier browse)만, 고른 계열 먼저. 검색은 검색 전용(search)까지
  * - 균형 안내 코드(엔진) → 화면 문구 (design.md 8-7)
  */
+import { NOTE_SEARCH_ALIASES } from '../catalog/noteNames';
 import { EngineParams } from '../engine/params';
 import type { RecommendationEngine } from '../engine/RecommendationEngine';
 import type { BlendNote, Catalog, Family, Layer, Note } from '../engine/types';
@@ -105,7 +106,7 @@ export function searchNotes(catalog: Catalog, query: string): Note[] {
   const hits: { note: Note; prefix: boolean }[] = [];
   for (const n of catalog.notes) {
     if (!usable(n)) continue;
-    const names = [normalizeQuery(n.nameKo), normalizeQuery(n.nameEn), normalizeQuery(n.key)];
+    const names = [n.nameKo, n.nameEn, n.key, ...(NOTE_SEARCH_ALIASES[n.key] ?? [])].map(normalizeQuery);
     if (!names.some((x) => x.includes(q))) continue;
     hits.push({ note: n, prefix: names.some((x) => x.startsWith(q)) });
   }

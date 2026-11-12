@@ -98,3 +98,36 @@ describe('같은 한글 이름 구분', () => {
     expect(JSON.stringify(f)).toBe(before);
   });
 });
+
+import { searchNotes } from '../../src/blend/blendDraft';
+import { NOTE_NAME_FIXES } from '../../src/catalog/noteNames';
+
+describe('검색: "침향"·"나무향"·"우드" (사장 확인 2026-11-12)', () => {
+  const real = realCatalog();
+  const keys = (c: Catalog, q: string) => searchNotes(c, q).map((n) => n.key);
+
+  it('가짜 카탈로그: "침향"·"우드"로 우드(침향)이 나온다', () => {
+    const c = fixNoteNames(fixtureCatalog());
+    expect(keys(c, '침향')).toEqual(['oud']);
+    expect(keys(c, '우드')[0]).toBe('oud');
+  });
+
+  it('실제 카탈로그: "침향" → Oud·White oud, "나무향" → Woods, "우드" → Oud 먼저 + 예전 이름으로 Woods도', () => {
+    if (!real) return;
+    const c = fixNoteNames(real);
+    expect(keys(c, '침향').slice(0, 2).sort()).toEqual(['oud', 'white oud']);
+    expect(keys(c, '나무향')).toContain('woods');
+    const wood = keys(c, '우드');
+    expect(wood[0]).toBe('oud');
+    expect(wood).toContain('woods');
+  });
+});
+
+describe('앱 이름 고치기(noteNames.ts)는 다음 카탈로그를 새로 만들면 지운다', () => {
+  it('실제 카탈로그 원본에 이미 고친 이름이 들어 있으면 실패 → NOTE_NAME_FIXES·NOTE_SEARCH_ALIASES를 지우고 이 테스트도 지운다', () => {
+    const real = realCatalog();
+    if (!real) return;
+    const already = Object.entries(NOTE_NAME_FIXES).filter(([k, v]) => real.notes.find((n) => n.key === k)?.nameKo === v);
+    expect(already, `카탈로그 ${real.version}에 이미 들어 있음`).toEqual([]);
+  });
+});
