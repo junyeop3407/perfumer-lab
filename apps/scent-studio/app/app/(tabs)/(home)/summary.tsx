@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { View } from 'react-native';
 
-import { hintTexts, LAYER_LABEL, LEVEL_KO, toEngineBlend } from '@/src/blend/blendDraft';
+import { foldAccords, hintTexts, LAYER_LABEL, LEVEL_KO, toEngineBlend } from '@/src/blend/blendDraft';
 import { useDraft } from '@/src/blend/DraftContext';
 import { useCatalog } from '@/src/catalog/CatalogContext';
 import { LAYERS } from '@/src/engine/types';
@@ -19,6 +20,8 @@ export default function SummaryScreen() {
   const catalog = useCatalog();
   const { draft } = useDraft();
   const names = useNoteNames();
+  // 어코드가 많으면 상위 6개 + "그 외"로 접는다(5-2 폰 확인 C)
+  const [allAccords, setAllAccords] = useState(false);
   if (catalog.status !== 'ready') {
     return (
       <Screen needsCatalog>
@@ -43,6 +46,8 @@ export default function SummaryScreen() {
   const blend = toEngineBlend(draft);
   const ratios = engine.displayRatios(blend);
   const hints = hintTexts(engine, blend);
+  const folded = foldAccords(ratios);
+  const shown = allAccords ? ratios : folded.shown;
   const accordKo = (k: string) => cat.accords.find((a) => a.key === k)?.nameKo ?? k;
   const noteOf = (k: string) => engine.note(k)!;
 
@@ -110,22 +115,28 @@ export default function SummaryScreen() {
             {S.accordsDisclaimer}
           </Txt>
           <View className="mt-4 gap-3">
-            {ratios.map((r) => (
-              <View
-                key={r.accord}
-                testID={TestIds.accordBar(r.accord)}
-                accessible
-                accessibilityLabel={`${accordKo(r.accord)} ${r.percent}퍼센트`}>
-                <View className="flex-row items-baseline justify-between">
-                  <Txt variant="label">{accordKo(r.accord)}</Txt>
-                  <Txt variant="label">{`${r.percent}%`}</Txt>
-                </View>
-                <View className="mt-1 h-1.5 bg-surfaceAlt dark:bg-surfaceAlt-dark">
-                  <View style={{ width: `${r.percent}%` }} className="h-1.5 bg-primary dark:bg-primary-dark" />
-                </View>
-              </View>
+            {shown.map((r) => (
+              <AccordBar key={r.accord} testID={TestIds.accordBar(r.accord)} name={accordKo(r.accord)} percent={r.percent} />
             ))}
+            {folded.rest && !allAccords && (
+              <AccordBar
+                testID={TestIds.accordBar('other')}
+                name={`${S.accordsOther}${folded.rest.count}${S.noteCountUnit}`}
+                percent={folded.rest.percent}
+                muted
+              />
+            )}
           </View>
+          {folded.rest && (
+            <Button
+              kind="text"
+              className="mt-1 self-start"
+              testID={TestIds.ACCORDS_MORE}
+              label={allAccords ? S.accordsLess : S.accordsMore}
+              accessibilityState={{ expanded: allAccords }}
+              onPress={() => setAllAccords((v) => !v)}
+            />
+          )}
         </View>
 
         {hints.length > 0 && (
@@ -143,5 +154,25 @@ export default function SummaryScreen() {
         </View>
       </View>
     </Screen>
+  );
+}
+
+/** 어코드 막대 한 줄: 이름과 %를 글자로, 막대 길이는 실제 %(5-2 기기 확인 디자인 6). muted는 "그 외" 묶음 */
+function AccordBar({ testID, name, percent, muted = false }: { testID: string; name: string; percent: number; muted?: boolean }) {
+  return (
+    <View testID={testID} accessible accessibilityLabel={`${name} ${percent}퍼센트`}>
+      <View className="flex-row items-baseline justify-between">
+        <Txt variant="label" sub={muted}>
+          {name}
+        </Txt>
+        <Txt variant="label" sub={muted}>{`${percent}%`}</Txt>
+      </View>
+      <View className="mt-1 h-1.5 bg-surfaceAlt dark:bg-surfaceAlt-dark">
+        <View
+          style={{ width: `${percent}%` }}
+          className={`h-1.5 ${muted ? 'bg-compare dark:bg-compare-dark' : 'bg-primary dark:bg-primary-dark'}`}
+        />
+      </View>
+    </View>
   );
 }

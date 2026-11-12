@@ -72,7 +72,7 @@ export function toEngineBlend(draft: Draft): BlendNote[] {
 
 // ---------- 노트 목록 · 검색 ----------
 
-export type NoteSection = { family: Family; notes: Note[] };
+export type NoteSection = { family: Family; notes: Note[]; rare?: boolean };
 
 const byUse = (a: Note, b: Note) => b.df - a.df || (a.nameKo < b.nameKo ? -1 : a.nameKo > b.nameKo ? 1 : 0);
 
@@ -90,10 +90,15 @@ export function layerUse(catalog: Catalog): Record<Layer, Map<string, number>> {
   return u;
 }
 
+/** 노트가 쓰인 횟수 중 이 층 비율이 이보다 낮으면 "이 층에 드물게 쓰는 노트" (5-2 폰 확인 B) */
+export const RARE_LAYER_SHARE = 0.25;
+
 /**
  * 많이 쓰는 노트(browse)를 계열별로. 고른 계열(고른 순서) 먼저.
  * layer를 주면(노트 고르기 화면) 나머지 계열은 그 층에서 많이 쓰는 계열 순, 묶음 안도 그 층에서 많이 쓰는 노트 순
- * (5-2 기기 확인 버그 3: MIDDLE인데 시트러스부터 나옴). layer가 없으면 휠 순서·전체 사용 순.
+ * (5-2 기기 확인 버그 3). 그 층에 드물게 쓰는 노트(RARE_LAYER_SHARE 미만)는 고른 계열이라도 맨 뒤 rare 묶음으로 보낸다
+ * (5-2 폰 확인 B: BASE인데 시트러스부터 나와 베이스에 과일을 고르게 됨). 목록에 나오는 노트는 층마다 같다.
+ * layer가 없으면 휠 순서·전체 사용 순.
  */
 export function noteSections(catalog: Catalog, chosen: readonly string[], layer?: Layer): NoteSection[] {
   const byFamily = new Map<string, Note[]>();
@@ -103,16 +108,26 @@ export function noteSections(catalog: Catalog, chosen: readonly string[], layer?
     list.push(n);
     byFamily.set(n.family, list);
   }
-  const use = layer ? layerUse(catalog)[layer] : null;
+  const all = layerUse(catalog);
+  const use = layer ? all[layer] : null;
   const noteUse = (n: Note) => use?.get(n.key) ?? 0;
+  const rare = (n: Note) => {
+    if (!layer) return false;
+    const sum = (all.top.get(n.key) ?? 0) + (all.middle.get(n.key) ?? 0) + (all.base.get(n.key) ?? 0);
+    return sum > 0 && noteUse(n) / sum < RARE_LAYER_SHARE;
+  };
   const famUse = (code: string) => (byFamily.get(code) ?? []).reduce((a, n) => a + noteUse(n), 0);
   const rest = [...catalog.families]
     .filter((f) => !chosen.includes(f.code))
     .sort((a, b) => famUse(b.code) - famUse(a.code) || a.wheelOrder - b.wheelOrder);
   const first = chosen.map((c) => catalog.families.find((f) => f.code === c)).filter((f): f is Family => !!f);
-  return [...first, ...rest]
-    .map((family) => ({ family, notes: [...(byFamily.get(family.code) ?? [])].sort((a, b) => noteUse(b) - noteUse(a) || byUse(a, b)) }))
-    .filter((s) => s.notes.length > 0);
+  const sorted = [...first, ...rest].map((family) => ({
+    family,
+    notes: [...(byFamily.get(family.code) ?? [])].sort((a, b) => noteUse(b) - noteUse(a) || byUse(a, b)),
+  }));
+  const main = sorted.map((s) => ({ family: s.family, notes: s.notes.filter((n) => !rare(n)) }));
+  const tail = sorted.map((s) => ({ family: s.family, notes: s.notes.filter(rare), rare: true }));
+  return [...main, ...tail].filter((s) => s.notes.length > 0);
 }
 
 /** 검색용 정리: 한글 조합형(NFC)으로 맞추고, 소문자, 띄어쓰기 없앰 */
@@ -213,4 +228,16 @@ export function hintTexts(engine: RecommendationEngine, blend: BlendNote[]): str
     }
   }
   return out;
+}
+
+// ---------- 요약 어코드 접기 (5-2 폰 확인 C) ----------
+
+/** 보여 줄 어코드 수. 이보다 하나만 많을 때는 접지 않는다(한 개를 접으려고 "그 외" 한 줄을 쓰지 않음) */
+export const ACCORDS_SHOWN = 6;
+
+/** 상위 ACCORDS_SHOWN개 + 나머지를 합친 "그 외" 한 줄. 보이는 %의 합은 그대로 100 */
+export function foldAccords<T extends { percent: number }>(ratios: readonly T[]): { shown: T[]; rest: { count: number; percent: number } | null } {
+  if (ratios.length <= ACCORDS_SHOWN + 1) return { shown: [...ratios], rest: null };
+  const rest = ratios.slice(ACCORDS_SHOWN);
+  return { shown: ratios.slice(0, ACCORDS_SHOWN), rest: { count: rest.length, percent: rest.reduce((a, r) => a + r.percent, 0) } };
 }

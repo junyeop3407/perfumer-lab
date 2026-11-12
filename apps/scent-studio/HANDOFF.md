@@ -4,9 +4,9 @@
 실행 방법: `cd app && npx expo start`(폰 Expo Go QR / `a` 안드로이드 에뮬레이터 / `w` 웹), 처음엔 `CATALOG_SOURCE=real npm run catalog:prepare`. 자세히 `docs/device_setup.md`. 디자인 시안: `docs/design/mock.html`
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: b30fcb0 (5-2 시작 직전) — 5-3 시작 때 새로 적는다
-결과: `bash tests/run.sh`(2026-11-12) 파이프라인 159/159 · Vitest 187/187 · **화면: 승인 12/42 통과(아직 화면 없음 30 = `app/tests/acceptance/pending.txt`) · 회귀 4/4** · 서버·DB 657/657 + 레드팀 도구 1 건너뜀. 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9), 목표 웹 54/56 + 카카오 보류 2. B7 "자기 자신 찾기" 후보(사장 승인 대기)
+결과: `bash tests/run.sh`(2026-11-12) 파이프라인 159/159 · Vitest 193/193 · **화면: 승인 12/42 통과(아직 화면 없음 30 = `app/tests/acceptance/pending.txt`) · 회귀 4/4** · 서버·DB 657/657 + 레드팀 도구 1 건너뜀. 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9), 목표 웹 54/56 + 카카오 보류 2. B7 "자기 자신 찾기" 사장 승인(5-3에서 테스트로)
 사용자에게 남은 질문: 없음 (궁합 3개·이름 겹침은 2026-11-12 사장 결정 반영). 5-9 전까지: 개발용 빌드 방식·아이폰 서명
-다음 할 일: 사장 폰 재확인(버그 4·5) → OK면 **5-3 추천·상세·찾기**(B1~B6·F1·F2·H5, 등급 문구 질문, 겹친 노트는 같은 층·다른 층만, 끝나면 pending.txt에서 B·F·H5 지움). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
+다음 할 일: 사장 폰 확인(A 계열 칩 딥 그린 · B 층에 드문 노트는 뒤로 · C 어코드 접기) → OK면 `/handoff` 후 새 세션에서 **5-3 추천·상세·찾기**(B1~B6·F1·F2·H5, 등급 문구 질문, 겹친 노트는 같은 층·다른 층만, 끝나면 pending.txt에서 B·F·H5 지움). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
 
 ## ★ 다음 세션 시작 (2026-11-12 — 5-2 코드·리뷰 끝, 기기 최소 확인 사장 대기)
 1. **오늘(2026-11-12) 한 것:**
@@ -18,6 +18,7 @@
 4. **5-3에서 같이:** [추천 보기]·PC 요약 오른쪽 추천 미리보기(5-2에는 아직 없음), 등급 문구 질문.
 5. **같은 날 사장 결정 반영(2026-11-12):** 궁합 노트 늘 3개(모자라면 "같은 계열 추천"), Oud=우드(침향)·Woods=나무향·White oud=화이트 우드(침향)(`notes_ko.csv` + 앱이 지금 카탈로그도 고침, **다음 카탈로그를 다시 만들 때 원본에 들어감**), 겹치는 이름은 영어 작게. 승인 A7 강화(허락). QA는 일반 에이전트가 대신(qa-reviewer 미등록), Gemini 교차 리뷰 1라운드 반영(`docs/review_result.md`). **5-3은 사장 기기 확인 OK 뒤.**
 7. **사장 기기 확인(2026-11-12, 안드로이드 Expo Go) 반영:** 버그 5개(탭 3개 위 잘림·빈 화면 → "곧 열려요", MIDDLE 목록이 층 기준 아님, 강도 판·요약 끝이 가림 — 원인 SafeAreaView className이 폰에서 안 먹음) + 디자인 6·8·9·10. **디자인 7(오른쪽 위 회색 원형 버튼)은 Expo Go 개발자 메뉴라 반영 없음 — 사장 답 대기.** 다음: 사장이 고친 것 폰으로 다시 확인 → OK면 5-3. 화면 회귀 테스트 `npx playwright test -c playwright.regression.config.ts`.
+9. **5-2 폰 확인 2차(2026-11-12):** 5-2 기기 최소 확인 통과(1·2·4·5·6·8·9·10). 안 보이던 원인은 Expo Go가 옛 화면을 띄움 → device_setup.md에 "완전히 닫기". A·B·C 반영, 캡처 `docs/design/screens/5-2b/`. 자세히 NOTES "5-2 폰 확인 2차".
 8. **5-3 시작 전 정리(2026-11-12):** expo 58.0.24(e8dde53), run.sh에 화면 테스트(승인 + 회귀, pending.txt), 추천 품질 확인(자기 자신 찾기 98.1% 1위, 등급 경계 그대로 추천), 캡처 `docs/design/screens/5-2/`. 설정은 마이 탭에. 경고 2개는 5-9. 자세히 `docs/NOTES.md` "5-3 시작 전 정리".
 6. **다음 카탈로그를 새로 만들면 지울 것:** `app/src/catalog/noteNames.ts`의 `NOTE_NAME_FIXES`·`NOTE_SEARCH_ALIASES`(+ `catalogBoot.ts`의 `fixNoteNames`, 관련 테스트). 받아 둔 카탈로그에 고친 이름이 들어 있으면 테스트가 실패해서 알려 준다(`docs/NOTES.md` "노트 이름 고치기").
 

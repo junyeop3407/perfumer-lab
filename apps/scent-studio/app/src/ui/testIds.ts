@@ -46,6 +46,7 @@ export const TestIds = {
   SUMMARY_SCREEN: 'summary',
   ACCORD_BAR_PREFIX: 'accordBar:',
   accordBar: (accord: string) => `accordBar:${accord}`,
+  ACCORDS_MORE: 'accordsMore',
   BALANCE_HINT: 'summary:hint',
   EDIT_NOTES: 'summary:edit',
   SHOW_RECS: 'summary:recs',

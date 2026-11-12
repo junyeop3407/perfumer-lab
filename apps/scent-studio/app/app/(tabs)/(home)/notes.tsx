@@ -118,9 +118,9 @@ export default function NotesScreen() {
       );
     }
     return sections.map((s) => (
-      <View key={s.family.code} className="mb-6">
+      <View key={`${s.family.code}${s.rare ? ':rare' : ''}`} className="mb-6">
         <Txt variant="label" sub>
-          {`${s.family.nameKo} · ${LAYER_KO[layer]}${S.oftenUsedInLayer}`}
+          {`${s.family.nameKo} · ${LAYER_KO[layer]}${s.rare ? S.rareInLayer : S.oftenUsedInLayer}`}
         </Txt>
         <View className="flex-row flex-wrap gap-x-3">{s.notes.map(item)}</View>
       </View>

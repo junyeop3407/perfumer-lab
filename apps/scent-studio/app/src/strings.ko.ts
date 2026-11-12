@@ -36,6 +36,7 @@ export const S = {
   inOtherLayer: '이미 다른 층에 고른 노트예요: ',
   oftenUsed: ' · 많이 쓰는 노트',
   oftenUsedInLayer: '에 많이 쓰는 노트',
+  rareInLayer: '에는 드물게 쓰는 노트',
   intensityLegend: '막대 개수와 약 · 중 · 강은 노트의 강도예요',
   searchResults: '검색 결과',
   searchEmpty: '맞는 노트가 없어요. 다른 이름으로 찾아보세요.',
@@ -63,6 +64,9 @@ export const S = {
   layerEmpty: '비어 있음',
   accordsTitle: '이 조합의 어코드',
   accordsDisclaimer: '메인 테마 추정치예요. 실제로 섞은 향을 예측한 값은 아니에요.',
+  accordsOther: '그 외 ',
+  accordsMore: '어코드 모두 보기',
+  accordsLess: '접기',
   editNotes: '노트 수정',
   summaryEmpty: '고른 노트가 없어요.',
 } as const;

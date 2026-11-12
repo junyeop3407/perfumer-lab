@@ -13,7 +13,7 @@ import { Header, Screen } from '@/src/ui/Screen';
 import { TestIds } from '@/src/ui/testIds';
 import { Txt } from '@/src/ui/Txt';
 
-/** 계열 고르기 (테두리 칩, 고르면 accentSoft 바탕 + accentStrong 테두리 + 체크 — design_rules.md 6절) */
+/** 계열 고르기 (테두리 칩, 고르면 primary(딥 그린) 테두리 + 체크 + 글자 — design_rules.md 6절. 골드는 "매우 비슷" 배지에만, 5-2 폰 확인 A) */
 export default function FamiliesScreen() {
   const catalog = useCatalog();
   const { draft, setDraft } = useDraft();
@@ -53,11 +53,13 @@ export default function FamiliesScreen() {
               <View
                 className={`h-9 flex-row items-center gap-1 rounded-chip border px-2.5 ${
                   on
-                    ? 'border-accentStrong bg-accentSoft dark:border-accentStrong-dark dark:bg-accentSoft-dark'
+                    ? 'border-primary bg-surface dark:border-primary-dark dark:bg-surface-dark'
                     : 'border-line dark:border-line-dark'
                 }`}>
-                {on && <Icon name="check" size={16} />}
-                <Txt variant="label">{f.nameKo}</Txt>
+                {on && <Icon name="check" size={16} color="primary" />}
+                <Txt variant="label" className={on ? 'text-primary dark:text-primary-dark' : undefined}>
+                  {f.nameKo}
+                </Txt>
               </View>
             </Pressable>
           );

@@ -20,8 +20,10 @@ describe('버그 3: 노트 목록이 지금 층에 맞게 (계열을 안 골라�
     expect(noteSections(cat, [], 'base')[0].notes[0].key).toBe('sandalwood');
   });
 
-  it('고른 계열은 층과 상관없이 먼저 (승인 A2)', () => {
-    expect(noteSections(cat, ['citrus', 'woody'], 'middle').slice(0, 2).map((s) => s.family.code)).toEqual(['citrus', 'woody']);
+  // 5-2 폰 확인 B로 바뀜: 고른 계열이라도 그 층에 드물게 쓰는 노트는 뒤로(reviewFixes5_2phone.test.ts)
+  it('고른 계열은 그 층에 쓰는 노트가 있으면 먼저 (승인 A2)', () => {
+    expect(noteSections(cat, ['citrus', 'woody'], 'top')[0].family.code).toBe('citrus');
+    expect(noteSections(cat, ['citrus', 'woody'], 'base')[0].family.code).toBe('woody');
   });
 
   it('층이 바뀌어도 목록에 나오는 노트는 같다(순서만 다름)', () => {
