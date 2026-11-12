@@ -34,6 +34,14 @@ export function applyFamilies(draft: Draft, families: string[], fresh: boolean):
   return fresh ? emptyDraft(families) : { ...draft, families: [...families] };
 }
 
+/**
+ * 계열 화면 [다음]. 새 조합으로 들어왔으면 첫 [다음]에서만 비우고(freshPending → false),
+ * 노트를 고른 뒤 뒤로 와서 다시 [다음]을 눌러도 노트는 남는다 (Gemini 5-2).
+ */
+export function familiesNext(draft: Draft, families: string[], freshPending: boolean): { draft: Draft; freshPending: false } {
+  return { draft: applyFamilies(draft, families, freshPending), freshPending: false };
+}
+
 const usable = (n: Note | undefined): n is Note => !!n && n.tier !== 'hidden';
 
 export function addNote(draft: Draft, layer: Layer, noteKey: string, catalog?: Catalog): AddResult {
@@ -113,8 +121,19 @@ export type Pairing = { note: Note; filled: boolean };
  * 잘 어울리는 노트 3개 (사장 결정 2026-11-12): 실제로 함께 쓰인 노트(카탈로그 pairings) 먼저,
  * 모자라면 같은 계열에서 많이 쓰는 노트로 채운다(filled = "같은 계열 추천" 표시). 그래도 모자라면 많이 쓰는 노트 전체에서.
  */
+/** 카탈로그마다 한 번만: key 찾기 표와 많이 쓰는 순 정렬 (노트 카드를 열 때마다 3,000개를 정렬하지 않게, Gemini 5-2) */
+const pairingIndex = new WeakMap<Catalog, { byKey: Map<string, Note>; byUse: Note[] }>();
+function indexOf(catalog: Catalog) {
+  let ix = pairingIndex.get(catalog);
+  if (!ix) {
+    ix = { byKey: new Map(catalog.notes.map((n) => [n.key, n])), byUse: [...catalog.notes].sort(byUse) };
+    pairingIndex.set(catalog, ix);
+  }
+  return ix;
+}
+
 export function pairingsFor(catalog: Catalog, note: Note, count = 3): Pairing[] {
-  const byKey = new Map(catalog.notes.map((n) => [n.key, n]));
+  const { byKey, byUse: pool } = indexOf(catalog);
   const out: Pairing[] = [];
   const used = new Set([note.key]);
   const push = (n: Note | undefined, filled: boolean) => {
@@ -123,7 +142,6 @@ export function pairingsFor(catalog: Catalog, note: Note, count = 3): Pairing[] 
     out.push({ note: n, filled });
   };
   for (const k of note.pairings) push(byKey.get(k), false);
-  const pool = [...catalog.notes].sort(byUse);
   const tiers: ((n: Note) => boolean)[] = [
     (n) => n.family === note.family && n.tier === 'browse',
     (n) => n.family === note.family && n.tier === 'search',

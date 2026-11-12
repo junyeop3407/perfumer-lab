@@ -83,3 +83,33 @@ describe('QA 5-2 낮음: 화면 코드 속 한글 문구와 카탈로그 이름�
     expect(outside(names.join(''))).toEqual([]);
   });
 });
+
+import { familiesNext, pairingsFor } from '../../src/blend/blendDraft';
+import { fixtureCatalog } from './testCatalogs';
+
+describe('Gemini 5-2 중간: 새 조합으로 들어와 노트를 고른 뒤 계열 화면으로 돌아와 [다음]을 다시 눌러도 노트가 남는다', () => {
+  it('처음 [다음]만 초안을 비우고, 그다음부터는 계열만 바꾼다', () => {
+    let d = emptyDraft(['citrus']);
+    let fresh = true;
+    ({ draft: d, freshPending: fresh } = familiesNext(d, ['citrus'], fresh));
+    const r = addNote(d, 'top', 'lemon');
+    if (!r.ok) throw new Error('준비 실패');
+    d = r.draft;
+    ({ draft: d, freshPending: fresh } = familiesNext(d, ['citrus', 'woody'], fresh));
+    expect(d.families).toEqual(['citrus', 'woody']);
+    expect(d.notes.map((n) => n.noteKey)).toEqual(['lemon']);
+    expect(fresh).toBe(false);
+  });
+});
+
+describe('Gemini 5-2 중간: 궁합 계산이 노트 카드를 열 때마다 전체 노트를 정렬하지 않는다', () => {
+  it('실제 카탈로그 규모(노트 3,000개)에서 카드 300번 여는 계산이 30ms 안(고치기 전 약 90ms)', () => {
+    const base = fixtureCatalog();
+    const many = Array.from({ length: 3000 }, (_, i) => ({ ...base.notes[0], key: `n${i}`, df: i % 50, pairings: [] }));
+    const cat = { ...base, notes: [...base.notes, ...many] };
+    pairingsFor(cat, cat.notes[0]); // 첫 번은 준비 비용
+    const t0 = performance.now();
+    for (let i = 0; i < 300; i++) pairingsFor(cat, cat.notes[i % cat.notes.length]);
+    expect(performance.now() - t0).toBeLessThan(30);
+  });
+});

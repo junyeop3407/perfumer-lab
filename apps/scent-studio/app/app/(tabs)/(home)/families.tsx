@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { applyFamilies } from '@/src/blend/blendDraft';
+import { familiesNext } from '@/src/blend/blendDraft';
 import { useDraft } from '@/src/blend/DraftContext';
 import { useCatalog } from '@/src/catalog/CatalogContext';
 import { S } from '@/src/strings.ko';
@@ -20,6 +20,8 @@ export default function FamiliesScreen() {
   // fresh=1: 홈의 "새 조합 만들기"로 옴. 만들던 조합은 "다음"을 누를 때 비운다(뒤로 가면 그대로)
   const fresh = useLocalSearchParams<{ fresh?: string }>().fresh === '1';
   const [picked, setPicked] = useState<string[]>(fresh ? [] : draft.families);
+  // 주소의 fresh=1은 뒤로 와도 남는다 → 첫 [다음]에서 한 번만 쓴다
+  const [freshPending, setFreshPending] = useState(fresh);
   if (catalog.status !== 'ready') {
     return (
       <Screen needsCatalog>
@@ -66,7 +68,9 @@ export default function FamiliesScreen() {
         testID={TestIds.NEXT}
         label={S.next}
         onPress={() => {
-          setDraft(applyFamilies(draft, picked, fresh));
+          const next = familiesNext(draft, picked, freshPending);
+          setDraft(next.draft);
+          setFreshPending(next.freshPending);
           go('/notes');
         }}
       />

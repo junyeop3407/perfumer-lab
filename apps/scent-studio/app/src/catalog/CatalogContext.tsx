@@ -22,14 +22,14 @@ async function installId(): Promise<string> {
   try {
     const saved = await AsyncStorage.getItem(INSTALL_ID_KEY);
     if (saved) return saved;
-  } catch {
-    // 저장소를 못 읽어도 앱은 연다
+  } catch (e) {
+    console.warn(`[installId] 읽지 못해 새로 만듭니다: ${(e as Error).message}`); // 앱은 그대로 연다
   }
   const id = Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
   try {
     await AsyncStorage.setItem(INSTALL_ID_KEY, id);
-  } catch {
-    // 다음 실행에 새로 만든다
+  } catch (e) {
+    console.warn(`[installId] 저장하지 못했습니다(다음 실행에 새로 만듦): ${(e as Error).message}`);
   }
   return id;
 }

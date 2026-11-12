@@ -22,7 +22,9 @@ export function ambiguousNoteKeys(catalog: Catalog): Set<string> {
   const byName = new Map<string, string[]>();
   for (const n of catalog.notes) {
     if (n.tier === 'hidden') continue;
-    byName.set(n.nameKo, [...(byName.get(n.nameKo) ?? []), n.key]);
+    const keys = byName.get(n.nameKo) ?? [];
+    keys.push(n.key);
+    byName.set(n.nameKo, keys);
   }
   return new Set([...byName.values()].filter((keys) => keys.length > 1).flat());
 }
