@@ -76,8 +76,26 @@ export type NoteSection = { family: Family; notes: Note[] };
 
 const byUse = (a: Note, b: Note) => b.df - a.df || (a.nameKo < b.nameKo ? -1 : a.nameKo > b.nameKo ? 1 : 0);
 
-/** 많이 쓰는 노트(browse)를 계열별로. 고른 계열(고른 순서) 먼저, 나머지는 휠 순서. 묶음 안은 많이 쓰는 순 */
-export function noteSections(catalog: Catalog, chosen: readonly string[]): NoteSection[] {
+/** 층마다 노트가 향수에 쓰인 횟수 (카탈로그마다 한 번만 센다) */
+const layerUseCache = new WeakMap<Catalog, Record<Layer, Map<string, number>>>();
+export function layerUse(catalog: Catalog): Record<Layer, Map<string, number>> {
+  let u = layerUseCache.get(catalog);
+  if (!u) {
+    u = { top: new Map(), middle: new Map(), base: new Map() };
+    for (const p of catalog.perfumes) {
+      for (const l of ['top', 'middle', 'base'] as const) for (const k of p[l]) u[l].set(k, (u[l].get(k) ?? 0) + 1);
+    }
+    layerUseCache.set(catalog, u);
+  }
+  return u;
+}
+
+/**
+ * 많이 쓰는 노트(browse)를 계열별로. 고른 계열(고른 순서) 먼저.
+ * layer를 주면(노트 고르기 화면) 나머지 계열은 그 층에서 많이 쓰는 계열 순, 묶음 안도 그 층에서 많이 쓰는 노트 순
+ * (5-2 기기 확인 버그 3: MIDDLE인데 시트러스부터 나옴). layer가 없으면 휠 순서·전체 사용 순.
+ */
+export function noteSections(catalog: Catalog, chosen: readonly string[], layer?: Layer): NoteSection[] {
   const byFamily = new Map<string, Note[]>();
   for (const n of catalog.notes) {
     if (n.tier !== 'browse') continue;
@@ -85,10 +103,15 @@ export function noteSections(catalog: Catalog, chosen: readonly string[]): NoteS
     list.push(n);
     byFamily.set(n.family, list);
   }
-  const rest = [...catalog.families].filter((f) => !chosen.includes(f.code)).sort((a, b) => a.wheelOrder - b.wheelOrder);
+  const use = layer ? layerUse(catalog)[layer] : null;
+  const noteUse = (n: Note) => use?.get(n.key) ?? 0;
+  const famUse = (code: string) => (byFamily.get(code) ?? []).reduce((a, n) => a + noteUse(n), 0);
+  const rest = [...catalog.families]
+    .filter((f) => !chosen.includes(f.code))
+    .sort((a, b) => famUse(b.code) - famUse(a.code) || a.wheelOrder - b.wheelOrder);
   const first = chosen.map((c) => catalog.families.find((f) => f.code === c)).filter((f): f is Family => !!f);
   return [...first, ...rest]
-    .map((family) => ({ family, notes: [...(byFamily.get(family.code) ?? [])].sort(byUse) }))
+    .map((family) => ({ family, notes: [...(byFamily.get(family.code) ?? [])].sort((a, b) => noteUse(b) - noteUse(a) || byUse(a, b)) }))
     .filter((s) => s.notes.length > 0);
 }
 

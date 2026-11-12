@@ -457,3 +457,11 @@
 - 아이콘: Material Symbols 대신 `@expo/vector-icons` MaterialCommunityIcons 선 아이콘(같은 모양 계열, 앱·웹 같은 코드).
 - 테스트 준비 코드 변경: 없음(승인 테스트 그대로).
 - **노트 이름 고치기(2026-11-12 사장 결정) — 다음 카탈로그를 새로 만들면 지운다:** 원본 표 `pipeline/manual/notes_ko.csv`를 고쳤지만 지금 배포된 카탈로그(2026.11.05)는 고치기 전 것이라, 앱이 열 때 `app/src/catalog/noteNames.ts`의 `NOTE_NAME_FIXES`(Oud=우드(침향)·Woods=나무향·White oud=화이트 우드(침향))로 한 번 더 고치고, `NOTE_SEARCH_ALIASES`(Woods를 예전 이름 "우드"로도 검색)를 쓴다. 새 카탈로그를 만들어 받으면 **둘 다 지우고** `fixNoteNames` 부르는 곳(`catalogBoot.ts`)과 관련 테스트를 정리한다(겹치는 이름에 영어를 붙이는 `ambiguousNoteKeys`·`noteLabel`은 남긴다). 지킴이 테스트: 원본 표와 앱 값이 다르면 실패(`pipeline/tests/test_review_fixes_5_2.py`), 받아 둔 실제 카탈로그 원본에 이미 고친 이름이 있으면 실패(`app/tests/unit/noteNamesPairings.test.ts` "다음 카탈로그를 새로 만들면 지운다").
+
+## 5-2 사장 기기 확인 반영 (2026-11-12, 안드로이드 Expo Go, 갤럭시 S26 울트라)
+- 결과: 홈·노트 고르기·조합 요약 오류 없이 열림(다크·라이트). L9 큰 폰 참고값 1556/1428/1420ms(open 약 1.4초·engine 67ms) → `tests.md` L9 기록.
+- 버그 원인: **`SafeAreaView`(react-native-safe-area-context)에 준 `className`이 폰에서는 적용되지 않는다**(NativeWind는 외부 부품에 따로 연결해야 함). 화면 틀이 화면보다 길어져 노트 목록·요약 끝이 아래 막대·탭 바 뒤로 숨었다(버그 4·5). 웹은 className이 CSS로 그대로 먹어서 재현되지 않았다 → `Screen`은 `useSafeAreaInsets()`로 위 여백을 직접 준다. 지킴이: `reviewFixes5_2device.test.ts`(SafeAreaView에 className 금지, 모든 탭 화면이 Screen 사용).
+- 노트 목록은 지금 층 기준: 고른 계열 먼저, 나머지는 그 층에서 많이 쓰는 계열 순, 묶음 안도 그 층에서 많이 쓰는 순(`layerUse`, 카탈로그마다 한 번 셈). 제목 "플로럴 · 미들에 많이 쓰는 노트".
+- 디자인: 어코드 막대는 실제 %(20%면 1/5), 고른 노트 줄 넘김은 첫 칩 위치에서, ⓘ는 칩 안 [이름 | ⓘ], 강도 설명 한 줄("막대 개수와 약 · 중 · 강은 노트의 강도예요", 노트 고르기·요약).
+- 오른쪽 위 회색 원형 버튼은 **Expo Go 개발자 메뉴 버튼**(우리 앱 것 아님, 개발용 빌드·실제 앱에는 없음).
+- 화면 회귀 테스트는 승인 목록과 따로: `npx playwright test -c playwright.regression.config.ts`(`app/tests/regression/`, run.sh에는 아직 안 넣음 — 웹 승인과 같이 5-9에).

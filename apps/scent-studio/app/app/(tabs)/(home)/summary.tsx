@@ -42,7 +42,6 @@ export default function SummaryScreen() {
 
   const blend = toEngineBlend(draft);
   const ratios = engine.displayRatios(blend);
-  const maxPct = Math.max(1, ...ratios.map((r) => r.percent));
   const hints = hintTexts(engine, blend);
   const accordKo = (k: string) => cat.accords.find((a) => a.key === k)?.nameKo ?? k;
   const noteOf = (k: string) => engine.note(k)!;
@@ -58,6 +57,9 @@ export default function SummaryScreen() {
             <Txt variant="title">{S.myBlend}</Txt>
             <Txt variant="caption" sub>{`${S.noteCount}${draft.notes.length}${S.noteCountUnit}`}</Txt>
           </View>
+          <Txt variant="caption" sub className="pt-2">
+            {S.intensityLegend}
+          </Txt>
           {LAYERS.map((l, i) => {
             const notes = draft.notes.filter((n) => n.layer === l);
             return (
@@ -119,7 +121,7 @@ export default function SummaryScreen() {
                   <Txt variant="label">{`${r.percent}%`}</Txt>
                 </View>
                 <View className="mt-1 h-1.5 bg-surfaceAlt dark:bg-surfaceAlt-dark">
-                  <View style={{ width: `${(r.percent / maxPct) * 100}%` }} className="h-1.5 bg-primary dark:bg-primary-dark" />
+                  <View style={{ width: `${r.percent}%` }} className="h-1.5 bg-primary dark:bg-primary-dark" />
                 </View>
               </View>
             ))}

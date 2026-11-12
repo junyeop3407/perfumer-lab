@@ -17,6 +17,7 @@
 3. **사장 할 일:** 위 기기 확인 · 11-14 Fragrantica · 11-18 Parfumo 메일 · 11-25 Plan A/B.
 4. **5-3에서 같이:** [추천 보기]·PC 요약 오른쪽 추천 미리보기(5-2에는 아직 없음), 등급 문구 질문.
 5. **같은 날 사장 결정 반영(2026-11-12):** 궁합 노트 늘 3개(모자라면 "같은 계열 추천"), Oud=우드(침향)·Woods=나무향·White oud=화이트 우드(침향)(`notes_ko.csv` + 앱이 지금 카탈로그도 고침, **다음 카탈로그를 다시 만들 때 원본에 들어감**), 겹치는 이름은 영어 작게. 승인 A7 강화(허락). QA는 일반 에이전트가 대신(qa-reviewer 미등록), Gemini 교차 리뷰 1라운드 반영(`docs/review_result.md`). **5-3은 사장 기기 확인 OK 뒤.**
+7. **사장 기기 확인(2026-11-12, 안드로이드 Expo Go) 반영:** 버그 5개(탭 3개 위 잘림·빈 화면 → "곧 열려요", MIDDLE 목록이 층 기준 아님, 강도 판·요약 끝이 가림 — 원인 SafeAreaView className이 폰에서 안 먹음) + 디자인 6·8·9·10. **디자인 7(오른쪽 위 회색 원형 버튼)은 Expo Go 개발자 메뉴라 반영 없음 — 사장 답 대기.** 다음: 사장이 고친 것 폰으로 다시 확인 → OK면 5-3. 화면 회귀 테스트 `npx playwright test -c playwright.regression.config.ts`.
 6. **다음 카탈로그를 새로 만들면 지울 것:** `app/src/catalog/noteNames.ts`의 `NOTE_NAME_FIXES`·`NOTE_SEARCH_ALIASES`(+ `catalogBoot.ts`의 `fixNoteNames`, 관련 테스트). 받아 둔 카탈로그에 고친 이름이 들어 있으면 테스트가 실패해서 알려 준다(`docs/NOTES.md` "노트 이름 고치기").
 
 ## (이전) 다음 세션 시작 (2026-11-11 세션 끝 — 5-0 디자인·5-1 카탈로그 끝, 다음 기기 준비 안내 → 5-2)

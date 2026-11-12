@@ -35,6 +35,8 @@ export const S = {
   layerLimit: '층마다 3개까지 고를 수 있어요',
   inOtherLayer: '이미 다른 층에 고른 노트예요: ',
   oftenUsed: ' · 많이 쓰는 노트',
+  oftenUsedInLayer: '에 많이 쓰는 노트',
+  intensityLegend: '막대 개수와 약 · 중 · 강은 노트의 강도예요',
   searchResults: '검색 결과',
   searchEmpty: '맞는 노트가 없어요. 다른 이름으로 찾아보세요.',
   removeNote: '조합에서 빼기',
@@ -47,6 +49,11 @@ export const S = {
   pairingFilled: '같은 계열 추천',
   noteCardAdd: '이 층에 넣기',
   noteCardClose: '닫기',
+
+  // 곧 여는 탭 (5-3 · 5-6 · 5-7에서)
+  soonSearch: '향수 찾기는 곧 열려요. 지금은 홈에서 조합을 만들어 비슷한 향수를 찾아볼 수 있어요.',
+  soonLibrary: '보관함은 곧 열려요. 저장한 조합과 찜한 향수가 여기에 모여요.',
+  soonMy: '마이는 곧 열려요. 불호 노트와 로그인 설정이 여기에 들어가요.',
 
   // 요약
   summaryTitle: '조합 요약',

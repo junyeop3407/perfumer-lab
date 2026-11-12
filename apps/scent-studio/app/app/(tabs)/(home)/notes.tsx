@@ -49,7 +49,7 @@ export default function NotesScreen() {
 
   const cat = catalog.status === 'ready' ? catalog.catalog : null;
   const noteByKey = useMemo(() => new Map((cat?.notes ?? []).map((n) => [n.key, n])), [cat]);
-  const sections = useMemo(() => (cat ? noteSections(cat, draft.families) : []), [cat, draft.families]);
+  const sections = useMemo(() => (cat ? noteSections(cat, draft.families, layer) : []), [cat, draft.families, layer]);
   const results = useMemo(() => (cat ? searchNotes(cat, deferredQuery) : []), [cat, deferredQuery]);
 
   // 목록은 고른 노트·층이 바뀔 때만 다시 그린다(강도만 바꾸면 그대로)
@@ -120,12 +120,12 @@ export default function NotesScreen() {
     return sections.map((s) => (
       <View key={s.family.code} className="mb-6">
         <Txt variant="label" sub>
-          {s.family.nameKo + S.oftenUsed}
+          {`${s.family.nameKo} · ${LAYER_KO[layer]}${S.oftenUsedInLayer}`}
         </Txt>
         <View className="flex-row flex-wrap gap-x-3">{s.notes.map(item)}</View>
       </View>
     ));
-  }, [cat, deferredQuery, results, sections, pickedLayer, pick, openInfo, names]);
+  }, [cat, deferredQuery, results, sections, pickedLayer, pick, openInfo, names, layer]);
 
   if (!cat) {
     return (
@@ -269,16 +269,20 @@ export default function NotesScreen() {
           <Txt variant="caption" sub>
             {S.pickedTitle}
           </Txt>
+          <Txt variant="caption" sub>
+            {S.intensityLegend}
+          </Txt>
           {draft.notes.length === 0 ? (
             <Txt variant="label" sub className="mt-2">
               {S.pickedEmpty}
             </Txt>
           ) : (
             LAYERS.filter((l) => draft.notes.some((n) => n.layer === l)).map((l) => (
-              <View key={l} className="flex-row flex-wrap items-center gap-x-3">
-                <Txt variant="layer" sub className="w-16">
+              <View key={l} className="flex-row items-start">
+                <Txt variant="layer" sub className="w-16 pt-4">
                   {LAYER_LABEL[l]}
                 </Txt>
+                <View className="flex-1 flex-row flex-wrap gap-x-3">
                 {draft.notes
                   .filter((n) => n.layer === l)
                   .map((n) => (
@@ -294,6 +298,7 @@ export default function NotesScreen() {
                       }}
                     />
                   ))}
+                </View>
               </View>
             ))
           )}

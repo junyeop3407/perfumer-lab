@@ -33,7 +33,7 @@ const LAYER_TICK: Record<Layer, string> = {
 
 export const familyName = (catalog: Catalog, code: string) => catalog.families.find((f) => f.code === code)?.nameKo ?? code;
 
-/** 목록의 노트 하나: [이름 칩][ⓘ]. 고른 노트는 ✓, 다른 층에 고른 노트는 층 이름을 같이 */
+/** 목록의 노트 하나: 칩 안에 [이름 | ⓘ]. 고른 노트는 ✓ + 층 색, 화면 읽기에는 고른 층을 같이 */
 export const NoteListItem = memo(function NoteListItem({
   note,
   en,
@@ -52,30 +52,34 @@ export const NoteListItem = memo(function NoteListItem({
 }) {
   const name = en ? `${note.nameKo} ${en}` : note.nameKo;
   const label = `${name}, ${familyKo}${pickedLayer ? `, ${LAYER_KO[pickedLayer]}에 고름` : ''}`;
+  const picked = pickedLayer ? LAYER_FG[pickedLayer] : '';
+  // 칩 하나 안에 [이름 | ⓘ] (5-2 기기 확인 디자인 9: 칩 밖 ⓘ가 줄을 지저분하게 함).
+  // 보이는 높이 36, 두 누르는 곳은 각각 높이 48(위아래 -6으로 칩 밖까지)·폭 48 이상
   return (
-    <View className="flex-row items-center">
-      <Pressable
-        testID={TestIds.noteItem(note.key)}
-        accessibilityRole="button"
-        accessibilityLabel={label}
-        onPress={() => onPick(note.key)}
-        className="min-h-touch min-w-12 justify-center">
-        <View
-          className={`h-9 flex-row items-center gap-1 rounded-chip px-2.5 ${
-            pickedLayer ? LAYER_BG[pickedLayer] : 'border border-line dark:border-line-dark'
-          }`}>
+    <View className="min-h-touch justify-center">
+      <View
+        className={`h-9 flex-row items-center rounded-chip ${
+          pickedLayer ? LAYER_BG[pickedLayer] : 'border border-line dark:border-line-dark'
+        }`}>
+        <Pressable
+          testID={TestIds.noteItem(note.key)}
+          accessibilityRole="button"
+          accessibilityLabel={label}
+          onPress={() => onPick(note.key)}
+          className="-my-1.5 h-12 min-w-12 flex-row items-center justify-center gap-1 pl-2.5 pr-1">
           {pickedLayer && <Icon name="check" size={16} color={pickedLayer === 'base' ? 'onNoteBase' : 'onNoteTop'} />}
-          <NoteNameText ko={note.nameKo} en={en} className={pickedLayer ? LAYER_FG[pickedLayer] : ''} />
-        </View>
-      </Pressable>
-      <Pressable
-        testID={TestIds.noteInfo(note.key)}
-        accessibilityRole="button"
-        accessibilityLabel={`${name}${S.noteInfo}`}
-        onPress={() => onInfo(note.key)}
-        className="h-12 w-12 items-center justify-center">
-        <Icon name="info" size={18} color="inkSub" />
-      </Pressable>
+          <NoteNameText ko={note.nameKo} en={en} className={picked} />
+        </Pressable>
+        <Pressable
+          testID={TestIds.noteInfo(note.key)}
+          accessibilityRole="button"
+          accessibilityLabel={`${name}${S.noteInfo}`}
+          onPress={() => onInfo(note.key)}
+          className="-my-1.5 h-12 w-12 flex-row items-center justify-center">
+          <View className={`mr-2 h-5 border-l ${pickedLayer ? 'border-ink/20 dark:border-bg-dark/30' : 'border-line dark:border-line-dark'}`} />
+          <Icon name="info" size={16} color={pickedLayer === 'base' ? 'onNoteBase' : pickedLayer ? 'onNoteTop' : 'inkSub'} />
+        </Pressable>
+      </View>
     </View>
   );
 });

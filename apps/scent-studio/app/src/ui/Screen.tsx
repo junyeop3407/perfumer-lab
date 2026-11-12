@@ -3,11 +3,13 @@
  * - side: PC에서 스크롤 밖 오른쪽 패널(목록을 내려도 화면에 그대로 보임)
  * - footer: 스크롤 밖 아래 고정 막대(안내·강도·다음 버튼이 목록 위치와 상관없이 보임)
  * - needsCatalog: 카탈로그가 준비되기 전에는 "불러오는 중"·"오류 + 다시 시도"를 보여 준다(네 가지 상태, design_rules.md 7절)
+ * 위쪽 safe area는 SafeAreaView 대신 insets로 직접 띄운다: 폰에서는 외부 부품(SafeAreaView)에 준 className이
+ * 적용되지 않아 화면 틀이 화면보다 길어지고 끝까지 스크롤되지 않았다(5-2 기기 확인 버그 4·5).
  * 아래쪽 safe area는 하단 탭이 맡는다. 키보드: 목록을 끌면 닫히고, 버튼은 키보드가 떠 있어도 한 번에 눌린다(D3).
  */
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCatalog } from '../catalog/CatalogContext';
 import { S } from '../strings.ko';
@@ -33,18 +35,23 @@ export function Screen({
   // 가상 데이터 띠가 있으면 띠가 위쪽 safe area를 이미 맡는다(_layout.tsx SampleBanner)
   const banner = catalog.status === 'ready' && catalog.isSample;
   const gate = needsCatalog && catalog.status !== 'ready';
+  const insets = useSafeAreaInsets();
   return (
-    <SafeAreaView edges={banner ? [] : ['top']} className="flex-1 bg-bg dark:bg-bg-dark">
+    <View style={{ paddingTop: banner ? 0 : insets.top }} className="flex-1 bg-bg dark:bg-bg-dark">
       <View className="flex-1 flex-row">
         <View className="flex-1">
-          <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerClassName="px-6 pb-12 pt-4">
+          <ScrollView
+            className="flex-1"
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+            contentContainerClassName="px-6 pb-16 pt-4">
             <View className={`w-full ${wide ? 'max-w-page' : 'max-w-text'}`}>{gate ? <CatalogGate /> : children}</View>
           </ScrollView>
           {!gate && footer}
         </View>
         {!gate && side ? <View className="w-panel pr-6 pt-4">{side}</View> : null}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

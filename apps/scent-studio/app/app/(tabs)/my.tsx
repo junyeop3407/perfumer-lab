@@ -1,12 +1,21 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { S } from '@/src/strings.ko';
+import { Button } from '@/src/ui/Button';
+import { go } from '@/src/ui/nav';
+import { Header, Screen } from '@/src/ui/Screen';
+import { TestIds } from '@/src/ui/testIds';
+import { Txt } from '@/src/ui/Txt';
 
-// 뼈대(plan.md 단계 1). 화면은 단계 5에서 만든다.
-export default function Screen() {
+/** 아직 만들지 않은 탭: 빈 화면 대신 "곧 열려요" 빈 상태 (design_rules.md 7절, 5-2 기기 확인 버그 2) */
+export default function SoonScreen() {
   return (
-    <View className="flex-1 bg-bg p-6 dark:bg-bg-dark">
-      <Text className="text-2xl font-semibold text-ink dark:text-ink-dark">{S.tabMy}</Text>
-    </View>
+    <Screen>
+      <Header title={S.tabMy} />
+      <View testID={TestIds.EMPTY_STATE} className="mt-8 gap-6">
+        <Txt sub>{S.soonMy}</Txt>
+        <Button kind="secondary" label={S.newBlend} onPress={() => go('/families?fresh=1')} />
+      </View>
+    </Screen>
   );
 }
