@@ -5,12 +5,13 @@
 import { memo } from 'react';
 import { Pressable, View } from 'react-native';
 
-import { LAYER_KO, LEVEL_KO } from '../blend/blendDraft';
+import { LAYER_KO, LEVEL_KO, pairingsFor } from '../blend/blendDraft';
 import type { Catalog, Layer, Note } from '../engine/types';
 import { S } from '../strings.ko';
 import { Button } from './Button';
 import { Icon } from './Icon';
 import { Ticks } from './Intensity';
+import { NoteNameText, useNoteNames } from './NoteName';
 import { TestIds, type IntensityLevel } from './testIds';
 import { Txt } from './Txt';
 
@@ -35,18 +36,22 @@ export const familyName = (catalog: Catalog, code: string) => catalog.families.f
 /** 목록의 노트 하나: [이름 칩][ⓘ]. 고른 노트는 ✓, 다른 층에 고른 노트는 층 이름을 같이 */
 export const NoteListItem = memo(function NoteListItem({
   note,
+  en,
   familyKo,
   pickedLayer,
   onPick,
   onInfo,
 }: {
   note: Note;
+  /** 한글 이름이 겹칠 때 붙일 영어 이름 */
+  en: string | null;
   familyKo: string;
   pickedLayer: Layer | null;
   onPick: (key: string) => void;
   onInfo: (key: string) => void;
 }) {
-  const label = `${note.nameKo}, ${familyKo}${pickedLayer ? `, ${LAYER_KO[pickedLayer]}에 고름` : ''}`;
+  const name = en ? `${note.nameKo} ${en}` : note.nameKo;
+  const label = `${name}, ${familyKo}${pickedLayer ? `, ${LAYER_KO[pickedLayer]}에 고름` : ''}`;
   return (
     <View className="flex-row items-center">
       <Pressable
@@ -60,15 +65,13 @@ export const NoteListItem = memo(function NoteListItem({
             pickedLayer ? LAYER_BG[pickedLayer] : 'border border-line dark:border-line-dark'
           }`}>
           {pickedLayer && <Icon name="check" size={16} color={pickedLayer === 'base' ? 'onNoteBase' : 'onNoteTop'} />}
-          <Txt variant="label" className={pickedLayer ? LAYER_FG[pickedLayer] : ''}>
-            {note.nameKo}
-          </Txt>
+          <NoteNameText ko={note.nameKo} en={en} className={pickedLayer ? LAYER_FG[pickedLayer] : ''} />
         </View>
       </Pressable>
       <Pressable
         testID={TestIds.noteInfo(note.key)}
         accessibilityRole="button"
-        accessibilityLabel={`${note.nameKo}${S.noteInfo}`}
+        accessibilityLabel={`${name}${S.noteInfo}`}
         onPress={() => onInfo(note.key)}
         className="h-12 w-12 items-center justify-center">
         <Icon name="info" size={18} color="inkSub" />
@@ -91,18 +94,17 @@ export function SelectedChip({
   focused: boolean;
   onPress: () => void;
 }) {
+  const { en, label } = useNoteNames();
   return (
     <Pressable
       testID={TestIds.selectedNote(layer, note.key)}
       accessibilityRole="button"
       accessibilityState={{ selected: focused }}
-      accessibilityLabel={`${note.nameKo}, ${LEVEL_KO[level]}`}
+      accessibilityLabel={`${label(note)}, ${LEVEL_KO[level]}`}
       onPress={onPress}
       className="min-h-touch justify-center">
       <View className={`h-9 flex-row items-center gap-2 rounded-chip px-2.5 ${LAYER_BG[layer]}`}>
-        <Txt variant="label" className={LAYER_FG[layer]}>
-          {`✓ ${note.nameKo}`}
-        </Txt>
+        <NoteNameText ko={`✓ ${note.nameKo}`} en={en(note)} className={LAYER_FG[layer]} />
         <Ticks level={level} className={LAYER_TICK[layer]} />
         <Txt variant="label" className={LAYER_FG[layer]}>
           {LEVEL_KO[level]}
@@ -128,15 +130,15 @@ export function NoteCardBody({
   onAdd: () => void;
   onClose: () => void;
 }) {
-  const pairings = note.pairings
-    .map((k) => catalog.notes.find((n) => n.key === k))
-    .filter((n): n is Note => !!n && n.tier !== 'hidden')
-    .slice(0, 3);
+  const { en } = useNoteNames();
+  // 실제 함께 쓰인 노트 먼저, 모자라면 같은 계열 추천으로 늘 3개 (사장 결정 2026-11-12)
+  const pairings = pairingsFor(catalog, note);
   return (
     <View>
       <View className="flex-row items-start justify-between">
         <Txt variant="title" accessibilityRole="header" className="flex-1">
           {note.nameKo}
+          {en(note) ? <Txt variant="caption" sub>{` ${en(note)}`}</Txt> : null}
         </Txt>
         <Pressable
           onPress={onClose}
@@ -159,8 +161,16 @@ export function NoteCardBody({
           </Txt>
           <View className="mt-1 flex-row flex-wrap gap-x-2">
             {pairings.map((p) => (
-              <View key={p.key} testID={TestIds.NOTE_CARD_PAIRING} className="mt-2 rounded-chip border border-line px-2 py-1 dark:border-line-dark">
-                <Txt variant="label">{p.nameKo}</Txt>
+              <View
+                key={p.note.key}
+                testID={TestIds.NOTE_CARD_PAIRING}
+                className="mt-2 rounded-chip border border-line px-2 py-1 dark:border-line-dark">
+                <NoteNameText ko={p.note.nameKo} en={en(p.note)} />
+                {p.filled && (
+                  <Txt variant="caption" sub>
+                    {S.pairingFilled}
+                  </Txt>
+                )}
               </View>
             ))}
           </View>

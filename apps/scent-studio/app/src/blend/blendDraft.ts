@@ -105,6 +105,34 @@ export function searchNotes(catalog: Catalog, query: string): Note[] {
   return hits.slice(0, SEARCH_LIMIT).map((h) => h.note);
 }
 
+// ---------- 잘 어울리는 노트 ----------
+
+export type Pairing = { note: Note; filled: boolean };
+
+/**
+ * 잘 어울리는 노트 3개 (사장 결정 2026-11-12): 실제로 함께 쓰인 노트(카탈로그 pairings) 먼저,
+ * 모자라면 같은 계열에서 많이 쓰는 노트로 채운다(filled = "같은 계열 추천" 표시). 그래도 모자라면 많이 쓰는 노트 전체에서.
+ */
+export function pairingsFor(catalog: Catalog, note: Note, count = 3): Pairing[] {
+  const byKey = new Map(catalog.notes.map((n) => [n.key, n]));
+  const out: Pairing[] = [];
+  const used = new Set([note.key]);
+  const push = (n: Note | undefined, filled: boolean) => {
+    if (out.length >= count || !n || n.tier === 'hidden' || used.has(n.key)) return;
+    used.add(n.key);
+    out.push({ note: n, filled });
+  };
+  for (const k of note.pairings) push(byKey.get(k), false);
+  const pool = [...catalog.notes].sort(byUse);
+  const tiers: ((n: Note) => boolean)[] = [
+    (n) => n.family === note.family && n.tier === 'browse',
+    (n) => n.family === note.family && n.tier === 'search',
+    (n) => n.tier === 'browse',
+  ];
+  for (const ok of tiers) for (const n of pool) if (ok(n)) push(n, true);
+  return out;
+}
+
 // ---------- 균형 안내 ----------
 
 const EMPTY_LAYER_TEXT: Record<Layer, string> = {

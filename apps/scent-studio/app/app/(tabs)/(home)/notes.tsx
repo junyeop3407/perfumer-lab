@@ -13,6 +13,7 @@ import { Icon } from '@/src/ui/Icon';
 import { IntensityPicker } from '@/src/ui/Intensity';
 import { WIDE_MIN_WIDTH } from '@/src/ui/layout';
 import { go, goBack } from '@/src/ui/nav';
+import { useNoteNames } from '@/src/ui/NoteName';
 import { familyName, NoteCardBody, NoteListItem, SelectedChip } from '@/src/ui/NoteParts';
 import { Header, Screen } from '@/src/ui/Screen';
 import { TestIds } from '@/src/ui/testIds';
@@ -33,6 +34,7 @@ export default function NotesScreen() {
   const insets = useSafeAreaInsets();
   const color = useTokenColor();
   const reduceMotion = useReducedMotion();
+  const names = useNoteNames();
 
   const [layer, setLayer] = useState<Layer>('top');
   const [query, setQuery] = useState('');
@@ -92,6 +94,7 @@ export default function NotesScreen() {
       <NoteListItem
         key={n.key}
         note={n}
+        en={names.en(n)}
         familyKo={familyName(cat, n.family)}
         pickedLayer={pickedLayer.get(n.key) ?? null}
         onPick={pick}
@@ -122,7 +125,7 @@ export default function NotesScreen() {
         <View className="flex-row flex-wrap gap-x-3">{s.notes.map(item)}</View>
       </View>
     ));
-  }, [cat, deferredQuery, results, sections, pickedLayer, pick, openInfo]);
+  }, [cat, deferredQuery, results, sections, pickedLayer, pick, openInfo, names]);
 
   if (!cat) {
     return (
@@ -169,7 +172,7 @@ export default function NotesScreen() {
         {focused && (
           <View className="mb-2">
             <View className="flex-row items-center justify-between">
-              <Txt variant="label">{`${LAYER_LABEL[focused.layer]} · ${noteOf(focused.noteKey).nameKo}`}</Txt>
+              <Txt variant="label">{`${LAYER_LABEL[focused.layer]} · ${names.label(noteOf(focused.noteKey))}`}</Txt>
               <Button
                 kind="text"
                 label={S.removeNote}
@@ -182,7 +185,7 @@ export default function NotesScreen() {
             </View>
             <IntensityPicker
               noteKey={focused.noteKey}
-              noteName={noteOf(focused.noteKey).nameKo}
+              noteName={names.label(noteOf(focused.noteKey))}
               value={focused.level}
               onChange={(l) => setDraft(setLevel(draft, focused.noteKey, l))}
             />

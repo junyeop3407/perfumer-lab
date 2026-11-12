@@ -4,6 +4,7 @@
  */
 import { RecommendationEngine } from '../engine/RecommendationEngine';
 import type { Catalog } from '../engine/types';
+import { ambiguousNoteKeys, fixNoteNames } from './noteNames';
 
 export type CatalogTiming = { openMs: number; engineMs: number; totalMs: number };
 export type Booted = {
@@ -11,6 +12,8 @@ export type Booted = {
   engine: RecommendationEngine;
   origin: 'cache' | 'bundled';
   isSample: boolean;
+  /** 한글 이름이 다른 노트와 겹쳐 영어 이름을 같이 보여 줄 노트 key */
+  ambiguous: ReadonlySet<string>;
   timing: CatalogTiming;
 };
 
@@ -20,12 +23,14 @@ export async function bootCatalog(
 ): Promise<Booted> {
   const t0 = now();
   const opened = await open();
+  const catalog = fixNoteNames(opened.catalog);
   const t1 = now();
-  const engine = new RecommendationEngine(opened.catalog);
+  const engine = new RecommendationEngine(catalog);
   const t2 = now();
   return {
-    catalog: opened.catalog,
+    catalog,
     engine,
+    ambiguous: ambiguousNoteKeys(catalog),
     origin: opened.origin,
     isSample: opened.catalog.source?.name === 'sample',
     timing: { openMs: t1 - t0, engineMs: t2 - t1, totalMs: t2 - t0 },

@@ -32,3 +32,21 @@ describe('카탈로그 시작 (L9 시간)', () => {
     expect(real.isSample).toBe(false);
   });
 });
+
+describe('카탈로그 시작: 노트 이름 고치기·겹치는 이름 (사장 결정 2026-11-12)', () => {
+  it('Oud(가짜 카탈로그에 있음) 이름을 고치고, 한글 이름이 겹치는 노트 key를 알려 준다', async () => {
+    const base = fixtureCatalog();
+    const cat = {
+      ...base,
+      notes: [
+        ...base.notes,
+        { ...base.notes[0], key: 'pear', nameEn: 'Pear', nameKo: '배', tier: 'browse' as const },
+        { ...base.notes[0], key: 'nashi pear', nameEn: 'Nashi pear', nameKo: '배', tier: 'browse' as const },
+      ],
+    };
+    const r = await bootCatalog(async () => ({ catalog: cat, origin: 'bundled' as const }), () => 0);
+    expect(r.catalog.notes.find((n) => n.key === 'oud')!.nameKo).toBe('우드(침향)');
+    expect(r.engine.note('oud')!.nameKo).toBe('우드(침향)');
+    expect([...r.ambiguous].sort()).toEqual(['nashi pear', 'pear']);
+  });
+});

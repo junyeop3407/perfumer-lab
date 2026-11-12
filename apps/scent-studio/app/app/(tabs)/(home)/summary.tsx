@@ -8,6 +8,7 @@ import { S } from '@/src/strings.ko';
 import { Button } from '@/src/ui/Button';
 import { Ticks } from '@/src/ui/Intensity';
 import { go, goBack } from '@/src/ui/nav';
+import { NoteNameText, useNoteNames } from '@/src/ui/NoteName';
 import { LAYER_BG } from '@/src/ui/NoteParts';
 import { Header, Screen } from '@/src/ui/Screen';
 import { TestIds } from '@/src/ui/testIds';
@@ -17,6 +18,7 @@ import { Txt } from '@/src/ui/Txt';
 export default function SummaryScreen() {
   const catalog = useCatalog();
   const { draft } = useDraft();
+  const names = useNoteNames();
   if (catalog.status !== 'ready') {
     return (
       <Screen needsCatalog>
@@ -43,7 +45,7 @@ export default function SummaryScreen() {
   const maxPct = Math.max(1, ...ratios.map((r) => r.percent));
   const hints = hintTexts(engine, blend);
   const accordKo = (k: string) => cat.accords.find((a) => a.key === k)?.nameKo ?? k;
-  const noteKo = (k: string) => engine.note(k)?.nameKo ?? k;
+  const noteOf = (k: string) => engine.note(k)!;
 
   return (
     <Screen>
@@ -77,11 +79,11 @@ export default function SummaryScreen() {
                         key={n.noteKey}
                         testID={TestIds.selectedNote(l, n.noteKey)}
                         accessible
-                        accessibilityLabel={`${noteKo(n.noteKey)}, ${LEVEL_KO[n.level]}`}
+                        accessibilityLabel={`${names.label(noteOf(n.noteKey))}, ${LEVEL_KO[n.level]}`}
                         className="min-h-8 flex-row items-center justify-between gap-2">
-                        <Txt variant="noteName" className="flex-1">
-                          {noteKo(n.noteKey)}
-                        </Txt>
+                        <View className="flex-1">
+                          <NoteNameText variant="noteName" ko={noteOf(n.noteKey).nameKo} en={names.en(noteOf(n.noteKey))} />
+                        </View>
                         <View className="flex-row items-center gap-2">
                           <Ticks level={n.level} className="bg-inkSub dark:bg-inkSub-dark" />
                           <Txt variant="label" sub>

@@ -44,6 +44,7 @@ export const S = {
   // 노트 카드
   noteCardFamily: '계열 · ',
   noteCardPairings: '잘 어울리는 노트',
+  pairingFilled: '같은 계열 추천',
   noteCardAdd: '이 층에 넣기',
   noteCardClose: '닫기',
 

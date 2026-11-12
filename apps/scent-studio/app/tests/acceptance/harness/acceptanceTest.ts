@@ -12,6 +12,8 @@ import { FakeUserServer, TEST_TOKEN, TEST_USER_ID } from './fakeUserServer';
  * 가짜 로그인(FakeAuth)으로 앱을 켠다. 기본 화면은 큰 폰(412×915) 라이트 모드.
  */
 const TEST_CATALOG = path.resolve(__dirname, '../../../../tests/fixtures/test_catalog.json.gz');
+/** 승인 테스트가 가짜 카탈로그 내용을 직접 읽을 때 (A7 궁합 개수) */
+export const TEST_CATALOG_PATH = TEST_CATALOG;
 
 export const SIZES = {
   smallPhone: { width: 360, height: 640 },

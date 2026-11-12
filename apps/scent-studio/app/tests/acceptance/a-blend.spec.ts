@@ -1,4 +1,7 @@
-import { SIZES, T, allText, expect, test } from './harness/acceptanceTest';
+import { readFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
+
+import { SIZES, T, TEST_CATALOG_PATH, allText, expect, test } from './harness/acceptanceTest';
 
 /** 승인 목록 A. 향 조합 만들기 (docs/tests.md) */
 test.describe('A. 향 조합 만들기', () => {
@@ -89,6 +92,33 @@ test.describe('A. 향 조합 만들기', () => {
       } else {
         expect(card.y + card.height, '폰 크기에서 노트 카드는 화면 아래에 붙음').toBeGreaterThan(size.height - 2);
       }
+    }
+  });
+
+  // 2026-11-12 사장 허락: 레몬 하나가 아니라 목록의 모든 노트에서 궁합 3개. 실제 궁합이 모자라면 같은 계열 추천으로 채우고 표시
+  test('A7 목록의 모든 노트 카드에 잘 어울리는 노트 3개 (모자라면 "같은 계열 추천"으로 채움)', async ({ app }) => {
+    const catalog = JSON.parse(gunzipSync(readFileSync(TEST_CATALOG_PATH)).toString('utf-8')) as {
+      notes: { key: string; nameKo: string; tier: string; pairings: string[] }[];
+    };
+    const byKey = new Map(catalog.notes.map((n) => [n.key, n]));
+    await app.launchAppWith(SIZES.pc);
+    await app.startNewBlend('citrus');
+    const keys = await app.page
+      .getByTestId(T.NOTE_LIST)
+      .filter({ visible: true })
+      .locator('[data-testid^="noteInfo:"]')
+      .evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')!.slice('noteInfo:'.length)));
+    expect(keys.length, '목록 노트가 없음').toBeGreaterThan(0);
+    for (const key of keys) {
+      const note = byKey.get(key)!;
+      await app.click(T.noteInfo(key));
+      await expect(app.node(T.NOTE_CARD), `${key} 카드`).toContainText(note.nameKo);
+      const pairings = app.page.getByTestId(T.NOTE_CARD_PAIRING).filter({ visible: true });
+      await expect(pairings, `${key}: 잘 어울리는 노트 3개`).toHaveCount(3);
+      const real = note.pairings.filter((k) => byKey.get(k) && byKey.get(k)!.tier !== 'hidden').length;
+      await expect(pairings.filter({ hasText: '같은 계열 추천' }), `${key}: 채운 것만 "같은 계열 추천"`).toHaveCount(
+        Math.max(0, 3 - Math.min(3, real)),
+      );
     }
   });
 

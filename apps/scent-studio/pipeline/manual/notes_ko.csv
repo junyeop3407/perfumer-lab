@@ -27,7 +27,7 @@ leather,가죽,부드럽고 깊은 가죽의 결
 oakmoss,오크모스,촉촉한 숲 바닥의 이끼 향
 violet,바이올렛,파우더리하고 여린 보랏빛 꽃 향
 grapefruit,자몽,쌉쌀하고 상쾌한 시트러스 향
-oud,우드,깊고 묵직한 어두운 나무 향
+oud,우드(침향),깊고 묵직한 어두운 나무 향
 cinnamon,시나몬,따뜻하고 달콤한 향신료 향
 ambergris,앰버그리스,짭조름하고 은은한 바다의 잔향
 neroli,네롤리,맑고 쌉쌀한 오렌지 꽃 향
@@ -73,7 +73,7 @@ sage,세이지,쌉쌀하고 차분한 허브 향
 pineapple,파인애플,달콤하고 새콤한 열대 과일 향
 cashmere wood,캐시미어 우드,포근하고 부드러운 나무 향
 honey,꿀,진하고 따스한 꿀의 단맛
-woods,우드,차분하고 깊은 나무 향
+woods,나무향,차분하고 깊은 나무 향
 osmanthus,오스만투스,살구를 닮은 부드러운 꽃 향
 cypress,사이프러스,서늘하고 맑은 침엽수 향
 elemi resin,엘레미 레진,레몬빛이 도는 맑은 수지 향
@@ -371,7 +371,7 @@ kiwi,키위,
 palo santo,팔로 산토,
 pistachio,피스타치오,
 vermouth,베르무트,
-white oud,화이트 우드,
+white oud,화이트 우드(침향),
 zorplox,조르플록스,
 comorian ylang-ylang,코모로 일랑일랑,
 indian patchouli,인디안 패출리,
