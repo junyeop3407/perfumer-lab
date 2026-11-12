@@ -36,7 +36,11 @@ export default function TabLayout() {
         // 줄 높이를 정해 주지 않으면 글꼴에 따라 글자 아래가 잘린다
         tabBarLabelStyle: { fontFamily: FONT.sansMedium, fontSize: wide ? 14 : 12, lineHeight: wide ? 20 : 16 },
       }}>
-      <Tabs.Screen name="(home)" options={{ title: S.tabHome, tabBarButtonTestID: TestIds.TAB_HOME, tabBarIcon: icon('home', !wide) }} />
+      {/* 홈 탭을 떠나면 홈 쌓임을 첫 화면으로 되돌린다: 다른 탭에 갔다 와도 홈(+ "만들던 조합 이어 하기")이 보이게 (5-2 폰 확인 3차) */}
+      <Tabs.Screen
+        name="(home)"
+        options={{ title: S.tabHome, tabBarButtonTestID: TestIds.TAB_HOME, tabBarIcon: icon('home', !wide), popToTopOnBlur: true }}
+      />
       <Tabs.Screen name="search" options={{ title: S.tabSearch, tabBarButtonTestID: TestIds.TAB_SEARCH, tabBarIcon: icon('search', !wide) }} />
       <Tabs.Screen name="library" options={{ title: S.tabLibrary, tabBarButtonTestID: TestIds.TAB_LIBRARY, tabBarIcon: icon('library', !wide) }} />
       <Tabs.Screen name="my" options={{ title: S.tabMy, tabBarButtonTestID: TestIds.TAB_MY, tabBarIcon: icon('my', !wide) }} />

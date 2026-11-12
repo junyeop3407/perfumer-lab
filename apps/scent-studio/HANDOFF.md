@@ -4,9 +4,9 @@
 실행 방법: `cd app && npx expo start`(폰 Expo Go QR / `a` 안드로이드 에뮬레이터 / `w` 웹), 처음엔 `CATALOG_SOURCE=real npm run catalog:prepare`. 자세히 `docs/device_setup.md`. 디자인 시안: `docs/design/mock.html`
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: b30fcb0 (5-2 시작 직전) — 5-3 시작 때 새로 적는다
-결과: `bash tests/run.sh`(2026-11-12) 파이프라인 159/159 · Vitest 193/193 · **화면: 승인 12/42 통과(아직 화면 없음 30 = `app/tests/acceptance/pending.txt`) · 회귀 4/4** · 서버·DB 657/657 + 레드팀 도구 1 건너뜀. 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9), 목표 웹 54/56 + 카카오 보류 2. B7 "자기 자신 찾기" 사장 승인(5-3에서 테스트로)
+결과: `bash tests/run.sh`(2026-11-12) 파이프라인 159/159 · Vitest 193/193 · **화면: 승인 12/42 통과(아직 화면 없음 30 = `app/tests/acceptance/pending.txt`) · 회귀 8/8** · 서버 656/656 + 레드팀 도구 1 건너뜀(이제 매번 돎, 약 3분 45초). 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9), 목표 웹 54/56 + 카카오 보류 2. B7 "자기 자신 찾기" 사장 승인(5-3에서 테스트로)
 사용자에게 남은 질문: 없음 (궁합 3개·이름 겹침은 2026-11-12 사장 결정 반영). 5-9 전까지: 개발용 빌드 방식·아이폰 서명
-다음 할 일: 사장 폰 확인(A 계열 칩 딥 그린 · B 층에 드문 노트는 뒤로 · C 어코드 접기) → OK면 `/handoff` 후 새 세션에서 **5-3 추천·상세·찾기**(B1~B6·F1·F2·H5, 등급 문구 질문, 겹친 노트는 같은 층·다른 층만, 끝나면 pending.txt에서 B·F·H5 지움). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
+다음 할 일: 사장 폰 확인(홈 탭 다시 누르면 "만들던 조합 이어 하기" 보임) → `/handoff` 후 새 세션에서 **5-3 추천·상세·찾기**(B1~B6·F1·F2·H5, 등급 문구 질문, 겹친 노트는 같은 층·다른 층만, 끝나면 pending.txt에서 B·F·H5 지움). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
 
 ## ★ 다음 세션 시작 (2026-11-12 — 5-2 코드·리뷰 끝, 기기 최소 확인 사장 대기)
 1. **오늘(2026-11-12) 한 것:**
