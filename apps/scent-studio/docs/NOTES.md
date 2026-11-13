@@ -517,3 +517,15 @@
 - **6 시트 아래 빈 공간:** 노트 설명·등급 설명 Modal에 `statusBarTranslucent`·`navigationBarTranslucent`(안드로이드에서 바 아래까지 그려 `insets.bottom`이 한 번만). 웹은 이 속성을 무시해 화면으로 잴 수 없어 코드 검사 테스트(`sheetInsets.test.ts`)만 — **실제 확인은 폰.**
 - **7 B7 근거 문구:** `docs/tests.md` B7 근거에 실제 조건 4가지와 다시 만드는 명령을 적음.
 - **3 늘 참고:** 고치지 않음. 비교표 `docs/engine_always_reference_compare.md`(스크립트 `app/scripts/gradeVariants.check.ts`, 24조합 `app/scripts/combos24.json`). 추천 ㉮.
+
+### 2026-11-13 계산 버전 9(㉮) — 사장 결정
+- 카탈로그 버전(`ENGINE_VERSION` 8)은 그대로, **계산 버전만 9**(`CALC_VERSION`, `NOTE_FULL_COUNT` 4). 노트 일치 만점 기준 = 고른 노트 중 가장 무거운 4개의 무게 합(4개 이하면 전체 합 그대로 — 계산 순서까지 8과 같음). Python `engine_ref.py`·앱 `RecommendationEngine.ts`·골든 다시 만듦(바뀐 사례: "층마다 3개" 9노트 1개). 테스트: `app/tests/unit/engineCalcV9.test.ts`(만점·4개 이하 그대로·카탈로그 버전 8 열림·7과 9 거부), `pipeline/tests/test_engine_calc_v9.py`.
+- B7 새 숫자(사장: **tests.md는 예전 숫자 그대로**, 여기에만): 실제 4,438개 중 자기 자신 1위 96.7%(4,293) · 묶음 1위 97.7%(4,336) · 매우 비슷 98.8%(4,386). 가짜 카탈로그 그대로(1위 24/25, 매우 비슷 22), 승인 B7 통과.
+- 9노트 화면 모양 400개 1위: 매우 비슷 9.0% · 비슷 79.3% · 참고 11.8%.
+- **서버의 추천 기록 구분(고치지 않음, 사장 확인):** 서버는 시향 기록(`tasting_feedback`)과 "추천이 이상해요"(`error_reports`)에 `engine_version`·`catalog_version`을 저장하지만, 이 값은 앱이 보내는 것이고 그 화면(5-6·5-7)은 아직 없어 앱이 보낸 실제 기록은 아직 없다. 지금 이름 그대로면 앱이 카탈로그 버전(8)을 보낼지 계산 버전(9)을 보낼지 정해져 있지 않아, 계산 8로 만든 추천과 9로 만든 추천을 **구분할 수 없다**. 5-6 전에 "engine_version 칸에 계산 버전을 보낸다"(catalog_version은 따로 있음)로 정하면 칸 추가 없이 구분된다.
+
+### 2026-11-13 계산 버전 9(㉮) — 사장 결정
+- 카탈로그 버전(`ENGINE_VERSION` 8)은 그대로, **계산 버전만 9**(`CALC_VERSION`, `NOTE_FULL_COUNT` 4). 노트 일치 만점 기준 = 고른 노트 중 가장 무거운 4개의 무게 합(4개 이하면 전체 합 그대로 — 계산 순서까지 8과 같음). Python `engine_ref.py`·앱 `RecommendationEngine.ts`·골든 다시 만듦(바뀐 사례: "층마다 3개" 9노트 1개). 테스트: `app/tests/unit/engineCalcV9.test.ts`(만점·4개 이하 그대로·카탈로그 버전 8 열림·7과 9 거부), `pipeline/tests/test_engine_calc_v9.py`.
+- B7 새 숫자(사장 승인으로 `docs/tests.md` 근거 바꿈, 예전 숫자는 괄호): 실제 4,438개 중 자기 자신 1위 96.7%(4,293) · 묶음 1위 97.7%(4,336) · 매우 비슷 98.8%(4,386). 가짜 카탈로그 그대로(1위 24/25, 매우 비슷 22), 승인 B7 통과.
+- 9노트 화면 모양 400개 1위: 매우 비슷 9.0% · 비슷 79.3% · 참고 11.8%.
+- **서버의 추천 기록 구분(고치지 않음, 사장 확인):** 서버는 시향 기록(`tasting_feedback`)과 "추천이 이상해요"(`error_reports`)에 `engine_version`·`catalog_version`을 저장하지만, 이 값은 앱이 보내는 것이고 그 화면(5-6·5-7)은 아직 없어 앱이 보낸 실제 기록은 아직 없다. 앱이 이 칸에 카탈로그 버전(8)을 보낼지 계산 버전(9)을 보낼지 정해져 있지 않아, 지금 그대로면 계산 8과 9로 만든 추천을 **구분할 수 없다**. 5-6 전에 "engine_version 칸에는 계산 버전을 보낸다"(catalog_version은 따로 있음)로 정하면 칸 추가 없이 구분된다.

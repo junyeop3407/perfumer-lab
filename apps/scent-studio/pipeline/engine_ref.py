@@ -26,6 +26,10 @@ STRENGTH_BASE = 0.3
 NOTE_MATCH_BY_STRENGTH = True
 # 시험용 스위치: 노트 일치도에도 강도를 반영할지 (pipeline/experiments/strong_both.py). 엔진은 꺼진 상태(False)가 기준
 NOTE_MATCH_BY_INTENSITY = False
+# 계산 버전(카탈로그 버전 ENGINE_VERSION=8과 따로, 2026-11-13 사장 결정). 9: ㉮ 노트 일치는 고른 노트 중 가장 무거운
+# NOTE_FULL_COUNT개까지 다 맞으면 만점 — 노트를 많이 골라도 "늘 참고"가 되지 않게(docs/engine_always_reference_compare.md). 4개 이하면 8과 똑같다
+CALC_VERSION = 9
+NOTE_FULL_COUNT = 4
 
 
 def intensity(level: str | float) -> float:
@@ -177,6 +181,8 @@ class Engine:
         weights = {x.note_key: math.log(1 + self.n / self.notes[x.note_key]["df"]) * (x.intensity if NOTE_MATCH_BY_INTENSITY else 1.0)
                    for x in blend}
         w_sum = sum(weights.values())
+        # 계산 버전 9: 만점 기준 = 가장 무거운 NOTE_FULL_COUNT개의 무게 합(그보다 적게 골랐으면 전체 합 그대로 — 계산 순서까지 8과 같게)
+        full = w_sum if len(blend) <= NOTE_FULL_COUNT else sum(sorted(weights.values(), reverse=True)[:NOTE_FULL_COUNT])
 
         scored = []
         for p in self.perfumes:
@@ -200,7 +206,7 @@ class Engine:
                 nm += weights[x.note_key] * c
                 if kind:
                     matched.append({"noteKey": x.note_key, "layer": x.layer, "match": kind})
-            note_match = nm / w_sum
+            note_match = min(1.0, nm / full)
             if NOTE_MATCH_BY_STRENGTH and not note_only:
                 shares = p.get("noteWeights")
                 held = sum((shares[x.note_key] if shares else 1.0 / len(all_notes)) for x in blend if x.note_key in all_notes)

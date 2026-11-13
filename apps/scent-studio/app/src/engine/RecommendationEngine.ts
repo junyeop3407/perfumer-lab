@@ -154,6 +154,11 @@ export class RecommendationEngine {
       weights.set(x.noteKey, w);
       wSum += w;
     }
+    // 계산 버전 9: 만점 기준 = 가장 무거운 NOTE_FULL_COUNT개의 무게 합(그 이하로 골랐으면 전체 합 그대로 — 8과 똑같게)
+    const full =
+      blend.length <= P.NOTE_FULL_COUNT
+        ? wSum
+        : [...weights.values()].sort((a, c) => c - a).slice(0, P.NOTE_FULL_COUNT).reduce((a, x) => a + x, 0);
 
     type Scored = { p: Indexed; score: number; similarity: number; accordSim: number; noteMatch: number; matched: MatchedNote[] };
     const scored: Scored[] = [];
@@ -187,7 +192,7 @@ export class RecommendationEngine {
       for (const x of blend) {
         if (p.all.has(x.noteKey)) held += p.perfume.noteWeights ? p.perfume.noteWeights[x.noteKey] : 1.0 / p.all.size;
       }
-      const noteMatch = (nm / wSum) * (P.STRENGTH_BASE + (1.0 - P.STRENGTH_BASE) * Math.sqrt(Math.min(held, 1.0)));
+      const noteMatch = Math.min(1, nm / full) * (P.STRENGTH_BASE + (1.0 - P.STRENGTH_BASE) * Math.sqrt(Math.min(held, 1.0)));
       // 등급과 화면 점수는 선호를 뺀 유사도로, 선호는 순위에만 쓴다 (2026-11-02 사장 결정)
       const similarity = (P.W_ACCORD * accordSim + P.W_NOTE * noteMatch) / (P.W_ACCORD + P.W_NOTE);
       let score: number;

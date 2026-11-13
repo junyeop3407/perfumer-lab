@@ -3679,11 +3679,11 @@
    "recommendations": [
     {
      "perfumeKey": "T001",
-     "score": 0.7259061220734576,
-     "similarity": 0.7259061220734576,
+     "score": 0.9583036271272828,
+     "similarity": 0.9583036271272828,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.5993430501281233,
-     "grade": "SIMILAR",
+     "noteMatch": 0.9796298765798372,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3749,11 +3749,11 @@
     },
     {
      "perfumeKey": "T006",
-     "score": 0.7053309447128818,
-     "similarity": 0.7053309447128818,
+     "score": 0.9246733740459459,
+     "similarity": 0.9246733740459459,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.5656745780835446,
-     "grade": "SIMILAR",
+     "noteMatch": 0.9245985533558313,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3819,11 +3819,11 @@
     },
     {
      "perfumeKey": "T033",
-     "score": 0.6963635729838381,
-     "similarity": 0.6963635729838381,
+     "score": 0.9100161501767601,
+     "similarity": 0.9100161501767601,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.5510006970723822,
-     "grade": "SIMILAR",
+     "noteMatch": 0.9006140052062545,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3889,11 +3889,11 @@
     },
     {
      "perfumeKey": "T013",
-     "score": 0.679590282116579,
-     "similarity": 0.679590282116579,
+     "score": 0.8826001037929434,
+     "similarity": 0.8826001037929434,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.5235534938350491,
-     "grade": "SIMILAR",
+     "noteMatch": 0.8557513838509181,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -3959,11 +3959,11 @@
     },
     {
      "perfumeKey": "T012",
-     "score": 0.6601835530580661,
-     "similarity": 0.6601835530580661,
+     "score": 0.8508796865989088,
+     "similarity": 0.8508796865989088,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.49179702810293713,
-     "grade": "SIMILAR",
+     "noteMatch": 0.803845246624316,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4024,11 +4024,11 @@
     },
     {
      "perfumeKey": "T011",
-     "score": 0.6597673378353686,
-     "similarity": 0.6597673378353686,
+     "score": 0.8501993802749184,
+     "similarity": 0.8501993802749184,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.49111594864761376,
-     "grade": "SIMILAR",
+     "noteMatch": 0.8027320180941497,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4094,11 +4094,11 @@
     },
     {
      "perfumeKey": "T005",
-     "score": 0.6406117376117976,
-     "similarity": 0.6406117376117976,
+     "score": 0.8188894346956412,
+     "similarity": 0.8188894346956412,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.4597704210090432,
-     "grade": "REFERENCE",
+     "noteMatch": 0.7514975616916963,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4159,11 +4159,11 @@
     },
     {
      "perfumeKey": "T025",
-     "score": 0.6323729440297118,
-     "similarity": 0.6323729440297118,
+     "score": 0.8054230762582483,
+     "similarity": 0.8054230762582483,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.44628875878381163,
-     "grade": "REFERENCE",
+     "noteMatch": 0.7294617024305079,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4224,11 +4224,11 @@
     },
     {
      "perfumeKey": "T015",
-     "score": 0.6275574320244425,
-     "similarity": 0.6275574320244425,
+     "score": 0.7975520924696116,
+     "similarity": 0.7975520924696116,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.43840883004791653,
-     "grade": "REFERENCE",
+     "noteMatch": 0.716581910776375,
+     "grade": "VERY_SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",
@@ -4289,11 +4289,11 @@
     },
     {
      "perfumeKey": "T026",
-     "score": 0.5680697570199043,
-     "similarity": 0.5680697570199043,
+     "score": 0.7003191242884347,
+     "similarity": 0.7003191242884347,
      "accordSim": 0.924790949416126,
-     "noteMatch": 0.34106536185867214,
-     "grade": "REFERENCE",
+     "noteMatch": 0.5574734173889948,
+     "grade": "SIMILAR",
      "sharedAccords": [
       {
        "accord": "citrus",

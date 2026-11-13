@@ -125,15 +125,15 @@ const hash6 = (k: string) => createHash('sha256').update(k).digest('hex').slice(
 test('방법 비교', () => {
   const t0 = Date.now();
   const lines: string[] = [];
-  // 0) "지금" 재구현이 실제 엔진과 같은지 (같지 않으면 비교가 무의미)
+  // 0) 재구현이 실제 엔진과 같은지 (같지 않으면 비교가 무의미). 2026-11-13 계산 버전 9부터 앱 엔진 = ㉮ K=4, "지금"(now) = 계산 버전 8
   seed = 7;
   for (let i = 0; i < 20; i++) {
     const b = userLike(2 + (i % 2), 1 + (i % 3));
-    const mine = recommend(b, 'now').map((r) => `${r.key}:${r.sim.toFixed(9)}`);
+    const mine = recommend(b, 'ga4').map((r) => `${r.key}:${r.sim.toFixed(9)}`);
     const real = engine.recommend(b, new Set(), new Set(), 10).map((r) => `${r.perfumeKey}:${r.similarity.toFixed(9)}`);
     expect(mine).toEqual(real);
   }
-  lines.push('재구현 확인: "지금"이 실제 엔진과 20조합 Top 10 점수까지 같음');
+  lines.push('재구현 확인: ㉮ K=4가 실제 엔진(계산 버전 9)과 20조합 Top 10 점수까지 같음');
 
   // ㉰ 기준값: 노트 수 n마다 무작위 조합 300개(시드 20261104) Top 10 유사도의 상위 10%·40%
   const perN = new Map<number, [number, number]>();
@@ -159,7 +159,7 @@ test('방법 비교', () => {
     return s >= vs ? 'VERY_SIMILAR' : s >= si ? 'SIMILAR' : 'REFERENCE';
   };
   // VARIANTS=ga3,ga4 처럼 골라 돌릴 수 있다(없으면 전부)
-  const ALL: [Variant, string][] = [['now', '지금'], ['ga3', '㉮ K=3'], ['ga4', '㉮ 노트 4개까지만 만점 기준(K=4)'], ['ga5', '㉮ K=5'], ['ga6', '㉮ K=6'], ['na', '㉯ 노트 비중 55→35%'], ['da', '㉰ 노트 수별 등급 기준'], ['ra', '㉱ 노트 많으면 노트 비중 줄이기']];
+  const ALL: [Variant, string][] = [['now', '계산 버전 8(예전)'], ['ga3', '㉮ K=3'], ['ga4', '㉮ 노트 4개까지만 만점 기준(K=4)'], ['ga5', '㉮ K=5'], ['ga6', '㉮ K=6'], ['na', '㉯ 노트 비중 55→35%'], ['da', '㉰ 노트 수별 등급 기준'], ['ra', '㉱ 노트 많으면 노트 비중 줄이기']];
   const VARS = process.env.VARIANTS ? ALL.filter(([v]) => process.env.VARIANTS!.split(',').includes(v)) : ALL;
 
   // 같은 조합 묶음을 모든 방법에 쓴다

@@ -8,7 +8,11 @@ export const EngineParams = {
   // 2026-10-31 v5: 노트 프로필을 "함께 든 노트의 몫 빼기"로(파이프라인), 원본 복사 오류 제외. 엔진 숫자는 v4와 같음
   // 2026-10-31 v6: 강 2.0 → 3.0 (어코드 쪽에만, 사장 결정)
   // 2026-11-02 v7: 어코드·노트 강도(카탈로그), 일치도 × 강도 몫, 선호를 뺀 등급 (docs/engine_v2_trial.md, 사장 결정)
+  /** 카탈로그 버전: 카탈로그 파일의 engineVersion과 같아야 연다(다르면 거부). 계산만 바뀌면 올리지 않는다(2026-11-13 사장 결정) */
   ENGINE_VERSION: 8,
+  /** 계산 버전(카탈로그와 따로). 9: ㉮ 노트 일치는 가장 무거운 NOTE_FULL_COUNT개까지 다 맞으면 만점(docs/engine_always_reference_compare.md). Python engine_ref.CALC_VERSION과 같게 */
+  CALC_VERSION: 9,
+  NOTE_FULL_COUNT: 4,
 
   // 2026-10-30 사장 결정: 기획 60/30/10 → 45/45/10 (재현 9/20 → 15/20). 2026-10-31 v4: 35/55/10
   W_ACCORD: 0.35,
