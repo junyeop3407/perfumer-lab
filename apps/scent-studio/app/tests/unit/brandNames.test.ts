@@ -53,3 +53,23 @@ describe('한글로 향수 찾기', () => {
     expect(searchPerfumes(fixtureCatalog(), '샤넬')).toEqual([]); // 표에 없는 브랜드는 한글로 안 찾아진다
   });
 });
+
+describe('사장 검수(2026-11-13): 표기 6개 고침, 원래 표기는 검색어로 남김', () => {
+  const FIXED: [string, string, string[]][] = [
+    ['Mancera', '만세라', ['맨세라']],
+    ['Tiziana Terenzi', '티지아나 테렌치', ['티지아나 테렌지']],
+    ["L'Artisan Parfumeur", '라티잔 파퓨머', ['라티잔 퍼퓨머', '아티잔']],
+    ['Histoires de Parfums', '이스뜨와 드 퍼퓸', ['히스토아 드 퍼퓸']],
+    ['Joop!', '죠프', ['욥', '조프']],
+    ['Stéphane Humbert Lucas', '스테판 움베르 루카스', ['스테판 험버트 루카스']],
+  ];
+  it.each(FIXED)('%s → %s, 옛 표기로도 찾아진다', (brand, ko, olds) => {
+    expect(brandKo(brand)).toBe(ko);
+    const base = fixtureCatalog();
+    const cat = { ...base, perfumes: base.perfumes.map((p) => (p.key === 'T001' ? { ...p, brand } : p)) } as Catalog;
+    for (const q of [ko, ...olds]) {
+      expect(searchPerfumes(cat, q).map((p) => p.key), q).toContain('T001');
+      expect(searchPerfumes(cat, q.replace(/\s+/g, '')).map((p) => p.key), `${q} 띄어쓰기 없이`).toContain('T001');
+    }
+  });
+});

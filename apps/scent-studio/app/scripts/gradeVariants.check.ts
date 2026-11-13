@@ -42,7 +42,8 @@ const IX: Ix[] = cat.perfumes.map((p) => {
 const N = IX.length;
 const roundHalfUp = (x: number) => Math.floor(x + 0.5);
 
-type Variant = 'now' | 'ga' | 'na' | 'da' | 'ra';
+/** ga3·ga4·ga5·ga6: ㉮의 "가장 무거운 K개까지 맞으면 만점"에서 K */
+type Variant = 'now' | 'ga3' | 'ga4' | 'ga5' | 'ga6' | 'na' | 'da' | 'ra';
 type Rec = { key: string; sim: number; accordSim: number; noteMatch: number };
 
 /** 엔진 recommend와 같은 순서·묶음·브랜드 제한으로 Top k (선호·불호 없음) */
@@ -50,7 +51,8 @@ function recommend(blend: BlendNote[], v: Variant, k = 10): Rec[] {
   const b = engine.blendVector(blend);
   const w = new Map(blend.map((x) => [x.noteKey, Math.log(1 + N / notes.get(x.noteKey)!.df)]));
   const wSum = [...w.values()].reduce((a, x) => a + x, 0);
-  const top4 = [...w.values()].sort((a, c) => c - a).slice(0, 4).reduce((a, x) => a + x, 0);
+  const K = v.startsWith('ga') ? Number(v.slice(2)) : 4;
+  const topK = [...w.values()].sort((a, c) => c - a).slice(0, K).reduce((a, x) => a + x, 0);
   const n = blend.length;
   const wNote = v === 'na' ? 0.35 : v === 'ra' && n > 3 ? (P.W_NOTE * 3) / n : P.W_NOTE;
   const wAcc = v === 'na' ? 0.55 : P.W_ACCORD + P.W_NOTE - wNote;
@@ -63,7 +65,7 @@ function recommend(blend: BlendNote[], v: Variant, k = 10): Rec[] {
     }
     let held = 0;
     for (const x of blend) if (ix.all.has(x.noteKey)) held += ix.p.noteWeights ? ix.p.noteWeights[x.noteKey] : 1.0 / ix.all.size;
-    const base = v === 'ga' ? Math.min(1, nm / top4) : nm / wSum;
+    const base = v.startsWith('ga') ? Math.min(1, nm / topK) : nm / wSum;
     const noteMatch = base * (P.STRENGTH_BASE + (1.0 - P.STRENGTH_BASE) * Math.sqrt(Math.min(held, 1.0)));
     return { ix, sim: (wAcc * accordSim + wNote * noteMatch) / (wAcc + wNote), accordSim, noteMatch };
   });
@@ -156,7 +158,9 @@ test('방법 비교', () => {
     const [vs, si] = perN.get(Math.min(9, Math.max(1, n)))!;
     return s >= vs ? 'VERY_SIMILAR' : s >= si ? 'SIMILAR' : 'REFERENCE';
   };
-  const VARS: [Variant, string][] = [['now', '지금'], ['ga', '㉮ 노트 4개까지만 만점 기준'], ['na', '㉯ 노트 비중 55→35%'], ['da', '㉰ 노트 수별 등급 기준'], ['ra', '㉱ 노트 많으면 노트 비중 줄이기']];
+  // VARIANTS=ga3,ga4 처럼 골라 돌릴 수 있다(없으면 전부)
+  const ALL: [Variant, string][] = [['now', '지금'], ['ga3', '㉮ K=3'], ['ga4', '㉮ 노트 4개까지만 만점 기준(K=4)'], ['ga5', '㉮ K=5'], ['ga6', '㉮ K=6'], ['na', '㉯ 노트 비중 55→35%'], ['da', '㉰ 노트 수별 등급 기준'], ['ra', '㉱ 노트 많으면 노트 비중 줄이기']];
+  const VARS = process.env.VARIANTS ? ALL.filter(([v]) => process.env.VARIANTS!.split(',').includes(v)) : ALL;
 
   // 같은 조합 묶음을 모든 방법에 쓴다
   seed = 20261113;

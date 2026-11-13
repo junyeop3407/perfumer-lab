@@ -21,8 +21,9 @@ if [ -z "$PY" ]; then
   echo "pytest가 설치된 Python 3.12 이상을 찾지 못했습니다: Windows py -m pip install -r pipeline/requirements.txt / Mac brew install python@3.12 → python3.12 -m pip install --break-system-packages -r pipeline/requirements.txt" >&2
   exit 1
 fi
+T0=$SECONDS # 단계마다 걸린 초를 요약 줄 끝에 적는다(2026-11-13 사장: 어느 단계가 오래 걸리는지)
 "$PY" -I -m pytest -q pipeline/tests >"$LOG" 2>&1 || fail "파이프라인"
-SUM_PIPE="파이프라인: $(grep -E '[0-9]+ (passed|failed)' "$LOG" | tail -1)"
+SUM_PIPE="파이프라인: $(grep -E '[0-9]+ (passed|failed)' "$LOG" | tail -1) [$((SECONDS - T0))초]"
 export SCENT_PY="$PY" # Vitest의 카탈로그 준비 테스트(prepare-catalog.mjs)가 같은 Python으로 샘플을 만든다
 
 # 2. 앱: 추천 엔진(골든·성질) 등 부품 단위 테스트 (Vitest)
@@ -31,14 +32,17 @@ if [ ! -d node_modules ]; then
   echo "app/node_modules가 없습니다: cd app && npm install" >&2
   exit 1
 fi
+T0=$SECONDS
 npx vitest run "$@" >"$LOG" 2>&1 || fail "Vitest"
-SUM_VITEST="Vitest: $(grep -E '^\s+Tests ' "$LOG" | tail -1 | sed -E 's/^\s+Tests\s+//')"
+SUM_VITEST="Vitest: $(grep -E '^\s+Tests ' "$LOG" | tail -1 | sed -E 's/^\s+Tests\s+//') [$((SECONDS - T0))초]"
 
 # 2-2. 앱 화면: 승인 + 회귀 (Playwright, 크롬). CI=1: 남아 있는 옛 웹 서버를 다시 쓰지 않고 새로 빌드한다
 rm -f test-results/check.json # 빌드가 깨져 결과를 못 쓰면 옛 결과로 통과하지 않게
+T0=$SECONDS
 CI=1 npx playwright test -c playwright.check.config.ts >/dev/null 2>&1
 node tests/check-playwright.mjs test-results/check.json >"$LOG" 2>&1 || fail "화면 테스트"
 SUM_SCREEN="$(tail -1 "$LOG")" # "승인 n/m 통과(…) · 회귀 n/n 통과"
+T_SCREEN=$((SECONDS - T0)) # 웹 빌드 + 승인 + 회귀(한 번에 돌아 따로 나누지 못함)
 cd .. || exit 1
 
 # 3. 서버: DB 마이그레이션·검사·권한 (JUnit + 내장 Postgres, Docker 필요 없음, Java 21)
@@ -49,11 +53,13 @@ if ! command -v java >/dev/null 2>&1 || ! java -version 2>&1 | grep -qE 'version
 fi
 # --rerun: 서버 코드가 안 바뀌어도 Gradle이 "UP-TO-DATE"로 건너뛰지 않고 매번 돈다(2026-11-12: -q라 건너뛴 게 안 보였음)
 rm -rf build/test-results/test # 옛 결과로 세지 않게
+T0=$SECONDS
 ./gradlew test --rerun --console=plain -q >"$LOG" 2>&1 || fail "서버(JUnit)"
 SUM_SERVER="$(node ../tests/junit-summary.mjs build/test-results/test 2>"$LOG")" || fail "서버(JUnit) 결과"
+SUM_SERVER="$SUM_SERVER [$((SECONDS - T0))초]"
 
 echo "$SUM_PIPE"
 echo "$SUM_VITEST"
 echo "화면 ${SUM_SCREEN%% · *}"
-echo "화면 ${SUM_SCREEN##* · }"
+echo "화면 ${SUM_SCREEN##* · } [화면 전체 ${T_SCREEN}초]"
 echo "$SUM_SERVER"
