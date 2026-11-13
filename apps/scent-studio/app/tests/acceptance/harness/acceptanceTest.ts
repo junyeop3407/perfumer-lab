@@ -413,8 +413,11 @@ export const test = base.extend<Fixtures>({
       };
     });
     const catalog = readFileSync(TEST_CATALOG);
-    await context.route('**/catalog.json.gz', (route) =>
-      route.fulfill({ status: 200, contentType: 'application/gzip', body: catalog }),
+    // 사이트 맨 위의 /catalog.json.gz만 가짜 카탈로그로 답한다. 다른 경로(예 /search/catalog.json.gz)는 실제 사이트처럼
+    // 서버로 가게 둔다 — 예전에는 아무 경로나 답해서 웹 주소 버그(5-3 망가뜨려 보기)를 가렸다.
+    await context.route(
+      (url) => url.pathname === '/catalog.json.gz',
+      (route) => route.fulfill({ status: 200, contentType: 'application/gzip', body: catalog }),
     );
     await server.install(context);
     await use(new ScentApp(context));
