@@ -16,7 +16,7 @@ import { Txt } from '@/src/ui/Txt';
 /** 계열 고르기 (테두리 칩, 고르면 primary(딥 그린) 테두리 + 체크 + 글자 — design_rules.md 6절. 골드는 "매우 비슷" 배지에만, 5-2 폰 확인 A) */
 export default function FamiliesScreen() {
   const catalog = useCatalog();
-  const { draft, setDraft } = useDraft();
+  const { draft, setDraft, setNextLevel } = useDraft();
   // fresh=1: 홈의 "새 조합 만들기"로 옴. 만들던 조합은 "다음"을 누를 때 비운다(뒤로 가면 그대로)
   const fresh = useLocalSearchParams<{ fresh?: string }>().fresh === '1';
   const [picked, setPicked] = useState<string[]>(fresh ? [] : draft.families);
@@ -72,6 +72,7 @@ export default function FamiliesScreen() {
         onPress={() => {
           const next = familiesNext(draft, picked, freshPending);
           setDraft(next.draft);
+          if (freshPending) setNextLevel('medium'); // 새 조합을 시작할 때만 강도를 중으로 되돌린다(2026-11-13 사장)
           setFreshPending(next.freshPending);
           go('/notes');
         }}

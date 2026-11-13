@@ -17,9 +17,21 @@ export const NOTE_SEARCH_ALIASES: Record<string, string[]> = {
   woods: ['우드'],
 };
 
+/** 영어 이름 고치기: 학명 대신 쓰는 영어 이름(2026-11-13 사장: "감초 Glycyrrhiza glabra" → 영어 이름). 검색은 key로도 그대로 된다 */
+export const NOTE_EN_FIXES: Record<string, string> = {
+  'glycyrrhiza glabra': 'Licorice root',
+};
+
 export function fixNoteNames(catalog: Catalog): Catalog {
-  if (!catalog.notes.some((n) => NOTE_NAME_FIXES[n.key] && NOTE_NAME_FIXES[n.key] !== n.nameKo)) return catalog;
-  return { ...catalog, notes: catalog.notes.map((n) => (NOTE_NAME_FIXES[n.key] ? { ...n, nameKo: NOTE_NAME_FIXES[n.key] } : n)) };
+  const needs = (n: Note) =>
+    (NOTE_NAME_FIXES[n.key] && NOTE_NAME_FIXES[n.key] !== n.nameKo) || (NOTE_EN_FIXES[n.key] && NOTE_EN_FIXES[n.key] !== n.nameEn);
+  if (!catalog.notes.some(needs)) return catalog;
+  return {
+    ...catalog,
+    notes: catalog.notes.map((n) =>
+      needs(n) ? { ...n, nameKo: NOTE_NAME_FIXES[n.key] ?? n.nameKo, nameEn: NOTE_EN_FIXES[n.key] ?? n.nameEn } : n,
+    ),
+  };
 }
 
 /** 화면에 나오는(숨김 아닌) 노트 중 한글 이름이 다른 노트와 같은 노트 key */

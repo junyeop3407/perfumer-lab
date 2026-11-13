@@ -45,7 +45,8 @@ export function familiesNext(draft: Draft, families: string[], freshPending: boo
 
 const usable = (n: Note | undefined): n is Note => !!n && n.tier !== 'hidden';
 
-export function addNote(draft: Draft, layer: Layer, noteKey: string, catalog?: Catalog): AddResult {
+/** level: 새 노트의 강도. 화면은 마지막에 고른 강도를 넘긴다(2026-11-13 사장: 다른 강도를 누르기 전까지 유지) */
+export function addNote(draft: Draft, layer: Layer, noteKey: string, catalog?: Catalog, level: IntensityLevel = 'medium'): AddResult {
   if (catalog && !usable(catalog.notes.find((n) => n.key === noteKey))) return { ok: false, error: 'NOT_FOUND' };
   const existing = draft.notes.find((n) => n.noteKey === noteKey);
   if (existing) {
@@ -55,7 +56,7 @@ export function addNote(draft: Draft, layer: Layer, noteKey: string, catalog?: C
   if (draft.notes.filter((n) => n.layer === layer).length >= EngineParams.MAX_PER_LAYER) {
     return { ok: false, error: 'LAYER_LIMIT' };
   }
-  return { ok: true, draft: { ...draft, notes: [...draft.notes, { noteKey, layer, level: 'medium' }] } };
+  return { ok: true, draft: { ...draft, notes: [...draft.notes, { noteKey, layer, level }] } };
 }
 
 export function removeNote(draft: Draft, noteKey: string): Draft {

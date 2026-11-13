@@ -132,15 +132,19 @@ export function prepareCatalog({ source, dir = CATALOG_DIR, publicDir = PUBLIC_D
   if (publicBuild && source !== 'sample') throw new Error('공개 데모 빌드는 CATALOG_SOURCE=sample만 허용합니다');
   const p = catalogPaths(dir, publicDir);
   let result;
+  let from;
   if (source === 'real') {
     result = { source, version: checkReal(p.real) };
-    place(p.real, p.active);
-    place(p.real, p.web);
+    from = p.real;
   } else {
     result = { source, ...makeSample(p.sample, publicBuild, env, python) };
-    place(p.sample, p.active);
-    place(p.sample, p.web);
+    from = p.sample;
   }
+  // 공개 빌드: 복사하기 **전에** 넣을 파일이 샘플인지 확인한다(2026-11-13 사장 지시 — 예전에는 복사한 뒤에 확인해서,
+  // 첫 막기가 빠지면 실제 카탈로그가 public/에 먼저 들어갔다). 복사한 뒤 확인(아래)도 그대로 둔다.
+  if (publicBuild) assertPublicSource(p, readFileSync(from));
+  place(from, p.active);
+  place(from, p.web);
   if (publicBuild) {
     const want = readFileSync(p.sample);
     for (const f of [p.active, p.web]) {
@@ -148,6 +152,17 @@ export function prepareCatalog({ source, dir = CATALOG_DIR, publicDir = PUBLIC_D
     }
   }
   return result;
+}
+
+/**
+ * 공개 빌드에 넣으려는 파일(bytes)이 샘플 자리의 파일과 같은지 — 복사하기 전에 부른다.
+ * @param {ReturnType<typeof catalogPaths>} p
+ * @param {Uint8Array} bytes
+ */
+export function assertPublicSource(p, bytes) {
+  if (!existsSync(p.sample) || !readFileSync(p.sample).equals(Buffer.from(bytes))) {
+    throw new Error('공개 빌드에는 샘플 카탈로그만 넣을 수 있습니다(복사하지 않았습니다)');
+  }
 }
 
 /**

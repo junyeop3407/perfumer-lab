@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { catalogPaths, prepareCatalog, releaseNotePath } from '../../scripts/prepare-catalog.mjs';
+import { assertPublicSource, catalogPaths, prepareCatalog, releaseNotePath } from '../../scripts/prepare-catalog.mjs';
 import { parseCatalogBytes, validateCatalog } from '../../src/catalog/loadCatalog';
 import { RecommendationEngine } from '../../src/engine/RecommendationEngine';
 
@@ -101,10 +101,25 @@ describe('CATALOG_SOURCE 고르기', () => {
     expect(readFileSync(p.web).equals(body)).toBe(true);
   });
 
-  it('공개 데모 빌드는 real을 허용하지 않는다', () => {
+  it('공개 데모 빌드는 real을 허용하지 않는다 — 정확한 문구로 막고, 빌드 자리(앱·웹 public)에 아무것도 복사하지 않는다', () => {
     const body = writeReal();
     writeNote(body);
-    expect(() => prepareCatalog(opts({ source: 'real', publicBuild: true }))).toThrow(/sample/);
+    // 예전에는 /sample/만 봐서, 이 막기를 지워도 다른 오류의 파일 경로("catalog.sample.json.gz")로 통과했다(2026-11-13)
+    expect(() => prepareCatalog(opts({ source: 'real', publicBuild: true }))).toThrow(
+      '공개 데모 빌드는 CATALOG_SOURCE=sample만 허용합니다',
+    );
+    expect(existsSync(p.active), '앱 빌드 자리에 복사됨').toBe(false);
+    expect(existsSync(p.web), '웹 public에 복사됨').toBe(false);
+  });
+
+  it('공개 빌드의 두 번째 막기는 복사하기 전에 막는다: 넣을 파일이 샘플과 다르면 빌드 자리에 아무것도 복사하지 않는다', () => {
+    // 첫 막기를 지나도(예: 샘플을 만든 뒤 바뀌어 실제 파일이 된 경우) 복사 전에 멈춰야 한다
+    writeFileSync(p.sample, writeReal()); // 샘플 자리에 둔 파일
+    expect(() => assertPublicSource(p, Buffer.from('not-the-sample'))).toThrow(
+      '공개 빌드에는 샘플 카탈로그만 넣을 수 있습니다(복사하지 않았습니다)',
+    );
+    expect(existsSync(p.active)).toBe(false);
+    expect(existsSync(p.web)).toBe(false);
   });
 });
 

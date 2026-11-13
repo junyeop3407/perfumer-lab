@@ -28,7 +28,7 @@ type Notice = { kind: 'limit' } | { kind: 'other'; layer: Layer } | null;
  */
 export default function NotesScreen() {
   const catalog = useCatalog();
-  const { draft, setDraft } = useDraft();
+  const { draft, setDraft, nextLevel, setNextLevel } = useDraft();
   const { width } = useWindowDimensions();
   const wide = width >= WIDE_MIN_WIDTH;
   const insets = useSafeAreaInsets();
@@ -60,11 +60,11 @@ export default function NotesScreen() {
   );
 
   // 목록 칩의 누르기는 최신 상태를 보는 고정 함수로 (memo된 칩이 다시 그려지지 않게)
-  const latest = useRef({ draft, layer, cat });
-  latest.current = { draft, layer, cat };
+  const latest = useRef({ draft, layer, cat, nextLevel });
+  latest.current = { draft, layer, cat, nextLevel };
   const pick = useCallback(
     (k: string) => {
-      const { draft: d, layer: l, cat: c } = latest.current;
+      const { draft: d, layer: l, cat: c, nextLevel: lv } = latest.current;
       if (!c) return;
       const already = d.notes.find((n) => n.noteKey === k)?.layer ?? null;
       if (already === l) {
@@ -72,7 +72,7 @@ export default function NotesScreen() {
         setNotice(null);
         return;
       }
-      const r = addNote(d, l, k, c);
+      const r = addNote(d, l, k, c, lv); // 마지막에 누른 강도로 시작(2026-11-13 사장)
       if (r.ok) {
         setDraft(r.draft);
         setFocusKey(k);
@@ -187,7 +187,10 @@ export default function NotesScreen() {
               noteKey={focused.noteKey}
               noteName={names.label(noteOf(focused.noteKey))}
               value={focused.level}
-              onChange={(l) => setDraft(setLevel(draft, focused.noteKey, l))}
+              onChange={(l) => {
+                setDraft(setLevel(draft, focused.noteKey, l));
+                setNextLevel(l); // 다음 노트도 이 강도로 시작
+              }}
             />
           </View>
         )}
