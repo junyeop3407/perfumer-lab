@@ -8,8 +8,12 @@ export type AuthMode = 'supabase' | 'fake';
 export const AppConfig = {
   /** 사용자 데이터 서버 주소. 예: https://api.example.com/api/v1 */
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8080/api/v1',
-  /** 앱에 넣은 카탈로그 파일 이름 (웹에서는 같은 주소 아래 정적 파일, docs/design.md 7절) */
-  catalogFile: 'catalog.json.gz',
+  /**
+   * 웹에서 읽는 카탈로그 파일 주소 (사이트 맨 위의 정적 파일, docs/design.md 7절).
+   * 상대 주소면 /search/T001 같은 주소에서 /search/catalog.json.gz를 찾아 실패했다(5-3 망가뜨려 보기).
+   * EXPO_BASE_URL: app.json experiments.baseUrl(GitHub Pages 하위 경로, Plan B). 없으면 ''.
+   */
+  catalogFile: `${process.env.EXPO_BASE_URL ?? ''}/catalog.json.gz`,
   /** fake: 승인 테스트용 로그인 흉내("Google로 로그인"을 누르면 바로 로그인) */
   authMode: (process.env.EXPO_PUBLIC_AUTH_MODE === 'fake' ? 'fake' : 'supabase') as AuthMode,
   /** 이 시간이 지나도 서버가 대답하지 않으면 "서버를 깨우는 중이에요"를 보여 준다 */

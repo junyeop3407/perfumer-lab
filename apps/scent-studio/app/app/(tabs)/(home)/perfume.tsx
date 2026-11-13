@@ -15,7 +15,10 @@ export default function PerfumeFromRecs() {
   return (
     <Screen needsCatalog>
       <Header title={S.recsTitle} onBack={goBack} />
-      <View>{key ? <PerfumeDetail perfumeKey={key} rec={rec} blend={blend} /> : null}</View>
+      {/* key가 없으면 빈 key로 열어 "찾지 못했어요"를 보여 준다(5-3 망가뜨려 보기) */}
+      <View>
+        <PerfumeDetail perfumeKey={key ?? ''} rec={rec} blend={blend} />
+      </View>
     </Screen>
   );
 }

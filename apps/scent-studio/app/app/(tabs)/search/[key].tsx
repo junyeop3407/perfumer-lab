@@ -11,7 +11,7 @@ export default function PerfumeFromSearch() {
   return (
     <Screen needsCatalog>
       <Header title={S.searchTitle} onBack={goBack} />
-      {key ? <PerfumeDetail perfumeKey={key} /> : null}
+      <PerfumeDetail perfumeKey={key ?? ''} />
     </Screen>
   );
 }

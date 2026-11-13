@@ -79,7 +79,6 @@ export const S = {
   recsEmpty: '추천할 향수를 찾지 못했어요. 노트를 바꿔 다시 찾아보세요.',
   recsPickHint: '향수를 누르면 여기에 자세히 보여 드려요.',
   matchedLabel: '겹친 노트 · ',
-  matchedNone: '겹친 노트 없음',
   sharedNone: '공통 어코드 적음',
   rankUnit: '위',
 
@@ -111,7 +110,7 @@ export const S = {
   matchedTitle: '겹친 노트',
   sameLayer: '같은 층',
   otherLayer: '다른 층',
-  matchedEmpty: '내 조합과 같은 노트가 없어요.',
+  matchedEmpty: '겹친 노트는 없지만 어코드 구성이 비슷해요',
   onlyTitle: '이 향수에만 있는 노트',
   onlyEmpty: '이 향수에만 있는 노트는 없어요.',
   detailDisclaimer: '데이터상 유사도예요. 실제로 맡았을 때와 다를 수 있어요.',

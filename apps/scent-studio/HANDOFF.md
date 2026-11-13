@@ -4,9 +4,9 @@
 실행 방법: `cd app && npx expo start`(폰 Expo Go QR / `a` 안드로이드 에뮬레이터 / `w` 웹), 처음엔 `CATALOG_SOURCE=real npm run catalog:prepare`. 자세히 `docs/device_setup.md`. 디자인 시안: `docs/design/mock.html`
 테스트 실행: `bash tests/run.sh`
 리뷰 기준: 16f3ebd (5-3 시작 직전, 2026-11-13)
-결과: `bash tests/run.sh`(2026-11-13, 3분 58초) 파이프라인 159/159 · Vitest 210/210 · 화면 승인 22/43 통과(B1~B7·F1·F2·H5 새로 통과, 아직 화면 없음 21 = `app/tests/acceptance/pending.txt`) · 화면 회귀 9/9 · 서버 656/656 + 건너뜀 1(RedTeamRig, 전체 657 그대로). 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9) + B7(2026-11-12 승인), 목표 웹 54/56 + B7 + 카카오 보류 2
+결과: `bash tests/run.sh`(2026-11-13, 3분 56초) 파이프라인 159/159 · Vitest 210/210 · 화면 승인 22/43 통과(B1~B7·F1·F2·H5 새로 통과, 아직 화면 없음 21 = `app/tests/acceptance/pending.txt`) · 화면 회귀 12/12 · 서버 656/656 + 건너뜀 1(RedTeamRig, 전체 657 그대로). 승인 목록 65개(A~I 41 + J·K 15 + L 기기 9) + B7(2026-11-12 승인), 목표 웹 54/56 + B7 + 카카오 보류 2
 사용자에게 남은 질문: 디자인 7(폰 오른쪽 위 회색 원형 버튼 = Expo Go 개발자 메뉴라 앱에는 없음) 답 대기. 5-9 전까지: 개발용 빌드 방식·아이폰 서명
-다음 할 일: **5-3 사장 검토** — 캡처(`docs/design/screens/5-3/`: 추천 목록·등급 설명 ⓘ·상세·찾기·PC 나란히, 라이트·다크) OK + 폰 확인(아래 "폰 확인 순서"). QA 지적 중 사장 확인 1건: 실제로 겹친 노트가 없는 추천은 카드에 "겹친 노트 없음"으로 나온다(B2는 통과, `docs/review.md` 5-3). OK면 5-4(취향 C1~C3). 5-3 결정: 등급 설명은 목록 헤더 ⓘ 하나 + 사장 확정 문구(`docs/grade_explanation.md`, 근거는 앱에 넣지 않음). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
+다음 할 일: **5-3 사장 검토** — 캡처(`docs/design/screens/5-3/`: 추천 목록·등급 설명 ⓘ·상세·찾기·PC 나란히, 라이트·다크) OK + 폰 확인(아래 "폰 확인 순서"). 2026-11-13 사장 지시 반영 끝(겹친 노트 없는 추천: 카드 줄 숨김 + 상세 한 줄, 망가뜨려 보기 22개 모두 잡힘 + 이상하게 쓰기에서 웹 주소 버그 고침 — `docs/review.md` 5-3). **사장은 폰 확인 뒤 OK를 준다고 함.** 폰에서 볼 것: 첫 향수 검색 속도(이 PC 웹 약 1초), 추천 목록 열기 속도(이 PC 웹 0.86초). OK면 5-4(취향 C1~C3). 5-3 결정: 등급 설명은 목록 헤더 ⓘ 하나 + 사장 확정 문구(`docs/grade_explanation.md`, 근거는 앱에 넣지 않음). 다른 컴퓨터에서는 비공개 저장소 `pipeline-data-out/private_docs/`를 `pipeline/data/out/private_docs/`에 복사하고, 실제 카탈로그는 `cd backend && ./gradlew dbCatalogFetch -Papply=true`로 받는다
 
 ## ★ 다음 세션 시작 (2026-11-12 세션 끝 — 5-2 끝, 다음 5-3 추천 화면)
 1. **시작점: 5-3(추천 화면) 시작.** `/build-app 이어서` → `docs/plan_stage5.md` 5-3. 리뷰 기준 커밋을 5-3 시작 커밋으로 새로 적는다. 승인 테스트 **B1~B7, F1·F2, H5**를 통과시키고, 통과한 것은 `app/tests/acceptance/pending.txt`에서 지운다(목록에 있는데 통과하면 run.sh가 실패로 알려 줌. B7은 아직 테스트 코드가 없어 5-3에서 새로 쓴다).
@@ -37,6 +37,7 @@
    ```
    cd apps\scent-studio\app       # 저장소 폴더(이 PC: C:\git\perfumer-lab)에서
    git log --oneline -1          # 최신 커밋인지 확인
+   $env:CATALOG_SOURCE="real"; npm run catalog:prepare   # "카탈로그 준비: real (2026.11.05)"가 나와야 함
    npx expo start -c             # 학교·카페 와이파이면: npx expo start -c --tunnel
    ```
    1. 폰에서 **Expo Go를 최근 앱 화면에서 위로 밀어 완전히 닫는다**(열려 있으면 QR을 다시 찍어도 옛 화면).

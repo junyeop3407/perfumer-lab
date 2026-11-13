@@ -124,5 +124,5 @@ export function searchPerfumes(catalog: Catalog, query: string): Perfume[] {
 
 /** 검색용: 띄어쓰기·대소문자 무시, 악센트 무시(Lumiere = Lumière) */
 function fold(s: string): string {
-  return normalizeQuery(s.normalize('NFD').replace(/[̀-ͯ]/g, '')).normalize('NFC');
+  return normalizeQuery(s.normalize('NFD').replace(/[\u0300-\u036f]/g, '')).normalize('NFC');
 }

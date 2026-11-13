@@ -44,7 +44,6 @@ export function RecCard({
   const matched = overlaps(perfume, blend).map((o) => engine.note(o.noteKey)?.nameKo ?? o.noteKey);
   const score = scorePercent(rec);
   const sharedText = shared.length > 0 ? shared.join(' · ') : S.sharedNone;
-  const matchedText = matched.length > 0 ? `${S.matchedLabel}${matched.join(', ')}` : S.matchedNone;
   return (
     <Pressable
       testID={TestIds.rec(rank)}
@@ -70,9 +69,12 @@ export function RecCard({
         <Txt variant="caption" className="mt-1" testID={TestIds.recSharedAccords(rank)}>
           {sharedText}
         </Txt>
-        <Txt variant="caption" sub className="mt-0.5" testID={TestIds.recMatchedNotes(rank)}>
-          {matchedText}
-        </Txt>
+        {/* 실제로 겹친 노트가 없으면 이 줄을 숨긴다(2026-11-13 사장). 상세에서 "겹친 노트는 없지만…"으로 알린다 */}
+        {matched.length > 0 && (
+          <Txt variant="caption" sub className="mt-0.5" testID={TestIds.recMatchedNotes(rank)}>
+            {`${S.matchedLabel}${matched.join(', ')}`}
+          </Txt>
+        )}
       </View>
       <View className="items-end gap-1.5 pr-1">
         <Txt variant="label" testID={TestIds.recScore(rank)}>{`${score}%`}</Txt>
