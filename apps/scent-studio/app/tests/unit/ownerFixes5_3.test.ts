@@ -47,3 +47,13 @@ describe('감초 Glycyrrhiza glabra → 영어 이름으로(사장 6번)', () =>
     expect(noteLabel(fixed.notes[0], amb)).toBe('감초 Liquorice');
   });
 });
+
+describe('카드 구분 ①: 이 향수에 더 많은 어코드(사장 4번)', () => {
+  it('향수 % − 내 조합 %가 가장 큰 어코드, 10%p 이상일 때만', async () => {
+    const { extraAccord } = await import('../../src/recs/perfumeView');
+    const mine = [{ accord: 'citrus', percent: 50 }, { accord: 'green', percent: 30 }, { accord: 'woody', percent: 20 }];
+    expect(extraAccord(mine, [{ accord: 'citrus', percent: 40 }, { accord: 'woody', percent: 45 }, { accord: 'green', percent: 15 }])).toBe('woody');
+    expect(extraAccord(mine, [{ accord: 'citrus', percent: 45 }, { accord: 'amber', percent: 9 }])).toBeNull(); // 9%p는 안 보임
+    expect(extraAccord(mine, [{ accord: 'amber', percent: 10 }])).toBe('amber'); // 내 조합에 없던 어코드 10%
+  });
+});

@@ -107,7 +107,7 @@ export function validateCatalog(raw: unknown): Catalog {
   uniqueKeys(perfumes, 'key', 'perfumes');
   perfumes.forEach((p, i) => {
     const x = p as Record<string, unknown>;
-    need(isStr(x.brand) && isStr(x.name) && isStr(x.group), `perfumes[${i}] 이름`);
+    need(isStr(x.brand) && isStr(x.name) && isStr(x.group) && (x.nameRaw === undefined || isStr(x.nameRaw)), `perfumes[${i}] 이름`);
     need(x.year === null || isInt(x.year), `perfumes[${i}].year`);
     need(x.concentration === null || isStr(x.concentration), `perfumes[${i}].concentration`);
     need((x.rating === null || isNum(x.rating)) && isNum(x.ratingCount), `perfumes[${i}] 평점`);

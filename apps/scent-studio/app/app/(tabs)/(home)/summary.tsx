@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useWindowDimensions, View } from 'react-native';
 
+import { brandLabel } from '@/src/catalog/brandNames';
 import { scorePercent } from '@/src/recs/perfumeView';
 import { useRecs } from '@/src/recs/useRecs';
 import { GradeBadge } from '@/src/ui/Grade';
@@ -75,7 +76,7 @@ export default function SummaryScreen() {
             <View key={r.perfumeKey} className="rounded border border-line bg-surface p-4 dark:border-line-dark dark:bg-surface-dark">
               <View className="flex-row items-baseline justify-between">
                 <Txt variant="caption" sub>
-                  {p.brand}
+                  {brandLabel(p.brand)}
                 </Txt>
                 <Txt variant="label">{`${scorePercent(r)}%`}</Txt>
               </View>

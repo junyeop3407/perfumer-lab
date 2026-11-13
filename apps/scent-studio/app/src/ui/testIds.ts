@@ -63,6 +63,8 @@ export const TestIds = {
   recGrade: (rank: number) => `rec:${rank}:grade`,
   recSharedAccords: (rank: number) => `rec:${rank}:shared`,
   recMatchedNotes: (rank: number) => `rec:${rank}:matched`,
+  /** 카드 구분 ①: 이 향수에 더 많은 어코드 "+ 우디" (2026-11-13 사장) */
+  recExtraAccord: (rank: number) => `rec:${rank}:extra`,
   /** 등급 설명 ⓘ (목록 헤더에 하나, 2026-11-13 사장 결정) */
   GRADE_INFO: 'recs:gradeInfo',
   GRADE_INFO_SHEET: 'recs:gradeInfoSheet',

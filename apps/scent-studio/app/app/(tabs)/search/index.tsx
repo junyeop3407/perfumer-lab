@@ -1,6 +1,7 @@
 import { useDeferredValue, useMemo, useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
+import { brandLabel } from '@/src/catalog/brandNames';
 import { useCatalog } from '@/src/catalog/CatalogContext';
 import { searchPerfumes } from '@/src/recs/perfumeView';
 import { S } from '@/src/strings.ko';
@@ -70,11 +71,11 @@ export default function SearchScreen() {
               key={p.key}
               testID={TestIds.searchResult(p.key)}
               accessibilityRole="button"
-              accessibilityLabel={`${p.brand} ${p.name}`}
+              accessibilityLabel={`${brandLabel(p.brand)} ${p.name}`}
               onPress={() => go(`/search/${encodeURIComponent(p.key)}`)}
               className="min-h-touch justify-center border-b border-line py-3 active:bg-surfaceAlt dark:border-line-dark dark:active:bg-surfaceAlt-dark">
               <Txt variant="caption" sub>
-                {p.brand}
+                {brandLabel(p.brand)}
               </Txt>
               <Txt variant="noteName">{p.name}</Txt>
               {(p.concentration || p.year) && (

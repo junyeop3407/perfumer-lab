@@ -67,7 +67,14 @@ export function GradeInfoSheet({ visible, onClose }: { visible: boolean; onClose
     ['REFERENCE', S.gradeInfoRef],
   ];
   return (
-    <Modal visible={visible} transparent animationType={reduceMotion ? 'none' : wide ? 'fade' : 'slide'} onRequestClose={onClose}>
+    // 안드로이드: 내비게이션 바 아래까지 그려야 아래 여백(24 + insets.bottom)이 한 번만 들어간다(2026-11-13 사장 6번)
+    <Modal
+      visible={visible}
+      transparent
+      statusBarTranslucent
+      navigationBarTranslucent
+      animationType={reduceMotion ? 'none' : wide ? 'fade' : 'slide'}
+      onRequestClose={onClose}>
       <View className={`flex-1 ${wide ? 'items-center justify-center' : 'justify-end'}`}>
         <Pressable
           className="absolute inset-0 bg-ink/30 dark:bg-bg-dark/60"

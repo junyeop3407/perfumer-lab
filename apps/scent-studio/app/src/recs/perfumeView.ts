@@ -4,6 +4,7 @@
  * - "겹친 노트"는 실제 같은 노트만, 같은 층 / 다른 층으로 나눈다(2026-11-12 사장 결정). 같은 계열 일치는 보여 주지 않는다.
  */
 import { normalizeQuery } from '../blend/blendDraft';
+import { brandSearchNames } from '../catalog/brandNames';
 import type { RecommendationEngine } from '../engine/RecommendationEngine';
 import { LAYERS, type AccordRatio, type BlendNote, type Catalog, type Layer, type Perfume, type Recommendation } from '../engine/types';
 
@@ -75,6 +76,24 @@ export function perfumeAccords(engine: RecommendationEngine, catalog: Catalog, p
     .sort((a, b) => b.percent - a.percent || keys.indexOf(a.accord) - keys.indexOf(b.accord));
 }
 
+/** 카드 구분 ①: "+ 우디"로 보일 기준 — 이 향수 %가 내 조합보다 이만큼(%p) 이상 많을 때만 (2026-11-13 사장 4번) */
+export const EXTRA_ACCORD_MIN = 10;
+
+/** 이 향수에 내 조합보다 가장 많이 더 있는 어코드(향수 % − 내 조합 %가 가장 큰 것). EXTRA_ACCORD_MIN 미만이면 null */
+export function extraAccord(mine: readonly AccordRatio[], theirs: readonly AccordRatio[]): string | null {
+  const m = new Map(mine.map((r) => [r.accord, r.percent]));
+  let best: string | null = null;
+  let gap = EXTRA_ACCORD_MIN - 1e-9;
+  for (const r of theirs) {
+    const d = r.percent - (m.get(r.accord) ?? 0);
+    if (d > gap) {
+      gap = d;
+      best = r.accord;
+    }
+  }
+  return best;
+}
+
 /** 비교 막대 한 줄: 내 조합 % / 이 향수 % */
 export type CompareRow = { accord: string; mine: number; theirs: number };
 
@@ -103,7 +122,8 @@ const searchIndexCache = new WeakMap<Catalog, Indexed[]>();
 export function perfumeSearchIndex(catalog: Catalog): Indexed[] {
   let idx = searchIndexCache.get(catalog);
   if (!idx) {
-    idx = catalog.perfumes.map((p) => ({ p, names: [p.name, p.brand, `${p.brand}${p.name}`].map(fold) }));
+    // 한글 브랜드 이름·별칭으로도 찾는다(2026-11-13 사장, brandNames.ts)
+    idx = catalog.perfumes.map((p) => ({ p, names: [p.name, p.brand, `${p.brand}${p.name}`, ...brandSearchNames(p.brand)].map(fold) }));
     searchIndexCache.set(catalog, idx);
   }
   return idx;

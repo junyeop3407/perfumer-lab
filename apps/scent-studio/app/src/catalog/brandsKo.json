@@ -1,0 +1,926 @@
+{
+ "Guerlain": {
+  "ko": "겔랑",
+  "aliases": []
+ },
+ "XerJoff": {
+  "ko": "제르조프",
+  "aliases": [
+   "세르조프"
+  ]
+ },
+ "Giorgio Armani": {
+  "ko": "조르지오 아르마니",
+  "aliases": [
+   "아르마니"
+  ]
+ },
+ "Amouage": {
+  "ko": "아무아쥬",
+  "aliases": []
+ },
+ "Dior": {
+  "ko": "디올",
+  "aliases": [
+   "크리스찬디올"
+  ]
+ },
+ "Yves Saint Laurent": {
+  "ko": "입생로랑",
+  "aliases": [
+   "생로랑",
+   "YSL"
+  ]
+ },
+ "Calvin Klein": {
+  "ko": "캘빈 클라인",
+  "aliases": [
+   "CK"
+  ]
+ },
+ "Hugo Boss": {
+  "ko": "휴고 보스",
+  "aliases": [
+   "보스"
+  ]
+ },
+ "Acqua di Parma": {
+  "ko": "아쿠아 디 파르마",
+  "aliases": []
+ },
+ "Roja Parfums": {
+  "ko": "로자 퍼퓸",
+  "aliases": [
+   "로자"
+  ]
+ },
+ "Bvlgari": {
+  "ko": "불가리",
+  "aliases": []
+ },
+ "Dolce & Gabbana": {
+  "ko": "돌체앤가바나",
+  "aliases": [
+   "돌체 가바나",
+   "D&G"
+  ]
+ },
+ "Paco Rabanne": {
+  "ko": "파코 라반",
+  "aliases": [
+   "라반"
+  ]
+ },
+ "Penhaligon's": {
+  "ko": "펜할리곤스",
+  "aliases": []
+ },
+ "Chanel": {
+  "ko": "샤넬",
+  "aliases": []
+ },
+ "Lancôme": {
+  "ko": "랑콤",
+  "aliases": []
+ },
+ "Gucci": {
+  "ko": "구찌",
+  "aliases": []
+ },
+ "Byredo": {
+  "ko": "바이레도",
+  "aliases": []
+ },
+ "Tom Ford": {
+  "ko": "톰 포드",
+  "aliases": []
+ },
+ "Creed": {
+  "ko": "크리드",
+  "aliases": []
+ },
+ "Givenchy": {
+  "ko": "지방시",
+  "aliases": []
+ },
+ "Mancera": {
+  "ko": "맨세라",
+  "aliases": [
+   "만세라"
+  ]
+ },
+ "Parfums de Marly": {
+  "ko": "퍼퓸 드 말리",
+  "aliases": [
+   "드말리",
+   "말리"
+  ]
+ },
+ "Jil Sander": {
+  "ko": "질 샌더",
+  "aliases": []
+ },
+ "Prada": {
+  "ko": "프라다",
+  "aliases": []
+ },
+ "Tiziana Terenzi": {
+  "ko": "티지아나 테렌지",
+  "aliases": []
+ },
+ "Lalique": {
+  "ko": "랄리크",
+  "aliases": []
+ },
+ "Joop!": {
+  "ko": "욥",
+  "aliases": [
+   "조프"
+  ]
+ },
+ "L'Artisan Parfumeur": {
+  "ko": "라티잔 퍼퓨머",
+  "aliases": [
+   "아티잔"
+  ]
+ },
+ "Versace": {
+  "ko": "베르사체",
+  "aliases": []
+ },
+ "Mugler": {
+  "ko": "뮈글러",
+  "aliases": [
+   "무글러",
+   "티에리 뮈글러"
+  ]
+ },
+ "Burberry": {
+  "ko": "버버리",
+  "aliases": []
+ },
+ "Van Cleef & Arpels": {
+  "ko": "반클리프 아펠",
+  "aliases": [
+   "반클리프"
+  ]
+ },
+ "Issey Miyake": {
+  "ko": "이세이 미야케",
+  "aliases": []
+ },
+ "M. Micallef": {
+  "ko": "엠 미칼레프",
+  "aliases": [
+   "미칼레프"
+  ]
+ },
+ "Kenzo": {
+  "ko": "겐조",
+  "aliases": [
+   "켄조"
+  ]
+ },
+ "Montale": {
+  "ko": "몽탈",
+  "aliases": [
+   "몬탈레"
+  ]
+ },
+ "Goutal": {
+  "ko": "구딸",
+  "aliases": [
+   "아닉구딸"
+  ]
+ },
+ "Valentino": {
+  "ko": "발렌티노",
+  "aliases": []
+ },
+ "Rasasi": {
+  "ko": "라사시",
+  "aliases": []
+ },
+ "Kilian": {
+  "ko": "킬리안",
+  "aliases": [
+   "바이킬리안"
+  ]
+ },
+ "Nishane": {
+  "ko": "니샤네",
+  "aliases": []
+ },
+ "Davidoff": {
+  "ko": "다비도프",
+  "aliases": []
+ },
+ "Editions de Parfums Frédéric Malle": {
+  "ko": "프레데릭 말",
+  "aliases": [
+   "말",
+   "에디션 드 퍼퓸"
+  ]
+ },
+ "Jean Paul Gaultier": {
+  "ko": "장 폴 고티에",
+  "aliases": [
+   "고티에"
+  ]
+ },
+ "Jo Malone": {
+  "ko": "조 말론",
+  "aliases": [
+   "조말론런던"
+  ]
+ },
+ "Estée Lauder": {
+  "ko": "에스티 로더",
+  "aliases": []
+ },
+ "Zoologist": {
+  "ko": "주올로지스트",
+  "aliases": []
+ },
+ "Ormonde Jayne": {
+  "ko": "오르몽드 제인",
+  "aliases": []
+ },
+ "Juliette Has A Gun": {
+  "ko": "줄리엣 해즈 어 건",
+  "aliases": [
+   "줄리엣"
+  ]
+ },
+ "Maison Margiela": {
+  "ko": "메종 마르지엘라",
+  "aliases": [
+   "마르지엘라",
+   "레플리카"
+  ]
+ },
+ "Etat Libre d'Orange": {
+  "ko": "에따 리브르 도랑쥬",
+  "aliases": [
+   "에따리브르"
+  ]
+ },
+ "Armaf": {
+  "ko": "아르마프",
+  "aliases": []
+ },
+ "Hermès": {
+  "ko": "에르메스",
+  "aliases": []
+ },
+ "Pierre Guillaume": {
+  "ko": "피에르 기욤",
+  "aliases": []
+ },
+ "Etro": {
+  "ko": "에트로",
+  "aliases": []
+ },
+ "bdk Parfums": {
+  "ko": "비디케이 퍼퓸",
+  "aliases": [
+   "BDK"
+  ]
+ },
+ "Montblanc": {
+  "ko": "몽블랑",
+  "aliases": []
+ },
+ "Stéphane Humbert Lucas": {
+  "ko": "스테판 험버트 루카스",
+  "aliases": []
+ },
+ "Al Haramain / الحرمين": {
+  "ko": "알 하라마인",
+  "aliases": []
+ },
+ "Histoires de Parfums": {
+  "ko": "히스토아 드 퍼퓸",
+  "aliases": []
+ },
+ "Marc Jacobs": {
+  "ko": "마크 제이콥스",
+  "aliases": []
+ },
+ "Carolina Herrera": {
+  "ko": "캐롤리나 헤레라",
+  "aliases": []
+ },
+ "Lubin": {
+  "ko": "뤼뱅",
+  "aliases": [
+   "루빈"
+  ]
+ },
+ "Elizabeth Arden": {
+  "ko": "엘리자베스 아덴",
+  "aliases": []
+ },
+ "Narciso Rodriguez": {
+  "ko": "나르시소 로드리게즈",
+  "aliases": [
+   "나르시소"
+  ]
+ },
+ "Carner": {
+  "ko": "카르네르",
+  "aliases": [
+   "카너"
+  ]
+ },
+ "Yves Rocher": {
+  "ko": "이브 로쉐",
+  "aliases": []
+ },
+ "Nicolaï / Parfums de Nicolaï": {
+  "ko": "니콜라이",
+  "aliases": []
+ },
+ "Cartier": {
+  "ko": "까르띠에",
+  "aliases": [
+   "카르티에"
+  ]
+ },
+ "Lacoste": {
+  "ko": "라코스테",
+  "aliases": []
+ },
+ "The Merchant Of Venice": {
+  "ko": "더 머천트 오브 베니스",
+  "aliases": [
+   "머천트오브베니스"
+  ]
+ },
+ "Chopard": {
+  "ko": "쇼파드",
+  "aliases": []
+ },
+ "Salvatore Ferragamo": {
+  "ko": "살바토레 페라가모",
+  "aliases": [
+   "페라가모"
+  ]
+ },
+ "L'Occitane en Provence": {
+  "ko": "록시땅",
+  "aliases": []
+ },
+ "The Different Company": {
+  "ko": "더 디퍼런트 컴퍼니",
+  "aliases": []
+ },
+ "Rochas": {
+  "ko": "로샤스",
+  "aliases": []
+ },
+ "Chloé": {
+  "ko": "끌로에",
+  "aliases": [
+   "클로에"
+  ]
+ },
+ "Cacharel": {
+  "ko": "까사렐",
+  "aliases": [
+   "카샤렐"
+  ]
+ },
+ "Trussardi": {
+  "ko": "트루사르디",
+  "aliases": []
+ },
+ "Clive Christian": {
+  "ko": "클라이브 크리스찬",
+  "aliases": []
+ },
+ "Ex Nihilo": {
+  "ko": "엑스 니힐로",
+  "aliases": []
+ },
+ "Diesel": {
+  "ko": "디젤",
+  "aliases": []
+ },
+ "Miller Harris": {
+  "ko": "밀러 해리스",
+  "aliases": []
+ },
+ "Heeley": {
+  "ko": "힐리",
+  "aliases": []
+ },
+ "Laboratorio Olfattivo": {
+  "ko": "라보라토리오 올파티보",
+  "aliases": []
+ },
+ "L'Erbolario": {
+  "ko": "레르볼라리오",
+  "aliases": []
+ },
+ "Tauer Perfumes": {
+  "ko": "타우어 퍼퓸",
+  "aliases": [
+   "타우어"
+  ]
+ },
+ "Escada": {
+  "ko": "에스까다",
+  "aliases": [
+   "에스카다"
+  ]
+ },
+ "Birkholz": {
+  "ko": "비르크홀츠",
+  "aliases": []
+ },
+ "Widian / AJ Arabia": {
+  "ko": "위디안",
+  "aliases": []
+ },
+ "Aaron Terence Hughes": {
+  "ko": "애런 테렌스 휴즈",
+  "aliases": []
+ },
+ "Réminiscence": {
+  "ko": "레미니센스",
+  "aliases": []
+ },
+ "Nobile 1942": {
+  "ko": "노빌레 1942",
+  "aliases": [
+   "노빌레"
+  ]
+ },
+ "Zara": {
+  "ko": "자라",
+  "aliases": []
+ },
+ "Laura Biagiotti": {
+  "ko": "라우라 비아조티",
+  "aliases": []
+ },
+ "Boucheron": {
+  "ko": "부쉐론",
+  "aliases": []
+ },
+ "Caron": {
+  "ko": "까롱",
+  "aliases": [
+   "카론"
+  ]
+ },
+ "Molinard": {
+  "ko": "몰리나르",
+  "aliases": []
+ },
+ "Lolita Lempicka": {
+  "ko": "롤리타 렘피카",
+  "aliases": []
+ },
+ "Fragonard": {
+  "ko": "프라고나르",
+  "aliases": []
+ },
+ "Olfactive Studio": {
+  "ko": "올팩티브 스튜디오",
+  "aliases": []
+ },
+ "Swiss Arabian": {
+  "ko": "스위스 아라비안",
+  "aliases": []
+ },
+ "Perris Monte Carlo": {
+  "ko": "페리스 몬테카를로",
+  "aliases": []
+ },
+ "Ralph Lauren": {
+  "ko": "랄프 로렌",
+  "aliases": [
+   "폴로"
+  ]
+ },
+ "Roberto Cavalli": {
+  "ko": "로베르토 카발리",
+  "aliases": []
+ },
+ "Rammstein": {
+  "ko": "람슈타인",
+  "aliases": []
+ },
+ "Jovoy": {
+  "ko": "조보이",
+  "aliases": []
+ },
+ "Roberto Ugolini": {
+  "ko": "로베르토 우골리니",
+  "aliases": []
+ },
+ "Une Nuit Nomade": {
+  "ko": "윈 뉘 노마드",
+  "aliases": []
+ },
+ "Lanvin": {
+  "ko": "랑방",
+  "aliases": []
+ },
+ "Karl Lagerfeld": {
+  "ko": "칼 라거펠트",
+  "aliases": []
+ },
+ "Robert Piguet": {
+  "ko": "로베르 피게",
+  "aliases": []
+ },
+ "Comme des Garçons": {
+  "ko": "꼼데가르송",
+  "aliases": [
+   "꼼 데 가르송"
+  ]
+ },
+ "D.S. & Durga": {
+  "ko": "디에스 앤 더가",
+  "aliases": [
+   "디에스앤더가"
+  ]
+ },
+ "Atkinsons": {
+  "ko": "앳킨슨",
+  "aliases": []
+ },
+ "DKNY / Donna Karan": {
+  "ko": "디케이엔와이",
+  "aliases": [
+   "도나 카란"
+  ]
+ },
+ "Moschino": {
+  "ko": "모스키노",
+  "aliases": []
+ },
+ "Annayake / アナヤケ": {
+  "ko": "아나야케",
+  "aliases": []
+ },
+ "Bottega Veneta": {
+  "ko": "보테가 베네타",
+  "aliases": []
+ },
+ "Viktor & Rolf": {
+  "ko": "빅터앤롤프",
+  "aliases": [
+   "빅터 롤프"
+  ]
+ },
+ "Gritti": {
+  "ko": "그리띠",
+  "aliases": [
+   "그리티"
+  ]
+ },
+ "The House of Oud": {
+  "ko": "더 하우스 오브 오우드",
+  "aliases": []
+ },
+ "Loewe": {
+  "ko": "로에베",
+  "aliases": []
+ },
+ "Parfums MDCI": {
+  "ko": "퍼퓸 엠디씨아이",
+  "aliases": [
+   "MDCI"
+  ]
+ },
+ "Carthusia": {
+  "ko": "카르투시아",
+  "aliases": []
+ },
+ "J.F. Schwarzlose Berlin": {
+  "ko": "슈바르츠로제 베를린",
+  "aliases": []
+ },
+ "Balmain": {
+  "ko": "발망",
+  "aliases": []
+ },
+ "Dsquared²": {
+  "ko": "디스퀘어드",
+  "aliases": [
+   "디스퀘어드2"
+  ]
+ },
+ "Kayali": {
+  "ko": "카얄리",
+  "aliases": []
+ },
+ "Floris": {
+  "ko": "플로리스",
+  "aliases": []
+ },
+ "Clean": {
+  "ko": "클린",
+  "aliases": []
+ },
+ "Elie Saab": {
+  "ko": "엘리 사브",
+  "aliases": []
+ },
+ "Bruno Banani": {
+  "ko": "브루노 바나니",
+  "aliases": []
+ },
+ "Dunhill": {
+  "ko": "던힐",
+  "aliases": []
+ },
+ "Lorenzo Villoresi": {
+  "ko": "로렌초 빌로레시",
+  "aliases": []
+ },
+ "Zadig & Voltaire": {
+  "ko": "쟈딕앤볼테르",
+  "aliases": [
+   "자딕앤볼테르"
+  ]
+ },
+ "Liquides Imaginaires": {
+  "ko": "리퀴드 이마지네르",
+  "aliases": []
+ },
+ "Afnan Perfumes": {
+  "ko": "아프난",
+  "aliases": []
+ },
+ "Houbigant": {
+  "ko": "우비강",
+  "aliases": []
+ },
+ "Marc Gebauer": {
+  "ko": "마크 게바우어",
+  "aliases": []
+ },
+ "Aigner": {
+  "ko": "아이그너",
+  "aliases": []
+ },
+ "Electimuss": {
+  "ko": "일렉티무스",
+  "aliases": []
+ },
+ "Filippo Sorcinelli": {
+  "ko": "필리포 소르치넬리",
+  "aliases": []
+ },
+ "Tesori d'Oriente": {
+  "ko": "테소리 도리엔테",
+  "aliases": []
+ },
+ "Comptoir Sud Pacifique": {
+  "ko": "꽁뚜아 쉬드 파시피크",
+  "aliases": []
+ },
+ "John Varvatos": {
+  "ko": "존 바바토스",
+  "aliases": []
+ },
+ "Sisley": {
+  "ko": "시슬리",
+  "aliases": []
+ },
+ "Cerruti": {
+  "ko": "세루티",
+  "aliases": []
+ },
+ "Pana Dora": {
+  "ko": "파나 도라",
+  "aliases": []
+ },
+ "Les Parfums de Rosine": {
+  "ko": "레 퍼퓸 드 로진",
+  "aliases": [
+   "로진"
+  ]
+ },
+ "Gisada": {
+  "ko": "기사다",
+  "aliases": []
+ },
+ "Nabeel": {
+  "ko": "나빌",
+  "aliases": []
+ },
+ "Oriza L. Legrand": {
+  "ko": "오리자 엘 르그랑",
+  "aliases": []
+ },
+ "Duftanker MGO Duftmanufaktur": {
+  "ko": "두프트앙커",
+  "aliases": []
+ },
+ "Farmacia SS. Annunziata": {
+  "ko": "파르마치아 산티시마 안눈치아타",
+  "aliases": []
+ },
+ "Abercrombie & Fitch": {
+  "ko": "아베크롬비 앤 피치",
+  "aliases": [
+   "아베크롬비"
+  ]
+ },
+ "Moresque": {
+  "ko": "모레스크",
+  "aliases": []
+ },
+ "Dusita": {
+  "ko": "두시타",
+  "aliases": []
+ },
+ "Mäurer & Wirtz": {
+  "ko": "마우러 앤 비르츠",
+  "aliases": []
+ },
+ "Boadicea the Victorious": {
+  "ko": "보아디시아 더 빅토리어스",
+  "aliases": []
+ },
+ "Maître Parfumeur et Gantier": {
+  "ko": "메트르 퍼퓨머 에 강티에",
+  "aliases": []
+ },
+ "Jaguar": {
+  "ko": "재규어",
+  "aliases": []
+ },
+ "Juicy Couture": {
+  "ko": "쥬시 꾸뛰르",
+  "aliases": []
+ },
+ "Mexx": {
+  "ko": "멕스",
+  "aliases": []
+ },
+ "Vilhelm Parfumerie": {
+  "ko": "빌헬름 퍼퓨머리",
+  "aliases": []
+ },
+ "Clinique": {
+  "ko": "크리니크",
+  "aliases": [
+   "클리니크"
+  ]
+ },
+ "Masque": {
+  "ko": "마스크",
+  "aliases": [
+   "마스크 밀라노"
+  ]
+ },
+ "Fragrance One": {
+  "ko": "프래그런스 원",
+  "aliases": []
+ },
+ "Jimmy Choo": {
+  "ko": "지미추",
+  "aliases": [
+   "지미 추"
+  ]
+ },
+ "Azzaro": {
+  "ko": "아자로",
+  "aliases": []
+ },
+ "LM Parfums": {
+  "ko": "엘엠 퍼퓸",
+  "aliases": []
+ },
+ "Santa Maria Novella": {
+  "ko": "산타 마리아 노벨라",
+  "aliases": [
+   "산타마리아노벨라"
+  ]
+ },
+ "Ted Lapidus": {
+  "ko": "테드 라피더스",
+  "aliases": []
+ },
+ "Thameen": {
+  "ko": "타민",
+  "aliases": []
+ },
+ "The Nose Behind": {
+  "ko": "더 노즈 비하인드",
+  "aliases": []
+ },
+ "Nina Ricci": {
+  "ko": "니나 리치",
+  "aliases": [
+   "니나리찌"
+  ]
+ },
+ "Mercedes-Benz": {
+  "ko": "메르세데스 벤츠",
+  "aliases": [
+   "벤츠"
+  ]
+ },
+ "The Body Shop": {
+  "ko": "더바디샵",
+  "aliases": [
+   "바디샵"
+  ]
+ },
+ "Grès": {
+  "ko": "그레",
+  "aliases": []
+ },
+ "Nikos": {
+  "ko": "니코스",
+  "aliases": []
+ },
+ "s.Oliver": {
+  "ko": "에스 올리버",
+  "aliases": []
+ },
+ "Areej Le Doré": {
+  "ko": "아리즈 르 도레",
+  "aliases": []
+ },
+ "Le Couvent": {
+  "ko": "르 쿠방",
+  "aliases": [
+   "르쿠벙"
+  ]
+ },
+ "Annette Neuffer": {
+  "ko": "아네트 노이퍼",
+  "aliases": []
+ },
+ "Fendi": {
+  "ko": "펜디",
+  "aliases": []
+ },
+ "Bond No. 9": {
+  "ko": "본드 넘버 나인",
+  "aliases": [
+   "본드 넘버9"
+  ]
+ },
+ "Profumi del Forte": {
+  "ko": "프로푸미 델 포르테",
+  "aliases": []
+ },
+ "Shay & Blue": {
+  "ko": "셰이 앤 블루",
+  "aliases": []
+ },
+ "Molton Brown": {
+  "ko": "몰튼 브라운",
+  "aliases": []
+ },
+ "Guy Laroche": {
+  "ko": "기 라로쉬",
+  "aliases": []
+ },
+ "Câline": {
+  "ko": "칼린",
+  "aliases": []
+ },
+ "Berdoues": {
+  "ko": "베르두",
+  "aliases": []
+ },
+ "Frapin": {
+  "ko": "프라팽",
+  "aliases": []
+ },
+ "Argos": {
+  "ko": "아르고스",
+  "aliases": []
+ },
+ "Bois 1920": {
+  "ko": "부아 1920",
+  "aliases": []
+ },
+ "Jennifer Lopez": {
+  "ko": "제니퍼 로페즈",
+  "aliases": []
+ },
+ "Oscar de la Renta": {
+  "ko": "오스카 드 라 렌타",
+  "aliases": []
+ },
+ "Korres": {
+  "ko": "코레스",
+  "aliases": []
+ },
+ "Jean Patou": {
+  "ko": "장 파투",
+  "aliases": []
+ }
+}

@@ -1,0 +1,497 @@
+[
+ {
+  "name": "핑크 페퍼 · 장미 · 패출리",
+  "blend": [
+   {
+    "noteKey": "pink pepper",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "rose",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "patchouli",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "베르가못 · 장미 · 머스크",
+  "blend": [
+   {
+    "noteKey": "bergamot",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "rose",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "자몽 · 라벤더 · 베티버",
+  "blend": [
+   {
+    "noteKey": "grapefruit",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lavender",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vetiver",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "만다린 · 자스민 · 바닐라",
+  "blend": [
+   {
+    "noteKey": "mandarin orange",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "jasmine",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vanilla",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "핑크 페퍼 · 아이리스 · 시더우드",
+  "blend": [
+   {
+    "noteKey": "pink pepper",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "iris",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "cedarwood",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "레몬 · 녹차 · 화이트 머스크",
+  "blend": [
+   {
+    "noteKey": "lemon",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "green tea",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "white musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "카다멈 · 타바코 · 우드 · 앰버",
+  "blend": [
+   {
+    "noteKey": "cardamom",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "tobacco",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "oud",
+    "layer": "base",
+    "level": "strong"
+   },
+   {
+    "noteKey": "amber",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "복숭아 · 작약 · 머스크",
+  "blend": [
+   {
+    "noteKey": "peach",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "peony",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "마린 노트 · 세이지 · 시더우드 약",
+  "blend": [
+   {
+    "noteKey": "marine notes",
+    "layer": "top",
+    "level": "strong"
+   },
+   {
+    "noteKey": "sage",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "cedarwood",
+    "layer": "base",
+    "level": "weak"
+   }
+  ]
+ },
+ {
+  "name": "시나몬 · 통카 빈 · 바닐라 · 샌달우드",
+  "blend": [
+   {
+    "noteKey": "cinnamon",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "tonka bean",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vanilla",
+    "layer": "base",
+    "level": "strong"
+   },
+   {
+    "noteKey": "sandalwood",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "레몬 강 · 장미 · 머스크",
+  "blend": [
+   {
+    "noteKey": "lemon",
+    "layer": "top",
+    "level": "strong"
+   },
+   {
+    "noteKey": "rose",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "베르가못 · 라벤더 · 바닐라 강",
+  "blend": [
+   {
+    "noteKey": "bergamot",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lavender",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vanilla",
+    "layer": "base",
+    "level": "strong"
+   }
+  ]
+ },
+ {
+  "name": "핑크 페퍼 · 아이리스 · 시더우드",
+  "blend": [
+   {
+    "noteKey": "pink pepper",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "iris",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "cedarwood",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "레몬 · 녹차 · 화이트 머스크",
+  "blend": [
+   {
+    "noteKey": "lemon",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "green tea",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "white musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "카다멈 · 타바코 · 우드 · 앰버",
+  "blend": [
+   {
+    "noteKey": "cardamom",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "tobacco",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "oud",
+    "layer": "base",
+    "level": "strong"
+   },
+   {
+    "noteKey": "amber",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "마린 노트 · 세이지 · 시더우드 약",
+  "blend": [
+   {
+    "noteKey": "marine notes",
+    "layer": "top",
+    "level": "strong"
+   },
+   {
+    "noteKey": "sage",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "cedarwood",
+    "layer": "base",
+    "level": "weak"
+   }
+  ]
+ },
+ {
+  "name": "레몬 강 · 장미 · 머스크",
+  "blend": [
+   {
+    "noteKey": "lemon",
+    "layer": "top",
+    "level": "strong"
+   },
+   {
+    "noteKey": "rose",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "베르가못 · 라벤더 · 바닐라 강",
+  "blend": [
+   {
+    "noteKey": "bergamot",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lavender",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vanilla",
+    "layer": "base",
+    "level": "strong"
+   }
+  ]
+ },
+ {
+  "name": "배 · 아이리스 · 패출리",
+  "blend": [
+   {
+    "noteKey": "pear",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "iris",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "patchouli",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "만다린 · 은방울꽃 · 화이트 머스크",
+  "blend": [
+   {
+    "noteKey": "mandarin orange",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lily of the valley",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "white musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "배 · 프리지아 · 머스크",
+  "blend": [
+   {
+    "noteKey": "pear",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "freesia",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "musk",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "베르가못 · 라벤더 · 오크모스",
+  "blend": [
+   {
+    "noteKey": "bergamot",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lavender",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "oakmoss",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "라벤더 강 · 제라늄 · 베티버",
+  "blend": [
+   {
+    "noteKey": "lavender",
+    "layer": "top",
+    "level": "strong"
+   },
+   {
+    "noteKey": "geranium",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "vetiver",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ },
+ {
+  "name": "민트 · 라벤더 · 시더우드",
+  "blend": [
+   {
+    "noteKey": "mint",
+    "layer": "top",
+    "level": "medium"
+   },
+   {
+    "noteKey": "lavender",
+    "layer": "middle",
+    "level": "medium"
+   },
+   {
+    "noteKey": "cedarwood",
+    "layer": "base",
+    "level": "medium"
+   }
+  ]
+ }
+]

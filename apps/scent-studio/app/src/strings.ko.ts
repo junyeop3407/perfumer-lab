@@ -78,7 +78,7 @@ export const S = {
   recsSub: '데이터상 유사도 순',
   recsEmpty: '추천할 향수를 찾지 못했어요. 노트를 바꿔 다시 찾아보세요.',
   recsPickHint: '향수를 누르면 여기에 자세히 보여 드려요.',
-  matchedLabel: '겹친 노트 · ',
+  matchedLabel: '겹친 노트 ',
   sharedNone: '공통 어코드 적음',
   rankUnit: '위',
 
@@ -125,6 +125,6 @@ export const S = {
   perfumeSearchPlaceholder: '향수 이름이나 브랜드로 찾기',
   perfumeSearchLabel: '향수 검색',
   perfumeSearchHint: '향수 이름이나 브랜드를 입력하면 바로 찾아 드려요.',
-  perfumeSearchEmpty: '맞는 향수가 없어요. 다른 이름으로 찾아보세요.',
+  perfumeSearchEmpty: '맞는 향수가 없어요. 다른 이름이나 영어 이름으로도 찾아보세요.',
   clearSearch: '검색어 지우기',
 } as const;

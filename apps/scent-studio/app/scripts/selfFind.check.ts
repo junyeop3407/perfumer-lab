@@ -8,7 +8,7 @@
  *   ※ tests.md의 "어코드가 노트와 맞는 향수"는 B7 테스트용 향수를 고를 때의 설명이고, 이 숫자에는 걸러 쓰지 않았다.
  *
  * 돌리기(앱 폴더에서, 실제 카탈로그는 assets/catalog/catalog.real.json.gz — 없으면 가짜만):
- *   npx vitest run -c vitest.scripts.config.mts
+ *   CHECK=scripts/selfFind.check.ts npx vitest run -c vitest.scripts.config.mts
  * 출력은 개수·비율만(실제 향수 이름은 찍지 않는다. 공개 저장소).
  */
 import { existsSync, readFileSync } from 'node:fs';

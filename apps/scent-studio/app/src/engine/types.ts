@@ -31,6 +31,8 @@ export type Perfume = {
   key: string;
   brand: string;
   name: string;
+  /** 정리 전 원래 이름(이름 끝의 "브랜드 연도 농도"를 잘라 냈을 때만, src/catalog/perfumeNames.ts) */
+  nameRaw?: string;
   year: number | null;
   concentration: string | null;
   rating: number | null;

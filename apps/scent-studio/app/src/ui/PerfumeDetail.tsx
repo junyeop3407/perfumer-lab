@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { LAYER_KO, LAYER_LABEL } from '../blend/blendDraft';
+import { brandLabel } from '../catalog/brandNames';
 import { useCatalog } from '../catalog/CatalogContext';
 import { LAYERS, type BlendNote, type Layer, type Recommendation } from '../engine/types';
 import { ACCORDS_SHOWN_DETAIL, chipMark, compareRows, onlyInPerfume, overlaps, perfumeAccords, scorePercent } from '../recs/perfumeView';
@@ -73,7 +74,7 @@ export function PerfumeDetail({
   return (
     <View testID={TestIds.DETAIL_SCREEN}>
       <Txt variant="caption" sub>
-        {perfume.brand}
+        {brandLabel(perfume.brand)}
       </Txt>
       <Txt variant="title" accessibilityRole="header" className="mt-0.5">
         {perfume.name}

@@ -5,10 +5,10 @@
  */
 import { Pressable, View } from 'react-native';
 
-import type { Catalog, Perfume, Recommendation } from '../engine/types';
-import { overlaps, scorePercent } from '../recs/perfumeView';
-import type { BlendNote } from '../engine/types';
+import type { AccordRatio, BlendNote, Catalog, Perfume, Recommendation } from '../engine/types';
+import { extraAccord, overlaps, perfumeAccords, scorePercent } from '../recs/perfumeView';
 import type { RecommendationEngine } from '../engine/RecommendationEngine';
+import { brandLabel } from '../catalog/brandNames';
 import { S } from '../strings.ko';
 import { GRADE_KO, GradeBadge } from './Grade';
 import { TestIds } from './testIds';
@@ -28,6 +28,7 @@ export function RecCard({
   catalog,
   engine,
   blend,
+  mine,
   selected,
   onPress,
 }: {
@@ -37,6 +38,8 @@ export function RecCard({
   catalog: Catalog;
   engine: RecommendationEngine;
   blend: readonly BlendNote[];
+  /** 내 조합의 어코드 %(목록에서 한 번 계산해 넘긴다) */
+  mine: readonly AccordRatio[];
   selected: boolean;
   onPress: () => void;
 }) {
@@ -44,13 +47,16 @@ export function RecCard({
   const matched = overlaps(perfume, blend).map((o) => engine.note(o.noteKey)?.nameKo ?? o.noteKey);
   const score = scorePercent(rec);
   const sharedText = shared.length > 0 ? shared.join(' · ') : S.sharedNone;
+  // 카드 구분 ①: 이 향수에 내 조합보다 10%p 이상 많은 어코드 하나 (2026-11-13 사장)
+  const extra = extraAccord(mine, perfumeAccords(engine, catalog, perfume));
+  const extraKo = extra ? (catalog.accords.find((a) => a.key === extra)?.nameKo ?? extra) : null;
   return (
     <Pressable
       testID={TestIds.rec(rank)}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
-      accessibilityLabel={`${rank}${S.rankUnit}, ${perfume.brand} ${perfume.name}, ${score}%, ${GRADE_KO[rec.grade]}`}
+      accessibilityLabel={`${rank}${S.rankUnit}, ${brandLabel(perfume.brand)} ${perfume.name}, ${score}%, ${GRADE_KO[rec.grade]}`}
       className={`flex-row gap-3 border-b border-line py-4 active:bg-surfaceAlt dark:border-line-dark dark:active:bg-surfaceAlt-dark ${
         selected ? 'bg-surface dark:bg-surface-dark' : ''
       }`}>
@@ -61,18 +67,26 @@ export function RecCard({
       </View>
       <View className="flex-1">
         <Txt variant="caption" sub testID={TestIds.recBrand(rank)}>
-          {perfume.brand}
+          {brandLabel(perfume.brand)}
         </Txt>
         <Txt variant="noteName" testID={TestIds.recName(rank)}>
           {perfume.name}
         </Txt>
-        <Txt variant="caption" className="mt-1" testID={TestIds.recSharedAccords(rank)}>
-          {sharedText}
-        </Txt>
+        <View className="mt-1 flex-row flex-wrap items-baseline gap-x-2">
+          <Txt variant="caption" testID={TestIds.recSharedAccords(rank)}>
+            {sharedText}
+          </Txt>
+          {extraKo && (
+            <Txt variant="caption" testID={TestIds.recExtraAccord(rank)} className="font-sans-medium text-primary dark:text-primary-dark">
+              {`+ ${extraKo}`}
+            </Txt>
+          )}
+        </View>
         {/* 실제로 겹친 노트가 없으면 이 줄을 숨긴다(2026-11-13 사장). 상세에서 "겹친 노트는 없지만…"으로 알린다 */}
         {matched.length > 0 && (
           <Txt variant="caption" sub className="mt-0.5" testID={TestIds.recMatchedNotes(rank)}>
-            {`${S.matchedLabel}${matched.join(', ')}`}
+            {/* 카드 구분 ③: 겹친 노트 수 / 고른 노트 수 (2026-11-13 사장) */}
+            {`${S.matchedLabel}${matched.length}/${blend.length}${S.noteCountUnit} · ${matched.join(', ')}`}
           </Txt>
         )}
       </View>

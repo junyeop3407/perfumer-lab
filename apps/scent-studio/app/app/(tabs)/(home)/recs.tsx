@@ -36,6 +36,7 @@ export default function RecsScreen() {
     );
   }
   const { catalog: cat, engine } = catalog;
+  const mine = blend.length > 0 ? engine.displayRatios(blend) : [];
   const perfumeOf = (key: string) => cat.perfumes.find((p) => p.key === key)!;
   const selectedKey = wide ? (picked && recs.some((r) => r.perfumeKey === picked) ? picked : recs[0]?.perfumeKey) : null;
   const selectedRec = recs.find((r) => r.perfumeKey === selectedKey);
@@ -70,6 +71,7 @@ export default function RecsScreen() {
               catalog={cat}
               engine={engine}
               blend={blend}
+              mine={mine}
               selected={r.perfumeKey === selectedKey}
               onPress={() => (wide ? setPicked(r.perfumeKey) : go(`/perfume?key=${encodeURIComponent(r.perfumeKey)}`))}
             />

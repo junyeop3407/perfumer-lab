@@ -5,6 +5,7 @@
 import { RecommendationEngine } from '../engine/RecommendationEngine';
 import type { Catalog } from '../engine/types';
 import { ambiguousNoteKeys, fixNoteNames } from './noteNames';
+import { fixPerfumeNames } from './perfumeNames';
 
 export type CatalogTiming = { openMs: number; engineMs: number; totalMs: number };
 export type Booted = {
@@ -23,7 +24,8 @@ export async function bootCatalog(
 ): Promise<Booted> {
   const t0 = now();
   const opened = await open();
-  const catalog = fixNoteNames(opened.catalog);
+  // 노트 이름 고치기 + 향수 이름 끝의 "브랜드 연도 농도" 정리(2026-11-13 사장 결정, perfumeNames.ts)
+  const catalog = fixPerfumeNames(fixNoteNames(opened.catalog));
   const t1 = now();
   const engine = new RecommendationEngine(catalog);
   const t2 = now();

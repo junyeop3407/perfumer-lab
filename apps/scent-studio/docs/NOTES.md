@@ -508,3 +508,12 @@
 - **D 5-1 못 잡은 것:** gzip 시각 — 이 PC Python 3.14의 `gzip.compress` 기본값이 이미 `mtime=0`(확인)이라 고장 내도 바이트가 같다(동작이 안 바뀌는 고장). 옛 Python용으로 테스트 유지. Java 바꿔치기 대신 바로 쓰기 — 차이는 쓰는 도중 꺼질 때만 생겨 테스트로 재현이 어렵고, 깨진 파일이 남아도 다음 준비(`checkReal` 해시·크기)와 앱 `openCatalog`가 막는다. (지난 보고의 "3개"는 이 Java 하나를 둘로 센 실수 — 5-1 재실행 못 잡음은 gzip·공개 빌드(A에서 고침)·Java 1개, 모두 3개.)
 - **1 강도 유지:** 전에는 새 노트가 늘 "중"으로 들어갔다(고른 노트의 강도는 노트마다 따로 남아 사라지는 경우 없음 — 빼고 다시 넣거나 새 조합일 때만 새로). 이제 마지막에 누른 강도로 시작하고, 새 조합을 시작할 때만 중(`DraftContext.nextLevel`). 회귀 테스트 `owner-fixes-5-3.spec.ts`, `ownerFixes5_3.test.ts`. 웹에 강도 칸의 `aria-checked`가 안 나감(PC 목록의 "선택됨"도) → 5-8 접근성.
 - **6 감초:** `NOTE_EN_FIXES`(glycyrrhiza glabra → "Licorice root", 앱이 열 때 고침, key 검색은 그대로). 노트 카드 아래 빈 공간: 안드로이드 `Modal`은 `navigationBarTranslucent` 없이 내비게이션 바 위에서 끝나는데, 시트가 `24 + insets.bottom`(내비게이션 바 높이)을 또 더해 두 배가 된다(`notes.tsx` 323줄, 등급 설명 시트도 같음). 고치지 않음(사장 확인).
+
+### 2026-11-13 사장 결정 반영(두 번째) — 1·2·4·5·6·7, 3은 비교만
+- **1 5-2 빈틈 테스트 8개:** `app/tests/unit/mutationGaps5_2.test.ts`(V15 이웃 계열·V20 숨김 노트 겹침·V23 빼기), `app/tests/regression/mutation-gaps-5-2.spec.ts`(W2 요약 버튼·W4 칩 강도 글자·W8 계열 다시 누르기·W13 연타·W14 다른 층 안내). 같은 고장을 다시 넣어 **8개 모두 잡힘** 확인(실패한 테스트 이름·이유까지).
+- **2 한글 브랜드:** `pipeline/manual/brands_ko.csv`(평가 수 상위 200, 높음 97 · 낮음 103) → `node app/scripts/build-brands-ko.mjs` → `app/src/catalog/brandsKo.json`(테스트가 CSV와 같은지·글꼴 2,350자 안인지 확인). 화면: 추천 카드·상세·찾기·PC 미리보기 브랜드 "영어 (한글)". 검색: 한글 이름·별칭, 띄어쓰기 없이도. 결과 없음 문구 "…다른 이름이나 영어 이름으로도 찾아보세요". **주의: 이 표는 실제 브랜드 이름 200개라 공개 데모(Plan B) 빌드에도 들어간다** — 사장 확인 필요.
+- **4 카드 구분:** ① `+ 우디`(이 향수 % − 내 조합 %가 가장 큰 어코드, 10%p 이상일 때만, `extraAccord`), ③ "겹친 노트 2/9개 · 레몬, 장미"(0개면 줄 숨김 그대로).
+- **5 이름 정리:** 이름 끝이 자기 " 브랜드 [연도] [농도]"와 정확히 같을 때만 자르고 원래 이름은 `nameRaw`. 파이프라인 `build_catalog.clean_perfume_name`(다음 카탈로그부터, 가짜 카탈로그는 다시 만듦 — T041이 "Lumière d'Agrumes" + nameRaw) + 앱 `src/catalog/perfumeNames.ts`(지금 카탈로그, 열 때). **브랜드만 붙은 끝은 자르지 않는다**("212 Carolina Herrera"·"1270 Frapin"처럼 진짜 이름 32개 — 처음 규칙이 파이프라인 테스트 "1962 Houseo"에서 걸려 좁힘). 실제 12,469개 중 2,902개 정리(브랜드+연도+농도 2,575 · 브랜드+농도 327). **여는 시간(이 PC, `scripts/bootTime.check.ts`, 15번 가운데 값): 146ms → 149ms, 정리 자체 2.2ms.**
+- **6 시트 아래 빈 공간:** 노트 설명·등급 설명 Modal에 `statusBarTranslucent`·`navigationBarTranslucent`(안드로이드에서 바 아래까지 그려 `insets.bottom`이 한 번만). 웹은 이 속성을 무시해 화면으로 잴 수 없어 코드 검사 테스트(`sheetInsets.test.ts`)만 — **실제 확인은 폰.**
+- **7 B7 근거 문구:** `docs/tests.md` B7 근거에 실제 조건 4가지와 다시 만드는 명령을 적음.
+- **3 늘 참고:** 고치지 않음. 비교표 `docs/engine_always_reference_compare.md`(스크립트 `app/scripts/gradeVariants.check.ts`, 24조합 `app/scripts/combos24.json`). 추천 ㉮.

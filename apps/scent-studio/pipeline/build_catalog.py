@@ -54,6 +54,29 @@ class BuildResult:
     report: dict = field(default_factory=dict)
 
 
+def clean_perfume_name(name: str, brand: str, year: int | None, concentration: str | None) -> str:
+    """이름 끝이 그 향수 자신의 " 브랜드 연도 농도" / " 브랜드 연도" / " 브랜드 농도"와 정확히 같을 때만 잘라 낸다(2026-11-13 사장 결정).
+    브랜드만 붙은 끝(" 브랜드")은 자르지 않는다 — "212 Carolina Herrera"·"1270 Frapin"처럼 진짜 이름이다(실제 32개).
+    자른 뒤 이름이 비면 그대로 둔다. 앱 app/src/catalog/perfumeNames.ts와 같은 규칙."""
+    ends = []
+    if year and concentration:
+        ends.append(f" {brand} {year} {concentration}")
+    if year:
+        ends.append(f" {brand} {year}")
+    if concentration:
+        ends.append(f" {brand} {concentration}")
+    for end in ends:
+        if name.endswith(end) and name[: -len(end)].strip():
+            return name[: -len(end)].rstrip()
+    return name
+
+
+def perfume_name_fields(name: str, brand: str, year: int | None, concentration: str | None) -> dict:
+    """카탈로그 줄의 이름 칸: 정리한 name, 바뀌었으면 원래 이름 nameRaw"""
+    clean = clean_perfume_name(name, brand, year, concentration)
+    return {"name": clean} if clean == name else {"name": clean, "nameRaw": name}
+
+
 def _int(v):
     return None if R.is_na(v) else int(float(v))
 
@@ -520,7 +543,7 @@ def build(rows: list[dict], params: R.Params, aliases: dict[str, str],
         return out
 
     perfumes_out = [{
-        "key": p.key, "brand": p.brand, "name": p.name, "year": p.year,
+        "key": p.key, "brand": p.brand, **perfume_name_fields(p.name, p.brand, p.year, p.concentration), "year": p.year,
         "concentration": p.concentration, "rating": p.rating, "ratingCount": p.rating_count,
         "accords": p.accords, "top": p.layers["top"], "middle": p.layers["middle"], "base": p.layers["base"],
         "group": group_of[p.key], **strength_fields(p),

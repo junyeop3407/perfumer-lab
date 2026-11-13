@@ -313,7 +313,14 @@ export default function NotesScreen() {
         </View>
       </Screen>
       {!wide && (
-        <Modal visible={infoOpen && !!card} transparent animationType={reduceMotion ? 'none' : 'slide'} onRequestClose={closeInfo}>
+        // 안드로이드: 시트를 내비게이션 바 아래까지 그려야 아래 여백(24 + insets.bottom)이 한 번만 들어간다(2026-11-13 사장 6번)
+        <Modal
+          visible={infoOpen && !!card}
+          transparent
+          statusBarTranslucent
+          navigationBarTranslucent
+          animationType={reduceMotion ? 'none' : 'slide'}
+          onRequestClose={closeInfo}>
           <View className="flex-1 justify-end">
             <Pressable
               className="absolute inset-0 bg-ink/30 dark:bg-bg-dark/60"
