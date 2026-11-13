@@ -52,7 +52,6 @@ export const S = {
   noteCardClose: '닫기',
 
   // 곧 여는 탭 (5-3 · 5-6 · 5-7에서)
-  soonSearch: '향수 찾기는 곧 열려요. 지금은 홈에서 조합을 만들어 비슷한 향수를 찾아볼 수 있어요.',
   soonLibrary: '보관함은 곧 열려요. 저장한 조합과 찜한 향수가 여기에 모여요.',
   soonMy: '마이는 곧 열려요. 불호 노트와 로그인 설정이 여기에 들어가요.',
 
@@ -69,4 +68,64 @@ export const S = {
   accordsLess: '접기',
   editNotes: '노트 수정',
   summaryEmpty: '고른 노트가 없어요.',
+  showRecs: '추천 보기',
+  showAllRecs: '추천 전체 보기',
+  previewTitle: '비슷한 향수 미리보기',
+  previewSub: '데이터상 유사도 상위 3개',
+
+  // 추천 목록 (5-3)
+  recsTitle: '비슷한 향수',
+  recsSub: '데이터상 유사도 순',
+  recsEmpty: '추천할 향수를 찾지 못했어요. 노트를 바꿔 다시 찾아보세요.',
+  recsPickHint: '향수를 누르면 여기에 자세히 보여 드려요.',
+  matchedLabel: '겹친 노트 · ',
+  matchedNone: '겹친 노트 없음',
+  sharedNone: '공통 어코드 적음',
+  rankUnit: '위',
+
+  // 등급 설명 (2026-11-13 사장 확정 문구, docs/grade_explanation.md)
+  gradeInfoOpen: '등급 기준 설명 보기',
+  gradeInfoTitle: '등급은 이렇게 나눠요',
+  gradeInfoBody: '점수는 내 조합과 이 향수가 데이터상 얼마나 닮았는지예요.',
+  gradeInfoVery: '약 76% 이상',
+  gradeInfoSimilar: '약 65% 이상',
+  gradeInfoRef: '그보다 낮아요',
+  gradeInfoNote: "잘 맞는 조합이면 '매우 비슷'이 여러 개 나올 수 있어요.",
+  close: '닫기',
+
+  // 등급 글자 (승인 B2: 이 세 가지)
+  gradeVery: '매우 비슷',
+  gradeSimilar: '비슷',
+  gradeRef: '참고',
+
+  // 향수 상세
+  similarityPrefix: '데이터상 유사도 ',
+  notesTitle2: '노트',
+  myBlendMark: '내 조합',
+  otherLayerMark: '내 조합 · 다른 층',
+  layerNone: '정보 없음',
+  compareTitle: '어코드 비교',
+  perfumeAccordsTitle: '어코드',
+  compareMine: '내 조합',
+  compareTheirs: '이 향수',
+  matchedTitle: '겹친 노트',
+  sameLayer: '같은 층',
+  otherLayer: '다른 층',
+  matchedEmpty: '내 조합과 같은 노트가 없어요.',
+  onlyTitle: '이 향수에만 있는 노트',
+  onlyEmpty: '이 향수에만 있는 노트는 없어요.',
+  detailDisclaimer: '데이터상 유사도예요. 실제로 맡았을 때와 다를 수 있어요.',
+  perfumeDisclaimer: '어코드와 노트는 데이터상 정보예요. 실제로 맡았을 때와 다를 수 있어요.',
+  dataSourcePrefix: '데이터: ',
+  dataSourceSample: '데이터: 가상 샘플',
+  strengthNote: ' · 강도는 함량이 아니라 커뮤니티가 느낀 강도예요.',
+  perfumeMissing: '이 향수를 찾지 못했어요.',
+
+  // 향수 찾기
+  searchTitle: '향수 찾기',
+  perfumeSearchPlaceholder: '향수 이름이나 브랜드로 찾기',
+  perfumeSearchLabel: '향수 검색',
+  perfumeSearchHint: '향수 이름이나 브랜드를 입력하면 바로 찾아 드려요.',
+  perfumeSearchEmpty: '맞는 향수가 없어요. 다른 이름으로 찾아보세요.',
+  clearSearch: '검색어 지우기',
 } as const;

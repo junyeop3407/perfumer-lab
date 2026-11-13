@@ -80,7 +80,7 @@ function CatalogGate() {
 }
 
 /** 화면 위 제목줄: [←] 제목 / 작은 설명 */
-export function Header({ title, sub, onBack }: { title: string; sub?: string; onBack?: () => void }) {
+export function Header({ title, sub, onBack, right }: { title: string; sub?: string; onBack?: () => void; right?: ReactNode }) {
   return (
     <View className="mb-4 min-h-touch flex-row items-center gap-2">
       {onBack && (
@@ -103,6 +103,7 @@ export function Header({ title, sub, onBack }: { title: string; sub?: string; on
           </Txt>
         ) : null}
       </View>
+      {right}
     </View>
   );
 }

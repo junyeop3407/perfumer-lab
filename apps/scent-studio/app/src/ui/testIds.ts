@@ -63,6 +63,9 @@ export const TestIds = {
   recGrade: (rank: number) => `rec:${rank}:grade`,
   recSharedAccords: (rank: number) => `rec:${rank}:shared`,
   recMatchedNotes: (rank: number) => `rec:${rank}:matched`,
+  /** 등급 설명 ⓘ (목록 헤더에 하나, 2026-11-13 사장 결정) */
+  GRADE_INFO: 'recs:gradeInfo',
+  GRADE_INFO_SHEET: 'recs:gradeInfoSheet',
 
   // 향수 상세
   DETAIL_SCREEN: 'detail',

@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
+
+import { scorePercent } from '@/src/recs/perfumeView';
+import { useRecs } from '@/src/recs/useRecs';
+import { GradeBadge } from '@/src/ui/Grade';
+import { WIDE_MIN_WIDTH } from '@/src/ui/layout';
+import { sharedAccordNames } from '@/src/ui/RecCard';
 
 import { foldAccords, hintTexts, LAYER_LABEL, LEVEL_KO, toEngineBlend } from '@/src/blend/blendDraft';
 import { useDraft } from '@/src/blend/DraftContext';
@@ -22,6 +28,8 @@ export default function SummaryScreen() {
   const names = useNoteNames();
   // 어코드가 많으면 상위 6개 + "그 외"로 접는다(5-2 폰 확인 C)
   const [allAccords, setAllAccords] = useState(false);
+  const wide = useWindowDimensions().width >= WIDE_MIN_WIDTH;
+  const { recs } = useRecs();
   if (catalog.status !== 'ready') {
     return (
       <Screen needsCatalog>
@@ -51,8 +59,45 @@ export default function SummaryScreen() {
   const accordKo = (k: string) => cat.accords.find((a) => a.key === k)?.nameKo ?? k;
   const noteOf = (k: string) => engine.note(k)!;
 
+  // PC: 오른쪽에 추천 미리보기 상위 3개 + [추천 전체 보기] (design_rules.md 4절). 폰: [추천 보기] 버튼만
+  const preview = wide ? (
+    <View>
+      <Txt variant="headline" accessibilityRole="header">
+        {S.previewTitle}
+      </Txt>
+      <Txt variant="caption" sub className="mt-1">
+        {S.previewSub}
+      </Txt>
+      <View className="mt-4 gap-3">
+        {recs.slice(0, 3).map((r) => {
+          const p = cat.perfumes.find((x) => x.key === r.perfumeKey)!;
+          return (
+            <View key={r.perfumeKey} className="rounded border border-line bg-surface p-4 dark:border-line-dark dark:bg-surface-dark">
+              <View className="flex-row items-baseline justify-between">
+                <Txt variant="caption" sub>
+                  {p.brand}
+                </Txt>
+                <Txt variant="label">{`${scorePercent(r)}%`}</Txt>
+              </View>
+              <View className="mt-0.5 flex-row items-center justify-between gap-2">
+                <Txt variant="noteName" className="flex-1">
+                  {p.name}
+                </Txt>
+                <GradeBadge grade={r.grade} />
+              </View>
+              <Txt variant="caption" sub className="mt-1">
+                {sharedAccordNames(cat, r).join(' · ')}
+              </Txt>
+            </View>
+          );
+        })}
+      </View>
+      <Button className="mt-4" testID={TestIds.SHOW_RECS} label={S.showAllRecs} onPress={() => go('/recs')} />
+    </View>
+  ) : undefined;
+
   return (
-    <Screen>
+    <Screen wide={wide} side={preview}>
       <View testID={TestIds.SUMMARY_SCREEN}>
         <Header title={S.summaryTitle} onBack={goBack} />
 
@@ -149,7 +194,8 @@ export default function SummaryScreen() {
           </View>
         )}
 
-        <View className="mt-8 flex-row gap-2">
+        {!wide && <Button className="mt-8" testID={TestIds.SHOW_RECS} label={S.showRecs} onPress={() => go('/recs')} />}
+        <View className={`${wide ? 'mt-8' : 'mt-2'} flex-row gap-2`}>
           <Button kind="secondary" className="flex-1" testID={TestIds.EDIT_NOTES} label={S.editNotes} onPress={goBack} />
         </View>
       </View>

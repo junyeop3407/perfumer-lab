@@ -86,3 +86,29 @@ test.describe('B. 추천 보기', () => {
     await expect(detail.getByTestId(T.DATA_SOURCE)).toContainText('Parfumo');
   });
 });
+
+/** 승인 목록 B 추가 (2026-11-12 사장 승인, docs/tests.md B7) */
+test.describe('B. 추천 보기 (추가)', () => {
+  test('B7 자기 자신 찾기: T001의 노트를 그대로 넣으면 T001이 1위·매우 비슷', async ({ app }) => {
+    // T001 Lumière d'Agrumes: 탑 레몬·베르가못 / 미들 오스만투스·자스민 / 베이스 샌달우드·화이트 머스크 (강도 모두 중)
+    await app.launchApp();
+    await app.startNewBlend('citrus', 'floral', 'woody');
+    await app.pickNote('top', 'lemon', 'medium');
+    await app.pickNote('top', 'bergamot', 'medium');
+    await app.pickNote('middle', 'osmanthus', 'medium');
+    await app.pickNote('middle', 'jasmine', 'medium');
+    await app.pickNote('base', 'sandalwood', 'medium');
+    // 화이트 머스크는 검색 전용 노트라 목록이 아니라 검색으로 고른다
+    await app.click(T.layerTab('base'));
+    await app.type(T.NOTE_SEARCH, 'white musk');
+    await app.click(T.noteItem('white musk'));
+    await app.waitForTag(T.selectedNote('base', 'white musk'));
+    await app.click(T.intensity('white musk', 'medium'));
+    await app.type(T.NOTE_SEARCH, '');
+    await app.goToSummary();
+    await app.showRecommendations();
+    const top = (await app.recommendations())[0];
+    expect(top.name, '자기 자신(또는 농도만 다른 같은 향수)이 1위').toBe("Lumière d'Agrumes");
+    expect(top.grade).toBe('매우 비슷');
+  });
+});

@@ -2,9 +2,13 @@ import { SIZES, T, expect, test } from '../acceptance/harness/acceptanceTest';
 
 /** 5-2 사장 기기 확인(2026-11-12, 안드로이드 Expo Go)에서 나온 문제 */
 test.describe('5-2 기기 확인 회귀', () => {
-  test('버그 2: 향수 찾기·보관함·마이 탭이 빈 화면이 아니라 "곧 열려요" 안내', async ({ app }) => {
+  test('버그 2: 향수 찾기·보관함·마이 탭이 빈 화면이 아니다 (아직 없는 탭은 "곧 열려요" 안내)', async ({ app }) => {
     await app.launchAppWith(SIZES.smallPhone);
-    for (const tab of [T.TAB_SEARCH, T.TAB_LIBRARY, T.TAB_MY]) {
+    // 향수 찾기는 5-3에서 생겼다: 빈 화면 대신 검색창과 안내 문장이 보인다
+    await app.openTab(T.TAB_SEARCH);
+    await app.waitForTag(T.PERFUME_SEARCH);
+    await expect(app.page.getByText('향수 이름이나 브랜드를 입력하면').filter({ visible: true })).toBeVisible();
+    for (const tab of [T.TAB_LIBRARY, T.TAB_MY]) {
       await app.openTab(tab);
       await expect(app.node(T.EMPTY_STATE), tab).toContainText('곧 열려요');
     }
